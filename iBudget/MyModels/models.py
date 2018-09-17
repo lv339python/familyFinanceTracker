@@ -113,3 +113,4 @@ class SpendingHistory(models.Model):
     comment = models.TextField()
     class Meta:
         db_table = 'Spending history'
+
