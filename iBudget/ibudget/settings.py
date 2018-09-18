@@ -46,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'iBudget.urls'
+ROOT_URLCONF = 'ibudget.urls'
 
 TEMPLATES = [
     {
@@ -64,7 +64,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'iBudget.wsgi.application'
+WSGI_APPLICATION = 'ibudget.wsgi.application'
 
 
 # Database
