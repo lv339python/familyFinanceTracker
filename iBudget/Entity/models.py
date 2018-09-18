@@ -4,8 +4,19 @@ from django.contrib.auth.models import (
 )
 
 
-class CustomUser(AbstractBaseUser):
-    email = models.EmailField(max_length=50, unique=True)
+class UserProfile(AbstractBaseUser):
+    """A user's profile with the required fields "email", "password" and the user's image (optional).
+    Parameters
+    ----------
+    email : 'string'
+        User's email.
+    icon : 'string'
+       File's name.
+
+    """
+    # email = models.EmailField(max_length=50, unique=True)
+
+
     icon = models.CharField(max_length=30)
 
     objects = BaseUserManager()
@@ -14,9 +25,9 @@ class CustomUser(AbstractBaseUser):
 
 class IncomeCategories(models.Model):
     name = models.CharField(max_length=30)
-    owner = models.ForeignKey(CustomUser, on_delete=True)
+    owner = models.ForeignKey(UserProfile, on_delete=True)
     date = models.DateField()
-    sum = models.DecimalField(max_digits=17, decimal_places=2)
+    value = models.DecimalField(max_digits=17, decimal_places=2)
     icon = models.CharField(max_length=30)
 
 
@@ -24,12 +35,12 @@ class FundsCategories(models.Model):
     name = models.CharField(max_length=30)
     icon = models.CharField(max_length=30)
     is_shared = models.BooleanField(default=False)
-    owner = models.ForeignKey(CustomUser, on_delete=True)
+    owner = models.ForeignKey(UserProfile, on_delete=True)
 
 
 class SpendingCategories(models.Model):
     name = models.CharField(max_length=30)
-    owner = models.ForeignKey(CustomUser, on_delete=True)
+    owner = models.ForeignKey(UserProfile, on_delete=True)
     icon = models.CharField(max_length=30)
     is_shared = models.BooleanField(default=False)
 
@@ -37,8 +48,8 @@ class SpendingCategories(models.Model):
 class Group(models.Model):
     name = models.CharField(max_length=30)
     icon = models.CharField(max_length=30)
-    owner = models.ForeignKey(CustomUser, on_delete=False)
-    members = models.ManyToManyField(CustomUser,
+    owner = models.ForeignKey(UserProfile, on_delete=False)
+    members = models.ManyToManyField(UserProfile,
                                      through='UsersInGroups',
                                      related_name="groups")
     shared_funds = models.ManyToManyField(FundsCategories,
@@ -51,30 +62,30 @@ class Group(models.Model):
 
 class IncomeHistory(models.Model):
     income = models.ForeignKey(IncomeCategories, on_delete=True, related_name="income_history")
-    funds = models.ForeignKey(FundsCategories, on_delete=True, related_name="income_history")
+    fund = models.ForeignKey(FundsCategories, on_delete=True, related_name="income_history")
     date = models.DateTimeField()
-    sum = models.DecimalField(max_digits=17, decimal_places=2)
+    value = models.DecimalField(max_digits=17, decimal_places=2)
     comment = models.TextField(null=True, default="")
 
 
 class SpendingHistory(models.Model):
-    funds = models.ForeignKey(FundsCategories, on_delete=True, related_name="spending_history")
+    fund = models.ForeignKey(FundsCategories, on_delete=True, related_name="spending_history")
     spending_categories = models.ForeignKey(SpendingCategories, on_delete=True, related_name="spending_history")
-    sum = models.DecimalField(max_digits=17, decimal_places=2)
+    value = models.DecimalField(max_digits=17, decimal_places=2)
     date = models.DateTimeField()
-    owner = models.ForeignKey(CustomUser, on_delete=True)
+    owner = models.ForeignKey(UserProfile, on_delete=True)
     comment = models.TextField(null=True, default="")
 
 
 class UsersInGroups(models.Model):
     group = models.ForeignKey(Group, on_delete=True)
-    user = models.ForeignKey(CustomUser, on_delete=True)
+    user = models.ForeignKey(UserProfile, on_delete=True)
     is_admin = models.BooleanField()
 
 
 class SharedFunds(models.Model):
     group = models.ForeignKey(Group, on_delete=True)
-    funds = models.ForeignKey(FundsCategories, on_delete=True)
+    fund = models.ForeignKey(FundsCategories, on_delete=True)
 
 
 class SharedSpendingCategories(models.Model):
