@@ -22,3 +22,22 @@ class UserProfile(AbstractBaseUser):
 
     objects = BaseUserManager()
     USERNAME_FIELD = 'email'
+
+    @staticmethod
+    def get_by_email(email):
+        """Static methods are similar to regular functions.
+
+        Note:
+            Do not include the `self` parameter in the ``Args`` section.
+
+        Args:
+            email(str): The first parameter.
+        Returns:
+            UserProfile object if database contain user with email, None otherwise.
+
+        """
+        try:
+            user = UserProfile.objects.filter(email=email).first()
+            return user
+        except ValueError:
+            return None
