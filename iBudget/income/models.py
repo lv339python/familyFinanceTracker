@@ -1,3 +1,7 @@
+"""
+This module provides model of income category.
+"""
+
 from django.db import models
 
 from authentication.models import UserProfile
@@ -19,5 +23,3 @@ class IncomeCategories(models.Model):
     value = models.DecimalField(max_digits=17, decimal_places=2)
     icon = models.CharField(max_length=30)
     owner = models.ForeignKey(UserProfile, on_delete=True)
-
-

@@ -1,3 +1,7 @@
+"""
+This module provides model of spending category.
+"""
+
 from django.db import models
 
 from authentication.models import UserProfile
@@ -18,5 +22,3 @@ class SpendingCategories(models.Model):
     icon = models.CharField(max_length=30)
     owner = models.ForeignKey(UserProfile, on_delete=True)
     is_shared = models.BooleanField(default=False)
-
-

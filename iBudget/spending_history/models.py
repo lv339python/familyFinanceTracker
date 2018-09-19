@@ -1,3 +1,7 @@
+"""
+This module provides model of spending history.
+"""
+
 from django.db import models
 
 from authentication.models import UserProfile
@@ -18,10 +22,10 @@ class SpendingHistory(models.Model):
 
     """
     fund = models.ForeignKey(FundCategories, on_delete=True, related_name="spending_history")
-    spending_categories = models.ForeignKey(SpendingCategories, on_delete=True, related_name="spending_history")
+    spending_categories = models.ForeignKey(SpendingCategories,
+                                            on_delete=True,
+                                            related_name="spending_history")
     date = models.DateTimeField()
     value = models.DecimalField(max_digits=17, decimal_places=2)
     owner = models.ForeignKey(UserProfile, on_delete=True)
     comment = models.TextField(null=True, default="")
-
-

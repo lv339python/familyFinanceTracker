@@ -1,3 +1,7 @@
+"""
+This module provides model of group and its relations.
+"""
+
 from django.db import models
 
 from authentication.models import UserProfile

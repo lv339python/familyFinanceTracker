@@ -1,3 +1,7 @@
+"""
+This module provides model of fund category.
+"""
+
 from django.db import models
 
 from authentication.models import UserProfile

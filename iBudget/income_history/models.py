@@ -1,3 +1,7 @@
+"""
+This module provides model of income history.
+"""
+
 from django.db import models
 
 from fund.models import FundCategories
@@ -20,4 +24,3 @@ class IncomeHistory(models.Model):
     date = models.DateTimeField()
     value = models.DecimalField(max_digits=17, decimal_places=2)
     comment = models.TextField(null=True, default="")
-

@@ -1,3 +1,7 @@
+"""
+This module provides user profile  model.
+"""
+
 from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
@@ -18,4 +22,3 @@ class UserProfile(AbstractBaseUser):
 
     objects = BaseUserManager()
     USERNAME_FIELD = 'email'
-
