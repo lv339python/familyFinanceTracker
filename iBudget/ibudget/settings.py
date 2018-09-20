@@ -152,6 +152,14 @@ AUTHORIZATION_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_URL = "https://www.googleapis.com/oauth2/v4/token"
 LOCAL_URL = "http://127.0.0.1:8000"
 
+# AWS
+
+AWS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID'
+
+AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
+
+AWS_STORAGE_BUCKET_NAME = 'AWS_STORAGE_BUCKET_NAME'
+
 try:
     from .local_settings import *
 except ImportError:
