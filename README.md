@@ -7,6 +7,7 @@ ToDo
 ## Technologies
 * Python (3.7.0)
 * PostgreSQL (10.5)
+* npm (3.5.2)
 
 ## Install
 For the next steps of service installation, you will need setup of Ubuntu OS
@@ -32,7 +33,7 @@ postgres=# \q
 pip install -r requirements.txt
 ```
 
-* Go to the `iBudget/iBudget` project directory and create your own local_settings.py in the folder with settings.py and configure correct database connection.
+* Go to the `iBudget/ibudget` project directory and create your own local_settings.py in the folder with settings.py and configure correct database connection.
 ```
 SECRET_KEY = "YOUR_SECRET_KEY_FOR_DJANGO_APP"
 
@@ -55,6 +56,26 @@ DATABASES = {
 python manage.py migrate
 ```
 
+### Install npm and vue-cli on your local machine:
+```
+sudo apt-get npm
+npm install -g vue-cli 
+```
+
+## Build Setup
+
+``` bash
+# install dependencies
+npm install
+
+# serve with hot reload at localhost:8080
+npm run dev
+
+# build for production with minification
+npm run build
+```
+
+For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
 ## Run Project
 
