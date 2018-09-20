@@ -1,12 +1,10 @@
 """
 This module provides function for validations.
 """
-
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
-MAX_LEN_PASSWORD = 16
-MIN_LEN_PASSWORD = 3
 SET_KEYS_REG_DATA = {"email", "password"}
 
 
@@ -20,11 +18,11 @@ def is_valid_password(password):
             bool: The return value. True is password valid, else False.
 
         """
-    if not isinstance(password, str):
+    try:
+        validate_password(password)
+        return True
+    except ValidationError:
         return False
-    if not MIN_LEN_PASSWORD <= len(password) <= MAX_LEN_PASSWORD:
-        return False
-    return True
 
 
 def is_valid_registration_data(data):
@@ -41,6 +39,7 @@ def is_valid_registration_data(data):
         return False
     if not set(data.keys()) == SET_KEYS_REG_DATA:
         return False
+
     if not is_valid_password(data["password"]):
         return False
     try:

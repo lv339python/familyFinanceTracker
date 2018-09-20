@@ -2,10 +2,10 @@
 This module provides user profile  model.
 """
 
-from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from django.db import models
 
 
 class UserProfile(AbstractBaseUser):
@@ -25,19 +25,16 @@ class UserProfile(AbstractBaseUser):
 
     @staticmethod
     def get_by_email(email):
-        """Static methods are similar to regular functions.
-
-        Note:
-            Do not include the `self` parameter in the ``Args`` section.
-
+        """
         Args:
             email(str): The first parameter.
         Returns:
             UserProfile object if database contain user with email, None otherwise.
 
         """
+
         try:
-            user = UserProfile.objects.filter(email=email).first()
+            user = UserProfile.objects.get(email=email)
             return user
-        except ValueError:
+        except UserProfile.DoesNotExist:
             return None
