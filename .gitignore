@@ -105,3 +105,15 @@ venv.bak/
 
 #PyCharm
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+#npm
+.DS_Store
+node_modules/
+bundel.js
+bundel.js.map
+npm-debug.log
+yarn-error.log
