@@ -14,8 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf.urls import url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('api/v1/', include('authentication.urls'))
+  url(r'^$', TemplateView.as_view(template_name='index.html'), name='uHome'),
+  path('api/v1/', include('authentication.urls'))
 ]
+
+urlpatterns += staticfiles_urlpatterns()
