@@ -58,8 +58,8 @@ python manage.py migrate
 
 ### Install npm and vue-cli on your local machine:
 ```
-sudo apt-get npm
-npm install -g vue-cli 
+sudo apt-get install npm
+sudo npm install -g vue-cli 
 ```
 
 ## Build Setup

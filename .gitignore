@@ -117,3 +117,4 @@ bundel.js
 bundel.js.map
 npm-debug.log
 yarn-error.log
+webpack-stats.json
