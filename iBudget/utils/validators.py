@@ -5,8 +5,13 @@ This module provides function for validations.
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from datetime import date
+import calendar
+
+from spending.models import SpendingCategories
 
 SET_KEYS_REG_DATA = {"email", "password"}
+SET_KEYS_SPEND_LIMIT_DATA = {"year", "month", "value", "spending_category"}
 
 
 def is_valid_password(password):
@@ -48,6 +53,30 @@ def is_valid_registration_data(data):
         return True
     except ValidationError:
         return False
+
+
+def is_valid_spending_limitation(data):
+  """Validate data of spending limitation.
+
+          Args:
+              data (dict): contain year, month, value and ID of spending category.
+
+          Returns:
+              bool: The return value. True is data valid, else False.
+
+          """
+
+  if not isinstance(data['value'], float):
+    return False
+  if data['month'] == 0 and data['year'] < date.today().year:
+    return False
+  if data['month']  and \
+    date(data['year'], data['month'], (calendar.monthrange(data['year'], data['month']))[1]) < date.today():
+    return False
+  return True
+
+
+
 
 
 def required_keys_validator(data, keys_required, strict=True):
