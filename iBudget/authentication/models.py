@@ -2,10 +2,10 @@
 This module provides user profile  model.
 """
 
-from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from django.db import models
 
 
 class UserProfile(AbstractBaseUser):
@@ -50,6 +50,18 @@ class UserProfile(AbstractBaseUser):
             'email': self.email,
         }
 
+    def update(self, password, first_name=None, last_name=None, icon=None):
+        """
+        Method which changes an information except email as it is an id of an user.
+        """
+        self.first_name = first_name if first_name else ""
+        self.last_name = last_name if last_name else ""
+        self.icon = icon if icon else ""
+
+        if password:
+            self.set_password(password)
+        self.save()
+
     @classmethod
     def create(cls, email, password, first_name=None, last_name=None, icon=None):
         """
@@ -68,14 +80,18 @@ class UserProfile(AbstractBaseUser):
         except (ValueError, AttributeError):
             pass
 
-    def update(self, password, first_name=None, last_name=None, icon=None):
+    @staticmethod
+    def get_by_email(email):
         """
-        Method which changes an information except email as it is an id of an user.
-        """
-        self.first_name = first_name if first_name else ""
-        self.last_name = last_name if last_name else ""
-        self.icon = icon if icon else ""
+        Args:
+            email(str): The first parameter.
+        Returns:
+            UserProfile object if database contain user with email, None otherwise.
 
-        if password:
-            self.set_password(password)
-        self.save()
+        """
+
+        try:
+            user = UserProfile.objects.get(email=email)
+            return user
+        except UserProfile.DoesNotExist:
+            return None
