@@ -1,5 +1,5 @@
 """
-WSGI config for iBudget project.
+WSGI config for ibudget project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
