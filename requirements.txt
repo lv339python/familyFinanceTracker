@@ -13,4 +13,3 @@ pylint-plugin-utils==0.4
 pytz==2018.5
 six==1.11.0
 wrapt==1.10.11
-requests_oauthlib==1.0.0

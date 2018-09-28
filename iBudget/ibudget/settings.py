@@ -144,14 +144,6 @@ WEBPACK_LOADER = {
   }
 }
 
-CLIENT_ID = '1086962473724-39bt35f7knvd6ef704qd2regsm1g5a4m.apps.googleusercontent.com'
-CLIENT_SECRET = 'UZZnoAzCT7FbE_WsLjfkant0'
-REDIRECT_URL = 'http://localhost:8000/api/v1/authentication/sign_in'
-SCOPE = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile']
-AUTHORIZATION_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth"
-TOKEN_URL = "https://www.googleapis.com/oauth2/v4/token"
-LOCAL_URL = "http://127.0.0.1:8000"
-
 try:
     from .local_settings import *
 except ImportError:
