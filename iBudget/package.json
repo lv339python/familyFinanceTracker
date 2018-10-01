@@ -10,7 +10,13 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
-    "vue": "^2.5.11"
+    "dayspan-vuetify": "^0.2.6",
+    "kalendar-vue": "^0.2.3",
+    "v-calendar": "^0.9.7",
+    "vue": "^2.5.11",
+    "vue-simple-calendar": "^4.0.2",
+    "vue2-datepicker": "^2.4.2",
+    "vuejs-datepicker": "^1.5.3"
   },
   "browserslist": [
     "> 1%",
