@@ -5,13 +5,8 @@ This module provides function for validations.
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from datetime import date
-import calendar
-
-from spending.models import SpendingCategories
 
 SET_KEYS_REG_DATA = {"email", "password"}
-SET_KEYS_SPEND_LIMIT_DATA = {"year", "month", "value", "spending_category"}
 
 
 def is_valid_password(password):

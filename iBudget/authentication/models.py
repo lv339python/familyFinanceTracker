@@ -95,3 +95,19 @@ class UserProfile(AbstractBaseUser):
             return user
         except UserProfile.DoesNotExist:
             return None
+
+    @staticmethod
+    def get_by_id(user_id):
+        """
+        Args:
+            user_id (int): The first parameter.
+        Returns:
+            UserProfile object if database contain user with id, None otherwise.
+
+        """
+
+        try:
+            user = UserProfile.objects.get(pk=user_id)
+            return user
+        except UserProfile.DoesNotExist:
+            return None
