@@ -6,11 +6,10 @@ import json
 from datetime import date
 from django.http import HttpResponse, JsonResponse
 
-from authentication.models import UserProfile
 from .models import SpendingCategories, SpendingLimitationIndividual
 
 
-def show_spending_ind(request, user_id=None):  #instead of user_id there should be request.user
+def show_spending_ind(request):
     """Handling request for creating of spending categories list.
 
         Args:
@@ -19,8 +18,8 @@ def show_spending_ind(request, user_id=None):  #instead of user_id there should 
             HttpResponse object.
     """
     if request.method == "GET":
-        if user_id:
-            user = UserProfile.get_by_id(user_id)
+        user = request.user
+        if user:
             user_categories = []
             for entry in SpendingCategories.objects.filter(owner=user):
                 user_categories.append({'id': entry.id, 'name': entry.name})
@@ -28,8 +27,7 @@ def show_spending_ind(request, user_id=None):  #instead of user_id there should 
     return JsonResponse({}, status=400)
 
 
-def set_spending_limitation_ind(request, user_id=2, spending_id=None):
-    #instead of user_id there should be request.user
+def set_spending_limitation_ind(request):
     """Handling request for create spending limitation.
 
         Args:
@@ -38,10 +36,13 @@ def set_spending_limitation_ind(request, user_id=2, spending_id=None):
             HttpResponse object.
     """
     if request.method == "POST":
+        user = request.user
         data = json.loads(request.body)
+        data['spending_id'] = int(data['spending_id'])
         data['month'] = int(data['month'])
         data['year'] = int(data['year'])
-        data['value'] = float(data['value'])
+        data['value'] = round(float(data['value']), 2)
+
         spending_limitation_ind = SpendingLimitationIndividual()
         if data['month']:
             spending_limitation_ind.start_date = date(data['year'], data['month'], 1)
@@ -53,22 +54,19 @@ def set_spending_limitation_ind(request, user_id=2, spending_id=None):
             spending_limitation_ind.start_date = date(data['year'], 1, 1)
             spending_limitation_ind.finish_date = date(data['year'], 12, 31)
 
-        spending_limitation_ind.spending_category = SpendingCategories.get_by_id(spending_id)
-        spending_limitation_ind.user = UserProfile.get_by_id(user_id)
+        spending_limitation_ind.spending_category = \
+            SpendingCategories.get_by_id(data['spending_id'])
 
-        if SpendingLimitationIndividual.objects.filter\
-            (user=spending_limitation_ind.user,
-             spending_category=spending_limitation_ind.spending_category,
-             start_date=spending_limitation_ind.start_date,
-             finish_date=spending_limitation_ind.finish_date):
-            SpendingLimitationIndividual.objects.filter\
-                (user=spending_limitation_ind.user,
-                 spending_category=spending_limitation_ind.spending_category,
-                 start_date=spending_limitation_ind.start_date,
-                 finish_date=spending_limitation_ind.finish_date).update(
-                     value=round(float(data['value']), 2))
+        spending_limitation = SpendingLimitationIndividual.objects.filter(
+            user=user,
+            spending_category=spending_limitation_ind.spending_category,
+            start_date=spending_limitation_ind.start_date,
+            finish_date=spending_limitation_ind.finish_date)
+        if spending_limitation:
+            spending_limitation.update(value=data['value'])
         else:
-            spending_limitation_ind.value = round(float(data['value']), 2)
+            spending_limitation_ind.value = data['value']
+            spending_limitation_ind.user = user
             spending_limitation_ind.save()
 
         return HttpResponse(status=201)

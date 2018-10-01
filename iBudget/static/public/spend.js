@@ -56,38 +56,40 @@ new Vue({
     },
 
     setLimit: function() {
-        console.log(this.selectedYear),
-        console.log(this.selectedMonth),
-        console.log(Number(this.selectedValue)),
+        console.log(this.aspend['id']);
+        console.log(this.selectedYear);
+        console.log(this.selectedMonth);
+        console.log(Number(this.selectedValue));
 
         axios({
           method: 'post',
-          url: "http://localhost:8000/spending/user/2/set_limit/"+String(this.aspend.id),
+          url: 'http://localhost:8000/spending/set_limit/',
           data: {
+            'spending_id': Number(this.aspend['id']),
             'year': Number(this.selectedYear),
             'month': Number(this.selectedMonth),
             'value':  Number(this.selectedValue),
           }
         });
 //        location.reload();
-        this.aspend: null,
-     this.selectedYear: null,
-     this.selectedMonth: null,
-     this.selectedIndex: 0,
-     this.selectedValue: null,
+     this.aspend= null;
+     this.selectedYear= null;
+     this.selectedMonth= null;
+     this.selectedIndex= 0;
+     this.selectedValue= null;
     },
 
     getSpendingList: function() {
-    var v = this;
-    axios.get('http://localhost:8000/spending/user/2/')
-      .then(function (response ) {
+      var v = this;
+      axios.get('http://localhost:8000/spending/')
+        .then(function (response ) {
 
-          v.spending_list = response.data;
-          console.log(v);
+            v.spending_list = response.data;
+            console.log(v);
 
-      }).catch(function (error) {
-        console.log(error);
-      })
+        }).catch(function (error) {
+          console.log(error);
+        })
     }
   }
 });

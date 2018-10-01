@@ -59,12 +59,13 @@
         <div class="form-group">
         <label for="value">Value:</label>
           <hr>
-          <input v-model.number="selectedValue"  id="value" type="number"
-                 placeholder="Your limit" pattern="^[0-9]{1,12}(\.)([0-9]{1,2})$">
+          <input v-model.number="selectedValue"  id="value" type="number" min="0" max="999999999"
+                 placeholder="Your limit" pattern="^\d+(\.\d+)?$">
         </div>
         <div>  Selected: {{ selectedValue }} </div>
         <hr>
-        <div v-if="selectedYear!=null&& selectedMonth!=null&&selectedValue>0&&typeof(selectedValue)==='number' ">
+        <div v-if="selectedYear!=null&& selectedMonth!=null&&
+          selectedValue>0&&typeof(selectedValue)==='number'&& selectedValue<999999999999999.99">
           <button class="btn btn-primary ml-5" v-on:click="setLimit">Set limit</button>
         </div>
 

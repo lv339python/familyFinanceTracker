@@ -49,31 +49,6 @@ def is_valid_registration_data(data):
     except ValidationError:
         return False
 
-
-def is_valid_spending_limitation(data):
-  """Validate data of spending limitation.
-
-          Args:
-              data (dict): contain year, month, value and ID of spending category.
-
-          Returns:
-              bool: The return value. True is data valid, else False.
-
-          """
-
-  if not isinstance(data['value'], float):
-    return False
-  if data['month'] == 0 and data['year'] < date.today().year:
-    return False
-  if data['month']  and \
-    date(data['year'], data['month'], (calendar.monthrange(data['year'], data['month']))[1]) < date.today():
-    return False
-  return True
-
-
-
-
-
 def required_keys_validator(data, keys_required, strict=True):
     """
     :param strict: shows the status of strict method of comparing keys
