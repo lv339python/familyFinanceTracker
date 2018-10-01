@@ -7,6 +7,33 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 SET_KEYS_REG_DATA = {"email", "password"}
+STR_MIN_LENGTH = 0
+STR_MAX_LENGTH = None
+
+def string_validator(value, min_length=STR_MIN_LENGTH, max_length=STR_MAX_LENGTH):
+    """
+    Function that provides string validation.
+    :param value: the string literal itself.
+    :type value: string
+    :param min_length: the minimal length of the received string value.
+    :type min_length: integer
+    :param max_length: the maximum length of the received string value.
+    :type max_length: integer
+    :return: `True` if value if valid and `False` if it is not.
+    """
+
+    if not isinstance(value, str):
+        return False
+
+    if len(value) < min_length:
+        return False
+
+    if max_length:
+        if len(value) > max_length:
+            return False
+
+    return True
+
 
 
 def is_valid_password(password):
@@ -96,3 +123,19 @@ def login_validate(data):
     if not email_validator(data['email']):
         return False
     return True
+
+
+def list_of_int_validator(value):
+  """
+  Function that provides list validation
+  :param value: list or tuple with integer items
+  :type value: list or tuple
+  :return: `True` if value if valid and `False` if it is not.
+  """
+  if not isinstance(value, (list, tuple)):
+    return False
+  if not value:
+    return False
+  if not all(isinstance(item, int) for item in value):
+    return False
+  return True

@@ -21,7 +21,12 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
   url(r'^$', TemplateView.as_view(template_name='index.html'), name='uHome'),
-  path('api/v1/authentication/', include('authentication.urls'))
+  path('api/v1/authentication/', include('authentication.urls')),
+  path('api/v2/group/', include('group.urls')),
+  path('spending/', include('spending.urls')),
+  path('api/v4/spending_history/', include('spending_history.urls')),
+  path('fund/', include('fund.urls'))
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
