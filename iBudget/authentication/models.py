@@ -22,7 +22,7 @@ class UserProfile(AbstractBaseUser):
     first_name = models.CharField(blank=True, max_length=30)
     last_name = models.CharField(blank=True, max_length=20)
     icon = models.CharField(blank=True, max_length=30)
-
+    is_sys_admin = models.BooleanField(default=False)
     objects = BaseUserManager()
     USERNAME_FIELD = 'email'
 
@@ -48,6 +48,7 @@ class UserProfile(AbstractBaseUser):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
+            'is_sys_admin': self.is_sys_admin,
         }
 
     def update(self, password, first_name=None, last_name=None, icon=None):
@@ -92,6 +93,22 @@ class UserProfile(AbstractBaseUser):
 
         try:
             user = UserProfile.objects.get(email=email)
+            return user
+        except UserProfile.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_by_id(user_id):
+        """
+        Args:
+            user_id(int): The first parameter.
+        Returns:
+          UserProfile object if database contain user with user_id, None otherwise.
+
+        """
+
+        try:
+            user = UserProfile.objects.get(id=user_id)
             return user
         except UserProfile.DoesNotExist:
             return None
