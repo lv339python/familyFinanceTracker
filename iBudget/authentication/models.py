@@ -18,7 +18,7 @@ class UserProfile(AbstractBaseUser):
         icon (str, optional): Name of the file with user's avatar.
     """
     email = models.EmailField(max_length=50, unique=True)
-    password = models.CharField(max_length=30)
+    password = models.CharField(max_length=128)
     first_name = models.CharField(blank=True, max_length=30)
     last_name = models.CharField(blank=True, max_length=20)
     icon = models.CharField(blank=True, max_length=30)
@@ -92,6 +92,22 @@ class UserProfile(AbstractBaseUser):
 
         try:
             user = UserProfile.objects.get(email=email)
+            return user
+        except UserProfile.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_by_id(user_id):
+        """
+        Args:
+            user_id (int): The first parameter.
+        Returns:
+            UserProfile object if database contain user with id, None otherwise.
+
+        """
+
+        try:
+            user = UserProfile.objects.get(pk=user_id)
             return user
         except UserProfile.DoesNotExist:
             return None
