@@ -55,5 +55,8 @@ export default {
 
 </script>
 <style>
-
+#calendar{
+  position:absolute;
+  bottom:0;
+}
 </style>
