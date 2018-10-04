@@ -23,10 +23,10 @@ from ibudget.views import FileHandler
 from ibudget import views
 
 urlpatterns = [
-  url(r'^$', TemplateView.as_view(template_name='index.html'), name='uHome'),
-  path('api/v1/authentication/', include('authentication.urls')),
-  path('api/v1/files/', FileHandler.as_view())
-
+    url(r'^$', TemplateView.as_view(template_name='index.html'), name='uHome'),
+    path('api/v1/authentication/', include('authentication.urls')),
+    path('api/v1/files/', FileHandler.as_view()),
+    path('api/v1/spending/', include('spending.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
