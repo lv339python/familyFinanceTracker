@@ -13,21 +13,21 @@ def get_user_roles(user_id):
     :return: role_dict
     """
     role_dict = {
-        'sys_admin': 0,
-        'admin': 0,
-        'member': 0,
-        'user': 0
+        'sys_admin': False,
+        'admin': False,
+        'member': False,
+        'user': False
 
     }
 
     user = UserProfile.get_by_id(user_id)
     if user.is_sys_admin:
-        role_dict['sys_admin'] = 1
+        role_dict['sys_admin'] = True
     if user:
-        role_dict['user'] = 1
+        role_dict['user'] = True
     user = UsersInGroups.get_by_id(user_id)
     if user and user.is_admin:
-        role_dict['admin'] = 1
+        role_dict['admin'] = True
     if user:
-        role_dict['member'] = 1
+        role_dict['member'] = True
     return role_dict

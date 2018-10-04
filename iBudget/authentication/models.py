@@ -18,7 +18,7 @@ class UserProfile(AbstractBaseUser):
         icon (str, optional): Name of the file with user's avatar.
     """
     email = models.EmailField(max_length=50, unique=True)
-    password = models.CharField(max_length=30)
+    password = models.CharField(max_length=128)
     first_name = models.CharField(blank=True, max_length=30)
     last_name = models.CharField(blank=True, max_length=20)
     icon = models.CharField(blank=True, max_length=30)
@@ -55,10 +55,12 @@ class UserProfile(AbstractBaseUser):
         """
         Method which changes an information except email as it is an id of an user.
         """
-        self.first_name = first_name if first_name else ""
-        self.last_name = last_name if last_name else ""
-        self.icon = icon if icon else ""
-
+        if first_name:
+            self.first_name = first_name
+        if icon:
+            self.icon = icon
+        if last_name:
+            self.last_name = last_name
         if password:
             self.set_password(password)
         self.save()

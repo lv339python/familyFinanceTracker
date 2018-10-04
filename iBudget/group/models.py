@@ -3,7 +3,6 @@ This module provides model of group and its relations.
 """
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
-
 from authentication.models import UserProfile
 from fund.models import FundCategories
 from spending.models import SpendingCategories
