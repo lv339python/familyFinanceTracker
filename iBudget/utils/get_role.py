@@ -31,4 +31,3 @@ def get_user_roles(user_id):
     if user:
         role_dict['member'] = True
     return role_dict
-sadsadsadasdsadsadsadsadsadsdsad
