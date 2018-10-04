@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+  <!--Bootstrap linking-->
+  <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+  <!--&lt;!&ndash; jQuery library &ndash;&gt;-->
+  <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+
+  <!--&lt;!&ndash; Latest compiled JavaScript &ndash;&gt;-->
+  <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
 </head>
   <body>
-      {% load render_bundle from webpack_loader %}
+
+     {% load render_bundle from webpack_loader %}
       <div id="app">
-          <app> </app>
+
       </div>
+
       {% render_bundle 'main' %}
+
   </body>
 </html>
