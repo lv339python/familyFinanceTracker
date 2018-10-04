@@ -1,6 +1,4 @@
 from django.urls import path
-
-
 from .views import login_user, logout_user, registration, google_sign_in, google_auth_grant, change_password
 
 urlpatterns = [

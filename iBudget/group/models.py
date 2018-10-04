@@ -41,7 +41,7 @@ class UsersInGroups(models.Model):
         Attributes:
             group (FK): Group ID.
             user (FK): User ID.
-            is_admin (bool):  "True" if user has right of administrator, "false" in other way.
+            is_admin (bool):  "True" if user has right of administrator, "False" in other way.
 
 
     """
@@ -91,3 +91,4 @@ class SharedSpendingCategories(models.Model):
     """
     group = models.ForeignKey(Group, on_delete=True)
     spending_categories = models.ForeignKey(SpendingCategories, on_delete=True)
+asdsadsadsadsadsadsad

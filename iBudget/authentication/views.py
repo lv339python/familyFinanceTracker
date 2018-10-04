@@ -112,7 +112,7 @@ def google_sign_in(request):
 
 @require_http_methods(["POST"])
 def change_password(request):
-    """Change_password UserProfile"""
+    """Change_password """
     user = request.user
     data = json.loads(request.body)
     print(user)
