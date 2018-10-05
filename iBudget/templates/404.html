@@ -1,0 +1,14 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>iBudget</title>
+</head>
+<body>
+    {{ path }}
+    <div id="app"></div>
+    <script src="{% static 'js/build.js' %}"></script>
+</body>
+</html>
