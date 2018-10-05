@@ -20,7 +20,6 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from ibudget.views import FileHandler
 
-from ibudget import views
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='uHome'),
