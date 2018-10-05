@@ -17,17 +17,15 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include
-from django.views.generic import TemplateView
 from ibudget.views import FileHandler
 from welcome.views import index
 
-f
 
 urlpatterns = [
   url(r'^$', index),
   path('api/v1/authentication/', include('authentication.urls')),
-  path('api/v1/files/', FileHandler.as_view())
-
+  path('api/v1/files/', FileHandler.as_view()),
+  path('api/v1/spending/', include('spending.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
