@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
+
 from utils.validators import login_validate, is_valid_registration_data
 from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
   LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
@@ -31,7 +32,10 @@ def registration(request):
         return HttpResponse(status=400)
     if UserProfile.get_by_email(data.get("email")):
         return HttpResponse(status=409)
-    UserProfile.create(data.get("email"), data.get("password"))
+    user = UserProfile()
+    user.email = data.get("email")
+    user.set_password(data.get("password"))
+    user.save()
     return HttpResponse(status=201)
 
 
@@ -60,7 +64,6 @@ def logout_user(request):
     :param request: request from the website
     :return: status 200
     """
-    print(request.user)
 
     logout(request)
     response = HttpResponse('operation was successful provided', status=200)
@@ -77,8 +80,7 @@ def google_auth_grant(request):
 
     google = OAuth2Session(CLIENT_ID, scope=SCOPE, redirect_uri=REDIRECT_URL)
     authorization_url = google.authorization_url(AUTHORIZATION_BASE_URL, access_type=
-                                              "offline", prompt="select_account")
-
+                                                 "offline", prompt="select_account")
     if authorization_url:
         return redirect(authorization_url)
 
@@ -108,4 +110,3 @@ def google_sign_in(request):
         user.save()
         return HttpResponse(status=201)
     return HttpResponse(status=400)
-

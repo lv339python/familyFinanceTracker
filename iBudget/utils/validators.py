@@ -49,7 +49,6 @@ def is_valid_registration_data(data):
     except ValidationError:
         return False
 
-
 def required_keys_validator(data, keys_required, strict=True):
     """
     :param strict: shows the status of strict method of comparing keys

@@ -19,7 +19,7 @@ class UserProfile(AbstractBaseUser):
         is_sys_admin(bool):  "True" if user has right of administrator, "false" in other way.
     """
     email = models.EmailField(max_length=50, unique=True)
-    password = models.CharField(max_length=128)
+    password = models.CharField(max_length=30)
     first_name = models.CharField(blank=True, max_length=30)
     last_name = models.CharField(blank=True, max_length=20)
     icon = models.CharField(blank=True, max_length=30)
@@ -104,14 +104,14 @@ class UserProfile(AbstractBaseUser):
     def get_by_id(user_id):
         """
         Args:
-            user_id(int): The first parameter.
+            user_id (int): The first parameter.
         Returns:
-          UserProfile object if database contain user with user_id, None otherwise.
+            UserProfile object if database contain user with id, None otherwise.
 
         """
 
         try:
-            user = UserProfile.objects.get(id=user_id)
+            user = UserProfile.objects.get(pk=user_id)
             return user
         except UserProfile.DoesNotExist:
             return None
