@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
-from utils.validators import login_validate, is_valid_registration_data, is_valid_password
+from utils.validators import login_validate, is_valid_registration_data
 from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
   LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
 from .models import UserProfile
@@ -109,16 +109,3 @@ def google_sign_in(request):
         return HttpResponse(status=201)
     return HttpResponse(status=400)
 
-
-@require_http_methods(["POST"])
-def change_password(request):
-    """Change_password """
-    user = request.user
-    data = json.loads(request.body)
-    print(user)
-    if user.check_password(data['OldPassword']):
-        if is_valid_password(data['NewPassword']):
-            user.set_password(data['NewPassword'])
-            user.save(update_fields=['password'])
-        return HttpResponse(status=200)
-    return HttpResponse(status=400)

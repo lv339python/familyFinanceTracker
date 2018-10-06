@@ -5,29 +5,38 @@ from authentication.models import UserProfile
 from group.models import UsersInGroups
 
 
-def get_user_roles(user_id):
+class UserRoles:
     """
-    Current function checks and returns user roles in dict data type
-
-    :param user_id: int
-    :return: role_dict
+    User's roles.
     """
-    role_dict = {
-        'sys_admin': False,
-        'admin': False,
-        'member': False,
-        'user': False
+    @staticmethod
+    def get_role():
+        """
+        Current function checks and returns user roles in dict data type
+        :return: role_dict
+        """
+        role_dict = {
+            'sys_admin': [],
+            'admin': [],
+            'member': [],
+            'user': []
+        }
 
-    }
+        user_list = UserProfile.objects.all()
+        users = UsersInGroups.objects.all()
 
-    user = UserProfile.get_by_id(user_id)
-    if user.is_sys_admin:
-        role_dict['sys_admin'] = True
-    if user:
-        role_dict['user'] = True
-    user = UsersInGroups.get_by_id(user_id)
-    if user and user.is_admin:
-        role_dict['admin'] = True
-    if user:
-        role_dict['member'] = True
-    return role_dict
+        for user in user_list:
+            if user.is_sys_admin:
+                role_dict['sys_admin'].append(user.first_name)
+            if user:
+                role_dict['user'].append(user.first_name)
+        for user in users:
+            if user.is_admin:
+                role_dict['admin'].append(user.id)
+            if user.user:
+                role_dict['member'].append(user.id)
+
+        role_dict['admin'] = [UserProfile.get_by_id(user_id).first_name for user_id in role_dict['admin']]
+        role_dict['member'] = [UserProfile.get_by_id(user_id).first_name for user_id in role_dict['member']]
+
+        return role_dict
