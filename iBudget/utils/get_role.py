@@ -5,7 +5,7 @@ from authentication.models import UserProfile
 from group.models import UsersInGroups
 
 
-class UserRoles:
+class UserRoles:  #pylint: disable=too-few-public-methods
     """
     User's roles.
     """
@@ -35,8 +35,13 @@ class UserRoles:
                 role_dict['admin'].append(user.id)
             if user.user:
                 role_dict['member'].append(user.id)
+        admins_names = []
+        for user_id in role_dict['admin']:
+            admins_names.append(UserProfile.get_by_id(user_id).first_name)
+        role_dict['admin'] = admins_names
 
-        role_dict['admin'] = [UserProfile.get_by_id(user_id).first_name for user_id in role_dict['admin']]
-        role_dict['member'] = [UserProfile.get_by_id(user_id).first_name for user_id in role_dict['member']]
-
+        members_names = []
+        for user_id in role_dict['member']:
+            members_names.append(UserProfile.get_by_id(user_id).first_name)
+        role_dict['member'] = members_names
         return role_dict
