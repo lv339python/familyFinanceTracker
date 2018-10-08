@@ -3,7 +3,6 @@ This module provides model of group and its relations.
 """
 
 from django.db import models
-from django.contrib.auth.models import (BaseUserManager)
 from authentication.models import UserProfile
 from fund.models import FundCategories
 from spending.models import SpendingCategories
@@ -12,13 +11,16 @@ from spending.models import SpendingCategories
 class Group(models.Model):
 
     """Describing group of users, related by shared funds and spending.
-    Attributes:
-        name (str): Name of user's group.
-        icon (str, optional): Name of the file with group's avatar.
-        owner (FK): ID owner of this group.
-        members: Relation realization between users and groups.
-        shared_funds: Relation realization between funds and groups.
-        shared_spendings: Relation realization between spending and groups.
+
+        Attributes:
+            name (str): Name of user's group.
+            icon (str, optional): Name of the file with group's avatar.
+            owner (FK): ID owner of this group.
+            members: Relation realization between users and groups.
+            shared_funds: Relation realization between funds and groups.
+            shared_spendings: Relation realization between spending and groups.
+
+
     """
     name = models.CharField(max_length=30)
     icon = models.CharField(max_length=30)
@@ -32,7 +34,6 @@ class Group(models.Model):
     shared_spendings = models.ManyToManyField(SpendingCategories,
                                             through='SharedSpendingCategories',
                                             related_name="groups")
-    objects = BaseUserManager()
 
     def to_dict(self):
       """
@@ -107,13 +108,12 @@ class UsersInGroups(models.Model):
     """Members of groups.
 
         Attributes:
-          group (FK): Group ID.
-          user (FK): User ID.
-          is_admin (bool):  "True" if user has right of administrator, "false" in other way.
+            group (FK): Group ID.
+            user (FK): User ID.
+            is_admin (bool):  "True" if user has right of administrator, "False" in other way.
+
 
     """
-
-    objects = BaseUserManager()
     group = models.ForeignKey(Group, on_delete=True)
     user = models.ForeignKey(UserProfile, on_delete=True)
     is_admin = models.BooleanField()
@@ -143,9 +143,9 @@ class UsersInGroups(models.Model):
 class SharedFunds(models.Model):
     """Common fund categories for groups.
 
-      Attributes:
-          group (FK): Group ID.
-          fund (FK): Fund category ID.
+        Attributes:
+            group (FK): Group ID.
+            fund (FK): Fund category ID.
 
 
     """
@@ -156,15 +156,15 @@ class SharedFunds(models.Model):
 class SharedSpendingCategories(models.Model):
     """Common spending categories for groups.
 
-      Attributes:
-          group (FK): Group ID.
-          spending_categories (FK): Spending category ID.
+        Attributes:
+            group (FK): Group ID.
+            spending_categories (FK): Spending category ID.
 
 
     """
     group = models.ForeignKey(Group, on_delete=True)
     spending_categories = models.ForeignKey(SpendingCategories, on_delete=True)
-    objects=BaseUserManager()
+
 
 
 

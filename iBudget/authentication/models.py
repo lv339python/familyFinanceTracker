@@ -16,13 +16,14 @@ class UserProfile(AbstractBaseUser):
         first_name (str): User's first name
         last_name (str): User's last name
         icon (str, optional): Name of the file with user's avatar.
+        is_sys_admin(bool):  "True" if user has right of administrator, "false" in other way.
     """
     email = models.EmailField(max_length=50, unique=True)
     password = models.CharField(max_length=128)
     first_name = models.CharField(blank=True, max_length=30)
     last_name = models.CharField(blank=True, max_length=20)
     icon = models.CharField(blank=True, max_length=30)
-
+    is_sys_admin = models.BooleanField(default=False)
     objects = BaseUserManager()
     USERNAME_FIELD = 'email'
 
@@ -48,16 +49,19 @@ class UserProfile(AbstractBaseUser):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
+            'is_sys_admin': self.is_sys_admin,
         }
 
     def update(self, password, first_name=None, last_name=None, icon=None):
         """
         Method which changes an information except email as it is an id of an user.
         """
-        self.first_name = first_name if first_name else ""
-        self.last_name = last_name if last_name else ""
-        self.icon = icon if icon else ""
-
+        if first_name:
+            self.first_name = first_name
+        if icon:
+            self.icon = icon
+        if last_name:
+            self.last_name = last_name
         if password:
             self.set_password(password)
         self.save()
@@ -98,13 +102,16 @@ class UserProfile(AbstractBaseUser):
 
     @staticmethod
     def get_by_id(user_id):
+        """
+        Args:
+            user_id (int): The first parameter.
+        Returns:
+            UserProfile object if database contain user with id, None otherwise.
 
-      """
-      returns object of User by id
-      """
+        """
 
-      try:
-        user = UserProfile.objects.get(id=user_id)
-        return user
-      except UserProfile.DoesNotExist:
-        return None
+        try:
+            user = UserProfile.objects.get(pk=user_id)
+            return user
+        except UserProfile.DoesNotExist:
+            return None

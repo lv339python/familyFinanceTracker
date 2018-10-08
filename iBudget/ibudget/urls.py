@@ -18,6 +18,8 @@ from django.conf.urls import url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include
 from django.views.generic import TemplateView
+from ibudget.views import FileHandler
+
 
 urlpatterns = [
   url(r'^$', TemplateView.as_view(template_name='index.html'), name='uHome'),
@@ -27,6 +29,10 @@ urlpatterns = [
   path('api/v4/spending_history/', include('spending_history.urls')),
   path('fund/', include('fund.urls'))
 
+    url(r'^$', TemplateView.as_view(template_name='index.html'), name='uHome'),
+    path('api/v1/authentication/', include('authentication.urls')),
+    path('api/v1/files/', FileHandler.as_view()),
+    path('api/v1/spending/', include('spending.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

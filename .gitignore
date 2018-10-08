@@ -118,3 +118,5 @@ bundel.js.map
 npm-debug.log
 yarn-error.log
 webpack-stats.json
+package-lock.json
+*.hot-update.js
