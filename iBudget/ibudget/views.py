@@ -20,10 +20,11 @@ class FileHandler(View):
         try:
             pic = request.FILES['icon']
             if AwsService.check_if_in_bucket(pic):
-                AwsService.upload(pic)
-                pic = str(pic)
-                url = AwsService.get_image_url(pic)
-                return HttpResponse(url)
+                if AwsService.upload(pic):
+                    pic = str(pic)
+                    url = AwsService.get_image_url(pic)
+                    return HttpResponse(url)
+                return RESPONSE_500_NO_SUCCESS
             return RESPONSE_400_INVALID_DATA
         except datastructures.MultiValueDictKeyError:
             return RESPONSE_400_NO_FILE
@@ -39,12 +40,12 @@ class FileHandler(View):
         req_dict = request.POST
         old_file = req_dict['old']
         new_file = request.FILES['icon']
-        if AwsService.del_photo(old_file):
-            AwsService.upload(new_file)
-            if AwsService.check_if_in_bucket(new_file):
-                return RESPONSE_200_SUCCESS
-            return RESPONSE_500_NO_SUCCESS
-        return RESPONSE_404_NOT_FOUND
+        if AwsService.upload(new_file):
+            if AwsService.del_photo(old_file):
+                if not AwsService.check_if_in_bucket(new_file):
+                    return RESPONSE_200_SUCCESS
+            return RESPONSE_404_NOT_FOUND
+        return RESPONSE_500_NO_SUCCESS
 
 
     def delete(self, request):# pylint: disable=no-self-use
@@ -52,7 +53,8 @@ class FileHandler(View):
          used as a profile photo or icon
          """
         key = request.body.decode()
-        if AwsService.check_if_in_bucket(key):
+        if not AwsService.check_if_in_bucket(key):
             if AwsService.del_photo(key):
                 return RESPONSE_200_SUCCESS
+            return RESPONSE_500_NO_SUCCESS
         return RESPONSE_404_NOT_FOUND

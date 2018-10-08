@@ -4,7 +4,10 @@
         <router-view></router-view>
         <ul>
           <li>
-            <router-link to="/spending/set_limit">Set spending limitation</router-link>
+            <router-link to="/spendings/set_limit">Set spending limitation individual</router-link>
+          </li>
+          <li>
+            <router-link to="/api/v1/spendings/admin/limit/">Set spending limitation group</router-link>
           </li>
         </ul>
 

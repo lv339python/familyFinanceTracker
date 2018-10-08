@@ -6,8 +6,9 @@ import json
 from datetime import date
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
+from utils.spendings_limit_checker import comp_gr_spends_w_limit # pylint: disable=W0611
+from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitGroup
 
-from .models import SpendingCategories, SpendingLimitationIndividual
 
 
 @require_http_methods(["GET"])
@@ -71,3 +72,63 @@ def set_spending_limitation_ind(request):
         spending_limitation_ind.save()
 
     return HttpResponse(status=201)
+
+
+def group_limit(request):
+    """the functions finds all the shared spendings associated with particular user and
+    returns them
+    :param request object
+    """
+    if request.method == 'GET':
+        user_id = request.user
+        available_spendings = \
+        SpendingCategories.objects.filter(sharedspendingcategories__group__usersingroups__user_id=
+                                          user_id,
+                                          sharedspendingcategories__group__usersingroups__is_admin=
+                                          True).distinct('name')
+        list_of_spensings = []
+        for i in available_spendings:
+            list_of_spensings.append(i.name)
+        return JsonResponse(list_of_spensings, safe=False, status=200)
+    return HttpResponse('Wrong request method', status=405)
+
+def set_group_limit(request):
+    """the function sets a limit for particular group and checks if such limit already
+    exists
+    :params:
+    request object with JSON in its body
+    """
+    if request.method == 'POST':
+        content = request.body
+        content = json.loads(content)
+        instance = SpendingCategories.objects.get(name=content['spending_category'])
+        catgs_with_limits = []
+        current_limits = SpendingLimitGroup.objects.all()
+        if current_limits:
+            for i in current_limits:
+                catgs_with_limits.append(i.spending_category_id)
+                if instance.id in catgs_with_limits:
+                    return HttpResponse("The limit for category '{}' already exists. Change limit?"
+                                        .format(instance.name), status=202)
+        SpendingLimitGroup.objects.create(spending_category=instance, start_date=
+                                          content['start_date'], end_date=content['end_date'],
+                                          value=content['value'])
+        return HttpResponse("Limit for spending '{}' is set".format(instance.name), status=200)
+    return HttpResponse('Wrong request method', status=405)
+
+
+def change_group_limit(request, category_name):
+    """When user clicks 'yes' to change the limit the URL 'admin/change_limit/<int: category_id>/
+    is opened and this function allows to set the new limit to the current limit.
+    params:
+    category_name: keyword argument (string)
+    """
+    if request.method == 'POST':
+        content = request.body
+        content = json.loads(content)
+        new_limit = content['value']
+        spending_to_find = SpendingCategories.objects.get(name=category_name)
+        SpendingLimitGroup.objects.filter(spending_category_id=spending_to_find.id).\
+                                          update(value=new_limit)
+        return HttpResponse("The limit amount has been changed to  '{}'".format(new_limit))
+    return HttpResponse('Wrong request method', status=405)
