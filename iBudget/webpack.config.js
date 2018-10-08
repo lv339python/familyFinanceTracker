@@ -3,11 +3,12 @@ var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
 var WriteFilePlugin = require('write-file-webpack-plugin')
 module.exports = {
-  entry: './static/src/main.js',
+  entry: [ './assets/js/app.js', './assets/scss/app.scss'],
   output: {
-    path: path.resolve(__dirname, './static/public'),
-    publicPath: '/public/',
-    filename: 'bundel.js'
+    path: path.resolve(__dirname, './static'),
+    publicPath: 'static/',
+    filename: 'js/app.js',
+    chunkFilename: "js/bundle.js"
   },
   plugins: [
   new BundleTracker({filename: 'webpack-stats.json'}),
@@ -76,7 +77,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+       '~': path.join(__dirname, './assets/js'),
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
