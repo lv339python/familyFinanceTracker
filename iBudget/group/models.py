@@ -1,9 +1,8 @@
 """
 This module provides model of group and its relations.
 """
-
+from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
-
 from authentication.models import UserProfile
 from fund.models import FundCategories
 from spending.models import SpendingCategories
@@ -42,13 +41,30 @@ class UsersInGroups(models.Model):
         Attributes:
             group (FK): Group ID.
             user (FK): User ID.
-            is_admin (bool):  "True" if user has right of administrator, "false" in other way.
+            is_admin (bool):  "True" if user has right of administrator, "False" in other way.
 
 
     """
+    objects = BaseUserManager()
     group = models.ForeignKey(Group, on_delete=True)
     user = models.ForeignKey(UserProfile, on_delete=True)
     is_admin = models.BooleanField()
+
+    @staticmethod
+    def get_by_id(user_id):
+        """
+        Args:
+            user_id(int): The first parameter.
+        Returns:
+            UsersInGroups object if database contain user with user_id , None otherwise.
+
+        """
+
+        try:
+            user = UsersInGroups.objects.get(user_id=user_id)
+            return user
+        except UsersInGroups.DoesNotExist:
+            return None
 
 
 class SharedFunds(models.Model):
