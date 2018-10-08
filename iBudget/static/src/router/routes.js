@@ -1,8 +1,8 @@
-import Home from '../pages/Home'
-import Funds from '../pages/Funds'
-import Groups from '../pages/Groups'
-import Spendings from '../pages/Spendings'
-import Incomes from '../pages/Incomes'
+import Home from '../tabs/Home'
+import Funds from '../tabs/Funds'
+import Groups from '../tabs/Groups'
+import Spendings from '../tabs/Spendings'
+import Incomes from '../tabs/Incomes'
 export default [
   {
     path: '/incomes', component:Incomes
