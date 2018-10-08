@@ -1,7 +1,6 @@
 """
 This module provides model of spending history.
 """
-
 from django.db import models
 
 from authentication.models import UserProfile
