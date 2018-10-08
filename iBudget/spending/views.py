@@ -6,8 +6,8 @@ import json
 from datetime import date
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
+from utils.spendings_limit_checker import comp_gr_spends_w_limit # pylint: disable=W0611
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitGroup
-from utils.spendings_limit_checker import comp_gr_spends_w_limit # for test!
 
 
 
@@ -132,4 +132,3 @@ def change_group_limit(request, category_name):
                                           update(value=new_limit)
         return HttpResponse("The limit amount has been changed to  '{}'".format(new_limit))
     return HttpResponse('Wrong request method', status=405)
-
