@@ -40,7 +40,6 @@ class FileHandler(View):
         req_dict = request.POST
         old_file = req_dict['old']
         new_file = request.FILES['icon']
-        # ! first upload check, then delete check!
         if AwsService.upload(new_file):
             if AwsService.del_photo(old_file):
                 if not AwsService.check_if_in_bucket(new_file):

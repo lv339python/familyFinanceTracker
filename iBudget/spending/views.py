@@ -6,11 +6,7 @@ import json
 from datetime import date
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-
-from .models import SpendingCategories, SpendingLimitationIndividual
-
-from django.http import HttpResponse, JsonResponse
-from spending.models import SpendingCategories, SpendingLimitGroup
+from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitGroup
 from utils.spendings_limit_checker import comp_gr_spends_w_limit # for test!
 
 
