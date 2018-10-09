@@ -77,7 +77,6 @@
           <hr>
         </div>
 
-
         <input type="checkbox" id="shared_button" v-model="is_shared">
         <label for="shared_button">Shared</label>
         <span>{{ is_shared }}</span>
@@ -98,7 +97,6 @@ import axios from 'axios';
             group_list: [],
             shared_list: [],
             shared_category: null,
-            // shared_list2:[],
             category: null,
             type_of_pay: null,
             sum: null,
