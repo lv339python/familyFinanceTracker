@@ -107,5 +107,12 @@ def spending_individual_limit_validate(data):
 
     if not(data['spending_id'] and data['month'] and data['year'] and data['value']):
         return False
+    try:
+        data['spending_id'] = int(data['spending_id'])
+        data['month'] = int(data['month'])
+        data['year'] = int(data['year'])
+        data['value'] = round(float(data['value']), 2)
+        return True
+    except (ValidationError, AttributeError):
+        return False
     return True
-
