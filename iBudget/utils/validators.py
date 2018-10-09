@@ -1,6 +1,7 @@
 """
 This module provides function for validations.
 """
+from datetime import date
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -95,3 +96,27 @@ def login_validate(data):
     if not email_validator(data['email']):
         return False
     return True
+
+
+def spending_individual_limit_validate(data):
+    """
+    Function that provides login data validation.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != set({'spending_id', 'month', 'year', 'value'}):
+        return False
+    try:
+        data['spending_id'] = int(data['spending_id'])
+        data['month'] = int(data['month'])
+        data['year'] = int(data['year'])
+        data['value'] = round(float(data['value']), 2)
+        if data['spending_id'] > 0 and \
+            -1 < data['month'] < 13 and \
+            data['year'] >= date.today().year and \
+            data['value'] > 0:
+            return True
+        return False
+    except (ValidationError, AttributeError):
+        return False

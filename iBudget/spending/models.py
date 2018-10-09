@@ -37,6 +37,20 @@ class SpendingCategories(models.Model):
         except SpendingCategories.DoesNotExist:
             return None
 
+    @staticmethod
+    def get_by_user_ind(user):
+        """
+        Args:
+            user (FK): Owner of this category.
+        Returns:
+            List of spending categories for user if they exist, None otherwise.
+
+        """
+        try:
+            return SpendingCategories.objects.filter(owner=user, is_shared=False)
+        except SpendingCategories.DoesNotExist:
+            return None
+
 
 class SpendingLimitationIndividual(models.Model):
     """Limitation of user's spending.
@@ -55,6 +69,31 @@ class SpendingLimitationIndividual(models.Model):
     start_date = models.DateField()
     finish_date = models.DateField()
     value = models.DecimalField(max_digits=17, decimal_places=2)
+
+    @staticmethod
+    def get_by_data(user, spending_category, start_date, finish_date):
+        """
+        Args:
+            user (FK): Owner of this category.
+            spending_category (FK): Spending category for individual purpose.
+            start_date: The beginning of time period.
+            finish_date: The end of time period.
+        Returns:
+            SpendingLimitationIndividual object if row with described data exists, None otherwise.
+
+
+        """
+        try:
+            notice = SpendingLimitationIndividual.objects.filter(
+                user=user,
+                spending_category=spending_category,
+                start_date=start_date,
+                finish_date=finish_date)
+            return notice
+        except SpendingLimitationIndividual.DoesNotExist:
+            return None
+
+
 
 
 class SpendingLimitationGroup(models.Model):
