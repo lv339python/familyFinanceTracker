@@ -21,3 +21,17 @@ class FundCategories(models.Model):
     icon = models.CharField(max_length=30)
     is_shared = models.BooleanField(default=False)
     owner = models.ForeignKey(UserProfile, on_delete=True)
+
+    @staticmethod
+    def filter_by_user_id(user_id, is_shared):
+        try:
+            return FundCategories.objects.filter(owner=user_id, is_shared = is_shared)
+        except FundCategories.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_by_id(id):
+        try:
+            return FundCategories.objects.get(id = id)
+        except FundCategories.DoesNotExist:
+            return None

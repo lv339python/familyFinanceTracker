@@ -7,7 +7,7 @@ from datetime import date
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
-from .models import SpendingCategories, SpendingLimitationIndividual
+from .models import SpendingCategories, SpendingLimitationIndividual, UserProfile
 
 
 @require_http_methods(["GET"])
@@ -19,10 +19,11 @@ def show_spending_ind(request):
         Returns:
             HttpResponse object.
     """
-    user = request.user
+    #user = request.user
+    user = UserProfile.get_by_id(5)
     if user:
         user_categories = []
-        for entry in SpendingCategories.objects.filter(owner=user):
+        for entry in SpendingCategories.filter_by_id(user, False):
             user_categories.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)

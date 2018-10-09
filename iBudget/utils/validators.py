@@ -1,7 +1,6 @@
 """
 This module provides function for validations.
 """
-
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -95,3 +94,25 @@ def login_validate(data):
     if not email_validator(data['email']):
         return False
     return True
+
+def input_spending_registration_validate(data):
+    try:
+        int(data['category'])
+    except(ValueError):
+        return False
+    try:
+        int(data['type_of_pay'])
+    except(ValueError):
+        return False
+    try:
+        int(data['sum'])
+        if 0 < len(data['sum'] < 16):
+            pass
+    except(ValueError):
+        return False
+    try:
+        str(data['comment'])
+    except(ValueError):
+        pass
+    return True
+

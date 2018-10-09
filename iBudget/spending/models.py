@@ -37,6 +37,13 @@ class SpendingCategories(models.Model):
         except SpendingCategories.DoesNotExist:
             return None
 
+    @staticmethod
+    def filter_by_id(id, is_shared):
+        try:
+            return SpendingCategories.objects.filter(owner=id, is_shared = is_shared)
+        except SpendingCategories.DoesNotExist:
+            return None
+
 
 class SpendingLimitationIndividual(models.Model):
     """Limitation of user's spending.

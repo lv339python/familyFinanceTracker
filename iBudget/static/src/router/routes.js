@@ -3,6 +3,7 @@ import Funds from '../tabs/Funds'
 import Groups from '../tabs/Groups'
 import Spendings from '../tabs/Spendings'
 import Incomes from '../tabs/Incomes'
+
 export default [
   {
     path: '/incomes', component:Incomes
@@ -18,5 +19,5 @@ export default [
   },
   {
     path: '/spendings', component:Spendings
-  }
+  },
 ];
