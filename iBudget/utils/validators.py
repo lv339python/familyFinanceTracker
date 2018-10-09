@@ -7,52 +7,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 SET_KEYS_REG_DATA = {"email", "password"}
-STR_MIN_LENGTH = 0
-STR_MAX_LENGTH = None
-
-
-def input_spending_registration_validate(data):
-    """validate data.
-        Args:
-            data (dict): contain category, type of pay, sum, comment
-        Returns:
-            bool: The return value. True is data valid, else False.
-    """
-    if not isinstance(data['category'], int):
-        return False
-    if not isinstance(data['type_of_pay'], int):
-        return False
-    if not isinstance(data['sum'], int):
-        return False
-    if not isinstance(data['comment'], str):
-        return False
-    return True
-
-
-def string_validator(value, min_length=STR_MIN_LENGTH, max_length=STR_MAX_LENGTH):
-    """
-    Function that provides string validation.
-    :param value: the string literal itself.
-    :type value: string
-    :param min_length: the minimal length of the received string value.
-    :type min_length: integer
-    :param max_length: the maximum length of the received string value.
-    :type max_length: integer
-    :return: `True` if value if valid and `False` if it is not.
-    """
-
-    if not isinstance(value, str):
-        return False
-
-    if len(value) < min_length:
-        return False
-
-    if max_length:
-        if len(value) > max_length:
-            return False
-
-    return True
-
 
 
 def is_valid_password(password):
@@ -64,7 +18,7 @@ def is_valid_password(password):
         Returns:
             bool: The return value. True is password valid, else False.
 
-        """
+    """
     try:
         validate_password(password)
         return True
@@ -94,6 +48,7 @@ def is_valid_registration_data(data):
         return True
     except ValidationError:
         return False
+
 
 def required_keys_validator(data, keys_required, strict=True):
     """
@@ -143,17 +98,43 @@ def login_validate(data):
     return True
 
 
-def list_of_int_validator(value):
-  """
-  Function that provides list validation
-  :param value: list or tuple with integer items
-  :type value: list or tuple
-  :return: `True` if value if valid and `False` if it is not.
-  """
-  if not isinstance(value, (list, tuple)):
-    return False
-  if not value:
-    return False
-  if not all(isinstance(item, int) for item in value):
-    return False
-  return True
+def input_spending_registration_validate(data):
+    """validate data.
+        Args:
+            data (dict): contain category, type of pay, sum, comment
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if not isinstance(data['category'], int):
+        return False
+    if not isinstance(data['type_of_pay'], int):
+        return False
+    if not isinstance(data['sum'], int):
+        return False
+    if not isinstance(data['comment'], str):
+        return False
+    return True
+
+
+def spending_individual_limit_validate(data):
+    """
+    Function that provides login data validation.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != set({'spending_id', 'month', 'year', 'value'}):
+        return False
+    try:
+        data['spending_id'] = int(data['spending_id'])
+        data['month'] = int(data['month'])
+        data['year'] = int(data['year'])
+        data['value'] = round(float(data['value']), 2)
+        if data['spending_id'] > 0 and \
+            -1 < data['month'] < 13 and \
+            data['year'] >= date.today().year and \
+            data['value'] > 0:
+            return True
+        return False
+    except (ValidationError, AttributeError):
+        return False

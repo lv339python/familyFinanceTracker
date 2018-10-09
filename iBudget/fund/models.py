@@ -1,6 +1,7 @@
 """
 This module provides model of fund category.
 """
+
 from django.db import models
 
 from authentication.models import UserProfile
@@ -30,6 +31,7 @@ class FundCategories(models.Model):
         Returns:
             FundCategories object if database contain category with user_id
             and is_shared value, None otherwise.
+
         """
         try:
             return FundCategories.objects.filter(owner=user_id,
@@ -44,6 +46,7 @@ class FundCategories(models.Model):
                 fund_id(int): index of fund category.
             Returns:
                 FundCategories object if database contain fund with id, None otherwise.
+
         """
         try:
             return FundCategories.objects.get(id=fund_id)

@@ -108,7 +108,7 @@ import axios from 'axios';
            }
         },
         created(){
-          axios.get('/api/v1/spending/show_spending_ind/')
+          axios.get('/api/v1/')
             .then(response => {
             // JSON responses are automatically parsed.
             this.spending_list = response.data
@@ -159,31 +159,24 @@ import axios from 'axios';
 
                 }
              }).then(response =>{
-                this.$router.go('/spending/set_limit')
+                this.$router.go('/Spendings/')
              })
         },
 
-          // getDisplayName(e){
-          //   let value = e.target.value
-          //   this.displayName = value
-          //   },
 
-          // shared: function (event) {
-          //   this.is_shared = true
-          // },
         }
 }
 </script>
 
 
-<style>
-  .date{
-    width: 230px;
-  }
-  .ourform{
-    width:250px;
-  }
-  .oursumanddate{
-    width:233px;
+<style scoped>
+.content{
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+  .text{
+    width: fit-content;
+    margin:  auto;
   }
 </style>

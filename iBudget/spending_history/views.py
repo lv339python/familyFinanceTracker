@@ -21,8 +21,8 @@ def register_spending(request):
             HttpResponse status.
     """
     data = json.loads(request.body)
-    # if input_spending_registration_validate(data):
-    #     return HttpResponse(status=400)
+    if input_spending_registration_validate(data):
+        return HttpResponse(status=400)
     owner = request.user
     fund = FundCategories.get_by_id(int(data["type_of_pay"]))
     spending = SpendingCategories.get_by_id(int(data["category"]))
@@ -40,7 +40,7 @@ def register_spending(request):
 
 
 
-# if spending.groups.instance.owner == owner:
+
 
 
 

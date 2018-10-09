@@ -31,35 +31,8 @@ class SpendingHistory(models.Model):
     owner = models.ForeignKey(UserProfile, on_delete=True)
     comment = models.TextField(null=True, default="")
 
-    def __str__(self):
-        """
-        :return: All the information about user which is added.
-        """
-        return str(self.to_dict())[:]
-
-    def __repr__(self):
-        """
-        :return: Basic information which includes user id and email.
-        """
-        return f"id:{self.id}"
-
-    def to_dict(self):
-        """
-        Convert information which added user to dictionary where
-        key is description of added information and value is an information.
-        """
-        return {
-            'id': self.id,
-            'fund': self.fund,
-            'spending_categories': self.spending_categories,
-            'date': self.date,
-            'value': self.value,
-            'owner': self.owner,
-            'comment': self.comment,
-        }
-
     @classmethod
-    def create(cls, fund, spending_categories, owner, value, date, comment):  # pylint: disable=too-many-arguments
+    def create(cls, fund, spending_categories, owner, value, date, comment): #pylint: disable=too-many-arguments
         """
         Class method which creates spending history. All arguments are obligatory.
         """
@@ -76,5 +49,3 @@ class SpendingHistory(models.Model):
             return spending
         except (ValueError, AttributeError):
             pass
-
-

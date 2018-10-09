@@ -1,11 +1,14 @@
+"""
+This module provides functions for handling fund view.
+"""
+from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from .models import FundCategories
-from django.http import JsonResponse
-
 
 @require_http_methods(["GET"])
 def show_spending_ind(request):
     """Handling request for creating of spending categories list.
+
         Args:
             request (HttpRequest): request from server which ask some data.
         Returns:
