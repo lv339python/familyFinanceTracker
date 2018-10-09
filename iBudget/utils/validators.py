@@ -95,3 +95,17 @@ def login_validate(data):
     if not email_validator(data['email']):
         return False
     return True
+
+
+def spending_individual_limit_validate(data):
+    """
+    Function that provides login data validation.
+    :type data: dict
+    :return: `True` if data is valid and `None` if it is not.
+    :rtype: bool
+    """
+
+    if not(data['spending_id'] and data['month'] and data['year'] and data['value']):
+        return False
+    return True
+
