@@ -1,6 +1,7 @@
 """
 This module provides model of spending history.
 """
+import datetime
 
 from django.db import models
 
@@ -29,3 +30,22 @@ class SpendingHistory(models.Model):
     value = models.DecimalField(max_digits=17, decimal_places=2)
     owner = models.ForeignKey(UserProfile, on_delete=True)
     comment = models.TextField(null=True, default="")
+
+    @classmethod
+    def create(cls, fund, spending_categories, owner, value, date, comment): #pylint: disable=too-many-arguments
+        """
+        Class method which creates spending history. All arguments are obligatory.
+        """
+        data = {}
+        data["fund"] = fund if fund else ""
+        data["spending_categories"] = spending_categories if spending_categories else ""
+        data["date"] = date if date else datetime.datetime.now()
+        data["value"] = value if value else ""
+        data["owner"] = owner if owner else ""
+        data["comment"] = comment if comment else ""
+        spending = cls(**data)
+        try:
+            spending.save()
+            return spending
+        except (ValueError, AttributeError):
+            pass

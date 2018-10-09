@@ -29,7 +29,8 @@ class SpendingCategories(models.Model):
         Args:
             spending_category_id (int): The first parameter.
         Returns:
-            SpendingCategories object if database contain spending category with id, None otherwise.
+            SpendingCategories object if database contain spending
+            category with id, None otherwise.
 
         """
         try:
@@ -38,16 +39,33 @@ class SpendingCategories(models.Model):
             return None
 
     @staticmethod
+    def filter_by_user_id(user_id, is_shared):
+        """
+        Args:
+            user_id (int): index of user,
+            is_shared(bool): which category we need(shared or not shared).
+        Returns:
+            SpendingCategories object if database contain category with user_id
+            and is_shared value, None otherwise.
+
+
+        """
+        try:
+            return SpendingCategories.objects.filter(owner=user_id, is_shared=is_shared)
+        except SpendingCategories.DoesNotExist:
+            return None
+
+    @staticmethod
     def get_by_user_ind(user):
         """
         Args:
-            user (FK): Owner of this category.
+            user (FK): Owner of this category,
         Returns:
             List of spending categories for user if they exist, None otherwise.
 
         """
         try:
-            return SpendingCategories.objects.filter(owner=user, is_shared=False)
+            return SpendingCategories.objects.filter(owner=user)
         except SpendingCategories.DoesNotExist:
             return None
 
