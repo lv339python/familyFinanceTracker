@@ -32,7 +32,7 @@ class SpendingHistory(models.Model):
     comment = models.TextField(null=True, default="")
 
     @classmethod
-    def create(cls, fund, spending_categories, owner, value, date, comment):
+    def create(cls, fund, spending_categories, owner, value, date, comment): #pylint: disable=too-many-arguments
         """
         Class method which creates spending history. All arguments are obligatory.
         """

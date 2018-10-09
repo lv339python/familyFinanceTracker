@@ -1,48 +1,55 @@
 <template>
-  <div class="container pt-5" id="spending_registration">
-  <div class="row mb-3">
-    <div class="col-md-4">
-      <h1>Spending history</h1>
-    </div>
-    <div class="row">
-      <div class="col-md-12 pt-2">
-        <div>
-          <label >Select category:</label>
-
+    <div id="spending_registration">
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label >Select category:</label>
             <select v-model="category" class="ourform">
               <option v-for="spend in spending_list" v-bind:value="spend.id"> {{ spend.name }}
               </option>
             </select>
+           </div>
+        </div>
 
-          <label>Chose type_of_pay:</label>
-
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Chose type_of_pay:</label>
             <select v-model="type_of_pay" class="ourform">
               <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id"> {{ type_of_pay.name }}
               </option>
             </select>
-          <label>Input sum</label>
-          <input v-model="sum" type="number" class="date">
-
-          <label>Comment</label>
-          <input v-model="comment" type="text">
-          <div>{{ comment }}</div>
-
-          <label>Chose date</label>
-          <input v-model="date" type="date">
-          <div>{{ date }}</div>
-
-          <button>Shared</button>
-          <button v-on:click="setData">Save</button>
-          <button>Cancel</button>
-
+           </div>
         </div>
-        <hr>
-      </div>
 
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Input sum</label>
+            <input v-model="sum" type="number" class="date">
+           </div>
+        </div>
+
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Input comment</label>
+            <input v-model="comment" type="text" class="date">
+           </div>
+        </div>
+
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Chose date</label>
+            <input v-model="date" type="date">
+           </div>
+           <hr>
+        </div>
+
+        <button v-on:click="setData" :variant="secondary">Save</button>
+        <button :variant="secondary">Shared</button>
     </div>
-  </div>
-</div>
-
 </template>
 
 <script>
@@ -58,8 +65,10 @@ import axios from 'axios';
             sum: null,
             date:null,
             comment:null,
+
            }
         },
+
         created(){
           axios.get('/api/v1/spending/')
             .then(response => {
@@ -79,6 +88,7 @@ import axios from 'axios';
           })
         },
         methods: {
+
           setData: function (event) {
             axios({
               method: 'post',
