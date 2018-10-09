@@ -1,4 +1,4 @@
-import Spending_history from '../tabs/Spending_history'
+import {Spending_registration} from "src/components";
 import {Home,Funds, Groups, Spendings, Incomes } from 'src/tabs';
 
 import {Login} from "src/components"
@@ -21,7 +21,7 @@ export default [
     path: '/spendings', component:Spendings
   },
   {
-    path: '/spending_history/', component:Spending_history
+    path: '/Spending_registration', component:Spending_registration
   },
   {
     path: '/login', component:Login

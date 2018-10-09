@@ -4,19 +4,17 @@ from django.http import JsonResponse
 
 
 @require_http_methods(["GET"])
-def show_fund_ind(request):
-    """Handling request for creating of fund_id list.
+def show_spending_ind(request):
+    """Handling request for creating of spending categories list.
         Args:
-            request (HttpRequest): Limitation data.
+            request (HttpRequest): request from server which ask some data.
         Returns:
             HttpResponse object.
     """
     user = request.user
     if user:
-        user_card = []
-        for entry in FundCategories.objects.filter(owner=user):
-            user_card.append({'id': entry.id, 'name': entry.name})
-            print(user_card)
-
-        return JsonResponse(user_card, status=200, safe=False)
+        user_funds = []
+        for entry in FundCategories.filter_by_user_id(user, False):
+            user_funds.append({'id': entry.id, 'name': entry.name})
+        return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)

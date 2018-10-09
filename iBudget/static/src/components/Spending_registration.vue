@@ -1,71 +1,89 @@
-<template xmlns="http://www.w3.org/1999/html">
-<div class="container pt-5" id="spending_history">
-  <div class="row mb-3">
-    <div class="col-md-4">
-      <h1>Spending history</h1>
-    </div>
-    <div class="row">
-      <div class="col-md-12 pt-2">
-        <div>
-          <label >Select category:</label>
-
+<template>
+    <div id="spending_registration">
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label >Select category:</label>
             <select v-model="category" class="ourform">
               <option v-for="spend in spending_list" v-bind:value="spend.id"> {{ spend.name }}
               </option>
             </select>
-          <div>{{ category }}</div>
-          <label>Your your card:</label>
+           </div>
+        </div>
 
-            <select v-model="card" class="ourform">
-              <option v-for="card in fund_list" v-bind:value="card.id"> {{ card.name }}
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Chose type_of_pay:</label>
+            <select v-model="type_of_pay" class="ourform">
+              <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id"> {{ type_of_pay.name }}
               </option>
             </select>
-          <div>{{ card }}</div>
-          <label>Input sum</label>
-          <input v-model="sum" type="number" class="date">
-          <div>{{ sum }}</div>
+           </div>
+        </div>
 
-          <label>Comment</label>
-          <input v-model="comment" type="text">
-          <div>{{ comment }}</div>
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Input sum</label>
+            <input v-model="sum" type="number" class="date">
+           </div>
+        </div>
 
-          <label>Chose date</label>
-          <input v-model="date" type="date">
-          <div>{{ date }}</div>
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Input comment</label>
+            <input v-model="comment" type="text" class="date">
+           </div>
+        </div>
 
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Chose date</label>
+            <input v-model="date" type="date">
+           </div>
+           <hr>
+        </div>
 
-          <label>Chose group</label>
-          <select v-model="group" class="ourform">
-              <option v-for="group in group_list"
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Chose group</label>
+            <select v-model="group" class="ourform">
+            <option v-for="group in group_list"
                       v-bind:value="group.id"
                       v-on:click="is_active_shared_cat=group.id">
                       {{ group.name }}
-              </option>
-          </select>
+            </option>
+            </select>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
             <label>Chose category</label>
             <select v-model="shared_category" class="ourform" >
-              <option v-for="shared_category in shared_list"
+            <option v-for="shared_category in shared_list"
                       v-if="shared_category.id_group === is_active_shared_cat"
                       v-bind:value="shared_category.id">
                       {{ shared_category.name_cat }}
-              </option>
-          </select>
-
-
-          <input type="checkbox" id="shared_button" v-model="is_shared">
-          <label for="shared_button">Shared</label>
-          <span>{{ is_shared }}</span>
-
-          <button v-on:click="setData">Save</button>
-          <button>Cancel</button>
-
+            </option>
+            </select>
+          </div>
+          <hr>
         </div>
-        <hr>
-      </div>
+
+
+        <input type="checkbox" id="shared_button" v-model="is_shared">
+        <label for="shared_button">Shared</label>
+        <span>{{ is_shared }}</span>
+        <button v-on:click="setData" :variant="secondary">Save</button>
 
     </div>
-  </div>
-</div>
 </template>
 
 
@@ -80,9 +98,9 @@ import axios from 'axios';
             group_list: [],
             shared_list: [],
             shared_category: null,
-            shared_list2:[],
+            // shared_list2:[],
             category: null,
-            card: null,
+            type_of_pay: null,
             sum: null,
             date:null,
             comment:null,
@@ -92,7 +110,7 @@ import axios from 'axios';
            }
         },
         created(){
-          axios.get('/api/v1/spending/show_spending')
+          axios.get('/api/v1/spending/show_spending_ind/')
             .then(response => {
             // JSON responses are automatically parsed.
             this.spending_list = response.data
@@ -117,7 +135,7 @@ import axios from 'axios';
           .catch(e => {
           this.errors.push(e)
           });
-          axios.get('api/v1/spending/show_spending_ind/')
+          axios.get('api/v1/spending/show_spending_group/')
             .then(response => {
             // JSON responses are automatically parsed.
             this.shared_list = response.data
@@ -134,7 +152,7 @@ import axios from 'axios';
               url: 'api/v1/spending_history/register_spending/',
               data: {
                   'category': this.category,
-                  'card': this.card,
+                  'type_of_pay': this.type_of_pay,
                   'date': this.date,
                   'sum': this.sum,
                   'comment': this.comment,

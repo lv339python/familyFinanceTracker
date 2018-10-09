@@ -82,6 +82,20 @@ class SpendingCategories(models.Model):
             pass
 
     @staticmethod
+    def get_by_user_ind(user):
+        """
+        Args:
+            user (FK): Owner of this category,
+        Returns:
+            List of spending categories for user if they exist, None otherwise.
+        """
+        try:
+            return SpendingCategories.objects.filter(owner=user)
+        except SpendingCategories.DoesNotExist:
+            return None
+
+
+    @staticmethod
     def get_by_name(name):
         """
         Args:

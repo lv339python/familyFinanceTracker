@@ -35,74 +35,21 @@ class Group(models.Model):
                                             through='SharedSpendingCategories',
                                             related_name="groups")
 
-    def to_dict(self):
-      """
-      Convert information team object to dictionary where
-      key is description of added information and value is an information.
-      """
-      members = [user.id for user in self.members.all()] if self.members else []
-      shared_funds = [funds.id for funds in self.shared_funds.all()] if self.shared_funds else[]
-      shared_spendings=[spendings.id for spendings in self.shared_spendings.all()] if self.shared_spendings else[]
-      return {
-        'id': self.id,
-        'name': self.name,
-        'icon': self.icon,
-        'owner': self.owner,
-        'members_id': members,
-        'shared_funds': shared_funds,
-        'shared_spendings': shared_spendings,
-      }
-
-    @classmethod
-    def create(cls, owner, name, icon=None):
-      """
-      Class method with create group
-      """
-      data = {}
-      data["owner"] = owner if owner else ""
-      data["name"] = name if name else ""
-      data["icon"] = icon if icon else ""
-      group = cls(**data)
-      try:
-        group.save()
-        return group
-      except (ValueError, AttributeError):
-        pass
-
     @staticmethod
-    def get_by_id(group_id):
-
-      """
-      returns object of Group by id
-      """
-      try:
-        group = Group.objects.get(id=group_id)
-        return group
-      except Group.DoesNotExist:
-        return None
-
-    @staticmethod
-    def get_groups_by_owner(owner_id):
-      try:
-        group=Group.objects.get(owner=owner_id)
-        return group
-      except Group.DoesNotExist:
-        return None
+    def group_filter_by_owner_id(user_id):
+        """
+        Args:
+            user_id (int): index of owner,
+        Returns:
+            Group object if database contain group with user_id
+        """
+        try:
+            return Group.objects.filter(owner=user_id)
+        except Group.DoesNotExist:
+            return None
 
 
-    @staticmethod
-    def delete_by_id(group_id):
-      """
-      :param user_id: an id of a user to be deleted
-      :type user_id: int
-      :return: True if object existed in the db and was removed or False if it didn't exist
-      """
 
-      try:
-        group = Group.objects.get(id=group_id)
-        group.delete()
-      except Group.DoesNotExist:
-        return None
 
 class UsersInGroups(models.Model):
     """Members of groups.
@@ -164,8 +111,6 @@ class SharedSpendingCategories(models.Model):
     """
     group = models.ForeignKey(Group, on_delete=True)
     spending_categories = models.ForeignKey(SpendingCategories, on_delete=True)
-
-
 
 
     @staticmethod

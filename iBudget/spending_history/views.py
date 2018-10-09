@@ -1,41 +1,46 @@
+"""
+This module provides functions for handling spending_history view.
+"""
 import json
+from decimal import Decimal
+
 from django.http import HttpResponse
-from .models import SpendingHistory
-from fund.models import FundCategories
-from spending.models import SpendingCategories
 from django.views.decorators.http import require_http_methods
-from group.models import Group,SharedSpendingCategories
+from utils.validators import input_spending_registration_validate
+
+from .models import SpendingCategories, SpendingHistory, FundCategories
 
 
-
-@require_http_methods(['POST'])
+@require_http_methods(["POST"])
 def register_spending(request):
+    """Handling request for creating of spending categories list.
+        Args:
+            request (HttpRequest): request from server which contain
+            fund, category, sum, date, comment
+        Returns:
+            HttpResponse status.
+    """
     data = json.loads(request.body)
+    # if input_spending_registration_validate(data):
+    #     return HttpResponse(status=400)
     owner = request.user
-    fund_id = int(data["card"])
+    fund = FundCategories.get_by_id(int(data["type_of_pay"]))
+    spending = SpendingCategories.get_by_id(int(data["category"]))
 
-    spending_id = int(data["category"])
-    #   category-називаємо на бекуб потім так само називаємо на фронті
-    spending = SpendingCategories.get_by_spend_id(spending_id)
-    # spending_id-можна написати любу змінну
-
-    sum = int(data["sum"])
-    comment = data["comment"]
-    date = data.get("date")
-    categories = FundCategories.get_by_fund_id(fund_id)
-
-
+    if spending.owner == owner:
+        SpendingHistory.create(fund,
+                               spending,
+                               owner,
+                               Decimal(data["sum"]),
+                               data["date"],
+                               data["comment"])
+        return HttpResponse(status=201)
+    return HttpResponse(status=403)
 
 
-    # if spending.owner == owner:
-    #   SpendingHistory.create(categories, spending, date, sum, owner, comment)
-    #   return HttpResponse(status=201)
 
-    if spending.groups.instance.owner == owner:
-      # groups-список груп до яких налкжить даний користувач
-      SpendingHistory.create(categories, spending, date, sum, owner, comment)
-      return HttpResponse(status=201)
-    return HttpResponse (status=403)
+
+# if spending.groups.instance.owner == owner:
 
 
 

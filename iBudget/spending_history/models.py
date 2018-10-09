@@ -58,53 +58,23 @@ class SpendingHistory(models.Model):
             'comment': self.comment,
         }
 
-
-
     @classmethod
-    def create(cls, fund, spending_categories, date=None, value=None, owner=None, comment=None):
+    def create(cls, fund, spending_categories, owner, value, date, comment):  # pylint: disable=too-many-arguments
         """
-        Class method which creates user. Email and password are obligatory.
+        Class method which creates spending history. All arguments are obligatory.
         """
         data = {}
-        data["fund"] = fund
-        data["spending_categories"] = spending_categories
+        data["fund"] = fund if fund else ""
+        data["spending_categories"] = spending_categories if spending_categories else ""
         data["date"] = date if date else datetime.datetime.now()
         data["value"] = value if value else ""
         data["owner"] = owner if owner else ""
-        data["comment"]= comment if comment else ""
-        spending_history = cls(**data)
+        data["comment"] = comment if comment else ""
+        spending = cls(**data)
         try:
-            spending_history.save()
-            return spending_history
+            spending.save()
+            return spending
         except (ValueError, AttributeError):
             pass
 
-    # @staticmethod
-    # def get_by_email(email):
-    #     """
-    #     Args:
-    #         email(str): The first parameter.
-    #     Returns:
-    #         UserProfile object if database contain user with email, None otherwise.
-    #
-    #     """
-    #
-    #     try:
-    #         user = UserProfile.objects.get(email=email)
-    #         return user
-    #     except UserProfile.DoesNotExist:
-    #         return None
-    #
-    # @staticmethod
-    # def get_by_id(user_id):
-    #
-    #   """
-    #   returns object of Group by id
-    #   """
-    #
-    #   try:
-    #     user = UserProfile.objects.get(id=user_id)
-    #     return user
-    #   except UserProfile.DoesNotExist:
-    #     return None
-    #
+

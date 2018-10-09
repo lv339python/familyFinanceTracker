@@ -2,103 +2,52 @@
 This module provides functions for spending specifying.
 """
 import calendar
-import json
 from datetime import date
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.http import require_http_methods
-
-from .models import SpendingCategories, SpendingLimitationIndividual
-
+from .models import SpendingLimitationIndividual, SpendingCategories
 import json
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
-from authentication.models import UserProfile
-from group.models import Group, UsersInGroups, SharedSpendingCategories
-from .models import SpendingCategories
-
-# @require_http_methods(["POST"])
-# def set_shared_create(request):
-#
-#   data=json.loads(request.body)
-#   is_shared = bool(data["is_shared"])
-#   name = data["name"]
-#   icon = data["icon"]
-#   owner = data["owner"]
-#   # owner = UserProfile.get_by_id(owner)
-#   category=SpendingCategories.get_category(request, name=name)
-#   if  not category:
-#     SpendingCategories.create(name, icon, owner, is_shared)
-#     return JsonResponse(status=201)
-#   return JsonResponse("This category is alredy use", status=400)
-#
-# @require_http_methods(["PUT"])
-# def set_shared_update(request):
-#
-#     data = json.loads(request.body)
-#     is_shared = bool(data["is_shared"])
-#     name = data["name"]
-#     icon = data["icon"]
-#     owner = data["owner"]
-#     owner = UserProfile.get_by_id(owner)
-#     category = SpendingCategories.get_category(request, name=name)
-#     if category:
-#       SpendingCategories.update(name, icon, owner, is_shared)
-#       return JsonResponse(status=201, safe=False)
-#     return JsonResponse("This category is alredy use", status=400)
-
+from group.models import Group, SharedSpendingCategories
 
 @require_http_methods(["GET"])
-def show_spending(request):
+def show_spending_ind(request):
+    """Handling request for creating of spending categories list.
+        Args:
+            request (HttpRequest): Limitation data.
+        Returns:
+            HttpResponse object.
+    """
     user = request.user
     if user:
         user_categories = []
-        for entry in SpendingCategories.objects.filter(owner=user, is_shared=True):
+        for entry in SpendingCategories.get_by_user_ind(user):
             user_categories.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)
 
 
-
-
-
-
-# @require_http_methods(["GET"])
-# def show_spending_ind(group_id):
-#     """Handling request for creating of spending categories list.
-#         Args:
-#             request (HttpRequest): Limitation data.
-#         Returns:
-#             HttpResponse object.
-#     """
-#
-#
-#
-#
-#     group = Group.get_by_id(group_id)
-#
-#     if group:
-#       group_category = []
-#       for entry in SpendingCategories.objects.filter(id=SharedSpendingCategories.get_spend_by_group(group).id):
-#         group_category.append({'id': entry.id, 'name': entry.name})
-#
-#         print(group_category)
-#       return JsonResponse(group_category, status=200, safe=False)
 @require_http_methods(["GET"])
-def show_spending_ind(request):
+def show_spending_group(request):
+    """Handling request for creating of spending categories list in group.
+        Args:
+            request (HttpRequest): Limitation data.
+        Returns:
+            HttpResponse object.
+    """
 
     user = request.user
     users_group = []
 
     if user:
-        for i in Group.objects.filter(owner = user):
+        for i in Group.group_filter_by_owner_id(user):
             group_id = i.id
-            for el in SharedSpendingCategories.objects.filter(group = group_id):
+            for el in SharedSpendingCategories.objects.filter(group=group_id):
                 users_group.append({'id_cat': el.id,
                                     'name_cat': el.spending_categories.name,
                                     'id_group': group_id
                                     })
-    return JsonResponse(users_group, status=200, safe=False)
-
+        return JsonResponse(users_group, status=200, safe=False)
+    return JsonResponse({}, status=400)
 
 
 @require_http_methods(["POST"])

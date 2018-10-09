@@ -1,7 +1,8 @@
 <template>
   <div class="content">
       <div class="text">
-      <h1>There will be spendings...</h1>
+      <b-button :variant="secondary" to="../spending_registration">Spending Registration</b-button>
+
     </div>
   </div>
 

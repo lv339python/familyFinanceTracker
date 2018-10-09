@@ -10,6 +10,25 @@ SET_KEYS_REG_DATA = {"email", "password"}
 STR_MIN_LENGTH = 0
 STR_MAX_LENGTH = None
 
+
+def input_spending_registration_validate(data):
+    """validate data.
+        Args:
+            data (dict): contain category, type of pay, sum, comment
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if not isinstance(data['category'], int):
+        return False
+    if not isinstance(data['type_of_pay'], int):
+        return False
+    if not isinstance(data['sum'], int):
+        return False
+    if not isinstance(data['comment'], str):
+        return False
+    return True
+
+
 def string_validator(value, min_length=STR_MIN_LENGTH, max_length=STR_MAX_LENGTH):
     """
     Function that provides string validation.
