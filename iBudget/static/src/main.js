@@ -5,7 +5,7 @@ import BootstrapVue from 'bootstrap-vue'
 import axios from 'axios'
 
 
-Vue.use(axios)
+Vue.use(axios);
 Vue.use(BootstrapVue);
 
 

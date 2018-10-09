@@ -17,7 +17,7 @@ def is_valid_password(password):
         Returns:
             bool: The return value. True is password valid, else False.
 
-        """
+    """
     try:
         validate_password(password)
         return True
@@ -47,6 +47,7 @@ def is_valid_registration_data(data):
         return True
     except ValidationError:
         return False
+
 
 def required_keys_validator(data, keys_required, strict=True):
     """
@@ -95,24 +96,20 @@ def login_validate(data):
         return False
     return True
 
-def input_spending_registration_validate(data):
-    try:
-        int(data['category'])
-    except(ValueError):
-        return False
-    try:
-        int(data['type_of_pay'])
-    except(ValueError):
-        return False
-    try:
-        int(data['sum'])
-        if 0 < len(data['sum'] < 16):
-            pass
-    except(ValueError):
-        return False
-    try:
-        str(data['comment'])
-    except(ValueError):
-        pass
-    return True
 
+def input_spending_registration_validate(data):
+    """validate data.
+        Args:
+            data (dict): contain category, type of pay, sum, comment
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if not isinstance(data['category'], int):
+        return False
+    if not isinstance(data['type_of_pay'], int):
+        return False
+    if not isinstance(data['sum'], int):
+        return False
+    if not isinstance(data['comment'], int):
+        return False
+    return True

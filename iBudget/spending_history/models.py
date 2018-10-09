@@ -34,7 +34,7 @@ class SpendingHistory(models.Model):
     @classmethod
     def create(cls, fund, spending_categories, owner, value, date, comment):
         """
-        Class method which creates user. Email and password are obligatory.
+        Class method which creates spending history. All arguments are obligatory.
         """
         data = {}
         data["fund"] = fund if fund else ""
