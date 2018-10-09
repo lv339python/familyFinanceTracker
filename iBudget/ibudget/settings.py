@@ -54,6 +54,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SESSION_COOKIE_HTTPONLY = False
+
 AUTH_USER_MODEL = 'authentication.UserProfile'
 
 ROOT_URLCONF = 'ibudget.urls'

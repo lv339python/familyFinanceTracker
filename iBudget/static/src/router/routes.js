@@ -1,9 +1,9 @@
-import Home from '../tabs/Home'
-import Funds from '../tabs/Funds'
-import Groups from '../tabs/Groups'
-import Spendings from '../tabs/Spendings'
-import Incomes from '../tabs/Incomes'
 import Spending_history from '../tabs/Spending_history'
+import {Home,Funds, Groups, Spendings, Incomes } from 'src/tabs';
+
+import {Login} from "src/components"
+
+
 export default [
   {
     path: '/incomes', component:Incomes
@@ -22,6 +22,8 @@ export default [
   },
   {
     path: '/spending_history/', component:Spending_history
+  },
+  {
+    path: '/login', component:Login
   }
-
 ];
