@@ -87,7 +87,6 @@ def show_spending(request):
 def show_spending_ind(request):
 
     user = request.user
-    # user = UserProfile.get_by_id(1)
     users_group = []
 
     if user:
