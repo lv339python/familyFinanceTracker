@@ -108,7 +108,7 @@ import axios from 'axios';
            }
         },
         created(){
-          axios.get('/api/v1/')
+          axios.get('/api/v1/spending/')
             .then(response => {
             // JSON responses are automatically parsed.
             this.spending_list = response.data

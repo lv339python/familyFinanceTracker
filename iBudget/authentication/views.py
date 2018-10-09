@@ -28,8 +28,8 @@ def registration(request):
     """
 
     data = json.loads(request.body)
-    # if not is_valid_registration_data(data):
-    #     return HttpResponse(status=400)
+    if not is_valid_registration_data(data):
+        return HttpResponse(status=400)
     if UserProfile.get_by_email(data.get("email")):
         return HttpResponse(status=409)
     UserProfile.create(data.get("email"), data.get("password"))
@@ -44,9 +44,9 @@ def login_user(request):
     """
 
 
-    data =json.loads(request.body.decode("utf-8"))
-    # if not login_validate(data):
-    #     return HttpResponse('received data is not valid', status=400)
+    data = json.loads(request.body.decode("utf-8"))
+    if not login_validate(data):
+        return HttpResponse('received data is not valid', status=400)
     email = data['email'].strip().lower()
     user = authenticate(email=email, password=data['password'])
     if user is not None:

@@ -54,13 +54,13 @@ class SpendingCategories(models.Model):
         """
 
         if name:
-          self.name = name
+            self.name = name
         if icon:
-          self.icon = icon
+            self.icon = icon
         if owner:
-          self.owner = owner
+            self.owner = owner
         if is_shared:
-          self.is_shared = is_shared
+            self.is_shared = is_shared
         self.save()
 
     @classmethod
@@ -95,62 +95,8 @@ class SpendingCategories(models.Model):
             return None
 
 
-    @staticmethod
-    def get_by_name(name):
-        """
-        Args:
-            name(str): The first parameter.
-        Returns:
-            SpendingCategories object if database contain user with spending categories, None otherwise.
-
-        """
-
-        try:
-            spending_categories = SpendingCategories.objects.get(name=name)
-            return spending_categories
-        except SpendingCategories.DoesNotExist:
-            return None
-
-    @staticmethod
-    def get_by_spend_id(spending_categories_id):
-
-      """
-      returns object of Spending category by id
-      """
-
-      try:
-        spending_categories = SpendingCategories.objects.get(id=spending_categories_id)
-        return spending_categories
-      except SpendingCategories.DoesNotExist:
-        return None
 
 
-    @staticmethod
-    def get_category(request, name):
-
-      """
-      returns users category by user_id and name
-      """
-
-      try:
-        spending_category = SpendingCategories.objects.get(owner=request.user, name=name)
-        return spending_category
-      except SpendingCategories.DoesNotExist:
-        return None
-
-
-    @staticmethod
-    def set_shared(user_id, spending_categories_id):
-
-      """
-      returns object of Group by id
-      """
-
-      try:
-        spending_categories = SpendingCategories.objects.set(user_id=user_id, id=spending_categories_id)
-        return spending_categories
-      except SpendingCategories.DoesNotExist:
-        return None
     @staticmethod
     def get_by_id(spending_category_id):
         """
@@ -166,36 +112,6 @@ class SpendingCategories(models.Model):
         except SpendingCategories.DoesNotExist:
             return None
 
-    @staticmethod
-    def filter_by_user_id(user_id, is_shared):
-        """
-        Args:
-            user_id (int): index of user,
-            is_shared(bool): which category we need(shared or not shared).
-        Returns:
-            SpendingCategories object if database contain category with user_id
-            and is_shared value, None otherwise.
-
-
-        """
-        try:
-            return SpendingCategories.objects.filter(owner=user_id, is_shared=is_shared)
-        except SpendingCategories.DoesNotExist:
-            return None
-
-    @staticmethod
-    def get_by_user_ind(user):
-        """
-        Args:
-            user (FK): Owner of this category,
-        Returns:
-            List of spending categories for user if they exist, None otherwise.
-
-        """
-        try:
-            return SpendingCategories.objects.filter(owner=user)
-        except SpendingCategories.DoesNotExist:
-            return None
 
 
 class SpendingLimitationIndividual(models.Model):

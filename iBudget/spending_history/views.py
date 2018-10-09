@@ -36,37 +36,3 @@ def register_spending(request):
                                data["comment"])
         return HttpResponse(status=201)
     return HttpResponse(status=403)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -29,11 +29,11 @@ class Group(models.Model):
                                      through='UsersInGroups',
                                      related_name="groups")
     shared_funds = models.ManyToManyField(FundCategories,
-                                        through='SharedFunds',
-                                        related_name="groups")
+                                          through='SharedFunds',
+                                          related_name="groups")
     shared_spendings = models.ManyToManyField(SpendingCategories,
-                                            through='SharedSpendingCategories',
-                                            related_name="groups")
+                                              through='SharedSpendingCategories',
+                                              related_name="groups")
 
     @staticmethod
     def group_filter_by_owner_id(user_id):
@@ -67,24 +67,18 @@ class UsersInGroups(models.Model):
 
     @classmethod
     def create(cls, is_admin=None):
-      """
+        """
       Class method with create group
       """
-      data = {}
-      data["is_admin"] = is_admin if is_admin else ""
-      admin = cls(**data)
-      try:
-        admin.save()
-        return admin
-      except (ValueError, AttributeError):
-        pass
+        data = {}
+        data["is_admin"] = is_admin if is_admin else ""
+        admin = cls(**data)
+        try:
+            admin.save()
+            return admin
+        except (ValueError, AttributeError):
+            pass
 
-    @staticmethod
-    def get_user_id(user_in_groups_id):
-      try:
-        return UsersInGroups.objects.get(user=user_in_groups_id)
-      except Group.DoesNotExist:
-        return None
 
 
 class SharedFunds(models.Model):
@@ -111,28 +105,5 @@ class SharedSpendingCategories(models.Model):
     """
     group = models.ForeignKey(Group, on_delete=True)
     spending_categories = models.ForeignKey(SpendingCategories, on_delete=True)
-
-
-    @staticmethod
-    def get_spend_by_group(group):
-
-      """
-            returns object of Group by id
-      """
-      try:
-        return SharedSpendingCategories.objects.get(group=group)
-      except SharedSpendingCategories.DoesNotExist:
-        return None
-
-    @staticmethod
-    def get_spendinng_category(spending_categories):
-
-      """
-            returns object of Group by id
-      """
-      try:
-        return SharedSpendingCategories.objects.get(spending_categories=spending_categories)
-      except SharedSpendingCategories.DoesNotExist:
-        return None
 
 
