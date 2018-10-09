@@ -1,7 +1,7 @@
 <template>
   <div class="content">
       <div class="text">
-      <h1>There will be spendings...</h1>
+      <b-button :variant="secondary" to="../spend">Set individual limitation</b-button>
     </div>
   </div>
 

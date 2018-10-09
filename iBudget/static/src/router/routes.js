@@ -1,8 +1,9 @@
-import Home from '../tabs/Home'
-import Funds from '../tabs/Funds'
-import Groups from '../tabs/Groups'
-import Spendings from '../tabs/Spendings'
-import Incomes from '../tabs/Incomes'
+import {Home,Funds, Groups, Spendings, Incomes} from 'src/tabs';
+
+import {Login} from "src/components"
+import {Spend} from "src/components"
+
+
 export default [
   {
     path: '/incomes', component:Incomes
@@ -18,5 +19,11 @@ export default [
   },
   {
     path: '/spendings', component:Spendings
+  },
+  {
+    path: '/login', component:Login
+  },
+  {
+    path: '/spend', component:Spend
   }
 ];

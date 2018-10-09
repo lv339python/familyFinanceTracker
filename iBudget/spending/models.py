@@ -43,7 +43,7 @@ class SpendingCategories(models.Model):
         Args:
             user (FK): Owner of this category.
         Returns:
-            List of spending categories for user id they exist, None otherwise.
+            List of spending categories for user if they exist, None otherwise.
 
         """
         try:
@@ -79,7 +79,7 @@ class SpendingLimitationIndividual(models.Model):
             start_date: The beginning of time period.
             finish_date: The end of time period.
         Returns:
-            SpendingLimitationIndividual object if database row with described data, None otherwise.
+            SpendingLimitationIndividual object if row with described data exists, None otherwise.
 
 
         """
