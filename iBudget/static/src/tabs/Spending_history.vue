@@ -36,52 +36,26 @@
 
           <label>Chose group</label>
           <select v-model="group" class="ourform">
-              <option v-for="group in group_list" v-bind:value="group.id"> {{ group.name }}
+              <option v-for="group in group_list"
+                      v-bind:value="group.id"
+                      v-on:click="is_active_shared_cat=group.id">
+                      {{ group.name }}
               </option>
           </select>
-          <div>{{ group }}</div>
-
-
-
-
-
-          <!--<label>Chose group</label>-->
-          <!--<select v-model="group" class="ourform" v-on:change="getDisplayName($event)">-->
-              <!--<option v-for="group in group_list" v-bind:value="group.id"> {{ group.name }}-->
-              <!--</option>-->
-          <!--</select>-->
-          <!--<div>{{ group }}</div>-->
-
-
-
             <label>Chose category</label>
             <select v-model="shared_category" class="ourform" >
               <option v-for="shared_category in shared_list"
+                      v-if="shared_category.id_group === is_active_shared_cat"
                       v-bind:value="shared_category.id">
-                      {{ shared_category.name }}
+                      {{ shared_category.name_cat }}
               </option>
           </select>
-
-
-
-
-          <!--<label>Chose category</label>-->
-          <!--<select v-model="shared_category" class="ourform">-->
-              <!--<option v-for="shared_category in shared_list"-->
-                      <!--v-bind:value="shared_category.id">-->
-                <!--{{ shared_category.name }}-->
-              <!--</option>-->
-            <!--</select>-->
 
 
           <input type="checkbox" id="shared_button" v-model="is_shared">
           <label for="shared_button">Shared</label>
           <span>{{ is_shared }}</span>
-          <!--<input type="radio" id="shared_button"  v-model="is_shared">-->
-          <!--<label for="shared_button">Shared</label>-->
-          <!--<span>{{ is_shared }}</span>-->
-          <!--<input type="radio" v-on:click="shared">Shared</input>-->
-          <!--<button  v-on:click="shared">Shared</button>-->
+
           <button v-on:click="setData">Save</button>
           <button>Cancel</button>
 
@@ -106,6 +80,7 @@ import axios from 'axios';
             group_list: [],
             shared_list: [],
             shared_category: null,
+            shared_list2:[],
             category: null,
             card: null,
             sum: null,
@@ -113,13 +88,11 @@ import axios from 'axios';
             comment:null,
             is_shared:false,
             group:null,
-
-
-
+            is_active_shared_cat:null,
            }
         },
         created(){
-          axios.get('/spending/')
+          axios.get('/api/v1/spending/show_spending')
             .then(response => {
             // JSON responses are automatically parsed.
             this.spending_list = response.data
@@ -127,24 +100,24 @@ import axios from 'axios';
           })
           .catch(e => {
           this.errors.push(e)
-          })
-          axios.get('/fund/')
+          });
+          axios.get('api/v1/fund/')
             .then(response => {
             // JSON responses are automatically parsed.
             this.fund_list = response.data
           })
           .catch(e => {
           this.errors.push(e)
-          })
-          axios.get('/api/v2/group/get_by_group/')
+          });
+          axios.get('/api/v1/group/get_by_group/')
             .then(response => {
             // JSON responses are automatically parsed.
-            this.group_list = response.data
+            this.group_list = response.data;
           })
           .catch(e => {
           this.errors.push(e)
-          })
-          axios.get('/spending/show_spending_ind?group_id=' + this.group + '/')
+          });
+          axios.get('api/v1/spending/show_spending_ind/')
             .then(response => {
             // JSON responses are automatically parsed.
             this.shared_list = response.data
@@ -158,7 +131,7 @@ import axios from 'axios';
           setData: function (event) {
             axios({
               method: 'post',
-              url: 'api/v4/spending_history/register_spending/',
+              url: 'api/v1/spending_history/register_spending/',
               data: {
                   'category': this.category,
                   'card': this.card,
@@ -172,23 +145,8 @@ import axios from 'axios';
              }).then(response =>{
                 this.$router.go('/spending/set_limit')
              })
-          // sharedByGroup: function(shared_list) {
-          //     return _.findIndex(group_list, function(d)
-          //     {return d.id == shared_list.id;}) >=0;
-          //
-          //   }
-
-             //  axios({
-             //  method: 'post',
-             //  url: 'api/v2/group/get_by_group/',
-             //  data: {
-             //      'group': this.group_list,
-             //
-             //    }
-             // }).then(response =>{
-             //    this.$router.go('/spending/set_limit')
-             // })
         },
+
           // getDisplayName(e){
           //   let value = e.target.value
           //   this.displayName = value
@@ -197,15 +155,8 @@ import axios from 'axios';
           // shared: function (event) {
           //   this.is_shared = true
           // },
-
-
-
         }
 }
-
-
-
-
 </script>
 
 
