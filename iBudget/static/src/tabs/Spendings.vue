@@ -1,8 +1,8 @@
 <template>
-    <div class="content">
-        <div class="text">
-            <h1>There will be spendings...</h1>
-        </div>
+  <div class="content">
+      <div class="text">
+      <b-button :variant="secondary" to="../spending_registration">Spending Registration</b-button>
+      <b-button :variant="secondary" to="../spend">Set individual limitation</b-button>
     </div>
 </template>
 
