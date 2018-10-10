@@ -23,7 +23,7 @@ def show_spending_ind(request):
     user = request.user
     if user:
         user_categories = []
-        for entry in SpendingCategories.get_by_user_ind(user):
+        for entry in SpendingCategories.filter_by_user(user):
             user_categories.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)

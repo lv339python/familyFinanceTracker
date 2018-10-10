@@ -39,35 +39,18 @@ class SpendingCategories(models.Model):
             return None
 
     @staticmethod
-    def filter_by_user_id(user_id, is_shared):
+    def filter_by_user(user, is_shared=False):
         """
         Args:
-            user_id (int): index of user,
+            user (FK): user of category,
             is_shared(bool): which category we need(shared or not shared).
         Returns:
-            SpendingCategories object if database contain category with user_id
+            SpendingCategories object if database contain category for this user
             and is_shared value, None otherwise.
 
 
         """
-        try:
-            return SpendingCategories.objects.filter(owner=user_id, is_shared=is_shared)
-        except SpendingCategories.DoesNotExist:
-            return None
-
-    @staticmethod
-    def get_by_user_ind(user):
-        """
-        Args:
-            user (FK): Owner of this category,
-        Returns:
-            List of spending categories for user if they exist, None otherwise.
-
-        """
-        try:
-            return SpendingCategories.objects.filter(owner=user)
-        except SpendingCategories.DoesNotExist:
-            return None
+        return SpendingCategories.objects.filter(owner=user, is_shared=is_shared)
 
 
 class SpendingLimitationIndividual(models.Model):
@@ -101,17 +84,12 @@ class SpendingLimitationIndividual(models.Model):
 
 
         """
-        try:
-            notice = SpendingLimitationIndividual.objects.filter(
-                user=user,
-                spending_category=spending_category,
-                start_date=start_date,
-                finish_date=finish_date)
-            return notice
-        except SpendingLimitationIndividual.DoesNotExist:
-            return None
-
-
+        notice = SpendingLimitationIndividual.objects.filter(
+            user=user,
+            spending_category=spending_category,
+            start_date=start_date,
+            finish_date=finish_date)
+        return notice
 
 
 class SpendingLimitationGroup(models.Model):

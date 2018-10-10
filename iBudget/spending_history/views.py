@@ -23,16 +23,20 @@ def register_spending(request):
     data = json.loads(request.body)
     if input_spending_registration_validate(data):
         return HttpResponse(status=400)
-    owner = request.user
-    fund = FundCategories.get_by_id(int(data["type_of_pay"]))
-    spending = SpendingCategories.get_by_id(int(data["category"]))
 
+    owner = request.user
+    spending = SpendingCategories.get_by_id(int(data["category"]))
     if spending.owner == owner:
-        SpendingHistory.create(fund,
-                               spending,
-                               owner,
-                               Decimal(data["sum"]),
-                               data["date"],
-                               data["comment"])
-        return HttpResponse(status=201)
+        spending_history = SpendingHistory()
+        spending_history.fund = FundCategories.get_by_id(int(data["type_of_pay"]))
+        spending_history.spending_categories = spending
+        spending_history.date = data["date"]
+        spending_history.value = Decimal(data["value"])
+        spending_history.owner = owner
+        spending_history.comment = data["comment"]
+        try:
+            spending_history.save()
+            return HttpResponse(status=201)
+        except(ValueError, AttributeError):
+            return HttpResponse(status=406)
     return HttpResponse(status=403)
