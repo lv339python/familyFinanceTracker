@@ -16,7 +16,7 @@ class UserProfile(AbstractBaseUser):
         first_name (str): User's first name
         last_name (str): User's last name
         icon (str, optional): Name of the file with user's avatar.
-        is_sys_admin(bool):  "True" if user has right of administrator, "false" in other way.
+        is_sys_admin (bool):  "True" if user has right of administrator, "False" in other way.
     """
     email = models.EmailField(max_length=50, unique=True)
     password = models.CharField(max_length=128)
