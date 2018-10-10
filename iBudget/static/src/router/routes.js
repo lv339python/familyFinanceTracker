@@ -4,7 +4,6 @@ import {Login} from "src/components";
 import {Spending_registration} from "src/components";
 import {Spend} from "src/components";
 
-
 export default [
   {
     path: '/incomes', component:Incomes
