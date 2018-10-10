@@ -1,6 +1,6 @@
 <template>
-       <div id="header">
-      <aside>
+    <div id="side-bar">
+        <aside>
             <div id="buttons">
                 <b-button-group id="navbtns" vertical>
                     <b-button :variant="secondary" to="/login" v-show="!isLog">LOGIN</b-button>
@@ -14,54 +14,63 @@
                     </div>
                 </b-button-group>
             </div>
-      </aside>
+            <calendar></calendar>
+        </aside>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-    export default {
-        name: "SideBar",
-        data(){
-            return {
-                isLog: document.cookie.search("sessionid=") !== -1
-            }
-        },
-        created: function () {
-            this.$router.history.current.path  === '/login' &&
-            document.cookie.search("sessionid=") !== -1 &&
-            this.$router.push({path:'home'})
-        },
-        methods:
-        {
+import Calendar from './Calendar';
+import 'v-calendar/lib/v-calendar.min.css';
 
-            logout: function (event) {
-                axios({
-                    method: 'get',
-                    url: '/api/v1/authentication/logout/',
-                }).then(response => {
-                    this.isLog = false;
-                    this.$router.push({path:'login'});
-                });
-            }
+export default {
+    name: "SideBar",
+
+    components:{'calendar':Calendar},
+
+    data(){
+        return {
+            isLog: document.cookie.search("sessionid=") !== -1
+        }
+    },
+
+    created: function () {
+        this.$router.history.current.path  === '/login' &&
+        document.cookie.search("sessionid=") !== -1 &&
+        this.$router.push({path:'home'})
+    },
+
+    methods:
+    {
+        logout: function (event) {
+            axios({
+                method: 'get',
+                url: '/api/v1/authentication/logout/',
+            }).then(response => {
+                this.isLog = false;
+                this.$router.push({path:'login'});
+            });
         }
     }
+}
 </script>
 
 
 <style scoped>
-aside{
-  position:fixed;
-  background: orange;
-  float:left;
-  width: 250px;
-  height: 100vh;
-}
-#navbtns{
-  width: 140px;
-  margin-left: 55px;
-  position: absolute;
-  bottom: 275.2px;
-  margin-bottom: 20px;
-}
+    aside {
+        position: fixed;
+        background: orange;
+        float: left;
+        width: 250px;
+        height: 100vh;
+    }
+
+    #navbtns {
+        width: 140px;
+        margin-left: 55px;
+        position: absolute;
+        bottom: 275.2px;
+        margin-bottom: 20px;
+    }
 </style>

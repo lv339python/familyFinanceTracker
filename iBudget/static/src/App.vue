@@ -10,18 +10,20 @@
 </template>
 
 <script>
-  import SideBar from './components/SideBar'
-  import 'bootstrap/dist/css/bootstrap.css'
-  import 'bootstrap-vue/dist/bootstrap-vue.css'
+import SideBar from './components/SideBar'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 export default {
-  components: { 'sidebar':SideBar
-  }
+    components: {
+        'sidebar': SideBar
+    }
 }
 </script>
 
 <style>
-  #canvas{
-    margin-left: 250px;
-    background-color: whitesmoke;
-  }
+    #canvas {
+        margin-left: 250px;
+        background-color: whitesmoke;
+    }
 </style>
