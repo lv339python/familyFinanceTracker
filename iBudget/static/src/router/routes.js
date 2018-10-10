@@ -2,7 +2,6 @@ import {Home,Funds, Groups, Spendings, Incomes } from 'src/tabs';
 
 import {Login} from "src/components"
 
-
 export default [
   {
     path: '/incomes', component:Incomes
