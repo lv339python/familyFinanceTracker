@@ -3,7 +3,7 @@ them with existing limits in that group.
 If the limit is close/exceeded - it warns a user.
 """
 
-from spending.models import SpendingLimitGroup
+from spending.models import SpendingLimitationGroup
 from spending_history.models import SpendingHistory
 
 
@@ -12,9 +12,9 @@ def comp_gr_spends_w_limit(group_id):
     group_id - the id of the group for which the spending is added
     """
     find_limit = \
-    SpendingLimitGroup.objects.filter(spending_category_id__is_shared=True,
-                                      spending_category_id__sharedspendingcategories__group_id=
-                                      group_id).distinct('value')
+    SpendingLimitationGroup.objects.filter(spending_category_id__is_shared=True,
+                                           spending_category_id__sharedspendingcategories__group_id=
+                                           group_id).distinct('value')
     if not find_limit:
         return 'There are no limits for this group'
     list_of_values = {}
