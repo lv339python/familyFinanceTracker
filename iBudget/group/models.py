@@ -105,5 +105,3 @@ class SharedSpendingCategories(models.Model):
     """
     group = models.ForeignKey(Group, on_delete=True)
     spending_categories = models.ForeignKey(SpendingCategories, on_delete=True)
-
-
