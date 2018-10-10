@@ -4,11 +4,13 @@ This module provides functions for spending specifying.
 import calendar
 import json
 from datetime import date
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 
 from utils.validators import spending_individual_limit_validate
+from group.models import Group, SharedSpendingCategories
 from .models import SpendingCategories, SpendingLimitationIndividual
+
 
 
 @require_http_methods(["GET"])
@@ -26,6 +28,30 @@ def show_spending_ind(request):
         for entry in SpendingCategories.get_by_user_ind(user):
             user_categories.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_categories, status=200, safe=False)
+    return JsonResponse({}, status=400)
+
+
+@require_http_methods(["GET"])
+def show_spending_group(request):
+    """Handling request for creating of spending categories list in group.
+        Args:
+            request (HttpRequest): Limitation data.
+        Returns:
+            HttpResponse object.
+    """
+
+    user = request.user
+    users_group = []
+
+    if user:
+        for group in Group.group_filter_by_owner_id(user):
+            group_id = group.id
+            for shared_category in SharedSpendingCategories.objects.filter(group=group_id):
+                users_group.append({'id_cat': shared_category.id,
+                                    'name_cat': shared_category.spending_categories.name,
+                                    'id_group': group_id
+                                    })
+        return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
 
 

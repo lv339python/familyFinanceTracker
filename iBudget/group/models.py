@@ -1,7 +1,7 @@
 """
 This module provides model of group and its relations.
 """
-from django.contrib.auth.base_user import BaseUserManager
+
 from django.db import models
 from authentication.models import UserProfile
 from fund.models import FundCategories
@@ -9,6 +9,7 @@ from spending.models import SpendingCategories
 
 
 class Group(models.Model):
+
     """Describing group of users, related by shared funds and spending.
 
         Attributes:
@@ -34,6 +35,21 @@ class Group(models.Model):
                                               through='SharedSpendingCategories',
                                               related_name="groups")
 
+    @staticmethod
+    def group_filter_by_owner_id(user_id):
+        """
+        Args:
+            user_id (int): index of owner,
+        Returns:
+            Group object if database contain group with user_id
+        """
+        try:
+            return Group.objects.filter(owner=user_id)
+        except Group.DoesNotExist:
+            return None
+
+
+
 
 class UsersInGroups(models.Model):
     """Members of groups.
@@ -45,26 +61,24 @@ class UsersInGroups(models.Model):
 
 
     """
-    objects = BaseUserManager()
     group = models.ForeignKey(Group, on_delete=True)
     user = models.ForeignKey(UserProfile, on_delete=True)
     is_admin = models.BooleanField()
 
-    @staticmethod
-    def get_by_id(user_id):
+    @classmethod
+    def create(cls, is_admin=None):
         """
-        Args:
-            user_id(int): The first parameter.
-        Returns:
-            UsersInGroups object if database contain user with user_id , None otherwise.
-
-        """
-
+      Class method with create group
+      """
+        data = {}
+        data["is_admin"] = is_admin if is_admin else ""
+        admin = cls(**data)
         try:
-            user = UsersInGroups.objects.get(user_id=user_id)
-            return user
-        except UsersInGroups.DoesNotExist:
-            return None
+            admin.save()
+            return admin
+        except (ValueError, AttributeError):
+            pass
+
 
 
 class SharedFunds(models.Model):

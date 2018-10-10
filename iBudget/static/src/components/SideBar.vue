@@ -11,6 +11,7 @@
                         <b-button :variant="secondary" to="/spendings">SPENDINGS</b-button>
                         <b-button :variant="secondary" to="/groups">GROUPS</b-button>
                         <b-button :variant="secondary" @click="logout">LOGOUT</b-button>
+
                     </div>
                 </b-button-group>
             </div>

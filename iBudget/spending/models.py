@@ -23,6 +23,80 @@ class SpendingCategories(models.Model):
     owner = models.ForeignKey(UserProfile, on_delete=True)
     is_shared = models.BooleanField(default=False)
 
+    def __str__(self):
+        """
+        :return: All the information about categories spending which is added.
+        """
+        return str(self.to_dict())[:]
+
+    def __repr__(self):
+        """
+        :return: Basic information which includes categories spending.
+        """
+        return f"id:{self.id} name:{self.name}"
+
+    def to_dict(self):
+        """
+        Convert information which added spendings to dictionary where
+        key is description of added information and value is an information.
+        """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'icon': self.icon,
+            'owner': self.owner,
+            'is_shared':self.is_shared,
+        }
+
+    def update(self, name, owner, icon=None, is_shared=None):
+        """
+        Method which changes an information except owner as it is an id of an user.
+        """
+
+        if name:
+            self.name = name
+        if icon:
+            self.icon = icon
+        if owner:
+            self.owner = owner
+        if is_shared:
+            self.is_shared = is_shared
+        self.save()
+
+    @classmethod
+    def create(cls, name, icon=None, owner=None, is_shared=None):
+        """
+        Class method which creates categories of spending.
+        """
+        data = {}
+        data["name"] = name
+        data["icon"] = icon if icon else ""
+        data["owner"] = owner if owner else ""
+        data["is_shared"] = is_shared if is_shared else ""
+        spending_categories = cls(**data)
+
+        try:
+            spending_categories.save()
+            return spending_categories
+        except (ValueError, AttributeError):
+            pass
+
+    @staticmethod
+    def get_by_user_ind(user):
+        """
+        Args:
+            user (FK): Owner of this category,
+        Returns:
+            List of spending categories for user if they exist, None otherwise.
+        """
+        try:
+            return SpendingCategories.objects.filter(owner=user)
+        except SpendingCategories.DoesNotExist:
+            return None
+
+
+
+
     @staticmethod
     def get_by_id(spending_category_id):
         """
@@ -38,36 +112,6 @@ class SpendingCategories(models.Model):
         except SpendingCategories.DoesNotExist:
             return None
 
-    @staticmethod
-    def filter_by_user_id(user_id, is_shared):
-        """
-        Args:
-            user_id (int): index of user,
-            is_shared(bool): which category we need(shared or not shared).
-        Returns:
-            SpendingCategories object if database contain category with user_id
-            and is_shared value, None otherwise.
-
-
-        """
-        try:
-            return SpendingCategories.objects.filter(owner=user_id, is_shared=is_shared)
-        except SpendingCategories.DoesNotExist:
-            return None
-
-    @staticmethod
-    def get_by_user_ind(user):
-        """
-        Args:
-            user (FK): Owner of this category,
-        Returns:
-            List of spending categories for user if they exist, None otherwise.
-
-        """
-        try:
-            return SpendingCategories.objects.filter(owner=user)
-        except SpendingCategories.DoesNotExist:
-            return None
 
 
 class SpendingLimitationIndividual(models.Model):
