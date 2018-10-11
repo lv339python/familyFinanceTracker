@@ -9,7 +9,6 @@
               </option>
             </select>
            </div>
-           <div>  Selected: {{ selectedSpending}} </div>
         </div>
 
     <div class="col-md-4">
@@ -21,7 +20,6 @@
           <option v-for="item in 10">{{yyyy-1 + item}}</option>
         </select>
         </div>
-        <div>  Selected: {{ selectedYear }} </div>
       </div>
 
       <div class="col-md-4">
@@ -32,7 +30,6 @@
               <option v-for="month in months" v-bind:value="month.valueM"> {{ month.nameM }} </option>
           </select>
         </div>
-        <div>  Selected: {{ selectedMonth}} </div>
       </div>
          <div class="col-md-4">
         <hr>

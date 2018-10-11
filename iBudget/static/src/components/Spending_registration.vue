@@ -14,11 +14,11 @@
         <div class="col-md-4">
           <hr>
           <div class="form-group">
-            <label>Chose type_of_pay:</label>
-            <select v-model="type_of_pay" class="ourform">
+            <label>Choose type of pay:</label>
+            <select v-model="type_of_pay" class="form-control">
               <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id"> {{ type_of_pay.name }}
               </option>
-           </select>
+            </select>
            </div>
         </div>
 
@@ -26,7 +26,7 @@
           <hr>
           <div class="form-group">
             <label>Input sum</label>
-            <input v-model="sum" type="number" min="1" class="form-control">
+            <input v-model="value" type="number" min="1" class="form-control">
            </div>
         </div>
 
@@ -41,7 +41,7 @@
         <div class="col-md-4">
           <hr>
           <div class="form-group">
-            <label>Chose date</label>
+            <label>Choose date</label>
             <input v-model="date" type="date">
            </div>
            <hr>
@@ -106,7 +106,6 @@
     </div>
 </template>
 
-
 <script>
 import axios from 'axios';
     export default {
@@ -128,17 +127,17 @@ import axios from 'axios';
             is_active_shared_cat:null,
            }
         },
+
         created(){
           axios.get('/api/v1/spending/')
             .then(response => {
             // JSON responses are automatically parsed.
             this.spending_list = response.data
-
           })
           .catch(e => {
           this.errors.push(e)
-          });
-          axios.get('api/v1/fund/')
+          })
+          axios.get('/api/v1/fund/')
             .then(response => {
             // JSON responses are automatically parsed.
             this.fund_list = response.data
@@ -166,17 +165,17 @@ import axios from 'axios';
 
         },
         methods: {
+
           setData: function (event) {
             axios({
               method: 'post',
-              url: 'api/v1/spending_history/register_spending/',
+              url: '/api/v1/spending_history/register_spending/',
               data: {
+                  'category': this.category,
                   'type_of_pay': this.type_of_pay,
                   'date': this.date,
                   'value': this.value,
                   'comment': this.comment,
-                  'category': this.category,
-
                 }
              }).then(response =>{
                 this.$router.go('/Spendings/')
@@ -205,7 +204,6 @@ import axios from 'axios';
         }
 }
 </script>
-
 
 <style scoped>
 .content{
