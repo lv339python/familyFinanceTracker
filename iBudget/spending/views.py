@@ -6,12 +6,10 @@ import json
 from datetime import date
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-
-from utils.validators import spending_individual_limit_validate
-from .models import SpendingCategories, SpendingLimitationIndividual
-
 from django.db.models import Q
+from utils.validators import spending_individual_limit_validate
 from utils.spendings_limit_checker import comp_gr_spends_w_limit # pylint: disable=W0611
+from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 @require_http_methods(["GET"])
 def show_spending_ind(request):
