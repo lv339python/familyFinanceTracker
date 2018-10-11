@@ -42,7 +42,7 @@ class SpendingCategories(models.Model):
     def filter_by_user(user, is_shared=False):
         """
         Args:
-            user (FK): user of category,
+            user (UserProfile): user of category,
             is_shared(bool): which category we need(shared or not shared).
         Returns:
             SpendingCategories object if database contain category for this user
@@ -72,7 +72,7 @@ class SpendingLimitationIndividual(models.Model):
     value = models.DecimalField(max_digits=17, decimal_places=2)
 
     @staticmethod
-    def get_by_data(user, spending_category, start_date, finish_date):
+    def filter_by_data(user, spending_category, start_date, finish_date):
         """
         Args:
             user (FK): Owner of this category.
