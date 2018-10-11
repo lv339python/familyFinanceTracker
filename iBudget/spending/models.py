@@ -95,22 +95,6 @@ class SpendingCategories(models.Model):
             return None
 
     @staticmethod
-    def get_by_user_group(user):
-        """
-        Args:
-            user (FK): Owner of this category,
-        Returns:
-            List of spending categories for user if they exist, None otherwise.
-        """
-        try:
-            return SpendingCategories.objects.filter(owner=user, is_shared=True)
-        except SpendingCategories.DoesNotExist:
-            return None
-
-
-
-
-    @staticmethod
     def get_by_id(spending_category_id):
         """
         Args:
