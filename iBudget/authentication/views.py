@@ -61,7 +61,6 @@ def logout_user(request):
     :param request: request from the website
     :return: status 200
     """
-
     logout(request)
     response = HttpResponse('operation was successful provided', status=200)
     return response
