@@ -33,7 +33,7 @@ class AwsService:
         for obj in bucket_list['Contents']:
             if obj['Key'] == pic:
                 return False
-            return True
+        return True
 
     @classmethod
     def upload(cls, pic):

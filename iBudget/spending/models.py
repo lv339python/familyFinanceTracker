@@ -106,5 +106,5 @@ class SpendingLimitationGroup(models.Model):
 
     spending_category = models.ForeignKey(SpendingCategories, on_delete=True)
     start_date = models.DateField()
-    finish_date = models.DateField()
+    end_date = models.DateField()
     value = models.DecimalField(max_digits=17, decimal_places=2)
