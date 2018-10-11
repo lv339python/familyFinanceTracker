@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 SET_KEYS_REG_DATA = {"email", "password"}
-
+SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 
 def is_valid_password(password):
     """validate password
@@ -105,9 +105,9 @@ def input_spending_registration_validate(data):
         Args:
             data (dict): contain category, type of pay, sum, comment
         Returns:
-            bool: The return value. True is data valid, else False.
+            bool: The return value. True is data valid, else False.list([1,2,3])
     """
-    if set(data.keys()) != set({'category', 'type_of_pay', 'sum'}):
+    if set(data.keys()).difference(SET_KEYS_SPENDING_REG_DATA) == 0:
         return False
     try:
         data['category'] = int(data['category'])

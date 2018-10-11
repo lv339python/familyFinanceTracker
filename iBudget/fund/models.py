@@ -45,5 +45,5 @@ class FundCategories(models.Model):
         """
         try:
             return FundCategories.objects.get(pk=fund_id)
-        except FundCategories.DoesNotExist:
+        except (FundCategories.DoesNotExist, ValueError):
             return None

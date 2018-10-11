@@ -35,7 +35,7 @@ class SpendingCategories(models.Model):
         """
         try:
             return SpendingCategories.objects.get(pk=spending_category_id)
-        except SpendingCategories.DoesNotExist:
+        except (SpendingCategories.DoesNotExist, ValueError):
             return None
 
     @staticmethod
