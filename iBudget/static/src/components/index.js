@@ -1,9 +1,7 @@
 import Login from './Login';
 import Spend from './Spend';
-import Spending_registration from './Spending_registration';
 import SideBar from './SideBar';
-import Limit from './Limit';
+import Spending_registration from './Spending_registration';
 
-export {Login, SideBar, Limit, Spending_registration, Spend};
-
+export {Login, SideBar,Spending_registration, Spend};
 

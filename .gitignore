@@ -109,7 +109,6 @@ venv.bak/
 *.ntvs*
 *.njsproj
 *.sln
-.editorconfig
 
 #npm
 .DS_Store
@@ -121,4 +120,3 @@ yarn-error.log
 webpack-stats.json
 package-lock.json
 *.hot-update.js
-*.hot-update.json
