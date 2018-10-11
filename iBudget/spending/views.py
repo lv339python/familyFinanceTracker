@@ -7,6 +7,7 @@ from datetime import date
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
+
 from utils.validators import spending_individual_limit_validate
 from .models import SpendingCategories, SpendingLimitationIndividual
 
