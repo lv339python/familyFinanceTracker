@@ -3,8 +3,6 @@ import {Home, Funds, Groups, Spendings, Incomes} from 'src/tabs';
 import {Login} from "src/components";
 import {Spending_registration} from "src/components";
 import {Spend} from "src/components";
-import {Limit} from "src/components";
-
 
 export default [
   {
@@ -30,9 +28,5 @@ export default [
   },
   {
     path: '/spend', component:Spend
-  },
-
-  {
-    path: '/limit', component: Limit
   }
 ];

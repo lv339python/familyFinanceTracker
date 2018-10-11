@@ -14,6 +14,5 @@ RESPONSE_404_NOT_FOUND = HttpResponse('Invalid file name or file is already dele
 
 RESPONSE_200_SUCCESS = HttpResponse('The file was successfully updated/deleted', status=200)
 
-RESPONSE_500_NO_SUCCESS = HttpResponse('The file removal/upload was not successful, internal server'
-                                       ' error',
+RESPONSE_500_NO_SUCCESS = HttpResponse('The upload was not successful, internal server error',
                                        status=500)
