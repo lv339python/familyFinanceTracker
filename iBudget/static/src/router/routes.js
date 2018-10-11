@@ -3,8 +3,7 @@ import {Home, Funds, Groups, Spendings, Incomes} from 'src/tabs';
 import {Login} from "src/components";
 import {Spending_registration} from "src/components";
 import {Spend} from "src/components";
-import {Home,Funds, Groups, Spendings, Incomes } from 'src/tabs';
-import {Limit} from "src/components"
+import {Limit} from "src/components";
 
 
 export default [
