@@ -107,7 +107,7 @@ def input_spending_registration_validate(data):
         Returns:
             bool: The return value. True is data valid, else False.list([1,2,3])
     """
-    if set(data.keys()).difference(SET_KEYS_SPENDING_REG_DATA) == 0:
+    if not set(data.keys()).difference(SET_KEYS_SPENDING_REG_DATA):
         return False
     try:
         data['category'] = int(data['category'])
