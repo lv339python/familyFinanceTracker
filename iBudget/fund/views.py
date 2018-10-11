@@ -17,7 +17,7 @@ def show_spending_ind(request):
     user = request.user
     if user:
         user_funds = []
-        for entry in FundCategories.filter_by_user_id(user, False):
+        for entry in FundCategories.filter_by_user_id(user):
             user_funds.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)

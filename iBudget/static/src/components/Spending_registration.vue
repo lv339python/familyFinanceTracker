@@ -18,7 +18,7 @@
             <select v-model="type_of_pay" class="ourform">
               <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id"> {{ type_of_pay.name }}
               </option>
-            </select>
+           </select>
            </div>
         </div>
 
@@ -66,21 +66,42 @@
           <hr>
           <div class="form-group">
             <label>Chose category</label>
-            <select v-model="shared_category" class="ourform" >
-            <option v-for="shared_category in shared_list"
-                      v-if="shared_category.id_group === is_active_shared_cat"
-                      v-bind:value="shared_category.id">
-                      {{ shared_category.name_cat }}
+            <select v-model="category" class="ourform" >
+            <option v-for="category in shared_list"
+                      v-if="category.id_group === is_active_shared_cat"
+                      v-bind:value="category.id_cat">
+                      {{category.name_cat}}
             </option>
             </select>
+              <div>{{category}}</div>>
+              <div>{{this.shared_list}}</div>>
           </div>
           <hr>
         </div>
+
+
+
+        <!--<div class="col-md-4">-->
+          <!--<hr>-->
+          <!--<div class="form-group">-->
+            <!--<label>Chose category</label>-->
+            <!--<select v-model="shared_category" class="ourform" >-->
+            <!--<option v-for="shared_category in shared_list"-->
+                      <!--v-if="shared_category.id_group === is_active_shared_cat"-->
+                      <!--v-bind:value="shared_category.id">-->
+                      <!--{{ shared_category.name_cat}}-->
+            <!--</option>-->
+            <!--</select>-->
+          <!--</div>-->
+          <!--<hr>-->
+        <!--</div>-->
 
         <input type="checkbox" id="shared_button" v-model="is_shared">
         <label for="shared_button">Shared</label>
         <span>{{ is_shared }}</span>
         <button v-on:click="setData" :variant="secondary">Save</button>
+        <!--<button v-on:click="setDataGroup" :variant="secondary">Save group</button>-->
+
 
     </div>
 </template>
@@ -102,8 +123,8 @@ import axios from 'axios';
             sum: null,
             date:null,
             comment:null,
-            is_shared:false,
-            group:null,
+            // is_shared:false,
+            // group:null,
             is_active_shared_cat:null,
            }
         },
@@ -137,6 +158,7 @@ import axios from 'axios';
             .then(response => {
             // JSON responses are automatically parsed.
             this.shared_list = response.data
+
           })
           .catch(e => {
           this.errors.push(e)
@@ -149,19 +171,35 @@ import axios from 'axios';
               method: 'post',
               url: 'api/v1/spending_history/register_spending/',
               data: {
-                  'category': this.category,
                   'type_of_pay': this.type_of_pay,
                   'date': this.date,
                   'sum': this.sum,
                   'comment': this.comment,
-                  'is_shared':this.is_shared,
-                  'group': this.group,
+                  'category': this.category,
 
                 }
              }).then(response =>{
                 this.$router.go('/Spendings/')
              })
         },
+        //   setDataGroup: function (event) {
+        //     axios({
+        //       method: 'post',
+        //       url: 'api/v1/spending_history/register_spending_group/',
+        //       data: {
+        //           'shared_category': this.shared_category,
+        //           'type_of_pay': this.type_of_pay,
+        //           'date': this.date,
+        //           'sum': this.sum,
+        //           'comment': this.comment,
+        //           // 'is_shared':this.is_shared,
+        //           // 'group': this.group,
+        //
+        //         }
+        //      }).then(response =>{
+        //         this.$router.go('/Spendings/')
+        //      })
+        // },
 
 
         }

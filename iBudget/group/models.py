@@ -36,19 +36,14 @@ class Group(models.Model):
                                               related_name="groups")
 
     @staticmethod
-    def group_filter_by_owner_id(user_id):
+    def group_filter_by_owner_id(user):
         """
         Args:
             user_id (int): index of owner,
         Returns:
             Group object if database contain group with user_id
         """
-        try:
-            return Group.objects.filter(owner=user_id)
-        except Group.DoesNotExist:
-            return None
-
-
+        return Group.objects.filter(owner=user)
 
 
 class UsersInGroups(models.Model):
