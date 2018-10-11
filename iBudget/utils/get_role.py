@@ -1,47 +1,113 @@
 """
-    Function that provides for receiving roles
+Provides functions to view roles
 """
+
 from authentication.models import UserProfile
-from group.models import UsersInGroups
+from group.models import Group, UsersInGroups
 
 
-class UserRoles:  #pylint: disable=too-few-public-methods
+def is_user_sys_admin(user):
+
     """
-    User's roles.
+    Checks if user is sys admin
+    :param user(int):foreign key User ID
+    :return(bool): "True" if user is admin "False" in other way.
     """
-    @staticmethod
-    def get_role():
-        """
-        Current function checks and returns user roles in dict data type
-        :return: role_dict
-        """
-        role_dict = {
-            'sys_admin': [],
-            'admin': [],
-            'member': [],
-            'user': []
-        }
 
-        user_list = UserProfile.objects.all()
-        users = UsersInGroups.objects.all()
+    if user.is_sys_admin:
+        return True
+    return False
 
-        for user in user_list:
-            if user.is_sys_admin:
-                role_dict['sys_admin'].append(user.first_name)
-            if user:
-                role_dict['user'].append(user.first_name)
-        for user in users:
-            if user.is_admin:
-                role_dict['admin'].append(user.id)
-            if user.user:
-                role_dict['member'].append(user.id)
-        admins_names = []
-        for user_id in role_dict['admin']:
-            admins_names.append(UserProfile.get_by_id(user_id).first_name)
-        role_dict['admin'] = admins_names
 
-        members_names = []
-        for user_id in role_dict['member']:
-            members_names.append(UserProfile.get_by_id(user_id).first_name)
-        role_dict['member'] = members_names
-        return role_dict
+def groups_for_user(user):
+
+    """
+    Checks groups for user
+    :param user(int):foreign key User ID
+    :return:list groups_for_user
+    """
+
+    group = Group.objects.filter(members=user)
+    list_group = []
+    for item in group:
+        list_group.append(item.id)
+    return list_group
+
+
+def is_user_in_group(group_id, user):
+
+    """
+    Checks if user in group
+    :param user(int):foreign key User ID
+    :param group_id(PK):Group ID
+    :return (bool): "True" if user in group, "False" in other way.
+    """
+
+    try:
+        UsersInGroups.objects.get(group=group_id, user=user)
+        return True
+    except UsersInGroups.DoesNotExist:
+        return False
+
+
+def is_user_admin_group(group_id, user):
+
+    """
+    Checks if user in group is admin.
+    :param user(int):foreign key User ID
+    :param group_id(PK):Group ID
+    :return(bool): "True" if user in group,is admin "False" in other way.
+
+    """
+
+    try:
+        user_in_group = UsersInGroups.objects.get(group=group_id, user=user)
+        return user_in_group.is_admin
+    except UsersInGroups.DoesNotExist:
+        return False
+
+
+def is_user_member_group(group_id, user):
+
+    """
+    Checks if user in group is admin.
+    :param user(int):foreign key User ID
+    :param group_id(PK):Group ID
+    :return(bool): "True" if user a group member, "False" in other way.
+
+    """
+
+    try:
+        user_in_group = UsersInGroups.objects.get(group=group_id, user=user)
+        return not user_in_group.is_admin
+    except UsersInGroups.DoesNotExist:
+        return False
+
+
+def user_teams_roles(user):
+
+    """
+    Checks user teams roles.
+    :param user(int):foreign key User ID
+    :return: dict data type
+    """
+
+    list_group = groups_for_user(user)
+    result = {}
+    for item in list_group:
+        result[item] = 'admin' if is_user_admin_group(user=user, group_id=item) else 'member'
+    return result
+
+
+def user_all_roles():
+
+    """
+    Checks all user roles.
+    :return: dict data type
+    """
+
+    result = {}
+    users = UserProfile.objects.all()
+    for user in users:
+        result[user.id] = user_teams_roles(user)
+    return result

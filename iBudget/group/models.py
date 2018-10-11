@@ -34,6 +34,21 @@ class Group(models.Model):
                                               through='SharedSpendingCategories',
                                               related_name="groups")
 
+    @staticmethod
+    def get_group_by_id(group_id):
+        """
+        Args:
+            group_id(int): The first parameter.
+        Returns:
+            Groups object if database contain with group_id , None otherwise.
+
+        """
+        try:
+            group = Group.objects.get(pk=group_id)
+            return group
+        except Group.DoesNotExist:
+            return None
+
 
 class UsersInGroups(models.Model):
     """Members of groups.
@@ -54,14 +69,14 @@ class UsersInGroups(models.Model):
     def get_by_id(user_id):
         """
         Args:
-            user_id(int): The first parameter.
+            user_id(PK): The first parameter.
         Returns:
             UsersInGroups object if database contain user with user_id , None otherwise.
 
         """
 
         try:
-            user = UsersInGroups.objects.get(user_id=user_id)
+            user = UsersInGroups.objects.get(pk=user_id)
             return user
         except UsersInGroups.DoesNotExist:
             return None
