@@ -73,36 +73,14 @@
                       {{category.name_cat}}
             </option>
             </select>
-              <div>{{category}}</div>>
-              <div>{{this.shared_list}}</div>>
           </div>
           <hr>
         </div>
-
-
-
-        <!--<div class="col-md-4">-->
-          <!--<hr>-->
-          <!--<div class="form-group">-->
-            <!--<label>Chose category</label>-->
-            <!--<select v-model="shared_category" class="ourform" >-->
-            <!--<option v-for="shared_category in shared_list"-->
-                      <!--v-if="shared_category.id_group === is_active_shared_cat"-->
-                      <!--v-bind:value="shared_category.id">-->
-                      <!--{{ shared_category.name_cat}}-->
-            <!--</option>-->
-            <!--</select>-->
-          <!--</div>-->
-          <!--<hr>-->
-        <!--</div>-->
 
         <input type="checkbox" id="shared_button" v-model="is_shared">
         <label for="shared_button">Shared</label>
         <span>{{ is_shared }}</span>
         <button v-on:click="setData" :variant="secondary">Save</button>
-        <!--<button v-on:click="setDataGroup" :variant="secondary">Save group</button>-->
-
-
     </div>
 </template>
 
@@ -122,8 +100,6 @@ import axios from 'axios';
             value: null,
             date:null,
             comment:null,
-            // is_shared:false,
-            // group:null,
             is_active_shared_cat:null,
            }
         },
@@ -181,25 +157,6 @@ import axios from 'axios';
                 this.$router.go('/Spendings/')
              })
         },
-        //   setDataGroup: function (event) {
-        //     axios({
-        //       method: 'post',
-        //       url: 'api/v1/spending_history/register_spending_group/',
-        //       data: {
-        //           'shared_category': this.shared_category,
-        //           'type_of_pay': this.type_of_pay,
-        //           'date': this.date,
-        //           'sum': this.sum,
-        //           'comment': this.comment,
-        //           // 'is_shared':this.is_shared,
-        //           // 'group': this.group,
-        //
-        //         }
-        //      }).then(response =>{
-        //         this.$router.go('/Spendings/')
-        //      })
-        // },
-
 
         }
 }
