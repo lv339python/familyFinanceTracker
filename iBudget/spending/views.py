@@ -6,9 +6,12 @@ import json
 from datetime import date
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
+
+from utils.validators import spending_individual_limit_validate
+from .models import SpendingCategories, SpendingLimitationIndividual
+
 from django.db.models import Q
 from utils.spendings_limit_checker import comp_gr_spends_w_limit # pylint: disable=W0611
-from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 @require_http_methods(["GET"])
 def show_spending_ind(request):
@@ -22,7 +25,7 @@ def show_spending_ind(request):
     user = request.user
     if user:
         user_categories = []
-        for entry in SpendingCategories.objects.filter(owner=user):
+        for entry in SpendingCategories.get_by_user_ind(user):
             user_categories.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)
@@ -39,6 +42,8 @@ def set_spending_limitation_ind(request):
     """
     user = request.user
     data = json.loads(request.body)
+    if not spending_individual_limit_validate(data):
+        return HttpResponse(status=201)
     data['spending_id'] = int(data['spending_id'])
     data['month'] = int(data['month'])
     data['year'] = int(data['year'])
@@ -58,7 +63,7 @@ def set_spending_limitation_ind(request):
     spending_limitation_ind.spending_category = \
         SpendingCategories.get_by_id(data['spending_id'])
 
-    spending_limitation = SpendingLimitationIndividual.objects.filter(
+    spending_limitation = SpendingLimitationIndividual.get_by_data(
         user=user,
         spending_category=spending_limitation_ind.spending_category,
         start_date=spending_limitation_ind.start_date,
