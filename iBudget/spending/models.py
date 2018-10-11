@@ -35,39 +35,22 @@ class SpendingCategories(models.Model):
         """
         try:
             return SpendingCategories.objects.get(pk=spending_category_id)
-        except SpendingCategories.DoesNotExist:
+        except (SpendingCategories.DoesNotExist, ValueError):
             return None
 
     @staticmethod
-    def filter_by_user_id(user_id, is_shared):
+    def filter_by_user(user, is_shared=False):
         """
         Args:
-            user_id (int): index of user,
+            user (UserProfile): user of category,
             is_shared(bool): which category we need(shared or not shared).
         Returns:
-            SpendingCategories object if database contain category with user_id
+            SpendingCategories object if database contain category for this user
             and is_shared value, None otherwise.
 
 
         """
-        try:
-            return SpendingCategories.objects.filter(owner=user_id, is_shared=is_shared)
-        except SpendingCategories.DoesNotExist:
-            return None
-
-    @staticmethod
-    def get_by_user_ind(user):
-        """
-        Args:
-            user (FK): Owner of this category,
-        Returns:
-            List of spending categories for user if they exist, None otherwise.
-
-        """
-        try:
-            return SpendingCategories.objects.filter(owner=user)
-        except SpendingCategories.DoesNotExist:
-            return None
+        return SpendingCategories.objects.filter(owner=user, is_shared=is_shared)
 
 
 class SpendingLimitationIndividual(models.Model):
@@ -89,7 +72,7 @@ class SpendingLimitationIndividual(models.Model):
     value = models.DecimalField(max_digits=17, decimal_places=2)
 
     @staticmethod
-    def get_by_data(user, spending_category, start_date, finish_date):
+    def filter_by_data(user, spending_category, start_date, finish_date):
         """
         Args:
             user (FK): Owner of this category.
@@ -101,17 +84,12 @@ class SpendingLimitationIndividual(models.Model):
 
 
         """
-        try:
-            notice = SpendingLimitationIndividual.objects.filter(
-                user=user,
-                spending_category=spending_category,
-                start_date=start_date,
-                finish_date=finish_date)
-            return notice
-        except SpendingLimitationIndividual.DoesNotExist:
-            return None
-
-
+        notice = SpendingLimitationIndividual.objects.filter(
+            user=user,
+            spending_category=spending_category,
+            start_date=start_date,
+            finish_date=finish_date)
+        return notice
 
 
 class SpendingLimitationGroup(models.Model):
@@ -128,5 +106,5 @@ class SpendingLimitationGroup(models.Model):
 
     spending_category = models.ForeignKey(SpendingCategories, on_delete=True)
     start_date = models.DateField()
-    finish_date = models.DateField()
+    end_date = models.DateField()
     value = models.DecimalField(max_digits=17, decimal_places=2)
