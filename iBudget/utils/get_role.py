@@ -5,6 +5,7 @@ Provides functions to view roles
 from authentication.models import UserProfile
 from group.models import Group, UsersInGroups
 
+
 def is_user_sys_admin(user):
     """
     Checks if user is sys admin
