@@ -6,8 +6,8 @@ from decimal import Decimal
 
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
-from utils.validators import input_spending_registration_validate
 
+from utils.validators import input_spending_registration_validate
 from .models import SpendingCategories, SpendingHistory, FundCategories
 
 
@@ -21,18 +21,32 @@ def register_spending(request):
             HttpResponse status.
     """
     data = json.loads(request.body)
-    if input_spending_registration_validate(data):
+    if not input_spending_registration_validate(data):
         return HttpResponse(status=400)
-    owner = request.user
-    fund = FundCategories.get_by_id(int(data["type_of_pay"]))
-    spending = SpendingCategories.get_by_id(int(data["category"]))
 
-    if spending.owner == owner:
-        SpendingHistory.create(fund,
-                               spending,
-                               owner,
-                               Decimal(data["sum"]),
-                               data["date"],
-                               data["comment"])
-        return HttpResponse(status=201)
-    return HttpResponse(status=403)
+    user = request.user
+    spending = SpendingCategories.get_by_id(int(data["category"]))
+    if not spending:
+        return HttpResponse(status=400)
+    if not spending.owner == user:
+        return HttpResponse(status=403)
+    fund = FundCategories.get_by_id(int(data["type_of_pay"]))
+    if not fund:
+        return HttpResponse(status=400)
+    date = data["date"]
+    value = Decimal(data["value"])
+    comment = data["comment"]
+
+    spending_history = SpendingHistory(
+        fund=fund,
+        spending_categories=spending,
+        date=date,
+        value=value,
+        owner=user,
+        comment=comment
+    )
+    try:
+        spending_history.save()
+    except(ValueError, AttributeError):
+        return HttpResponse(status=406)
+    return HttpResponse(status=201)

@@ -1,6 +1,7 @@
 """
 This module provides function for validations.
 """
+from decimal import Decimal
 from datetime import date
 
 from django.contrib.auth.password_validation import validate_password
@@ -8,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 SET_KEYS_REG_DATA = {"email", "password"}
-
+SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 
 def is_valid_password(password):
     """validate password
@@ -104,17 +105,18 @@ def input_spending_registration_validate(data):
         Args:
             data (dict): contain category, type of pay, sum, comment
         Returns:
-            bool: The return value. True is data valid, else False.
+            bool: The return value. True is data valid, else False.list([1,2,3])
     """
-    if not isinstance(data['category'], int):
+    if not set(data.keys()).difference(SET_KEYS_SPENDING_REG_DATA):
         return False
-    if not isinstance(data['type_of_pay'], int):
+    try:
+        data['category'] = int(data['category'])
+        data['type_of_pay'] = int(data['type_of_pay'])
+        data['value'] = Decimal(data['value'])
+        data['comment'] = str(data['comment'])
+        return True
+    except (ValidationError, AttributeError):
         return False
-    if not isinstance(data['sum'], int):
-        return False
-    if not isinstance(data['comment'], str):
-        return False
-    return True
 
 
 def spending_individual_limit_validate(data):
