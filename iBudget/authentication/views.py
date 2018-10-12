@@ -77,7 +77,7 @@ def google_auth_grant(request):
 
     google = OAuth2Session(CLIENT_ID, scope=SCOPE, redirect_uri=REDIRECT_URL)
     authorization_url = google.authorization_url(AUTHORIZATION_BASE_URL, access_type=
-                                                 "offline", prompt="select_account")
+                                                 "offline", prompt="select_account")[0]
     if authorization_url:
         return redirect(authorization_url)
 
