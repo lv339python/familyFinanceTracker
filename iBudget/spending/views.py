@@ -40,14 +40,12 @@ def show_spending_group(request):
 
     user = request.user
     users_group = []
-
     if user:
         for group in Group.group_filter_by_owner_id(user):
-            group_id = group.id
-            for shared_category in SharedSpendingCategories.objects.filter(group=group_id):
+            for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
                 users_group.append({'id_cat': shared_category.spending_categories.id,
                                     'name_cat': shared_category.spending_categories.name,
-                                    'id_group': group_id
+                                    'id_group': group.id
                                     })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
