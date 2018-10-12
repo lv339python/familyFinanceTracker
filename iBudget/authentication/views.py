@@ -6,7 +6,7 @@ import json
 from random import randint
 
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
@@ -107,3 +107,19 @@ def google_sign_in(request):
         user.save()
         return HttpResponse(status=201)
     return HttpResponse(status=400)
+@require_http_methods(['GET'])
+def show_users_data(request):
+    user = request.user
+    users_data = []
+    if user:
+        for i in UserProfile.filter_by_user(user.id):
+            print(i)
+            users_data.append({
+                "email": i.email,
+                "first_name": i.first_name,
+                "last_name": i.last_name,
+                "icon": i.icon
+            })
+        return JsonResponse(users_data, status=200, safe=False)
+    return JsonResponse({}, status=400)
+

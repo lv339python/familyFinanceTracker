@@ -1,8 +1,6 @@
 <template>
-
   <div class="content">
       <div id="body">
-            <p>Please login to continue</p>
            <div id="form">
               <form class="login" @submit.prevent="login" v-show="loginDisplay">
                 <h1>Login</h1>
@@ -32,7 +30,7 @@
                 <br/>
                 <label>Password Confirmation</label>
                 <br/>
-                <input required v-model="password" type="password" placeholder="Password"/>
+                <input required v-model="password" type="password" placeholder="Confirm Password"/>
                 <hr/>
                 <b-button type="submit" @click="registration">Register</b-button>
                <br/>
@@ -113,14 +111,8 @@ export default {
 </script>
 
 <style scoped>
-    .content {
-        height: 100vh;
-        overflow: hidden;
-        display: flex;
-    }
+#body {
+    text-align: center;
+}
 
-    .text {
-        width: fit-content;
-        margin: auto;
-    }
 </style>
