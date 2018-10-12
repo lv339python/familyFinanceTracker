@@ -51,8 +51,6 @@ def login_user(request):
         login(request, user)
         response = HttpResponse('operation was successful provided', status=200)
         return response
-    print(data['password'])
-    print(user)
     return HttpResponse('email or password is not valid', status=400)
 
 
