@@ -32,6 +32,7 @@ class SpendingCategories(models.Model):
             SpendingCategories object if database contain spending
             category with id, None otherwise.
 
+    def to_dict(self):
         """
         try:
             return SpendingCategories.objects.get(pk=spending_category_id)

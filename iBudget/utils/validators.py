@@ -3,7 +3,6 @@ This module provides function for validations.
 """
 from decimal import Decimal
 from datetime import date
-
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -26,7 +25,6 @@ def is_valid_password(password):
         return True
     except ValidationError:
         return False
-
 
 def is_valid_registration_data(data):
     """validate data.

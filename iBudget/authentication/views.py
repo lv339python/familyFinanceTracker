@@ -42,6 +42,8 @@ def login_user(request):
     Login of the existing user.
     :return: status 200 if login was successful, status 400 if unsuccessful
     """
+
+
     data = json.loads(request.body.decode("utf-8"))
     if not login_validate(data):
         return HttpResponse('received data is not valid', status=400)
