@@ -18,6 +18,9 @@
                 <br/>
                 <br/>
                 <b-link @click="showRegister">Create a new account</b-link>
+                <br/>
+                <br/>
+                <b-link @click="showForgotPassword">Forgot password?</b-link>
               </form>
 
              <form class="register" @submit.prevent="register" v-show="registerDisplay" >
@@ -35,9 +38,19 @@
                 <input required v-model="password" type="password" placeholder="Password"/>
                 <hr/>
                 <b-button type="submit" @click="registration">Register</b-button>
-               <br/>
-               <br/>
-               <b-link @click="showLogin">Already registered?</b-link>
+                <br/>
+                <br/>
+                <b-link @click="showLogin">Already registered?</b-link>
+             </form>
+
+             <form class="forgotpassword" @submit.prevent="forgotpassword" v-show="ForgotPasswordDisplay" >
+                <h1>ForgotPassword</h1>
+                <label>E-mail address</label>
+                <br/>
+                <input required v-model="email" type="text" placeholder="Please Enter Your Email"/>
+                <br/>
+                <b-button type="submit" @click="">Send Password Reset Link</b-button>
+                <br/>
              </form>
            </div>
       </div>
@@ -54,7 +67,8 @@ export default {
     data() {
         return {
             loginDisplay:true,
-            registerDisplay:false
+            registerDisplay:false,
+            ForgotPasswordDisplay:false
         }
     },
     methods: {
@@ -66,12 +80,20 @@ export default {
 
         showRegister(){
             this.loginDisplay = false;
+            this.ForgotPasswordDisplay = false;
             this.registerDisplay = true
         },
 
         showLogin(){
             this.loginDisplay = true;
             this.registerDisplay = false;
+            this.ForgotPasswordDisplay = false
+        },
+
+        showForgotPassword(){
+            this.loginDisplay = false;
+            this.registerDisplay = false;
+            this.ForgotPasswordDisplay = true
         },
 
         close() {
@@ -89,6 +111,7 @@ export default {
             }).then(response =>{
                 this.loginDisplay = true;
                 this.registerDisplay = false;
+                this.ForgotPasswordDisplay = false;
             }).catch(e => {
                 this.error = true;
             })
