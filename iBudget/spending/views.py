@@ -8,6 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
 from utils.validators import is_valid_data_individual_limit
+from group.models import Group, SharedSpendingCategories
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 
@@ -26,6 +27,27 @@ def show_spending_ind(request):
         for entry in SpendingCategories.filter_by_user(user):
             user_categories.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_categories, status=200, safe=False)
+    return JsonResponse({}, status=400)
+
+@require_http_methods(["GET"])
+def show_spending_group(request):
+    """Handling request for creating of spending categories list in group.
+        Args:
+            request (HttpRequest): Limitation data.
+        Returns:
+            HttpResponse object.
+    """
+
+    user = request.user
+    users_group = []
+    if user:
+        for group in Group.group_filter_by_owner_id(user):
+            for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
+                users_group.append({'id_cat': shared_category.spending_categories.id,
+                                    'name_cat': shared_category.spending_categories.name,
+                                    'id_group': group.id
+                                    })
+        return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
 
 
@@ -89,10 +111,10 @@ def group_limit(request):
             user_id,
             sharedspendingcategories__group__usersingroups__is_admin=
             True).distinct('name')
-        list_of_spensings = []
+        list_of_spendings = []
         for i in available_spendings:
-            list_of_spensings.append(i.name)
-        return JsonResponse(list_of_spensings, safe=False, status=200)
+            list_of_spendings.append(i.name)
+        return JsonResponse(list_of_spendings, safe=False, status=200)
     return HttpResponse('Wrong request method', status=405)
 
 
@@ -117,7 +139,6 @@ def set_group_limit(request):
                                                                         content['end_date'])) | Q
                                                    (end_date__range=(content['start_date'],
                                                                      content['end_date'])))
-        print(len(current_limitdates))
         if current_limitdates:
             for i in current_limitdates:
                 catgs_with_limits.append(i.spending_category_id)

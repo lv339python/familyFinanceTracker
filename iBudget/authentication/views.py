@@ -6,7 +6,7 @@ import json
 from random import randint
 
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
@@ -79,8 +79,7 @@ def google_auth_grant(request):
     authorization_url = google.authorization_url(AUTHORIZATION_BASE_URL, access_type=
                                                  "offline", prompt="select_account")[0]
     if authorization_url:
-        # return redirect(authorization_url)
-        return JsonResponse({'url':authorization_url},status=200)
+        return redirect(authorization_url)
     return HttpResponse(status=400)
 
 
@@ -98,8 +97,7 @@ def google_sign_in(request):
     if user_data:
         if UserProfile.get_by_email(user_data['email']):
             login(request, UserProfile.get_by_email(user_data['email']))
-            return redirect("/")
-            # return HttpResponse('Operation was successful provided', status=200)
+            return HttpResponse('Operation was successful provided', status=200)
         user = UserProfile()
         user.email = user_data['email']
         user.first_name = user_data['given_name']

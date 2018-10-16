@@ -2,7 +2,7 @@
 Views module for handling AWS S3
 """
 from django.utils import datastructures
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 from utils.aws_helper import AwsService
 from utils.response_helper import (RESPONSE_400_INVALID_DATA, RESPONSE_400_NO_FILE,
@@ -13,6 +13,13 @@ from utils.response_helper import (RESPONSE_400_INVALID_DATA, RESPONSE_400_NO_FI
 class FileHandler(View):
     """ View for handling CRUD methods for images in the AmazonS3 bucket
     """
+    def get(self, request):
+        """the method retrieves default icons from AWS S3
+        :param - request object
+        """
+        urls = AwsService.get_default_list_icons()[1:]
+        return JsonResponse(urls, status=200, safe=False)
+
 
     def post(self, request):# pylint: disable=no-self-use
         """The name property of the file which is passed is 'icon', so in HTML form it must be set:
