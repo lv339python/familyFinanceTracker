@@ -27,7 +27,8 @@ urlpatterns = [
     path('api/v1/files/', FileHandler.as_view()),
     path('api/v1/spending/', include('spending.urls')),
     path('api/v1/fund/', include('fund.urls')),
-    path('api/v1/spending_history/', include('spending_history.urls'))
+    path('api/v1/spending_history/', include('spending_history.urls')),
+    path('api/v1/group/', include('group.urls'))
 ]
 
 urlpatterns += staticfiles_urlpatterns()

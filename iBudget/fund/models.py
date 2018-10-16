@@ -74,7 +74,7 @@ class FinancialGoal(models.Model):
         """
         Args:
             value: financial aim.
-            fund: Spending category for individual purpose.
+            fund: Fund for individual purpose.
             start_date: The beginning of time period.
             finish_date: The end of time period.
         Returns:

@@ -1,140 +1,110 @@
 <template>
     <div id="spend">
+       <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Chose group</label>
+            <select v-model="group" class="ourform">
+            <option v-for="group in group_list"
+                      v-bind:value="group.id"
+                      v-on:click="is_active_shared_fund=group.id">
+                      {{ group.name }}
+            </option>
+            </select>
+          </div>
+          <hr>
+        </div>
+
         <div class="col-md-4">
           <hr>
           <div class="form-group">
-            <label>Choose type of pay:</label>
-            <select v-model="selectedFund" class="form-control">
-              <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id"> {{ type_of_pay.name }}
-              </option>
+            <label>Chose fund</label>
+            <select v-model="fund" class="ourform" >
+            <option v-for="fund in fund_list"
+                      v-if="fund.id_group === is_active_shared_fund"
+                      v-bind:value="fund.id_fund">
+                      {{fund.name_fund}}
+            </option>
             </select>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Start date</label>
+            <input v-model="start_date" type="date">
+           </div>
+           <hr>
+        </div>
+
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Finish date</label>
+            <input v-model="finish_date" type="date">
+           </div>
+           <hr>
+        </div>
+
+        <div class="col-md-4">
+          <hr>
+          <div class="form-group">
+            <label>Input value</label>
+            <input v-model="value" type="number" min="1" class="form-control">
            </div>
         </div>
 
-    <div class="col-md-4">
-        <hr>
-        <div class="form-group">
-        <label for="years">Year:</label>
-
-        <select v-model="selectedYear" class="form-control" id="years">
-          <option v-for="item in 10">{{yyyy-1 + item}}</option>
-        </select>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <hr>
-        <div class="form-group">
-        <label for="monthYear">Month:</label>
-          <select v-model="selectedMonth" class="form-control" id="monthYear">
-              <option v-for="month in months" v-bind:value="month.valueM"> {{ month.nameM }} </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <hr>
-        <div class="form-group">
-        <label for="value">Value:</label>
-          <input v-model.number="selectedValueQ"  id="value" type="number" min="0" max="999999999"
-                 placeholder="Your limit" pattern="^\d+(\.\d+)?$">
-        </div>
-
-        <hr>
-        <div  v-show="isValidData">
-        <button v-on:click="setLimit" :variant="secondary" >goal</button>
-        </div>
-
-      </div>
+        <button v-on:click="setData" :variant="secondary">Save</button>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-    var today = new Date();
-    var yyyy = today.getFullYear();
-    export default {
+     export default {
      name: "Financial_goal",
      data () {
-    return {
-      months : [
-        {nameM: 'All the year', valueM: 0},
-        {nameM: 'January', valueM: 1},
-        {nameM: 'February', valueM: 2},
-        {nameM: 'March', valueM: 3},
-        {nameM: 'April', valueM: 4},
-        {nameM: 'May', valueM: 5},
-        {nameM: 'June', valueM: 6},
-        {nameM: 'July', valueM: 7},
-        {nameM: 'August', valueM: 8},
-        {nameM: 'September', valueM: 9},
-        {nameM: 'October', valueM: 10},
-        {nameM: 'November', valueM: 11},
-        {nameM: 'December', valueM: 12}
-      ],
-      fund_list: [],
-       yyyy: yyyy,
-       selectedYear: null,
-       selectedMonth: null,
-       selectedValue: null,
-       selectedFund: null,
-       errors: [],
-       newLimitation: {
-        "fund": null,
-        'year': null,
-        'month': null,
-        'value': 0
-        },
+     return {
+       fund_list: [],
+       group_list:null,
+       fund:null,
+       start_date:null,
+       finish_date:null,
+       value:null,
+       is_active_shared_fund:null
+
 
     }
   },
-  computed: {
-      selectedValueQ: {
-        get: function () {
-          return this.selectedValue;
+   created(){
+          axios.get('/api/v1/fund/show_fund_group/')
+            .then(response => {
+            // JSON responses are automatically parsed.
+            this.fund_list = response.data
+          })
+          .catch(e => {
+          this.errors.push(e)
+          });
+          axios.get('/api/v1/group/get_by_group/')
+            .then(response => {
+            // JSON responses are automatically parsed.
+            this.group_list = response.data;
+          })
+          .catch(e => {
+          this.errors.push(e)
+          });
         },
-        set: function (newValue) {
-          this.selectedValue = newValue;
-        }
-      },
-      isValidData: {
-          get: function(){
-            var result =
-                         this.selectedFund !=null &&
-                         this.selectedYear!=null &&
-                         this.selectedMonth != null &&
-                         typeof(this.selectedValueQ)==='number' &&
-                         this.selectedValueQ>0&&
-                         this.selectedValueQ<1000000000000000;
-            return result;
-          }
-      }
-},
-
-  created() {
-    axios({
-              method: 'get',
-              url: '/api/v1/fund/'
-             })
-    .then(response => {
-      // JSON responses are automatically parsed.
-      this.fund_list = response.data
-    })
-    .catch(e => {
-      this.errors.push(e)
-    })
-  },
-
   methods: {
-    setLimit: function (event) {
+    setData: function (event) {
       axios({
               method: 'post',
-              url: '/api/v1/fund/register_financial_goal_ind/',
+              url: '/api/v1/fund/register_financial_goal_group/',
               data: {
-                  'fund_id': this.selectedFund,
-                  'year': this.selectedYear,
-                  'month': this.selectedMonth,
-                  'value': this.selectedValueQ
+                  'value': this.value,
+                  'start_date': this.start_date,
+                  'finish_date': this.finish_date,
+                  'fund': this.fund
                 }
              }).then(response =>{
                 this.$router.go('fund/register_financial_goal_ind')
