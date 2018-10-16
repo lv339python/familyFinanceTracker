@@ -43,15 +43,15 @@
                 <b-link @click="showLogin">Already registered?</b-link>
              </form>
 
-             <form class="forgotpassword" @submit.prevent="forgot_password" v-show="ForgotPasswordDisplay" >
-                <h1>ForgotPassword</h1>
-                <label>E-mail address</label>
-                <br/>
-                <input required v-model="username" type="text" placeholder="Please Enter Your Email"/>
-                <br/>
-                <b-button type="submit" @click="">Send Password Reset Link</b-button>
-                <br/>
-             </form>
+             <!--<form class="forgotpassword" @submit.prevent="forgot_password" v-show="ForgotPasswordDisplay" >-->
+                <!--<h1>ForgotPassword</h1>-->
+                <!--<label>E-mail address</label>-->
+                <!--<br/>-->
+                <!--<input required v-model="username" type="text" placeholder="Please Enter Your Email"/>-->
+                <!--<br/>-->
+                <!--<b-button type="submit" @click="">Send Password Reset Link</b-button>-->
+                <!--<br/>-->
+             <!--</form>-->
            </div>
       </div>
   </div>
@@ -131,23 +131,23 @@ export default {
                 this.error = true;
             });
 
-        forgot_password: function (event) {
-            axios({
-                 method: 'post',
-                 url: '/api/v1/authentication/forgot_password/',
-                 data: {
-                     'email': this.username,
-
-                  }
-            }).then(response => {
-                this.$router.go('/home');
-            }).catch(e => {
-                this.error = true;
-            });
+        // forgot_password: function (event) {
+        //     axios({
+        //          method: 'post',
+        //          url: '/api/v1/authentication/forgot_password/',
+        //          data: {
+        //              'email': this.username,
+        //
+        //           }
+        //     }).then(response => {
+        //         this.$router.go('/home');
+        //     }).catch(e => {
+        //         this.error = true;
+        //     });
             }
         }
     }
-}
+
 </script>
 
 <style scoped>
