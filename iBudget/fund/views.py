@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from .models import FundCategories
 
 @require_http_methods(["GET"])
-def show_spending_ind(request):
+def show_fund(request):
     """Handling request for creating of spending categories list.
 
         Args:
