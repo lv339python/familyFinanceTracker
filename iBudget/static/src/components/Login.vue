@@ -106,9 +106,10 @@ export default {
                 this.$router.go('/home');
             }).catch(e => {
                 this.error = true;
-                })
-        },
-    }}
+                });
+        }
+    },
+}
 </script>
 
 <style scoped>
