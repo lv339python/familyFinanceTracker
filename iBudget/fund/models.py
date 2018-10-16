@@ -68,3 +68,23 @@ class FinancialGoal(models.Model):
         on_delete=models.CASCADE,
         related_name="goal"
     )
+
+    @staticmethod
+    def filter_by_data(value, start_date, finish_date, fund):
+        """
+        Args:
+            value: financial aim.
+            fund: Spending category for individual purpose.
+            start_date: The beginning of time period.
+            finish_date: The end of time period.
+        Returns:
+            SpendingLimitationIndividual object if row with described data exists, None otherwise.
+
+
+        """
+        goal = FinancialGoal.objects.filter(
+            value=value,
+            start_date=start_date,
+            finish_date=finish_date,
+            fund=fund)
+        return goal

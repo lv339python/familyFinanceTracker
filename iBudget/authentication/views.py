@@ -4,13 +4,13 @@ This module provides functions for handling Auth view.
 
 import json
 from random import randint
-
+from utils.jwttoken import create_token
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
-
+from utils.passwordreseting import send_password_update_letter
 from utils.validators import login_validate, is_valid_registration_data
 from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
   LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
@@ -105,5 +105,18 @@ def google_sign_in(request):
         user.last_name = user_data['family_name']
         user.password = str(randint(0, 9999))
         user.save()
+        return HttpResponse(status=201)
+    return HttpResponse(status=400)
+
+@require_http_methods(["POST"])
+def forgot_password(request):
+    """Handles POST request."""
+    data = json.loads(request.body)
+    email = data.get('email')
+    user = UserProfile.get_by_email(email=email)
+    if user:
+        arg = {'user_id': user.id}
+        token = create_token(data=arg, expiration_time=60*60)
+        send_password_update_letter(user, token)
         return HttpResponse(status=201)
     return HttpResponse(status=400)
