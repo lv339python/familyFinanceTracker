@@ -14,6 +14,6 @@ urlpatterns = [
     path('show_spending_group/', show_spending_group),
     path('admin/limit/', group_limit),
     path('admin/set_limit/', set_group_limit),
-    path('admin/change_limit/<str:category_name>', change_group_limit,
-    re_path(r'^add/', create_spending_category))
+    path('admin/change_limit/<str:category_name>', change_group_limit),
+    re_path(r'^add/', create_spending_category)
 ]

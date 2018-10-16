@@ -8,8 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
 
-from group.models import SharedSpendingCategories
-from utils.validators import is_valid_data_individual_limit
+from utils.validators import is_valid_data_individual_limit, is_valid_data_new_spending
 from group.models import Group, SharedSpendingCategories
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
@@ -113,10 +112,10 @@ def group_limit(request):
             user_id,
             sharedspendingcategories__group__usersingroups__is_admin=
             True).distinct('name')
-        list_of_spensings = []
+        list_of_spendings = []
         for i in available_spendings:
-            list_of_spensings.append(i.name)
-        return JsonResponse(list_of_spensings, safe=False, status=200)
+            list_of_spendings.append(i.name)
+        return JsonResponse(list_of_spendings, safe=False, status=200)
     return HttpResponse('Wrong request method', status=405)
 
 
@@ -141,7 +140,6 @@ def set_group_limit(request):
                                                                         content['end_date'])) | Q
                                                    (end_date__range=(content['start_date'],
                                                                      content['end_date'])))
-        print(len(current_limitdates))
         if current_limitdates:
             for i in current_limitdates:
                 catgs_with_limits.append(i.spending_category_id)
@@ -196,8 +194,8 @@ def create_spending_category(request):
     is_shared = False
 
 
-    # if not is_valid_data_new_spending(data):
-    #     return HttpResponse(status=400)
+    if not is_valid_data_new_spending(data):
+        return HttpResponse("Bad request", status=400)
     spending = SpendingCategories.filter_by_owner_name(owner=owner, name=name)
 
     if not spending:
@@ -211,4 +209,3 @@ def create_spending_category(request):
 
 
     return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
-
