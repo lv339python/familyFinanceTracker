@@ -1,7 +1,7 @@
-<template>
+        <template>
   <div class="content">
       <div class="text">
-        <b-button :variant="secondary" to="/goal">GOAL</b-button>
+      <h1>GoAL</h1>
     </div>
   </div>
 
@@ -9,7 +9,7 @@
 
 <script>
     export default {
-        name: "Funds"
+        name: "Goal"
     }
 </script>
 

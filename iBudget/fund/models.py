@@ -68,3 +68,13 @@ class FinancialGoal(models.Model):
         on_delete=models.CASCADE,
         related_name="goal"
     )
+
+
+    @staticmethod
+    def get_by_fund_name(name):
+
+        try:
+            return FinancialGoal.objects.get(fund=name)
+        except FinancialGoal.DoesNotExist:
+            return None
+

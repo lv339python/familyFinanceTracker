@@ -4,7 +4,9 @@ import SideBar from './SideBar';
 import Spending_registration from './Spending_registration';
 import Limit from './Limit';
 import Icon_getter from './Icon_getter';
+import Goal from './Goal';
 
-export {Login, SideBar, Spending_registration, Spend, Limit, Icon_getter};
+
+export {Login, SideBar, Spending_registration, Spend, Limit, Icon_getter, Goal};
 
 
