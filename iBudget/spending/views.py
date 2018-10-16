@@ -173,6 +173,3 @@ def change_group_limit(request, category_name):
             update(value=new_limit)
         return HttpResponse("The limit amount has been changed to  '{}'".format(new_limit))
     return HttpResponse('Wrong request method', status=405)
-
-# Addition to Halya, getting available standard images
-

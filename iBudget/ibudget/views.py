@@ -13,7 +13,10 @@ from utils.response_helper import (RESPONSE_400_INVALID_DATA, RESPONSE_400_NO_FI
 class FileHandler(View):
     """ View for handling CRUD methods for images in the AmazonS3 bucket
     """
-    def get(self,request):
+    def get(self, request):
+        """the method retrieves default icons from AWS S3
+        :param - request object
+        """
         urls = AwsService.get_default_list_icons()[1:]
         return JsonResponse(urls, status=200, safe=False)
 
