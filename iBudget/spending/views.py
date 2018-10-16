@@ -89,10 +89,10 @@ def group_limit(request):
             user_id,
             sharedspendingcategories__group__usersingroups__is_admin=
             True).distinct('name')
-        list_of_spensings = []
+        list_of_spendings = []
         for i in available_spendings:
-            list_of_spensings.append(i.name)
-        return JsonResponse(list_of_spensings, safe=False, status=200)
+            list_of_spendings.append(i.name)
+        return JsonResponse(list_of_spendings, safe=False, status=200)
     return HttpResponse('Wrong request method', status=405)
 
 
@@ -117,7 +117,6 @@ def set_group_limit(request):
                                                                         content['end_date'])) | Q
                                                    (end_date__range=(content['start_date'],
                                                                      content['end_date'])))
-        print(len(current_limitdates))
         if current_limitdates:
             for i in current_limitdates:
                 catgs_with_limits.append(i.spending_category_id)
@@ -152,3 +151,6 @@ def change_group_limit(request, category_name):
             update(value=new_limit)
         return HttpResponse("The limit amount has been changed to  '{}'".format(new_limit))
     return HttpResponse('Wrong request method', status=405)
+
+# Addition to Halya, getting available standard images
+

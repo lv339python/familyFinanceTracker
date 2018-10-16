@@ -73,3 +73,11 @@ class AwsService:
         if status in (200, 204):
             return True
         return False
+
+    @classmethod
+    def get_default_list_icons(cls):
+        bucket_list = cls.boto_client.list_objects_v2(Bucket=AWS_STORAGE_BUCKET_NAME)
+        urls = [{"name": img["Key"],
+                 "path": cls.get_image_url(img['Key'])} for img in bucket_list['Contents'] if
+                img['Key'].startswith('standard/')]
+        return urls
