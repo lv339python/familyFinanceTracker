@@ -1,27 +1,49 @@
 <template>
   <div class="content">
       <div class="text">
-      <h1>There will be groups...</h1>
+      <p>There are your groups: </p>
+          <ul id="groups">
+              <li v-for="(content,group) in cur_balance" >
+                  {{group}}
+                  <ul>
+                      <li v-for="(item,value) in content" >
+                          {{value}} : {{item}}
+                      </li>
+                  </ul>
+              </li>
+          </ul>
     </div>
   </div>
-
 </template>
 
 <script>
+    import axios from 'axios';
     export default {
-        name: "Groups"
-    }
+        name: "Groups",
+        data (){
+            return{
+                cur_balance : []
+            }} ,
+        created() {
+            axios.get('api/v1/group/')
+                .then(response => {
+                    this.cur_balance = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+        }}
 </script>
 
 <style scoped>
-    .content {
-        height: 100vh;
-        overflow: hidden;
-        display: flex;
-    }
-
-    .text {
-        width: fit-content;
-        margin: auto;
-    }
+.content{
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+  .text{
+      width: fit-content;
+      margin:  auto;
+      font-size: x-large;
+  }
 </style>

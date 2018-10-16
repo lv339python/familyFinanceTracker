@@ -60,6 +60,50 @@ class Group(models.Model):
         except Group.DoesNotExist:
             return None
 
+    @staticmethod
+    def filter_groups_by_user_id(user_id):
+        """
+        Args:
+            user_id(int): Current session user`s id.
+        Returns:
+            List of Groups objects .
+
+        """
+        users_groups = []
+        users_groups.extend(Group.objects.filter(members=user_id))
+        return users_groups
+
+    @staticmethod
+    def filter_funds_by_group(group_object):
+        """
+        Args:
+            group_object: users group object.
+        Returns:
+            List of fund objects for current group.
+
+        """
+        shared_funds, group_funds = [], []
+        shared_funds.extend(SharedFunds.objects.filter(group=group_object))
+        for fund in shared_funds:
+            group_funds.extend(FundCategories.objects.filter(id=fund.id))
+        return group_funds
+
+    @staticmethod
+    def filter_spendings_categories_by_group(group_object):
+        """
+        Args:
+            group_object: users group object.
+        Returns:
+            List of spend objects for current group.
+
+        """
+        shared_spendings, group_spendings = [], []
+        shared_spendings.extend(SharedSpendingCategories.objects.filter(group_id=group_object))
+        for spend in shared_spendings:
+            group_spendings.extend(SpendingCategories.objects.filter(id=
+                                                                     spend.spending_categories_id))
+        return group_spendings
+
 
 class UsersInGroups(models.Model):
     """Members of groups.
