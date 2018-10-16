@@ -18,8 +18,6 @@
                 <br/>
                 <br/>
                 <b-link @click="showRegister">Create a new account</b-link>
-                <hr/>
-                <b-button @click="google">Sign in With Google</b-button>
               </form>
 
              <form class="register" @submit.prevent="register" v-show="registerDisplay" >
@@ -110,29 +108,7 @@ export default {
                 this.error = true;
                 })
         },
-                google: function (event) {
-                console.log("start google");
-                axios({
-                    method: 'get',
-                    url: '/api/v1/authentication/auth/',
-                    // headers: {'Access-Control-Allow-Origin': '*'}
-                }).then(response =>{
-                    console.log("1");
-                    console.log(response);
-                    // this.$router.go('/home');
-                    console.log(response.data["url"]);
-                    window.location.replace(response.data["url"]);
-                    // this.$router.push(response.data["url"]);
-                }).catch(e => {
-                    console.log("err");
-                    console.log(e);
-                    this.error = true;
-                });
-                console.log("end google");
-                // Vue.http.headers.common['Access-Control-Request-Method'] = '*'
-            }
-        },
-    }
+    }}
 </script>
 
 <style scoped>
