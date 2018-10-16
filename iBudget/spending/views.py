@@ -7,6 +7,8 @@ from datetime import date
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
+
+from group.models import SharedSpendingCategories
 from utils.validators import is_valid_data_individual_limit
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
@@ -152,3 +154,39 @@ def change_group_limit(request, category_name):
             update(value=new_limit)
         return HttpResponse("The limit amount has been changed to  '{}'".format(new_limit))
     return HttpResponse('Wrong request method', status=405)
+
+
+@require_http_methods(["POST"])
+def create_spending_category(request):
+    """Handling request for creating new spending category.
+
+        Args:
+            request (HttpRequest): Data for new category.
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    data = json.loads(request.body)
+
+    name = data['name']
+    icon = data['icon']
+    owner = user
+    is_shared = False
+
+
+    # if not is_valid_data_new_spending(data):
+    #     return HttpResponse(status=400)
+    spending = SpendingCategories.filter_by_owner_name(owner=owner, name=name)
+
+    if not spending:
+        spending = SpendingCategories(name=name, icon=icon, owner=owner, is_shared=is_shared)
+        try:
+            spending.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=406)
+    else:
+        return HttpResponse("Sorry, but such category exists...\n OK", status=202)
+
+
+    return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
+

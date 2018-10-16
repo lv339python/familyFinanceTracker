@@ -136,7 +136,7 @@ import axios from 'axios';
                   'value': this.selectedValueQ
                 }
              }).then(response =>{
-                this.$router.go('/spending/set_limit')
+                this.$router.go('/spend')
              })
     }
   }
