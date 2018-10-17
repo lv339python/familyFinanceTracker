@@ -1,6 +1,10 @@
 <template>
     <div id="icon_getter">
-            <input type = image v-for="icon in icons" :src="icon.path"  v-on:click="get_name(icon.name)" class="icon" alt="icon"></input>
+            <input type = image
+            v-for="icon in icons" :src="icon.path"
+            v-on:click="get_name(icon.name)"
+            class="icon" alt="icon"></input>
+
     </div>
 </template>
 
@@ -20,7 +24,10 @@
 
             axios({
                 method: "get",
-                url: "api/v1/files/"
+                url: "api/v1/files/",
+                headers: {
+                'tab': 'spendings'
+                }
             }).then(response => {
                 this.icons = response.data;
             }).catch(error => {
@@ -29,13 +36,11 @@
         },
 
         methods:{
-            get_name: function(name){
-            this.icon_name = name
-            alert(this.icon_name)
-            },
+            get_name: function(name){this.$emit('get_name', {icon_name: name})},
         }
-
     }
+
+
 </script>
 
 <style scoped>
@@ -44,6 +49,5 @@
         max-width: 64px;
         min-width: 32px;
         min-height: 32px;
-
-    }
+}
 </style>
