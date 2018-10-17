@@ -4,15 +4,12 @@
             <b-button :variant="secondary" to="../spending_registration">Spending Registration</b-button>
             <b-button :variant="secondary" to="../spend">Set individual limitation</b-button>
             <b-button :variant="secondary" to="/limit">Set group limitation</b-button>
-            <b-button :variant="secondary" to="/add_spending">add spending</b-button>
-            <Icon_getter :tabName="tab"></Icon_getter>
-
+            <b-button :variant="secondary" to="/spending_add">Add spending</b-button>
         </div>
     </div>
 </template>
 
 <script>
-    import Icon_getter from '../components/Icon_getter.vue'
     export default {
         name: "Spendings",
         props: ["tabName"],
@@ -21,8 +18,7 @@
             tab: 'spendings'
                }
 
-        },
-        components: {'Icon_getter': Icon_getter}
+        }
 
     }
 </script>
