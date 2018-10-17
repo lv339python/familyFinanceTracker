@@ -28,7 +28,11 @@ def show_fund(request):
 
 
 def list_goal_user(user):
-    user = 1
+    """the functions finds all the user's goals associated with particular user and
+    returns them
+
+           Args:
+       """
     list_fund =[]
     for entry in FundCategories.filter_by_user(user):
         list_fund.append(entry.id)
@@ -44,18 +48,35 @@ def list_goal_user(user):
 
 @require_http_methods(["GET"])
 def show_goal_data(request):
+
+    """Handling request for creating of goal data list.
+
+       Args:
+           request (HttpRequest): Goal data.
+       Returns:
+           HttpResponse object.
+   """
+
     user = request.user
-    user = 1
     if user:
         user_goal_statistic = []
         for entry in list_goal_user(user):
             fund_category= FundCategories.get_by_id(entry)
             list_transactions = []
-            for item in IncomeHistory.objects.filter(fund=entry, date__range=[fund_category.goal.start_date,fund_category.goal.finish_date]):
+            for item in IncomeHistory.objects.filter(fund=entry, date__range=[fund_category.goal.start_date,
+                                                                              fund_category.goal.finish_date]):
                 list_transactions.append(item.value)
-            user_goal_statistic.append({"id": entry, "name": fund_category.name,"value": fund_category.goal.value,"start_date":fund_category.goal.start_date,"finish_date":fund_category.goal.finish_date,
+            user_goal_statistic.append({"id": entry,
+                                        "name": fund_category.name,
+                                        "value": fund_category.goal.value,
+                                        "start_date":fund_category.goal.start_date,
+                                        "finish_date":fund_category.goal.finish_date,
                                         'transaction': list_transactions})
-        return HttpResponse(user_goal_statistic, status=200)
+            print(user_goal_statistic)
+        return JsonResponse(user_goal_statistic, status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+
 
 
