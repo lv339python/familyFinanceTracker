@@ -12,15 +12,15 @@
             return {
                     icons: [],
                     icon_name: "",
-
                    }
         },
+        props: ['tabName'],
 
         created() {
-
             axios({
                 method: "get",
-                url: "api/v1/files/"
+                url: "api/v1/files/",
+                params: {"tab": this.tabName}
             }).then(response => {
                 this.icons = response.data;
             }).catch(error => {

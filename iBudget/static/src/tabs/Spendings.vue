@@ -5,14 +5,25 @@
             <b-button :variant="secondary" to="../spend">Set individual limitation</b-button>
             <b-button :variant="secondary" to="/limit">Set group limitation</b-button>
             <b-button :variant="secondary" to="/add_spending">add spending</b-button>
+            <Icon_getter :tabName="tab"></Icon_getter>
 
         </div>
     </div>
 </template>
 
 <script>
+    import Icon_getter from '../components/Icon_getter.vue'
     export default {
-        name: "Spendings"
+        name: "Spendings",
+        props: ["tabName"],
+        data() {
+        return {
+            tab: 'spendings'
+               }
+
+        },
+        components: {'Icon_getter': Icon_getter}
+
     }
 </script>
 

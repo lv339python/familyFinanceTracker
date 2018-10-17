@@ -17,7 +17,14 @@ class FileHandler(View):
         """the method retrieves default icons from AWS S3
         :param - request object
         """
-        urls = AwsService.get_default_list_icons()[1:]
+        if request.GET['tab'] == 'funds':
+             urls = AwsService.get_default_list_icons('standard_fund/')[1:]
+        if request.GET['tab'] == 'incomes':
+             urls = AwsService.get_default_list_icons('standard_income/')[1:]
+        if request.GET['tab'] == 'spendings':
+             urls = AwsService.get_default_list_icons('standard/')[1:]
+        if request.GET['tab'] == 'groups':
+            urls = AwsService.get_default_list_icons('standard_group/')[1:]
         return JsonResponse(urls, status=200, safe=False)
 
 
