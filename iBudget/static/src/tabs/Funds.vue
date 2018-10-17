@@ -1,7 +1,7 @@
 <template>
   <div class="content">
       <div class="text">
-      <b-button :variant="secondary" to="../financial_goal">Financial goal</b-button>
+      <b-button :variant="secondary" to="../Financial_goal">Financial goal</b-button>
     </div>
   </div>
 
