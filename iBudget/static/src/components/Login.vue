@@ -1,5 +1,5 @@
-<template>
 
+<template>
   <div class="content">
       <div id="body">
             <p>Please login to continue</p>
@@ -17,7 +17,18 @@
                 <b-button @click="login">Login</b-button>
                 <br/>
                 <br/>
-                <b-link @click="showRegister">Create a new account</b-link>
+                <b-link @click="showRegister">Create new account</b-link>
+                <br/>
+                <b-link @click="showforgotpassword">Forgot your password ? </b-link>
+                <br>
+                <form class="forgotpassword" @submit.prevent="forgotpassword" v-show="forgotpasswordDisplay" >
+                <h1>Forgot password </h1>
+                <label>Please enter your email to change your password.</label>
+                <br/>
+                <input required v-model="email" type="text" placeholder="Email"/>
+                <b-button @click="sendData">Send</b-button>
+                </form>
+
               </form>
 
              <form class="register" @submit.prevent="register" v-show="registerDisplay" >
@@ -39,6 +50,7 @@
                <br/>
                <b-link @click="showLogin">Already registered?</b-link>
              </form>
+
            </div>
       </div>
   </div>
@@ -54,7 +66,9 @@ export default {
     data() {
         return {
             loginDisplay:true,
-            registerDisplay:false
+            registerDisplay:false,
+            forgotpasswordDisplay:false,
+
         }
     },
     methods: {
@@ -66,12 +80,22 @@ export default {
 
         showRegister(){
             this.loginDisplay = false;
-            this.registerDisplay = true
+            this.registerDisplay = true;
+            this.forgotpasswordDisplay = false;
         },
 
         showLogin(){
             this.loginDisplay = true;
             this.registerDisplay = false;
+            this.forgotpasswordDisplay = false;
+
+
+        },
+
+        showforgotpassword(){
+            this.loginDislpay = false;
+            this.registerDisplay = false;
+            this.forgotpasswordDisplay = true;
         },
 
         close() {
@@ -106,9 +130,23 @@ export default {
                 this.$router.go('/home');
             }).catch(e => {
                 this.error = true;
-            });
+            })
+        },
+        sendData: function (event) {
+            axios({
+                method: 'post',
+                url: '/api/v1/authentication/send_email/',
+                data: {
+                    'email': this.email,
+
+                }
+            }).then(response =>{
+                this.$router.go('/home');
+            }).catch(e => {
+                this.error = true;
+            })
         }
-    },
+    }
 }
 </script>
 

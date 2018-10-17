@@ -11,10 +11,17 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
 
-from utils.validators import login_validate, is_valid_registration_data
+from utils.validators import login_validate, is_valid_registration_data, is_valid_password,\
+    updating_email_validate, updating_password_validate
 from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
   LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
 from .models import UserProfile
+from utils.jwttoken import create_token, handle_token
+from utils.password_reseting import send_password_update_letter, send_successful_update_letter
+
+TTL_SEND_PASSWORD_TOKEN = 60 * 60
+USER_TTL_NOTIFICATOR = TTL_SEND_PASSWORD_TOKEN / 60
+TTL_USER_ID_COOKIE = 60 * 60 * 24 * 14
 
 
 @require_http_methods(["POST"])
@@ -43,8 +50,8 @@ def login_user(request):
     :return: status 200 if login was successful, status 400 if unsuccessful
     """
     data = json.loads(request.body.decode("utf-8"))
-    if not login_validate(data):
-        return HttpResponse('received data is not valid', status=400)
+    # if not login_validate(data):
+    #     return HttpResponse('received data is not valid', status=400)
     email = data['email'].strip().lower()
     user = authenticate(email=email, password=data['password'])
     if user is not None:
@@ -106,4 +113,66 @@ def google_sign_in(request):
         user.password = str(randint(0, 9999))
         user.save()
         return HttpResponse(status=201)
+    return HttpResponse(status=400)
+
+
+@require_http_methods(["POST"])
+def send_email(request):
+    """
+
+    :param request: method POST
+    :return: HttpResponse 400 if its bad request and HttpResponse 200 if everything is alright
+    """
+    data = json.loads(request.body)
+    if updating_email_validate(data, 'email'):
+        email = data.get('email')
+
+    user = UserProfile.get_by_email(email=email)
+    if user:
+        arg = {'user_id': user.id}
+        token = create_token(data=arg, expiration_time=TTL_SEND_PASSWORD_TOKEN)
+        send_password_update_letter(user, token)
+        return HttpResponse(status=200)
+    return HttpResponse(status=400)
+
+
+@require_http_methods(["PUT"])
+def update_password(request, token=None):
+    """Handles PUT request."""
+    if token:
+        identifier = handle_token(token)
+        if not identifier:
+            return HttpResponse(status=498)
+        user = UserProfile.get_by_id(identifier['user_id'])
+        if not user:
+            return HttpResponse(status=404)
+        data = request.body
+        if updating_password_validate(data, 'new_password'):
+            new_password = data.get('new_password')
+            if not user.check_password(new_password):
+                user.update(password=new_password)
+                send_successful_update_letter(user)
+                return HttpResponse(status=200)
+    return HttpResponse(status=400)
+
+
+# tepmorary without token and validation
+@require_http_methods(["GET"])
+def password_recovery(request):
+    """Handles GET request."""
+    return redirect('')
+
+
+
+
+@require_http_methods(["POST"])
+def change_password(request):
+    """Change_password UserProfile"""
+    user = request.user
+    data = json.loads(request.body)
+    if user.check_password(data['OldPassword']):
+        if is_valid_password(data['NewPassword']):
+            user.set_password(data['NewPassword'])
+            user.save(update_fields=['password'])
+        return HttpResponse(status=200)
     return HttpResponse(status=400)
