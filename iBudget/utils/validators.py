@@ -11,7 +11,6 @@ from django.core.validators import validate_email
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 
-
 def is_valid_password(password):
     """validate password
 
@@ -143,3 +142,13 @@ def is_valid_data_individual_limit(data):
         return False
 
 
+def is_valid_data_new_spending(data):
+    """
+    Function that provides login data validation.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != {'name', 'icon'} or not data['name']:
+        return False
+    return True
