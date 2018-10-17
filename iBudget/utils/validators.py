@@ -11,6 +11,7 @@ from django.core.validators import validate_email
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 
+
 def is_valid_password(password):
     """validate password
 
@@ -140,3 +141,5 @@ def is_valid_data_individual_limit(data):
 
     except (ValidationError, AttributeError):
         return False
+
+

@@ -1,7 +1,6 @@
 <template>
   <div class="content">
       <div class="text">
-      <h1>There will be groups...</h1>
     </div>
   </div>
 

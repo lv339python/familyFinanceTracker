@@ -71,7 +71,6 @@ class UsersInGroups(models.Model):
 
 
     """
-    objects = BaseUserManager()
     group = models.ForeignKey(Group, on_delete=True)
     user = models.ForeignKey(UserProfile, on_delete=True)
     is_admin = models.BooleanField()

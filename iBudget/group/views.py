@@ -6,7 +6,6 @@ from django.views.decorators.http import require_http_methods
 from .models import Group
 
 
-
 @require_http_methods(["GET"])
 def get_by_group(request):
     """Handling request for creating of group list.
@@ -23,3 +22,6 @@ def get_by_group(request):
             user_groups.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_groups, status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+
