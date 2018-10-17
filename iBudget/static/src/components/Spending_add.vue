@@ -37,8 +37,8 @@ export default {
             newName: null,
             selectedIcon: '',
             newSpending: {
-            'name': null,
-            'icon': ''
+                'name': null,
+                'icon': ''
             },
             msg:''
 

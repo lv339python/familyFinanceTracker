@@ -36,15 +36,9 @@
         },
 
         methods:{
-            get_name: function(name){
-            this.icon_name = name;
-            this.$emit('get_name',
-                       {icon_name: this.icon_name
-                       }
-                       )
-            },
-         }
+            get_name: function(name){this.$emit('get_name', {icon_name: name})},
         }
+    }
 
 
 </script>
