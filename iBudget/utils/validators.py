@@ -143,7 +143,8 @@ def date_range_validate(data):
     """
     if data["start_date"] > data["finish_date"]:
         raise ValidationError("Finish time cannot be earlier than start time!")
-    return True
+    return data
+
 def is_valid_data_individual_limit(data):
     """
     Function that provides login data validation.
