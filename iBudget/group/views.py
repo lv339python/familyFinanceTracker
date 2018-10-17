@@ -24,7 +24,8 @@ def get_by_group(request):
         for entry in Group.group_filter_by_owner_id(user):
             user_groups.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_groups, status=200, safe=False)
-    return JsonResponse({}, status=400
+    return JsonResponse({}, status=400)
+
 def groups_balance(request):
     """
 
