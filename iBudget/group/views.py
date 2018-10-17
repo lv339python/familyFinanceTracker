@@ -3,6 +3,8 @@ This module provides functions for handling group view.
 """
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from income_history.models import IncomeHistory
+from spending_history.models import SpendingHistory
 from .models import Group
 
 

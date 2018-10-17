@@ -2,11 +2,11 @@
 This module provides functions for handling Auth view.
 """
 
-import json
-from random import randint
+import json, random, string
+
 
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
@@ -79,7 +79,8 @@ def google_auth_grant(request):
     authorization_url = google.authorization_url(AUTHORIZATION_BASE_URL, access_type=
                                                  "offline", prompt="select_account")[0]
     if authorization_url:
-        return redirect(authorization_url)
+        # return redirect(authorization_url)
+        return JsonResponse({'url': authorization_url}, status=200)
     return HttpResponse(status=400)
 
 
@@ -95,14 +96,17 @@ def google_sign_in(request):
                        LOCAL_URL + request.get_full_path(), code=request.GET["code"])
     user_data = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
     if user_data:
-        if UserProfile.get_by_email(user_data['email']):
-            login(request, UserProfile.get_by_email(user_data['email']))
-            return HttpResponse('Operation was successful provided', status=200)
+        user_profile = UserProfile.get_by_email(user_data['email'])
+        if user_profile:
+            login(request, user_profile)
+            return redirect("/")
         user = UserProfile()
         user.email = user_data['email']
         user.first_name = user_data['given_name']
         user.last_name = user_data['family_name']
-        user.password = str(randint(0, 9999))
+        chars_pass = string.ascii_letters + string.digits + string.punctuation
+        user.password = ''.join(random.choice(chars_pass) for _ in range(8))
         user.save()
-        return HttpResponse(status=201)
+        login(request, user_profile)
+        return redirect("/")
     return HttpResponse(status=400)
