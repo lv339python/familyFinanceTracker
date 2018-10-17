@@ -4,13 +4,11 @@ This module provides functions for handling Auth view.
 
 import json
 from random import randint
-
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
-
 from utils.validators import login_validate, is_valid_registration_data
 from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
   LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
@@ -107,3 +105,4 @@ def google_sign_in(request):
         user.save()
         return HttpResponse(status=201)
     return HttpResponse(status=400)
+
