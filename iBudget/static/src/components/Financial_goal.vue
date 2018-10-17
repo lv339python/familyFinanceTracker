@@ -1,6 +1,17 @@
 <template>
     <div id="spend">
        <div class="col-md-4">
+         <hr>
+         <div class="form-group">
+           <label>Chose fund:</label>
+           <select v-model="fund" class="form-control">
+             <option v-for="fund in fund_list_ind" v-bind:value="fund.id"> {{ fund.name }}
+             </option>
+           </select>
+          </div>
+       </div>
+
+       <div class="col-md-4">
           <hr>
           <div class="form-group">
             <label>Chose group</label>
@@ -67,6 +78,7 @@ import axios from 'axios';
      data () {
      return {
        fund_list: [],
+       fund_list_ind:[],
        group_list:null,
        fund:null,
        start_date:null,
@@ -86,6 +98,14 @@ import axios from 'axios';
           .catch(e => {
           this.errors.push(e)
           });
+          axios.get('/api/v1/fund/')
+            .then(response => {
+            // JSON responses are automatically parsed.
+            this.fund_list_ind = response.data
+          })
+          .catch(e => {
+          this.errors.push(e)
+          });
           axios.get('/api/v1/group/get_by_group/')
             .then(response => {
             // JSON responses are automatically parsed.
@@ -99,7 +119,7 @@ import axios from 'axios';
     setData: function (event) {
       axios({
               method: 'post',
-              url: '/api/v1/fund/register_financial_goal_group/',
+              url: '/api/v1/fund/register_financial_goal/',
               data: {
                   'value': this.value,
                   'start_date': this.start_date,
@@ -107,7 +127,7 @@ import axios from 'axios';
                   'fund': this.fund
                 }
              }).then(response =>{
-                this.$router.go('fund/register_financial_goal_ind')
+                this.$router.go('fund/register_financial_goal')
              })
     }
   }

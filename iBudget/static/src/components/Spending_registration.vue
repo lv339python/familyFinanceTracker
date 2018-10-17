@@ -94,7 +94,7 @@ import axios from 'axios';
             fund_list: [],
             group_list: [],
             shared_list: [],
-            shared_category: null,
+            // shared_category: null,
             category: null,
             type_of_pay: null,
             value: null,
@@ -111,7 +111,7 @@ import axios from 'axios';
           })
           .catch(e => {
           this.errors.push(e)
-          })
+          });
           axios.get('/api/v1/fund/')
             .then(response => {
             // JSON responses are automatically parsed.
