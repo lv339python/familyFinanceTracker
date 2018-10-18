@@ -1,10 +1,11 @@
 <template>
   <div class="content" id="goal">
       <div class="text">
-      <button v-on:click="is_active=!is_active">Ok</button>
+
       <ul>
-        <il v-for="goal in user_goal_list" v-if="is_active === true"> {{ goal.name}} - {{ goal.value }} </il>
-      </ul>
+        <il v-for="goal in user_goal_list"> {{ goal.name}} - {{ goal.value }}-{{goal.transaction}} </il>
+        </ul>
+
     </div>
   </div>
 

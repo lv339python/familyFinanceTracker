@@ -41,6 +41,7 @@ def list_goal_user(user):
         financial_goal=FinancialGoal.objects.filter(fund=entry)
         if financial_goal:
             list_goal.append(entry)
+    print (list_goal)
     return list_goal
 
 
@@ -72,7 +73,6 @@ def show_goal_data(request):
                                         "start_date":fund_category.goal.start_date,
                                         "finish_date":fund_category.goal.finish_date,
                                         'transaction': list_transactions})
-            print(user_goal_statistic)
         return JsonResponse(user_goal_statistic, status=200, safe=False)
     return JsonResponse({}, status=400)
 
