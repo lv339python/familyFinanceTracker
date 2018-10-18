@@ -106,6 +106,6 @@ def google_sign_in(request):
         chars_pass = string.ascii_letters + string.digits + string.punctuation
         user.password = ''.join(random.choice(chars_pass) for _ in range(8))
         user.save()
-        login(request, user_profile)
+        login(request, user)
         return redirect("/")
     return HttpResponse(status=400)

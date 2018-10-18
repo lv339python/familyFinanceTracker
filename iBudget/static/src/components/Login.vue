@@ -120,7 +120,7 @@ export default {
                 this.error = true;
             });
         }
-    }
+    },
 }
 </script>
 
