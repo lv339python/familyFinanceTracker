@@ -5,7 +5,7 @@
       <ul>
         <il v-for="goal in user_goal_list"> {{ goal.name}} - {{ goal.value }}-{{goal.transaction}} </il>
         </ul>
-
+        <chart1> </chart1>
     </div>
   </div>
 
