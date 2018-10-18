@@ -15,7 +15,7 @@
           <hr>
           <div class="form-group">
             <label>Chose group</label>
-            <select v-model="group" class="ourform">
+            <select v-model="group" class="form-control">
             <option v-for="group in group_list"
                       v-bind:value="group.id"
                       v-on:click="is_active_shared_fund=group.id">
@@ -30,7 +30,7 @@
           <hr>
           <div class="form-group">
             <label>Chose fund</label>
-            <select v-model="fund" class="ourform" >
+            <select v-model="fund" class="form-control" >
             <option v-for="fund in fund_list"
                       v-if="fund.id_group === is_active_shared_fund"
                       v-bind:value="fund.id_fund">
