@@ -106,7 +106,7 @@
         },
 
         created() {
-            axios.get('/api/v1/fund/show_fund_group/')
+            axios.get('/api/v1/fund/users_shared_fund/')
                 .then(response => {
                     // JSON responses are automatically parsed.
                     this.fund_list = response.data

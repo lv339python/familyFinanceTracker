@@ -82,9 +82,9 @@ class FinancialGoal(models.Model):
 
 
         """
-        goal = FinancialGoal.objects.filter(
+        goals = FinancialGoal.objects.filter(
             value=value,
             start_date=start_date,
             finish_date=finish_date,
             fund=fund)
-        return goal
+        return goals

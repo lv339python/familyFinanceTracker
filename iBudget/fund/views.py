@@ -32,7 +32,7 @@ def show_fund(request):
 
 
 @require_http_methods(["GET"])
-def show_fund_group(request):
+def users_shared_fund(request):
     """Handling request for creating of fund list in group.
         Args:
             request (HttpRequest): Limitation data.
