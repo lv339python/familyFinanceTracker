@@ -1,13 +1,9 @@
 <template>
-  <div id="app">
+  <div class="flex-container" id="app">
     <!--<sidebar></sidebar>-->
-      <navbar></navbar>
+      <navbar class="flex-element" id="navbar"></navbar>
+      <router-view class="flex-element" id="view"></router-view>
 
-      <div id="canvas">
-        <keep-alive>
-           <router-view></router-view>
-        </keep-alive>
-      </div>
   </div>
 </template>
 
@@ -28,7 +24,24 @@ export default {
 </script>
 
 <style>
-    #canvas {
+    #navbar {
+
+    }
+    /*#canvas {*/
+        /*background-color: whitesmoke;*/
+        /*height: 100%;*/
+    /*}*/
+    .flex-container{
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .flex-element{
+        flex-grow: 1;
+    }
+    #view {
         background-color: whitesmoke;
+        height: 100%;
+        display: flex;
     }
 </style>

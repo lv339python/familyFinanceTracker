@@ -1,19 +1,18 @@
 <template>
     <div>
-        <b-navbar toggleable="md" type="dark" variant="info" disabled>
+        <b-navbar id="nb" toggleable="md" type="dark" variant="info" sticky="true" v-if="checkLoginStatus()">
 
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-            <account></account>
+            <!--<account></account>-->
             <!--<b-navbar-brand to="/login">Account</b-navbar-brand>-->
-            <b-navbar-brand to="/home" :disabled="isLog">Home</b-navbar-brand>
-            <b-navbar-brand to="/incomes" :disabled="isLog">Incomes</b-navbar-brand>
-            <b-navbar-brand to="/funds" :disabled="isLog">Funds</b-navbar-brand>
-            <b-navbar-brand to="/spendings" :disabled="isLog">Spendings</b-navbar-brand>
-
+            <b-navbar-brand to="/home">Home</b-navbar-brand>
+            <b-navbar-brand to="/incomes">Incomes</b-navbar-brand>
+            <b-navbar-brand to="/funds">Funds</b-navbar-brand>
+            <b-navbar-brand to="/spendings">Spendings</b-navbar-brand>
             <b-collapse is-nav id="nav_collapse">
-
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
+                    <account></account>
                     <calendar></calendar>
                 </b-navbar-nav>
             </b-collapse>
@@ -29,15 +28,17 @@
 
     export default {
         name: "NavBar",
+
         components: {
             'calendar': Calendar,
             'account': Account
         },
-        data() {
-            return {
-                isLog: document.cookie.search("sessionid=") !== -1
+
+        methods: {
+            checkLoginStatus() {
+                return (document.cookie.search("sessionid=") !== -1)
             }
-        },
+        }
     }
 </script>
 
@@ -46,6 +47,7 @@
         width: fit-content;
         height: fit-content;
     }
+
     /*#collapse1 {*/
     /*width: 250px;*/
     /*height: fit-content;*/

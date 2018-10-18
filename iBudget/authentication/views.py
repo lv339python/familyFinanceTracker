@@ -107,19 +107,10 @@ def google_sign_in(request):
         user.save()
         return HttpResponse(status=201)
     return HttpResponse(status=400)
-@require_http_methods(['GET'])
-def show_users_data(request):
-    user = request.user
-    users_data = []
-    if user:
-        for i in UserProfile.filter_by_user(user.id):
-            print(i)
-            users_data.append({
-                "email": i.email,
-                "first_name": i.first_name,
-                "last_name": i.last_name,
-                "icon": i.icon
-            })
-        return JsonResponse(users_data, status=200, safe=False)
-    return JsonResponse({}, status=400)
 
+@require_http_methods(['GET'])
+def get_profile(request):
+    user = request.user
+    if user:
+        return JsonResponse(user.to_dict(), status=200, safe=False)
+    return JsonResponse({}, status=400)

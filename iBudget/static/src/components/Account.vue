@@ -1,19 +1,23 @@
 <template>
     <div id="acc">
-        <b-btn variant="primary" @click="showModal">
-            Account
-        </b-btn>
+        <b-button variant="primary" @click="showModal">
+            <img id="profile-thumbnail" rounded="circle"
+                 blank width="16" height="16" alt="img" class="m-1"
+                 src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>
+            {{user.email}}
+        </b-button>
         <b-modal ref="myModalRef" hide-footer title="Account">
             <div class="d-block text-center">
-                <b-card v-for="item in users_list">
-                    <b-img id="profile-photo" rounded="circle" blank width="75" height="75"
-                           blank-color="orange" alt="img" class="m-1"/>
+                <b-card >
+                    <img id="profile-photo" rounded="circle" blank width="75" height="75"
+                         blank-color="orange" alt="img" class="m-1"
+                         src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>
                     <p class="card-text" >
-                        <b>Email: </b>{{item.email}}
+                        <b>Email: </b>{{user.email}}
                         <br/>
-                        <b>First Name: </b>{{item.first_name}}
+                        <b>First Name: </b>{{user.first_name}}
                         <br/>
-                        <b>Last Name: </b>{{item.last_name}}
+                        <b>Last Name: </b>{{user.last_name}}
                     </p>
                 </b-card>
             </div>
@@ -23,13 +27,15 @@
 </template>
 
 <script>
+
     import axios from 'axios';
 
     export default {
         name: "Account",
+
         data() {
             return{
-                users_list : []
+                user: null,
             }
         },
         methods: {
@@ -39,24 +45,26 @@
             hideModal() {
                 this.$refs.myModalRef.hide()
             },
-            logout: function (event) {
-            axios({
-                method: 'get',
-                url: '/api/v1/authentication/logout/',
-            }).then(response => {
-                this.isLog = false;
-                this.hideModal();
-            });
-        }
+            logout: function (event)
+            {
+                axios({
+                    method: 'get',
+                    url: '/api/v1/authentication/logout/',
+                }).then(response => {
+                    this.$router.push('/login');
+                    this.$router.go();
+                    this.hideModal();
+                });
+            }
         },
         created(){
-            axios.get('api/v1/authentication/show_users_data')
+            axios.get('api/v1/authentication/profile/')
                 .then(response => {
             // JSON responses are automatically parsed.
-            this.users_list = response.data
+            this.user = response.data
           })
           .catch(e => {
-          this.errors.push(e)
+            this.errors.push(e)
           })
         }
     }
@@ -72,5 +80,8 @@
     }
     #acc {
         margin-right: 20px;
+    }
+    #profile-thumbnail{
+        margin-right: 5px;
     }
 </style>

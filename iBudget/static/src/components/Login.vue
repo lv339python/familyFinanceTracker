@@ -101,6 +101,7 @@ export default {
                     'password': this.password
                 }
             }).then(response =>{
+                this.$router.push('/home');
                 this.$router.go('/home');
             }).catch(e => {
                 this.error = true;
@@ -111,8 +112,14 @@ export default {
 </script>
 
 <style scoped>
-#body {
-    text-align: center;
-}
-
+    #body {
+        text-align: center;
+        display: flex;
+        margin:auto;
+    }
+    #form{
+        margin: auto;
+        width: fit-content;
+        vertical-align: middle;
+    }
 </style>
