@@ -79,7 +79,6 @@ def google_auth_grant(request):
     authorization_url = google.authorization_url(AUTHORIZATION_BASE_URL, access_type=
                                                  "offline", prompt="select_account")[0]
     if authorization_url:
-        # return redirect(authorization_url)
         return JsonResponse({'url': authorization_url}, status=200)
     return HttpResponse(status=400)
 

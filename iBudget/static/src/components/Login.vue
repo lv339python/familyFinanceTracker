@@ -110,18 +110,18 @@ export default {
                 this.error = true;
                 })
         },
-                google: function (event) {
-                axios({
-                    method: 'get',
-                    url: '/api/v1/authentication/auth/',
-                }).then(response =>{
-                    window.location.replace(response.data["url"]);
-                }).catch(e => {
-                    this.error = true;
-                });
-            }
-        },
+        google: function (event) {
+            axios({
+                method: 'get',
+                url: '/api/v1/authentication/auth/',
+            }).then(response => {
+                window.location.replace(response.data["url"]);
+            }).catch(e => {
+                this.error = true;
+            });
+        }
     }
+}
 </script>
 
 <style scoped>
