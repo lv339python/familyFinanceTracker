@@ -69,8 +69,7 @@ class Group(models.Model):
             List of Groups objects .
 
         """
-        users_groups = []
-        users_groups.extend(Group.objects.filter(members=user_id))
+        users_groups = Group.objects.filter(members=user_id)
         return users_groups
 
     @staticmethod
@@ -82,10 +81,11 @@ class Group(models.Model):
             List of fund objects for current group.
 
         """
-        shared_funds, group_funds = [], []
-        shared_funds.extend(SharedFunds.objects.filter(group=group_object))
+        group_funds = []
+        shared_funds = SharedFunds.objects.filter(group=group_object)
         for fund in shared_funds:
-            group_funds.extend(FundCategories.objects.filter(id=fund.id))
+            for el in FundCategories.objects.filter(id=fund.id):
+                group_funds.append({'id': el.id, 'name': el.name})
         return group_funds
 
     @staticmethod
@@ -97,11 +97,11 @@ class Group(models.Model):
             List of spend objects for current group.
 
         """
-        shared_spendings, group_spendings = [], []
-        shared_spendings.extend(SharedSpendingCategories.objects.filter(group_id=group_object))
+        group_spendings = []
+        shared_spendings = SharedSpendingCategories.objects.filter(group_id=group_object)
         for spend in shared_spendings:
-            group_spendings.extend(SpendingCategories.objects.filter(id=
-                                                                     spend.spending_categories_id))
+            for el in SpendingCategories.objects.filter(id=spend.spending_categories_id):
+                group_spendings.append({'id': el.id, 'name': el.name})
         return group_spendings
 
 
