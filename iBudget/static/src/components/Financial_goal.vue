@@ -3,7 +3,7 @@
         <div class="col-md-4">
             <hr>
             <div class="form-group">
-                <label>Chose fund:</label>
+                <label>Chose your goal:</label>
                 <select v-model="fund" class="form-control">
                     <option v-for="fund in fund_list_ind" v-bind:value="fund.id"> {{ fund.name }}
                     </option>
@@ -29,7 +29,7 @@
         <div class="col-md-4">
             <hr>
             <div class="form-group">
-                <label>Chose fund</label>
+                <label>Chose your group goal</label>
                 <select v-model="fund" class="form-control">
                     <option v-for="fund in fund_list"
                             v-if="fund.id_group === is_active_shared_fund"
