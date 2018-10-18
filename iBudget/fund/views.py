@@ -38,7 +38,7 @@ def create_new_fund(request):
     is_shared = False
     data = json.loads(request.body)
     user = request.user
-    shared_group = Group.get_group_by_id(data["shared_group"])
+    shared_group = data["shared_group"]
     if shared_group:
         is_shared = True
     name = data["name"]
@@ -55,6 +55,7 @@ def create_new_fund(request):
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
     if is_shared:
+        shared_group = Group.get_group_by_id(data["shared_group"])
         shared_fund = SharedFunds(group=shared_group,
                                   fund=new_fund)
         try:

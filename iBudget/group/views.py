@@ -37,6 +37,5 @@ def show_users_group(request):
         groups = []
         for item in UsersInGroups.filter_by_user(user):
             groups.append({'name': item.group.name, 'id': item.group.id})
-            print(groups)
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
