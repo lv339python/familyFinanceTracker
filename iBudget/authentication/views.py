@@ -2,7 +2,9 @@
 This module provides functions for handling Auth view.
 """
 
-import json, random, string
+import json
+import random
+import string
 
 
 from django.contrib.auth import authenticate, login, logout
