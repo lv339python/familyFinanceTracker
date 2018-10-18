@@ -1,6 +1,7 @@
 """
 This module provides function for validations.
 """
+from decimal import Decimal
 from datetime import date
 
 from django.contrib.auth.password_validation import validate_password
@@ -8,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 SET_KEYS_REG_DATA = {"email", "password"}
-
+SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 
 def is_valid_password(password):
     """validate password
@@ -104,38 +105,50 @@ def input_spending_registration_validate(data):
         Args:
             data (dict): contain category, type of pay, sum, comment
         Returns:
-            bool: The return value. True is data valid, else False.
+            bool: The return value. True is data valid, else False.list([1,2,3])
     """
-    if not isinstance(data['category'], int):
+    if not set(data.keys()).difference(SET_KEYS_SPENDING_REG_DATA):
         return False
-    if not isinstance(data['type_of_pay'], int):
+    try:
+        data['category'] = int(data['category'])
+        data['type_of_pay'] = int(data['type_of_pay'])
+        data['value'] = Decimal(data['value'])
+        data['comment'] = str(data['comment'])
+        return True
+    except (ValidationError, AttributeError):
         return False
-    if not isinstance(data['sum'], int):
-        return False
-    if not isinstance(data['comment'], str):
-        return False
-    return True
 
 
-def spending_individual_limit_validate(data):
+def is_valid_data_individual_limit(data):
     """
     Function that provides login data validation.
     :type data: dict
     :return: 'True' if data is valid and 'None' if it is not.
     :rtype: bool
     """
-    if set(data.keys()) != set({'spending_id', 'month', 'year', 'value'}):
+    if set(data.keys()) != {'spending_id', 'month', 'year', 'value'}:
         return False
     try:
         data['spending_id'] = int(data['spending_id'])
         data['month'] = int(data['month'])
         data['year'] = int(data['year'])
         data['value'] = round(float(data['value']), 2)
-        if data['spending_id'] > 0 and \
-            -1 < data['month'] < 13 and \
-            data['year'] >= date.today().year and \
-            data['value'] > 0:
-            return True
-        return False
+        return (data['spending_id'] > 0 and
+                -1 < data['month'] < 13 and
+                data['year'] >= date.today().year and
+                data['value'] > 0)
+
     except (ValidationError, AttributeError):
         return False
+
+
+def is_valid_data_new_spending(data):
+    """
+    Function that provides login data validation.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != {'name', 'icon'} or not data['name']:
+        return False
+    return True

@@ -34,6 +34,76 @@ class Group(models.Model):
                                               through='SharedSpendingCategories',
                                               related_name="groups")
 
+    @staticmethod
+    def group_filter_by_owner_id(user):
+        """
+        Args:
+            user_id (int): index of owner,
+        Returns:
+            Group object if database contain group with user_id
+        """
+        return Group.objects.filter(owner=user)
+
+
+    @staticmethod
+    def get_group_by_id(group_id):
+        """
+        Args:
+            group_id(int): The first parameter.
+        Returns:
+            Groups object if database contain with group_id , None otherwise.
+
+        """
+        try:
+            group = Group.objects.get(pk=group_id)
+            return group
+        except Group.DoesNotExist:
+            return None
+
+    @staticmethod
+    def filter_groups_by_user_id(user_id):
+        """
+        Args:
+            user_id(int): Current session user`s id.
+        Returns:
+            List of Groups objects .
+
+        """
+        users_groups = Group.objects.filter(members=user_id)
+        return users_groups
+
+    @staticmethod
+    def filter_funds_by_group(group_object):
+        """
+        Args:
+            group_object: users group object.
+        Returns:
+            List of fund objects for current group.
+
+        """
+        group_funds = []
+        shared_funds = SharedFunds.objects.filter(group=group_object)
+        for fund in shared_funds:
+            for i in FundCategories.objects.filter(id=fund.id):
+                group_funds.append({'id': i.id, 'name': i.name})
+        return group_funds
+
+    @staticmethod
+    def filter_spendings_categories_by_group(group_object):
+        """
+        Args:
+            group_object: users group object.
+        Returns:
+            List of spend objects for current group.
+
+        """
+        group_spendings = []
+        shared_spendings = SharedSpendingCategories.objects.filter(group_id=group_object)
+        for spend in shared_spendings:
+            for i in SpendingCategories.objects.filter(id=spend.spending_categories_id):
+                group_spendings.append({'id': i.id, 'name': i.name})
+        return group_spendings
+
 
 class UsersInGroups(models.Model):
     """Members of groups.
@@ -54,14 +124,14 @@ class UsersInGroups(models.Model):
     def get_by_id(user_id):
         """
         Args:
-            user_id(int): The first parameter.
+            user_id(PK): The first parameter.
         Returns:
             UsersInGroups object if database contain user with user_id , None otherwise.
 
         """
 
         try:
-            user = UsersInGroups.objects.get(user_id=user_id)
+            user = UsersInGroups.objects.get(pk=user_id)
             return user
         except UsersInGroups.DoesNotExist:
             return None

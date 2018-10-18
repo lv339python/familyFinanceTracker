@@ -33,7 +33,7 @@ class AwsService:
         for obj in bucket_list['Contents']:
             if obj['Key'] == pic:
                 return False
-            return True
+        return True
 
     @classmethod
     def upload(cls, pic):
@@ -62,7 +62,7 @@ class AwsService:
 
     @classmethod
     def del_photo(cls, key):
-        """the metod  accepts the name of the file and deletes if from the bucket;
+        """the method  accepts the name of the file and deletes if from the bucket;
         returns boolean value
         """
         response = cls.boto_client.delete_object(
@@ -73,3 +73,14 @@ class AwsService:
         if status in (200, 204):
             return True
         return False
+
+    @classmethod
+    def get_default_list_icons(cls):
+        """the method accepts forms a list of dictionaries with the file names and their URLs from
+        those available on Amazon S3
+        """
+        bucket_list = cls.boto_client.list_objects_v2(Bucket=AWS_STORAGE_BUCKET_NAME)
+        urls = [{"name": img["Key"],
+                 "path": cls.get_image_url(img['Key'])} for img in bucket_list['Contents'] if
+                img['Key'].startswith('standard/')]
+        return urls

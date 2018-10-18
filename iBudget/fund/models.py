@@ -23,21 +23,17 @@ class FundCategories(models.Model):
     owner = models.ForeignKey(UserProfile, on_delete=True)
 
     @staticmethod
-    def filter_by_user_id(user_id, is_shared):
+    def filter_by_user(user, is_shared=False):
         """
         Args:
-            user_id (int): index of user,
-            is_shared(bool): which category we need(shared or not shared)
+            user (FK): user of fund,
+            is_shared(bool): which category we need(shared or not shared).
         Returns:
-            FundCategories object if database contain category with user_id
+            FundCategories object if database contain fund for user
             and is_shared value, None otherwise.
 
         """
-        try:
-            return FundCategories.objects.filter(owner=user_id,
-                                                 is_shared=is_shared)
-        except FundCategories.DoesNotExist:
-            return None
+        return FundCategories.objects.filter(owner=user, is_shared=is_shared)
 
     @staticmethod
     def get_by_id(fund_id):
@@ -49,6 +45,26 @@ class FundCategories(models.Model):
 
         """
         try:
-            return FundCategories.objects.get(id=fund_id)
-        except FundCategories.DoesNotExist:
+            return FundCategories.objects.get(pk=fund_id)
+        except (FundCategories.DoesNotExist, ValueError):
             return None
+
+
+class FinancialGoal(models.Model):
+    """
+    Categories of available user's financial goal.
+        Attributes:
+        value (decimal):  Goal value.
+        start_date(Date): Date when goal was set.
+        finish_date(Date): Date when goal should be reached.
+        fund (FK): Fund for this goal.
+
+    """
+    value = models.DecimalField(max_digits=17, decimal_places=2)
+    start_date = models.DateField()
+    finish_date = models.DateField()
+    fund = models.OneToOneField(
+        FundCategories,
+        on_delete=models.CASCADE,
+        related_name="goal"
+    )
