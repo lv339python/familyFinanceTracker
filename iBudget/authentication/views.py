@@ -105,4 +105,3 @@ def google_sign_in(request):
         user.save()
         return HttpResponse(status=201)
     return HttpResponse(status=400)
-

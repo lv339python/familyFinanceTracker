@@ -1,15 +1,16 @@
 """
 This module provides functions for handling fund view.
 """
-from django.http import JsonResponse
 import json
 from decimal import Decimal
 
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+
 from group.models import Group, SharedFunds
 from utils.validators import input_fund_registration_validate, date_range_validate
-from .models import FundCategories,  FinancialGoal
+from .models import FundCategories, FinancialGoal
 
 
 @require_http_methods(["GET"])
@@ -29,6 +30,7 @@ def show_fund(request):
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 
+
 @require_http_methods(["GET"])
 def show_fund_group(request):
     """Handling request for creating of fund list in group.
@@ -46,9 +48,10 @@ def show_fund_group(request):
                 users_fund.append({'id_fund': shared_fund.fund.id,
                                    'name_fund': shared_fund.fund.name,
                                    'id_group': group.id
-                                    })
+                                   })
         return JsonResponse(users_fund, status=200, safe=False)
     return JsonResponse({}, status=400)
+
 
 @require_http_methods(["POST"])
 def register_financial_goal(request):
@@ -83,4 +86,3 @@ def register_financial_goal(request):
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
     return HttpResponse(status=201)
-
