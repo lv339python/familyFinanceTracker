@@ -104,11 +104,11 @@ export default {
                     'email': this.username,
                     'password': this.password
                 }
-            }).then(response =>{
+            }).then(response => {
                 this.$router.go('/home');
             }).catch(e => {
                 this.error = true;
-                })
+            })
         },
         google: function (event) {
             axios({
