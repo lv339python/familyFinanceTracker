@@ -84,8 +84,8 @@ class Group(models.Model):
         group_funds = []
         shared_funds = SharedFunds.objects.filter(group=group_object)
         for fund in shared_funds:
-            for el in FundCategories.objects.filter(id=fund.id):
-                group_funds.append({'id': el.id, 'name': el.name})
+            for i in FundCategories.objects.filter(id=fund.id):
+                group_funds.append({'id': i.id, 'name': i.name})
         return group_funds
 
     @staticmethod
@@ -100,8 +100,8 @@ class Group(models.Model):
         group_spendings = []
         shared_spendings = SharedSpendingCategories.objects.filter(group_id=group_object)
         for spend in shared_spendings:
-            for el in SpendingCategories.objects.filter(id=spend.spending_categories_id):
-                group_spendings.append({'id': el.id, 'name': el.name})
+            for i in SpendingCategories.objects.filter(id=spend.spending_categories_id):
+                group_spendings.append({'id': i.id, 'name': i.name})
         return group_spendings
 
 

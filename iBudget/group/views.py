@@ -52,15 +52,30 @@ def groups_balance(request):
     return JsonResponse(group_balance)
 
 def filter_income_history_by_fund(user_group):
+    """
+    Retrieving income history information by users group for shared funds
+    Args:
+        user_group: specific users group
+    Returns:
+        income_values: list of dictionaries consisting id,value and fund-name
+    """
     income_values = []
     for fund in Group.filter_funds_by_group(user_group):
-        for el in IncomeHistory.objects.filter(fund=fund['id']):
-            income_values.append({'id': el.id, 'value': el.value, 'fund_name': el.fund})
+        for i in IncomeHistory.objects.filter(fund=fund['id']):
+            income_values.append({'id': i.id, 'value': i.value,
+                                  'fund_name': i.fund})
     return income_values
 
 def filter_spending_history_by_spend_category(user_group):
+    """
+    Retrieving spending history information by users group for shared spendings
+    Args:
+        user_group: specific users group
+    Returns:
+        income_values: list of dictionaries consisting id,value and spend-name
+    """
     spend_values = []
     for spend in Group.filter_spendings_categories_by_group(user_group):
-        for el in SpendingHistory.objects.filter(spending_categories_id=spend['id']):
-            spend_values.append({'id': el.id, 'value': el.value, 'spend_name': el.spending_categories})
+        for i in SpendingHistory.objects.filter(spending_categories_id=spend['id']):
+            spend_values.append({'id': i.id, 'value': i.value, 'spend_name': i.spending_categories})
     return spend_values
