@@ -3,6 +3,7 @@ This module provides functions for handling fund view.
 """
 import json
 
+from django.db import transaction, IntegrityError
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from group.models import SharedFunds, Group
@@ -51,15 +52,26 @@ def create_new_fund(request):
         owner=user
     )
     try:
-        new_fund.save()
-    except(ValueError, AttributeError):
+        with transaction.atomic():
+            new_fund.save()
+            if is_shared:
+                shared_group = Group.get_group_by_id(data["shared_group"])
+                shared_fund = SharedFunds(
+                    group=shared_group,
+                    fund=new_fund)
+                shared_fund.save()
+    except IntegrityError:
         return HttpResponse(status=406)
-    if is_shared:
-        shared_group = Group.get_group_by_id(data["shared_group"])
-        shared_fund = SharedFunds(group=shared_group,
-                                  fund=new_fund)
-        try:
-            shared_fund.save()
-        except(ValueError, AttributeError):
-            return HttpResponse(status=406)
+    # try:
+    #     new_fund.save()
+    # except(ValueError, AttributeError):
+    #     return HttpResponse(status=406)
+    # if is_shared:
+    #     shared_group = Group.get_group_by_id(data["shared_group"])
+    #     shared_fund = SharedFunds(group=shared_group,
+    #                               fund=new_fund)
+    #     try:
+    #         shared_fund.save()
+    #     except(ValueError, AttributeError):
+    #         return HttpResponse(status=406)
     return HttpResponse(status=201)
