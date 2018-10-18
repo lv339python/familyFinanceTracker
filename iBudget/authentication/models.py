@@ -115,7 +115,3 @@ class UserProfile(AbstractBaseUser):
             return user
         except UserProfile.DoesNotExist:
             return None
-
-    @staticmethod
-    def filter_by_user(user):
-        return UserProfile.objects.filter(pk=user)

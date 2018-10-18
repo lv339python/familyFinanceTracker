@@ -13,7 +13,7 @@ from requests_oauthlib import OAuth2Session
 
 from utils.validators import login_validate, is_valid_registration_data
 from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
-  LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
+    LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
 from .models import UserProfile
 
 
@@ -77,7 +77,7 @@ def google_auth_grant(request):
 
     google = OAuth2Session(CLIENT_ID, scope=SCOPE, redirect_uri=REDIRECT_URL)
     authorization_url = google.authorization_url(AUTHORIZATION_BASE_URL, access_type=
-                                                 "offline", prompt="select_account")[0]
+    "offline", prompt="select_account")[0]
     if authorization_url:
         return redirect(authorization_url)
     return HttpResponse(status=400)
@@ -92,7 +92,7 @@ def google_sign_in(request):
     """
     google = OAuth2Session(CLIENT_ID, scope=SCOPE, redirect_uri=REDIRECT_URL)
     google.fetch_token(TOKEN_URL, client_secret=CLIENT_SECRET, authorization_response=
-                       LOCAL_URL + request.get_full_path(), code=request.GET["code"])
+    LOCAL_URL + request.get_full_path(), code=request.GET["code"])
     user_data = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
     if user_data:
         if UserProfile.get_by_email(user_data['email']):
@@ -107,8 +107,14 @@ def google_sign_in(request):
         return HttpResponse(status=201)
     return HttpResponse(status=400)
 
+
 @require_http_methods(['GET'])
 def get_profile(request):
+    """
+       Retrieving user profile. Handles post and get requests.
+       :param request: request from the website
+       :return: status 200 and dictionary with user's data if user exists, status 400 if user doesn't exist
+    """
     user = request.user
     if user:
         return JsonResponse(user.to_dict(), status=200, safe=False)
