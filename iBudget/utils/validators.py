@@ -10,6 +10,7 @@ from django.core.validators import validate_email
 
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
+SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
 
 def is_valid_password(password):
     """validate password

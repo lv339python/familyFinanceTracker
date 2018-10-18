@@ -26,7 +26,7 @@
                 method: "get",
                 url: "api/v1/files/",
                 headers: {
-                'tab': 'spendings'
+                'tab': 'funds'
                 }
             }).then(response => {
                 this.icons = response.data;

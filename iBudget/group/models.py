@@ -1,7 +1,6 @@
 """
 This module provides model of group and its relations.
 """
-from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from authentication.models import UserProfile
 from fund.models import FundCategories
@@ -90,7 +89,17 @@ class UsersInGroups(models.Model):
             return user
         except UsersInGroups.DoesNotExist:
             return None
+    @staticmethod
+    def filter_by_user(user):
+        """
+        Args:
+            user (FK): user in group,
+        Returns:
+            UsersInGroup object if database contain group for user,
+             None otherwise.
 
+        """
+        return UsersInGroups.objects.filter(user=user)
 
 class SharedFunds(models.Model):
     """Common fund categories for groups.
