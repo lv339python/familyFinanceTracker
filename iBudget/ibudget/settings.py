@@ -43,13 +43,11 @@ INSTALLED_APPS = [
     'spending',
     'spending_history',
     'webpack_loader',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -163,10 +161,6 @@ AWS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID'
 AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
 
 AWS_STORAGE_BUCKET_NAME = 'AWS_STORAGE_BUCKET_NAME'
-
-CORS_ORIGIN_ALLOW_ALL=True
-
-
 
 try:
     from .local_settings import *
