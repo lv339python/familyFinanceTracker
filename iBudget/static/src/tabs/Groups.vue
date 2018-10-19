@@ -39,7 +39,6 @@
 
 <style scoped>
     .content {
-        height: 100vh;
         overflow: hidden;
         display: flex;
     }

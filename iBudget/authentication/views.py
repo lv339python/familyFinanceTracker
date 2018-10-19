@@ -111,3 +111,16 @@ def google_sign_in(request):
         login(request, user)
         return redirect("/")
     return HttpResponse(status=400)
+
+@require_http_methods(['GET'])
+def get_profile(request):
+    """
+       Retrieving user profile. Handles post and get requests.
+       :param request: request from the website
+       :return: status 200 and dictionary with user's data if user exists,
+       status 400 if user doesn't exist
+    """
+    user = request.user
+    if user:
+        return JsonResponse(user.to_dict(), status=200, safe=False)
+    return JsonResponse({}, status=400)
