@@ -61,9 +61,7 @@ def required_keys_validator(data, keys_required, strict=True):
     :type strict: Bool
     :return: `True` if data is valid and `False` if it is not valid.
     """
-
     keys = set(data.keys())
-
     keys_required = set(keys_required)
     if strict:
         return not keys.symmetric_difference(keys_required)
@@ -205,3 +203,15 @@ def updating_email_validate(data, email):
             return None
         if email_validator(data.get(email)):
             return True
+
+
+def is_valid_data_new_spending(data):
+    """
+    Function that provides login data validation.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != {'name', 'icon'} or not data['name']:
+        return False
+    return True
