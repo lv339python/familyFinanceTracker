@@ -15,4 +15,4 @@ class Migration(migrations.Migration):
             name='password',
             field=models.CharField(max_length=128),
         ),
-]
+    ]
