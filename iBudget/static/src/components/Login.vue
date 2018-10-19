@@ -1,8 +1,6 @@
 <template>
-
   <div class="content">
       <div id="body">
-            <p>Please login to continue</p>
            <div id="form">
               <form class="login" @submit.prevent="login" v-show="loginDisplay">
                 <h1>Login</h1>
@@ -34,7 +32,7 @@
                 <br/>
                 <label>Password Confirmation</label>
                 <br/>
-                <input required v-model="password" type="password" placeholder="Password"/>
+                <input required v-model="password" type="password" placeholder="Confirm Password"/>
                 <hr/>
                 <b-button type="submit" @click="registration">Register</b-button>
                <br/>
@@ -50,6 +48,7 @@
 <script>
 import axios from 'axios';
 import router from 'src/router'
+
 export default {
     name: "Login",
     data() {
@@ -59,21 +58,26 @@ export default {
         }
     },
     methods: {
+
         navigate() {
             router.go(-1);
             //{router.push({name: 'Incomes'})
         },
+
         showRegister(){
             this.loginDisplay = false;
             this.registerDisplay = true
         },
+
         showLogin(){
             this.loginDisplay = true;
             this.registerDisplay = false;
         },
+
         close() {
             this.$emit('close');
         },
+
         registration: function (event) {
             axios({
                 method: 'post',
@@ -89,6 +93,7 @@ export default {
                 this.error = true;
             })
         },
+
         login: function (event) {
             axios({
                 method: 'post',
@@ -97,7 +102,9 @@ export default {
                     'email': this.username,
                     'password': this.password
                 }
-            }).then(response => {
+
+            }).then(response =>{
+                this.$router.push('/home');
                 this.$router.go('/home');
             }).catch(e => {
                 this.error = true;
@@ -118,13 +125,14 @@ export default {
 </script>
 
 <style scoped>
-    .content {
-        height: 100vh;
-        overflow: hidden;
+    #body {
+        text-align: center;
         display: flex;
+        margin:auto;
     }
-    .text {
-        width: fit-content;
+    #form{
         margin: auto;
+        width: fit-content;
+        vertical-align: middle;
     }
 </style>
