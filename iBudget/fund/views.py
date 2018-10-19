@@ -3,10 +3,9 @@ This module provides functions for handling fund view.
 """
 import json
 
-from utils.transaction import save_new_fund
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
-from group.models import SharedFunds, Group
+from utils.transaction import save_new_fund
 from .models import FundCategories
 
 @require_http_methods(["GET"])
