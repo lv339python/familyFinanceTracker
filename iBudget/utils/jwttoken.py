@@ -34,7 +34,7 @@ def create_token(data, expiration_time=None, not_before_time=None):
             nbf = int(timezone.now().timestamp()) + not_before_time
             data['nbf'] = nbf
 
-        token = jwt.encode(data, SECRET_KEY, ALGORITHM)
+        token = jwt.encode(data, SECRET_KEY, ALGORITHM).decode('utf-8')
         return token
 
     except TypeError:
