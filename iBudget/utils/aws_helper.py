@@ -37,7 +37,8 @@ class AwsService:
 
     @classmethod
     def upload(cls, pic):
-        """the method which accepts the file and uploads it to the bucket"""
+        """the method which accepts the file and uploads it to the bucket
+        """
         response = cls.boto_bucket.put_object(Key=pic.name, Body=pic.read())
         if response:
             return True

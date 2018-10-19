@@ -12,14 +12,6 @@
 <script>
     export default {
         name: "Spendings",
-        props: ["tabName"],
-        data() {
-        return {
-            tab: 'spendings'
-               }
-
-        }
-
     }
 </script>
 
