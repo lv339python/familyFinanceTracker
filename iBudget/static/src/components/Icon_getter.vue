@@ -7,6 +7,7 @@
             class="icon" alt="icon" v-if="! upload"></input>
             <br>
             <br>
+            <br>
             <button v-on:click="enable_upload" v-if="! upload">upload my own</button>
 
             <form enctype="multipart/form-data">
