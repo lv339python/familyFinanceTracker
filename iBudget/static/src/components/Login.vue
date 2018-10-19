@@ -16,6 +16,8 @@
                 <br/>
                 <br/>
                 <b-link @click="showRegister">Create a new account</b-link>
+                <hr/>
+                <b-button @click="google">Sign in With Google</b-button>
               </form>
 
              <form class="register" @submit.prevent="register" v-show="registerDisplay" >
@@ -100,9 +102,20 @@ export default {
                     'email': this.username,
                     'password': this.password
                 }
+
             }).then(response =>{
                 this.$router.push('/home');
                 this.$router.go('/home');
+            }).catch(e => {
+                this.error = true;
+            })
+        },
+        google: function (event) {
+            axios({
+                method: 'get',
+                url: '/api/v1/authentication/auth/',
+            }).then(response => {
+                window.location.replace(response.data["url"]);
             }).catch(e => {
                 this.error = true;
             });
