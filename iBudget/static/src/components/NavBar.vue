@@ -8,6 +8,7 @@
             <b-navbar-brand to="/home">Home</b-navbar-brand>
             <b-navbar-brand to="/incomes">Incomes</b-navbar-brand>
             <b-navbar-brand to="/funds">Funds</b-navbar-brand>
+            <b-navbar-brand to="/groups">Groups</b-navbar-brand>
             <b-navbar-brand to="/spendings">Spendings</b-navbar-brand>
             <b-collapse is-nav id="nav_collapse">
                 <!-- Right aligned nav items -->

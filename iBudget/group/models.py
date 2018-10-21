@@ -69,6 +69,7 @@ class Group(models.Model):
             List of Groups objects .
 
         """
+        print(user_id)
         users_groups = Group.objects.filter(members=user_id)
         return users_groups
 
