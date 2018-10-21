@@ -5,6 +5,7 @@
             <b-button :variant="secondary" to="../spend">Set individual limitation</b-button>
             <b-button :variant="secondary" to="/limit">Set group limitation</b-button>
             <b-button :variant="secondary" to="/spending_add">Add spending</b-button>
+            <b-button :variant="secondary" to="/spending_history">Spending history</b-button>
         </div>
     </div>
 </template>

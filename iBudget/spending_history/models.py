@@ -32,8 +32,8 @@ class SpendingHistory(models.Model):
 
     @staticmethod
     def filter_by_user_date_spending(user,
-                                     start_date=None,
-                                     finish_date=None,
+                                     start_date,
+                                     finish_date,
                                      spending_categories=None):
         """
         Args:
@@ -46,15 +46,14 @@ class SpendingHistory(models.Model):
 
 
         """
-        if not start_date:
-            start_date = datetime.date(datetime.date.today().year, datetime.date.today().month, 1)
-        if not finish_date:
-            finish_date = datetime.date.today()
-        start_date = datetime.datetime.combine(start_date, 0, 0)
-        finish_date = datetime.datetime.combine(finish_date, 23, 59)
+
         if spending_categories:
             return SpendingHistory.objects.filter(owner=user,
                                                   spending_categories=spending_categories,
-                                                  date__range=[start_date, finish_date])
+                                                  date__range=[start_date -
+                                                               datetime.timedelta(days=1),
+                                                               finish_date])
         return SpendingHistory.objects.filter(owner=user,
-                                              date__range=[start_date, finish_date])
+                                              date__range=[start_date -
+                                                           datetime.timedelta(days=1),
+                                                           finish_date])
