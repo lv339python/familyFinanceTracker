@@ -17,13 +17,13 @@
 </script>
 
 <style scoped>
-.content {
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-}
-.text {
-    width: fit-content;
-    margin:  auto;
-}
+    .content {
+        overflow: hidden;
+        display: flex;
+    }
+
+    .text {
+        width: fit-content;
+        margin: auto;
+    }
 </style>
