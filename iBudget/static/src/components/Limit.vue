@@ -18,6 +18,7 @@
           <p>End date:</p>
           <input v-model = "end_date" type = "text" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           required size = "9">
+          </input>
           <p>Amount:</p>
           <input v-model = "value" type = "number" required>
           </input>

@@ -1,5 +1,5 @@
 import {Home, Funds, Groups, Spendings, Incomes} from 'src/tabs';
-import {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add} from "src/components";
+import {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add, Income_tracker} from "src/components";
 
 
 export default [
@@ -35,5 +35,8 @@ export default [
   },
   {
     path: '/spending_add', component: Spending_add
+  },
+  {
+    path: '/track_incomes', component: Income_tracker
   }
 ];
