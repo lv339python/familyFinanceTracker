@@ -12,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 
 from group.models import SharedSpendingCategories, Group, UsersInGroups, SharedFunds
 from utils.get_role import groups_for_user, is_user_member_group, is_user_admin_group
-from utils.validators import input_spending_registration_validate
+from utils.validators import input_spending_registration_validate, is_valid_data_spending_history
 from .models import SpendingCategories, SpendingHistory, FundCategories
 
 
@@ -169,6 +169,8 @@ def create_spending_history(request):
     """
     user = request.user
     data = json.loads(request.body)
+    if not is_valid_data_spending_history(data):
+        return HttpResponse(status=400)
     start_date = parse_date(data['start_date'])
     finish_date = parse_date(data['finish_date'])
     utc_difference = int(data['UTC'])
