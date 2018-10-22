@@ -1,5 +1,4 @@
 """Save to BD with transaction"""
-from django.http import HttpResponse
 from django.db import transaction, IntegrityError
 from fund.models import FundCategories
 from group.models import SharedFunds, Group

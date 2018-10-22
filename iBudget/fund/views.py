@@ -1,20 +1,16 @@
 """
 This module provides functions for handling fund view.
 """
-from django.http import JsonResponse, HttpResponse
 import json
+
 from decimal import Decimal
-
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-
 from group.models import Group, SharedFunds
 from utils.validators import input_fund_registration_validate, date_range_validate
+from utils.transaction import save_new_fund
 from .models import FundCategories, FinancialGoal
 
-from utils.transaction import save_new_fund
-from .models import FundCategories
 
 @require_http_methods(["GET"])
 def show_fund(request):
