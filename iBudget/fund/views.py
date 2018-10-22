@@ -2,14 +2,13 @@
 This module provides functions for handling fund view.
 """
 import json
+
 from decimal import Decimal
-
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-
 from group.models import Group, SharedFunds
 from utils.validators import input_fund_registration_validate, date_range_validate
+from utils.transaction import save_new_fund
 from .models import FundCategories, FinancialGoal
 
 
@@ -86,3 +85,25 @@ def register_financial_goal(request):
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
     return HttpResponse(status=201)
+
+
+@require_http_methods(["POST"])
+def create_new_fund(request):
+    """Handling request for creating of new fund category.
+    Args:
+        request (HttpRequest): request from server which contain
+            shred_group, name, icon
+    Returns:
+        HttpResponse object.
+    """
+    is_shared = False
+    data = json.loads(request.body)
+    user = request.user
+    shared_group = data["shared_group"]
+    if shared_group:
+        is_shared = True
+    name = data["name"]
+    icon = data["icon"]
+    if save_new_fund(name, icon, is_shared, user, shared_group):
+        return HttpResponse(status=201)
+    return HttpResponse(status=406)

@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
-from .models import Group
+from .models import Group, UsersInGroups
 
 
 
@@ -24,6 +24,23 @@ def get_by_group(request):
         for entry in Group.group_filter_by_owner_id(user):
             user_groups.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_groups, status=200, safe=False)
+    return JsonResponse({}, status=400)
+
+
+@require_http_methods(["GET"])
+def show_users_group(request):
+    """Handling request for creating of user's groups list.
+    Args:
+        request (HttpRequest): request from server which ask list of groups for user.
+    Returns:
+        HttpResponse object.
+    """
+    user = request.user
+    if user:
+        groups = []
+        for item in UsersInGroups.filter_by_user(user):
+            groups.append({'name': item.group.name, 'id': item.group.id})
+        return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 
 def groups_balance(request):
