@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 
-from utils.validators import input_spending_registration_validate
+from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, IncomeHistory, FundCategories
 
 
@@ -18,32 +18,28 @@ def register_income(request):
             HttpResponse status.
     """
     data = json.loads(request.body)
-    if not input_spending_registration_validate(data):
+    if not input_income_registration_validate(data):
         return HttpResponse(status=400)
 
-    user = request.user
-    spending = IncomeCategories.get_by_id(int(data["category"]))
-    if not spending:
+    income = IncomeCategories.get_by_id(int(data["inc_category"]))
+    if not income:
         return HttpResponse(status=400)
-    if not spending.owner == user:
-        return HttpResponse(status=403)
-    fund = FundCategories.get_by_id(int(data["type_of_pay"]))
+    fund = FundCategories.get_by_id(int(data["fund_category"]))
     if not fund:
         return HttpResponse(status=400)
     date = data["date"]
     value = Decimal(data["value"])
     comment = data["comment"]
 
-    spending_history = IncomeHistory(
+    income_history = IncomeHistory(
         fund=fund,
-        spending_categories=spending,
+        income=income,
         date=date,
         value=value,
-        owner=user,
         comment=comment
     )
     try:
-        spending_history.save()
+        income_history.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
     return HttpResponse(status=201)

@@ -10,6 +10,7 @@ from django.core.validators import validate_email
 
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
+SET_KEYS_INCOME_REG_DATA = {'inc_category', 'fund_category', 'value'}
 SET_KEYS_FUND_GOAL = {'fund', 'value'}
 
 def is_valid_password(password):
@@ -131,6 +132,24 @@ def input_fund_registration_validate(data):
     try:
         data['fund'] = int(data['fund'])
         data['value'] = Decimal(data['value'])
+        return True
+    except (ValidationError, AttributeError):
+        return False
+
+def input_income_registration_validate(data):
+    """validate data.
+        Args:
+            data (dict): contain category, type of pay, sum, comment
+        Returns:
+            bool: The return value. True is data valid, else False.list([1,2,3])
+    """
+    if not set(data.keys()).difference(SET_KEYS_INCOME_REG_DATA):
+        return False
+    try:
+        data['inc_category'] = int(data['inc_category'])
+        data['fund_category'] = int(data['fund_category'])
+        data['value'] = Decimal(data['value'])
+        data['comment'] = str(data['comment'])
         return True
     except (ValidationError, AttributeError):
         return False
