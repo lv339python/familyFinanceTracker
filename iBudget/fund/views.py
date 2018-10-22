@@ -43,5 +43,6 @@ def create_new_fund(request):
         is_shared = True
     name = data["name"]
     icon = data["icon"]
-    save_new_fund(name, icon, is_shared, user, shared_group)
-    return HttpResponse(status=201)
+    if save_new_fund(name, icon, is_shared, user, shared_group):
+        return HttpResponse(status=201)
+    return HttpResponse(status=406)

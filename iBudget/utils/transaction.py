@@ -4,6 +4,7 @@ from django.db import transaction, IntegrityError
 from fund.models import FundCategories
 from group.models import SharedFunds, Group
 
+
 @transaction.atomic
 def save_new_fund(name, icon, is_shared, owner, shared_group):
     """Function for safe save FundCategories and SharedFunds
@@ -32,5 +33,5 @@ def save_new_fund(name, icon, is_shared, owner, shared_group):
                     fund=new_fund)
                 shared_fund.save()
     except IntegrityError:
-        return HttpResponse(status=406)
-    return HttpResponse(status=201)
+        return False
+    return True
