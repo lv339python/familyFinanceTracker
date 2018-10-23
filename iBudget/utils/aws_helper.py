@@ -37,7 +37,8 @@ class AwsService:
 
     @classmethod
     def upload(cls, pic):
-        """the method which accepts the file and uploads it to the bucket"""
+        """the method which accepts the file and uploads it to the bucket
+        """
         response = cls.boto_bucket.put_object(Key=pic.name, Body=pic.read())
         if response:
             return True
@@ -75,12 +76,12 @@ class AwsService:
         return False
 
     @classmethod
-    def get_default_list_icons(cls):
+    def get_default_list_icons(cls, tab):
         """the method accepts forms a list of dictionaries with the file names and their URLs from
         those available on Amazon S3
         """
         bucket_list = cls.boto_client.list_objects_v2(Bucket=AWS_STORAGE_BUCKET_NAME)
         urls = [{"name": img["Key"],
                  "path": cls.get_image_url(img['Key'])} for img in bucket_list['Contents'] if
-                img['Key'].startswith('standard/')]
+                img['Key'].startswith(tab)]
         return urls
