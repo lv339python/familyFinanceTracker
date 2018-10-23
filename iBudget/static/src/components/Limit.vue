@@ -1,28 +1,24 @@
 <template>
 <div id = "limit">
-    <div id="available_spendings">
       <p>You can set limits for the following group spendings:
         <select v-model = "spending_category" required>
           <option v-for = "item in list_of_spendings">{{item}}</option>
         </select>
       </p>
 
-    </div>
-
-    <div id = "limit values">
-      <form>
-      <p>Start date:</p>
+      <p>Start date:
           <input v-model = "start_date" type = "text" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           required size = "9">
           </input>
-          <p>End date:</p>
+      </p>
+      <p>End date:
           <input v-model = "end_date" type = "text" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           required size = "9">
-          <p>Amount:</p>
+      </p>
+      <p>Amount:
           <input v-model = "value" type = "number" required>
           </input>
-      </form>
-    </div>
+      </p>
      <p><button v-on:click = 'set_limit'>set</button></p>
      <p>{{reply}}</p>
      <p><button v-show='isShown' v-on:click="reRender">OK</button></p>

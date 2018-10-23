@@ -9,8 +9,8 @@
             </div>
         </div>
 
-        <div class="col-md-4">
-            <icon_getter @get_name='onGet_name'> </icon_getter>
+        <div class="col-md-7">
+            <icon_getter @get_name='onGet_name' :tabName="tab"> </icon_getter>
         </div>
 
         <div v-show="isValidData">
@@ -30,6 +30,7 @@ import Icon_getter from './Icon_getter';
 
 export default {
     name: "Spending_add",
+    props: ["tabName"],
     components:{'icon_getter': Icon_getter},
     data () {
         return {
@@ -40,7 +41,8 @@ export default {
                 'name': null,
                 'icon': ''
             },
-            msg:''
+            msg:'',
+            tab: 'spending'
 
         }
     },

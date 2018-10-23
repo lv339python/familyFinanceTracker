@@ -150,7 +150,8 @@
                     }
                 }).then(response => {
                     this.reply = response.data;
-                    alert(this.reply)
+                    alert(this.reply);
+                    this.$router.go('/Incomes/')
                 }).catch( error => {
                     alert(error.response.data)
                 })

@@ -17,3 +17,6 @@ RESPONSE_200_SUCCESS = HttpResponse('The file was successfully updated/deleted',
 RESPONSE_500_NO_SUCCESS = HttpResponse('The file removal/upload was not successful, internal server'
                                        ' error',
                                        status=500)
+
+RESPONSE_400_UPLOAD_ERROR = HttpResponse('The file was not successfully uploaded to the server.',
+                                         status=400)
