@@ -7,7 +7,7 @@ from django.views import View
 from utils.aws_helper import AwsService
 from utils.response_helper import (RESPONSE_400_INVALID_DATA, RESPONSE_400_NO_FILE,
                                    RESPONSE_404_NOT_FOUND, RESPONSE_200_SUCCESS,
-                                   RESPONSE_500_NO_SUCCESS)
+                                   RESPONSE_500_NO_SUCCESS, RESPONSE_400_UPLOAD_ERROR)
 
 
 class FileHandler(View):
@@ -17,22 +17,34 @@ class FileHandler(View):
         """the method retrieves default icons from AWS S3
         :param - request object
         """
-        urls = AwsService.get_default_list_icons()[1:]
+        if request.GET['tab'] == 'fund':
+            urls = AwsService.get_default_list_icons('standard_fund/')[1:]
+        if request.GET['tab'] == 'income':
+            urls = AwsService.get_default_list_icons('standard_income/')[1:]
+        if request.GET['tab'] == 'spending':
+            urls = AwsService.get_default_list_icons('standard/')[1:]
+        if request.GET['tab'] == 'group':
+            urls = AwsService.get_default_list_icons('standard_group/')[1:]
         return JsonResponse(urls, status=200, safe=False)
+
 
 
     def post(self, request):# pylint: disable=no-self-use
         """The name property of the file which is passed is 'icon', so in HTML form it must be set:
-        <input type='file' name = 'icon'>"""
+        <input type='file' name = 'icon'>
+        """
         try:
-            pic = request.FILES['icon']
-            if AwsService.check_if_in_bucket(pic):
-                if AwsService.upload(pic):
-                    pic = str(pic)
-                    url = AwsService.get_image_url(pic)
-                    return HttpResponse(url)
-                return RESPONSE_500_NO_SUCCESS
-            return RESPONSE_400_INVALID_DATA
+            print(request.FILES)
+            if request.FILES:
+                pic = request.FILES['icon']
+                if AwsService.check_if_in_bucket(pic):
+                    if AwsService.upload(pic):
+                        pic = str(pic)
+                        url = AwsService.get_image_url(pic)
+                        return HttpResponse(url)
+                    return RESPONSE_500_NO_SUCCESS
+                return RESPONSE_400_INVALID_DATA
+            return RESPONSE_400_UPLOAD_ERROR
         except datastructures.MultiValueDictKeyError:
             return RESPONSE_400_NO_FILE
 
