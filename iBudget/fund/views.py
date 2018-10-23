@@ -1,12 +1,12 @@
 """
 This module provides functions for handling fund view.
 """
-import json
 
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from .models import FundCategories, FinancialGoal
+
 from income_history.models import IncomeHistory
+from .models import FundCategories, FinancialGoal
 
 
 @require_http_methods(["GET"])
@@ -33,23 +33,20 @@ def list_goal_user(user):
 
            Args:
        """
-    list_fund =[]
+    list_fund = []
     for entry in FundCategories.filter_by_user(user):
         list_fund.append(entry.id)
     list_goal = []
     for entry in list_fund:
-        financial_goal=FinancialGoal.objects.filter(fund=entry)
+        financial_goal = FinancialGoal.objects.filter(fund=entry)
         if financial_goal:
             list_goal.append(entry)
-    print (list_goal)
+    print(list_goal)
     return list_goal
-
-
 
 
 @require_http_methods(["GET"])
 def show_goal_data(request):
-
     """Handling request for creating of goal data list.
 
        Args:
@@ -62,21 +59,37 @@ def show_goal_data(request):
     if user:
         user_goal_statistic = []
         for entry in list_goal_user(user):
-            fund_category= FundCategories.get_by_id(entry)
+            fund_category = FundCategories.get_by_id(entry)
             list_transactions = []
+            list_date_transactions = []
             for item in IncomeHistory.objects.filter(fund=entry, date__range=[fund_category.goal.start_date,
                                                                               fund_category.goal.finish_date]):
-                list_transactions.append(item.value)
+                list_transactions.append(float(item.value))
+                list_date_transactions.append(item.date)
             user_goal_statistic.append({"id": entry,
                                         "name": fund_category.name,
                                         "value": fund_category.goal.value,
-                                        "start_date":fund_category.goal.start_date,
-                                        "finish_date":fund_category.goal.finish_date,
-                                        'transaction': list_transactions})
+                                        "start_date": fund_category.goal.start_date,
+                                        "finish_date": fund_category.goal.finish_date,
+                                        "transaction": list_transactions,
+                                        "date_transaction": list_date_transactions})
         return JsonResponse(user_goal_statistic, status=200, safe=False)
     return JsonResponse({}, status=400)
 
 
+def list_goal_user(user):
+    """the functions finds all the user's goals associated with particular user and
+    returns them
 
-
-
+           Args:
+       """
+    list_fund = []
+    for entry in FundCategories.filter_by_user(user):
+        list_fund.append(entry.id)
+    list_goal = []
+    for entry in list_fund:
+        financial_goal = FinancialGoal.objects.filter(fund=entry)
+        if financial_goal:
+            list_goal.append(entry)
+    print(list_goal)
+    return list_goal

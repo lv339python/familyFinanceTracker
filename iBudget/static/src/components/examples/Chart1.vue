@@ -2,7 +2,7 @@
   <div class="container">
 
     <div class="Chart">
-      <h1 style="text-align:center;">Piechart</h1>
+      <h1 style="text-align:center;">{{name}}</h1>
       <pie-example v-bind:pieData="myPieData" v-bind:pieLabel="myPieLabel"/>
     </div>
 
@@ -11,18 +11,34 @@
 </template>
 
 <script>
-  import PieExample from './PieExample'
+  import PieExample from './PieExample';
+  import LineExample from './LineExample';
 
   export default {
     components: {
       PieExample,
+      LineExample
     },
+    props: ['transaction', 'date_transaction', 'value', 'name'],
     data () {
+    let pieData = this.transaction;
+    let Left =  pieData.reduce((a, b) => a + b, 0)
+    if (Left < 0); alert('Goal complete');
+    pieData.push(this.value - Left);
+
+    let pieLabel = this.date_transaction;
+    pieLabel.push('Left to goal');
+
+    console.log(this.transaction);
+    console.log(this.date_transaction);
+
+    console.log(pieData);
+    console.log(pieLabel);
+
       return {
-        dataPoints: null,
-        height: 20,
-        myPieData: [20,30,40],
-        myPieLabel: ["January", "February", "March"]
+        height:100,
+        myPieData: pieData,
+        myPieLabel: pieLabel,
       }
     },
     computed: {
@@ -38,7 +54,7 @@
 
 <style>
   .container {
-    max-width: 800px;
+    max-width: 600px;
     margin: 0 auto;
   }
 
