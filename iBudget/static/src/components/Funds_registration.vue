@@ -13,7 +13,7 @@
             <hr>
             <div class="form-group">
                 <label >Choose icon</label>
-                <icon_getter @get_name='onGet_name'> </icon_getter>
+                <icon_getter @get_name='onGet_name' :tabName="tab"> </icon_getter>
             </div>
         </div>
 
@@ -47,9 +47,12 @@ import Icon_getter from './Icon_getter.vue'
                 shared_group: null,
                 icon: null,
                 group: null,
-                user_groups_list: []
+                user_groups_list: [],
+                tab: 'fund',
+                selectedIcon: ''
             }
         },
+        props: ["tabName"],
         components:{
             'Icon_getter': Icon_getter
         },
@@ -69,7 +72,7 @@ import Icon_getter from './Icon_getter.vue'
                     url: '/api/v1/fund/create_new_fund/',
                     data: {
                         'name': this.name,
-                        'icon': this.icon,
+                        'icon': this.selectedIcon,
                         'shared_group': this.shared_group
                     }
                 }).then(response =>{
@@ -77,7 +80,7 @@ import Icon_getter from './Icon_getter.vue'
                 })
             },
             onGet_name (data) {
-                this.icon = data['icon_name']
+            this.selectedIcon = data['icon_name']
             }
         }
 }

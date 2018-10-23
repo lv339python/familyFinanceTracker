@@ -148,6 +148,7 @@ def date_range_validate(data):
         raise ValidationError("Finish time cannot be earlier than start time!")
     return data
 
+
 def is_valid_data_individual_limit(data):
     """
     Function that provides login data validation.
@@ -184,18 +185,17 @@ def is_valid_data_new_spending(data):
 
 
 def is_valid_data_create_new_group(data):
-    if not set(data.keys()).difference(SET_KEYS_GROUP_CREATE_DATA):
+    if set(data.keys()) != SET_KEYS_GROUP_CREATE_DATA:
         return False
     try:
         data['name'] = str(data['name'])
-        data['icon'] = str(data['icon'])
         return True
     except(ValueError, AttributeError):
         return False
 
 
 def is_valid_data_create_new_fund(data):
-    if set(data.keys()) != SET_KEYS_FUND_CREATE_DATA:
+    if not set(data.keys()).difference(SET_KEYS_FUND_CREATE_DATA):
         return False
     try:
         data['name'] = str(data['name'])
