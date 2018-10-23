@@ -266,3 +266,29 @@ def is_valid_data_spending_history(data):
 
     except (ValidationError, AttributeError):
         return False
+
+
+def is_valid_data_new_income(data):
+    """
+    Function that provides income creation validation
+    :param data:
+    :return:
+    """
+    if set(data.keys()) != {'name', 'icon', 'date', 'value'} or not data['name']:
+        return False
+    if not is_valid_date(data['date']):
+        return False
+    return True
+
+
+def is_valid_date(date):
+    """
+    Function that provides date validation
+    :param string
+    :return: True if date is date
+    """
+    try:
+        parse_date(date)
+    except ValueError:
+        return False
+    return True
