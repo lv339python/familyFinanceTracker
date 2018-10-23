@@ -52,6 +52,21 @@ class SpendingCategories(models.Model):
         """
         return SpendingCategories.objects.filter(owner=user, is_shared=is_shared)
 
+    @staticmethod
+    def filter_by_owner_name(owner, name):
+        """
+        Args:
+            owner (UserProfile): owner of category,
+            name(bool): name of category.
+        Returns:
+            SpendingCategories object if database contain category for this user
+            and name, None otherwise.
+
+
+        """
+        return SpendingCategories.objects.filter(owner=owner, name=name)
+
+
 
 class SpendingLimitationIndividual(models.Model):
     """Limitation of user's spending.

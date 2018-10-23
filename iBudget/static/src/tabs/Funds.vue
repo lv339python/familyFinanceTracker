@@ -1,6 +1,8 @@
 <template>
   <div class="content">
       <div class="text">
+      <b-button :variant="secondary" to="../Financial_goal">Financial goal</b-button>
+      <b-button :variant="secondary" to="../funds_registration">Create new fund</b-button>
         <b-button :variant="secondary" to="/goal">GOAL</b-button>
     </div>
   </div>
@@ -15,7 +17,6 @@
 
 <style scoped>
     .content {
-        height: 100vh;
         overflow: hidden;
         display: flex;
     }

@@ -10,6 +10,9 @@ import Goal from './Goal';
 export {Login, SideBar, Spending_registration, Spend, Limit, Icon_getter, Goal, Chart};
 
 import mixins from './mixins/index.js'
+import Funds_registration from './Funds_registration';
+import Spending_add from './Spending_add';
+import Financial_goal from './Financial_goal';
 
 import {
   Pie,
@@ -21,6 +24,7 @@ const VueCharts = {
   generateChart,
   render: () => console.error('[vue-chartjs]: This is not a vue component. It is the whole object containing all vue components. Please import the named export or access the components over the dot notation. For more info visit https://vue-chartjs.org/#/home?id=quick-start')
 }
+export {Login, SideBar, Spending_registration, Spend, Limit, Icon_getter, Spending_add,  Financial_goal, Funds_registration};
 
 export default VueCharts
 

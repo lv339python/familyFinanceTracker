@@ -1,7 +1,6 @@
 """
 This module provides model of group and its relations.
 """
-from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from authentication.models import UserProfile
 from fund.models import FundCategories
@@ -60,6 +59,50 @@ class Group(models.Model):
         except Group.DoesNotExist:
             return None
 
+    @staticmethod
+    def filter_groups_by_user_id(user_id):
+        """
+        Args:
+            user_id(int): Current session user`s id.
+        Returns:
+            List of Groups objects .
+
+        """
+        users_groups = Group.objects.filter(members=user_id)
+        return users_groups
+
+    @staticmethod
+    def filter_funds_by_group(group_object):
+        """
+        Args:
+            group_object: users group object.
+        Returns:
+            List of fund objects for current group.
+
+        """
+        group_funds = []
+        shared_funds = SharedFunds.objects.filter(group=group_object)
+        for fund in shared_funds:
+            for i in FundCategories.objects.filter(id=fund.id):
+                group_funds.append({'id': i.id, 'name': i.name})
+        return group_funds
+
+    @staticmethod
+    def filter_spendings_categories_by_group(group_object):
+        """
+        Args:
+            group_object: users group object.
+        Returns:
+            List of spend objects for current group.
+
+        """
+        group_spendings = []
+        shared_spendings = SharedSpendingCategories.objects.filter(group_id=group_object)
+        for spend in shared_spendings:
+            for i in SpendingCategories.objects.filter(id=spend.spending_categories_id):
+                group_spendings.append({'id': i.id, 'name': i.name})
+        return group_spendings
+
 
 class UsersInGroups(models.Model):
     """Members of groups.
@@ -71,7 +114,6 @@ class UsersInGroups(models.Model):
 
 
     """
-    objects = BaseUserManager()
     group = models.ForeignKey(Group, on_delete=True)
     user = models.ForeignKey(UserProfile, on_delete=True)
     is_admin = models.BooleanField()
@@ -91,7 +133,17 @@ class UsersInGroups(models.Model):
             return user
         except UsersInGroups.DoesNotExist:
             return None
+    @staticmethod
+    def filter_by_user(user):
+        """
+        Args:
+            user (FK): user in group,
+        Returns:
+            UsersInGroup object if database contain group for user,
+             None otherwise.
 
+        """
+        return UsersInGroups.objects.filter(user=user)
 
 class SharedFunds(models.Model):
     """Common fund categories for groups.

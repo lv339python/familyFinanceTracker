@@ -69,12 +69,22 @@ class FinancialGoal(models.Model):
         related_name="goal"
     )
 
-
     @staticmethod
-    def get_by_fund_name(name):
+    def filter_by_data(value, start_date, finish_date, fund):
+        """
+        Args:
+            value: financial aim.
+            fund: Fund for individual purpose.
+            start_date: The beginning of time period.
+            finish_date: The end of time period.
+        Returns:
+            SpendingLimitationIndividual object if row with described data exists, None otherwise.
 
-        try:
-            return FinancialGoal.objects.get(fund=name)
-        except FinancialGoal.DoesNotExist:
-            return None
 
+        """
+        goals = FinancialGoal.objects.filter(
+            value=value,
+            start_date=start_date,
+            finish_date=finish_date,
+            fund=fund)
+        return goals

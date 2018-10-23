@@ -1,40 +1,52 @@
 import {Home, Funds, Groups, Spendings, Incomes} from 'src/tabs';
-import {Login, Spending_registration, Spend, Limit, Icon_getter, Goal} from "src/components";
+import {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add, Financial_goal, Funds_registration, Goal} from "src/components";
 
 
 export default [
-  {
-    path: '/incomes', component:Incomes
-  },
-  {
-    path: '/home', component:Home
-  },
-  {
-    path: '/funds', component:Funds
-  },
-  {
-    path: '/groups', component:Groups
-  },
-  {
-    path: '/spendings', component:Spendings
-  },
-  {
-    path: '/login', component:Login
-  },
-  {
-    path: '/Spending_registration', component:Spending_registration
-  },
-  {
-    path: '/spend', component:Spend
-  },
-  {
-    path: '/limit', component: Limit
-  },
-  {
-    path: '/add_spending', component: Icon_getter
-  },
-  {
-    path: '/goal', component: Goal
-  },
+    {
+        path: '/', redirect: '/login'
+    },
+    {
+        path: '/incomes', component: Incomes
+    },
+    {
+        path: '/home', component: Home
+    },
+    {
+        path: '/funds', component: Funds
+    },
+    {
+        path: '/groups', component: Groups
+    },
+    {
+        path: '/spendings', component: Spendings
+    },
+    {
+        path: '/login', component: Login
+    },
+    {
+        path: '/Spending_registration', component: Spending_registration
+    },
+    {
+        path: '/spend', component: Spend
+    },
+    {
+        path: '/limit', component: Limit
+    },
+    {
+        path: '/add_spending', component: Icon_getter
+    },
+    {
+        path: '/spending_add', component: Spending_add
+    },
+    {
+        path: '/Financial_goal', component:Financial_goal
+    },
+    {
+        path: '/funds_registration', component: Funds_registration
+    },
+    {
+        path: '/goal', component: Goal
+    },
 
 ];
