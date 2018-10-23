@@ -8,6 +8,7 @@ from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, IncomeHistory, FundCategories
 
 
+
 @require_http_methods(["POST"])
 def register_income(request):
     """Handling request for creating of spending categories list.
@@ -19,7 +20,7 @@ def register_income(request):
     """
     data = json.loads(request.body)
     if not input_income_registration_validate(data):
-        return HttpResponse(status=400)
+        return HttpResponse('Please, fill all required fields', status=400)
 
     income = IncomeCategories.get_by_id(int(data["inc_category"]))
     if not income:
@@ -42,4 +43,4 @@ def register_income(request):
         income_history.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    return HttpResponse(status=201)
+    return HttpResponse('Your income was successfully registered', status=201)

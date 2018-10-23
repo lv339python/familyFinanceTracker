@@ -1,11 +1,11 @@
 <template>
     <div id="spending_registration">
-        <div class="col-md-4">
+        <div class="col-md-4" >
             <hr>
             <div class="form-group">
                 <label>Select category:</label>
-                <select v-model="category" class="form-control">
-                    <option v-for="spend in spending_list" v-bind:value="spend.id"> {{ spend.name }}
+                <select v-model="category"  required class="form-control">
+                    <option v-for="spend in spending_list" v-bind:value="spend.id" > {{ spend.name }}
                     </option>
                 </select>
             </div>

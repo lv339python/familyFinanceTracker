@@ -1,6 +1,6 @@
 <template>
-    <div class="content">
-        <div class="col-md-4">
+    <div class="content" >
+        <div class="col-md-4" >
             <hr>
             <div class="form-group">
                 <label>Select income category:</label>
@@ -10,8 +10,7 @@
                 </select>
             </div>
         </div>
-
-        <div class="col-md-4">
+        <div class="col-md-4" v-if="is_shared===false">
             <hr>
             <div class="form-group">
                 <label>Choose your fund:</label>
@@ -21,7 +20,38 @@
                 </select>
             </div>
         </div>
-
+        <div class="col-md-4" v-if="is_shared===true">
+            <hr>
+            <div class="form-group">
+                <label>Chose group</label>
+                <select v-model="group" class="ourform">
+                    <option v-for="group in group_list"
+                            v-bind:value="group.id"
+                            v-on:click="is_active_group=group.id">
+                        {{ group.name }}
+                    </option>
+                </select>
+            </div>
+            <hr>
+        </div>
+        <div class="col-md-4" v-if="is_active_group !== null && is_shared===true">
+            <hr>
+            <div class="form-group">
+                <label>Chose category</label>
+                <select v-model="fund_category" class="ourform">
+                    <option v-for="fund in shared_list"
+                            v-if="fund.id_group === is_active_group"
+                            v-bind:value="fund.id_fund">
+                        {{fund.name_fund}}
+                    </option>
+                </select>
+            </div>
+            <hr>
+        </div>
+        <div>
+            <label for="shared_button">Choose among shared funds : </label>
+            <input type="checkbox" id="shared_button" v-model="is_shared">
+        </div>
         <div class="col-md-4">
             <hr>
             <div class="form-group">
@@ -38,7 +68,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" >
             <hr>
             <div class="form-group">
                 <label>Choose date</label>
@@ -46,40 +76,8 @@
             </div>
             <hr>
         </div>
-
-        <!--<div class="col-md-4">-->
-        <!--<hr>-->
-        <!--<div class="form-group">-->
-        <!--<label>Chose group</label>-->
-        <!--<select v-model="group" class="ourform">-->
-        <!--<option v-for="group in group_list"-->
-        <!--v-bind:value="group.id"-->
-        <!--v-on:click="is_active_shared_cat=group.id">-->
-        <!--{{ group.name }}-->
-        <!--</option>-->
-        <!--</select>-->
-        <!--</div>-->
-        <!--<hr>-->
-        <!--</div>-->
-
-        <!--<div class="col-md-4">-->
-        <!--<hr>-->
-        <!--<div class="form-group">-->
-        <!--<label>Chose category</label>-->
-        <!--<select v-model="category" class="ourform">-->
-        <!--<option v-for="category in shared_list"-->
-        <!--v-if="category.id_group === is_active_shared_cat"-->
-        <!--v-bind:value="category.id_cat">-->
-        <!--{{category.name_cat}}-->
-        <!--</option>-->
-        <!--</select>-->
-        <!--</div>-->
-        <!--<hr>-->
-        <!--</div>-->
-
-        <!--<input type="checkbox" id="shared_button" v-model="is_shared">-->
-        <!--<label for="shared_button">Shared</label>-->
         <!--<span>{{ is_shared }}</span>-->
+
         <button v-on:click="setData" :variant="secondary">Save</button>
     </div>
 </template>
@@ -95,13 +93,13 @@
                 fund_list: [],
                 group_list: [],
                 shared_list: [],
-                // shared_category: null,
                 inc_category: null,
                 fund_category: null,
                 value: null,
                 date: null,
                 comment: null,
-                is_active_shared_cat: null,
+                is_active_group: null,
+                is_shared: false
             }
         },
         created() {
@@ -129,7 +127,7 @@
                 .catch(e => {
                     this.errors.push(e)
                 });
-            axios.get('api/v1/spending/show_spending_group/')
+            axios.get('api/v1/income/show_income_group/')
                 .then(response => {
                     // JSON responses are automatically parsed.
                     this.shared_list = response.data
@@ -151,7 +149,10 @@
                         'comment': this.comment,
                     }
                 }).then(response => {
-                    this.$router.go('/Incomes/')
+                    this.reply = response.data;
+                    alert(this.reply)
+                }).catch( error => {
+                    alert(error.response.data)
                 })
             },
         }
@@ -162,6 +163,7 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
+        flex-wrap: wrap;
     }
 
     .text {

@@ -8,6 +8,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
+
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 SET_KEYS_INCOME_REG_DATA = {'inc_category', 'fund_category', 'value'}
