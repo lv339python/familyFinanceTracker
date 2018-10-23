@@ -173,8 +173,8 @@ except ImportError:
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'rostik.homer.novosiadlo@gmail.com'
-EMAIL_HOST_PASSWORD = '80972513460'
+EMAIL_HOST_USER = 'lv339python@gmail.com'
+EMAIL_HOST_PASSWORD = '2324578a'
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = 'DEFAULT_FROM_EMAIL'
 

@@ -13,6 +13,7 @@ SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 STR_MIN_LENGTH = 0
 STR_MAX_LENGTH = None
 
+
 def is_valid_password(password):
     """validate password
 
@@ -143,6 +144,7 @@ def is_valid_data_individual_limit(data):
     except (ValidationError, AttributeError):
         return False
 
+
 def string_validator(value, min_length=STR_MIN_LENGTH, max_length=STR_MAX_LENGTH):
     """
     Function that provides string validation.
@@ -168,41 +170,42 @@ def string_validator(value, min_length=STR_MIN_LENGTH, max_length=STR_MAX_LENGTH
     return True
 
 
-
-
 def updating_password_validate(data, new_password):
     """
     :param data: dict that we need to validate.
     :type data: dict
-    :param requred_key: requred_key for required_keys_validator
-    :type requred_key: str
+    :param new_password: new_password for required_keys_validator
+    :type new_password: str
     :return: `True` if data is valid and `None` if it is not.
     """
 
     if data:
         if not required_keys_validator(data, [new_password], False):
-            return None
+            return False
         string = data.get(new_password)
         if not string_validator(string, 4):
-            return None
+            return False
         if is_valid_password(string):
             return True
+    return False
+
 
 def updating_email_validate(data, email):
     """
     :param data: dict that we need to validate.
     :type data: dict
-    :param requred_key: requred_key for required_keys_validator
-    :type requred_key: str
+    :param email: email for required_keys_validator
+    :type email: str
     :return: `True` if data is valid and `None` if it is not.
     """
     if data:
         if not required_keys_validator(data, [email], False):
-            return None
+            return False
         if not string_validator(data.get(email), 4):
-            return None
+            return False
         if email_validator(data.get(email)):
             return True
+    return False
 
 
 def is_valid_data_new_spending(data):

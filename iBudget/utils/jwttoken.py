@@ -5,8 +5,8 @@ The module that provides creating and handling JWT tokens.
 """
 
 import jwt
-from ibudget import settings
 from django.utils import timezone
+from ibudget import settings
 
 SECRET_KEY = settings.JWT_TOKEN_KEY
 ALGORITHM = settings.JWT_ALGORITHM

@@ -13,13 +13,13 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from requests_oauthlib import OAuth2Session
 
-from utils.validators import login_validate, is_valid_registration_data, is_valid_password,\
-    updating_email_validate, updating_password_validate
 from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
   LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
-from .models import UserProfile
+from utils.validators import login_validate, is_valid_registration_data, updating_email_validate, \
+    updating_password_validate
 from utils.jwttoken import create_token, handle_token
 from utils.password_reseting import send_password_update_letter, send_successful_update_letter
+from .models import UserProfile
 
 TTL_SEND_PASSWORD_TOKEN = 60 * 60
 USER_TTL_NOTIFICATOR = TTL_SEND_PASSWORD_TOKEN / 60
@@ -134,10 +134,10 @@ def get_profile(request):
 
 
 @require_http_methods(["POST"])
-def send_email(request):
+def forgot_password(request):
     """
 
-    :param request: method POST
+    :param request: Handles method POST
     :return: HttpResponse 400 if its bad request and HttpResponse 200 if everything is alright
     """
     data = json.loads(request.body)
@@ -153,9 +153,16 @@ def send_email(request):
     return HttpResponse(status=400)
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["PUT"])
 def update_password(request, token=None):
-    """Handles POST request."""
+    """
+
+    :param request: Handles method PUT
+    :return: :param request: method POST
+    :return: HttpResponse 400 if it is bad request and HttpResponse 200 if everything is good
+    """
+
+    data = json.loads(request.body)
     if not token:
         return HttpResponse(status=400)
     identifier = handle_token(token)
@@ -164,25 +171,11 @@ def update_password(request, token=None):
     user = UserProfile.get_by_id(identifier['user_id'])
     if not user:
         return HttpResponse(status=404)
-    data = request.body
     if updating_password_validate(data, 'new_password'):
         new_password = data.get('new_password')
         if not user.check_password(new_password):
             user.update(password=new_password)
             send_successful_update_letter(user)
-            return HttpResponse(status=200)
-        return HttpResponse(status=400)
-    return HttpResponse(status=400)
-
-
-@require_http_methods(["POST"])
-def change_password(request):
-    """Change_password UserProfile"""
-    user = request.user
-    data = json.loads(request.body)
-    if user.check_password(data['OldPassword']):
-        if is_valid_password(data['NewPassword']):
-            user.update(password=data['NewPassword'])
             return HttpResponse(status=200)
         return HttpResponse(status=400)
     return HttpResponse(status=400)

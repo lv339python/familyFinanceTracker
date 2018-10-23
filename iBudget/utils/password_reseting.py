@@ -30,6 +30,7 @@ def send_password_update_letter(user, token):
     templates = 'change_password_link.html'
     if send_email(subject, message, recipient_list, templates, ctx):
         return True
+    return False
 
 
 def send_successful_update_letter(user):
@@ -47,3 +48,4 @@ def send_successful_update_letter(user):
     templates = 'update_password.html'
     if send_email(subject, message, recipient_list, templates, ctx):
         return True
+    return False

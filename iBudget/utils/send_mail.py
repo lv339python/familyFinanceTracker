@@ -1,8 +1,8 @@
 """This is send mail method"""
 from smtplib import SMTPRecipientsRefused
-from ibudget import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from ibudget import settings
 
 
 def send_email(subject, message, recipient_list, template, ctx):
