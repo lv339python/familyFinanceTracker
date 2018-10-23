@@ -7,6 +7,7 @@ from datetime import date
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.utils.dateparse import parse_date
 
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
@@ -148,7 +149,7 @@ def date_range_validate(data):
 
 def is_valid_data_individual_limit(data):
     """
-    Function that provides login data validation.
+    Function that provides data validation for defining new limitation.
     :type data: dict
     :return: 'True' if data is valid and 'None' if it is not.
     :rtype: bool
@@ -171,7 +172,7 @@ def is_valid_data_individual_limit(data):
 
 def is_valid_data_new_spending(data):
     """
-    Function that provides login data validation.
+    Function that provides data validation for creating new spending category.
     :type data: dict
     :return: 'True' if data is valid and 'None' if it is not.
     :rtype: bool
@@ -179,3 +180,23 @@ def is_valid_data_new_spending(data):
     if set(data.keys()) != {'name', 'icon'} or not data['name']:
         return False
     return True
+
+def is_valid_data_spending_history(data):
+    """
+    Function that provides data validation for creating spending history.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != {'start_date', 'finish_date', 'UTC'}:
+        return False
+    try:
+        parse_date(data['start_date'])
+        parse_date(data['finish_date'])
+        int(data['UTC'])
+        if data['start_date'] <= data['finish_date']:
+            return True
+        return False
+
+    except (ValidationError, AttributeError):
+        return False
