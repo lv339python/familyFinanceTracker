@@ -4,6 +4,7 @@ This module provides model of spending history.
 
 import datetime
 from django.db import models
+
 from authentication.models import UserProfile
 from fund.models import FundCategories
 from spending.models import SpendingCategories
@@ -53,7 +54,10 @@ class SpendingHistory(models.Model):
                                                   date__range=[start_date -
                                                                datetime.timedelta(days=1),
                                                                finish_date])
-        return SpendingHistory.objects.filter(owner=user,
-                                              date__range=[start_date -
-                                                           datetime.timedelta(days=1),
-                                                           finish_date])
+        total = 0
+        for item in SpendingHistory.objects.filter(owner=user,
+                                                   date__range=[start_date -
+                                                                datetime.timedelta(days=1),
+                                                                finish_date]):
+            total += float(item.value)
+        return total

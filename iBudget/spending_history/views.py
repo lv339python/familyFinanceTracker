@@ -198,3 +198,23 @@ def create_spending_history(request):
                                                                    utc_difference)},
                             status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+@require_http_methods(["GET"])
+def get_month_spending(request):
+    """Handling request for representation total sum.
+        Args:
+            request (HttpRequest): data.
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    finish_date = date.today()
+    start_date = date(finish_date.year, finish_date.month, 1)
+
+    if user:
+        return HttpResponse(SpendingHistory.filter_by_user_date_spending(user,
+                                                                         start_date,
+                                                                         finish_date),
+                            status=200)
+    return HttpResponse('Bad Request', status=400)

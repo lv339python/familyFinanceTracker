@@ -39,7 +39,11 @@
             </div>
             <hr>
             <div  v-show="isValidData">
-                <button v-on:click="setLimit" :variant="secondary" >Set limit</button>
+                <button v-on:click="setLimit" :variant="secondary" class="btn btn-secondary">Set limit</button>
+                <br>
+                <button v-on:click="createDone" :variant="secondary" v-show="isDone"class="btn btn-secondary">
+                    {{msg}}
+                </button>
             </div>
         </div>
     </div>
@@ -70,6 +74,8 @@ export default {
                 {nameM: 'November', valueM: 11},
                 {nameM: 'December', valueM: 12}
             ],
+            isDone: false,
+            msg: '',
             spending_list: [],
             yyyy: yyyy,
             selectedYear: null,
@@ -132,10 +138,12 @@ export default {
                     'month': this.selectedMonth,
                     'value': this.selectedValueQ
                 }
-            }).then(response =>{
-                this.$router.go('/spend')
-            })
-        }
+            }).then(response =>(this.msg = response.data));
+                this.isDone=true;
+        },
+        createDone: function (event) {
+            this.$router.go('/spend')
+        },
     }
 }
 </script>
