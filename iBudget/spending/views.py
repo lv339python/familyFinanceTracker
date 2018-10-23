@@ -64,10 +64,10 @@ def set_spending_limitation_ind(request):
     user = request.user
     data = json.loads(request.body)
     if not is_valid_data_individual_limit(data):
-        return HttpResponse(status=400)
+        return HttpResponse('Bad request', status=400)
     spending = SpendingCategories.get_by_id(int(data['spending_id']))
     if not spending:
-        return HttpResponse(status=400)
+        return HttpResponse('Bad request', status=400)
     month = int(data['month'])
     year = int(data['year'])
     value = round(float(data['value']), 2)
@@ -86,18 +86,18 @@ def set_spending_limitation_ind(request):
         finish_date)
     if spending_limitation:
         spending_limitation.update(value=value)
-    else:
-        spending_limitation_ind = SpendingLimitationIndividual(user=user,
-                                                               spending_category=spending,
-                                                               start_date=start_date,
-                                                               finish_date=finish_date,
-                                                               value=value)
-        try:
-            spending_limitation_ind.save()
-        except(ValueError, AttributeError):
-            return HttpResponse(status=406)
+        return HttpResponse("The limit {} has been updated...\n OK".format(value), status=201)
+    spending_limitation_ind = SpendingLimitationIndividual(user=user,
+                                                           spending_category=spending,
+                                                           start_date=start_date,
+                                                           finish_date=finish_date,
+                                                           value=value)
+    try:
+        spending_limitation_ind.save()
+    except(ValueError, AttributeError):
+        return HttpResponse(status=406)
 
-    return HttpResponse(status=201)
+    return HttpResponse("The limit {} has been set...\n OK".format(value), status=201)
 
 
 def group_limit(request):

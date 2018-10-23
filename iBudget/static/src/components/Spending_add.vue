@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-7">
             <icon_getter @get_name='onGet_name' :tabName="tab"> </icon_getter>
         </div>
 
