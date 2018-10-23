@@ -49,7 +49,7 @@ class Group(models.Model):
         Args:
             group_id(int): The first parameter.
         Returns:
-            Groups object if database contain with group_id , None otherwise.
+            Groups object if database contain with group_id, None otherwise.
 
         """
         try:
@@ -118,6 +118,25 @@ class UsersInGroups(models.Model):
     is_admin = models.BooleanField()
 
     @staticmethod
+    def filter_by_group(group):
+        """
+        Implement searching of group members.
+
+        Args:
+            group (Group): group.
+        Returns:
+            List of group members if database contains them,
+            None otherwise.
+
+        """
+        list_members = []
+        for item in UsersInGroups.objects.filter(group=group):
+            list_members.append(item.user)
+        return list_members
+
+
+
+    @staticmethod
     def get_by_id(user_id):
         """
         Args:
@@ -156,6 +175,23 @@ class SharedFunds(models.Model):
     group = models.ForeignKey(Group, on_delete=True)
     fund = models.ForeignKey(FundCategories, on_delete=True)
 
+    @staticmethod
+    def filter_by_group(group):
+        """
+        Implement searching of group fund categories.
+
+        Args:
+            group (Group): group for funds sharing.
+        Returns:
+            List of shared funds for group if database contains funds for group,
+            None otherwise.
+
+        """
+        list_funds = []
+        for item in SharedFunds.objects.filter(group=group):
+            list_funds.append(item.fund)
+        return list_funds
+
 
 class SharedSpendingCategories(models.Model):
     """Common spending categories for groups.
@@ -168,3 +204,20 @@ class SharedSpendingCategories(models.Model):
     """
     group = models.ForeignKey(Group, on_delete=True)
     spending_categories = models.ForeignKey(SpendingCategories, on_delete=True)
+
+    @staticmethod
+    def filter_by_group(group):
+        """
+        Implement searching of group spending categories.
+
+        Args:
+            group (Group): group for spending sharing.
+        Returns:
+            List of shared spending for group if database contains spending for group,
+            None otherwise.
+
+        """
+        list_spendings = []
+        for item in SharedSpendingCategories.objects.filter(group=group):
+            list_spendings.append(item.spending_categories)
+        return list_spendings
