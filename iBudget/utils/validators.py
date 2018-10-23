@@ -10,8 +10,10 @@ from django.core.validators import validate_email
 
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
-SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
+SET_KEYS_FUND_CREATE_DATA = {'name', 'icon'}
 SET_KEYS_FUND_GOAL = {'fund', 'value'}
+SET_KEYS_GROUP_CREATE_DATA = {'name', 'icon'}
+
 
 def is_valid_password(password):
     """validate password
@@ -179,3 +181,25 @@ def is_valid_data_new_spending(data):
     if set(data.keys()) != {'name', 'icon'} or not data['name']:
         return False
     return True
+
+
+def is_valid_data_create_new_group(data):
+    if not set(data.keys()).difference(SET_KEYS_GROUP_CREATE_DATA):
+        return False
+    try:
+        data['name'] = str(data['name'])
+        data['icon'] = str(data['icon'])
+        return True
+    except(ValueError, AttributeError):
+        return False
+
+
+def is_valid_data_create_new_fund(data):
+    if set(data.keys()) != SET_KEYS_FUND_CREATE_DATA:
+        return False
+    try:
+        data['name'] = str(data['name'])
+        data['icon'] = str(data['icon'])
+        return True
+    except(ValueError, AttributeError):
+        return False

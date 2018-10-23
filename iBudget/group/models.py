@@ -37,12 +37,11 @@ class Group(models.Model):
     def group_filter_by_owner_id(user):
         """
         Args:
-            user_id (int): index of owner,
+            user (int): index of owner,
         Returns:
             Group object if database contain group with user_id
         """
         return Group.objects.filter(owner=user)
-
 
     @staticmethod
     def get_group_by_id(group_id):

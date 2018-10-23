@@ -7,7 +7,7 @@ from decimal import Decimal
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from group.models import Group, SharedFunds
-from utils.validators import input_fund_registration_validate, date_range_validate
+from utils.validators import input_fund_registration_validate, date_range_validate, is_valid_data_create_new_fund
 from utils.transaction import save_new_fund
 from .models import FundCategories, FinancialGoal
 
@@ -96,14 +96,12 @@ def create_new_fund(request):
     Returns:
         HttpResponse object.
     """
-    is_shared = False
     data = json.loads(request.body)
+    if is_valid_data_create_new_fund(data):
+        return HttpResponse(status=400)
     user = request.user
     shared_group = data["shared_group"]
-    if shared_group:
-        is_shared = True
-    name = data["name"]
-    icon = data["icon"]
-    if save_new_fund(name, icon, is_shared, user, shared_group):
+    is_shared = True if shared_group else False
+    if save_new_fund(name=data["name"], icon=data["icon"], is_shared=is_shared, owner=user, shared_group=shared_group):
         return HttpResponse(status=201)
     return HttpResponse(status=406)
