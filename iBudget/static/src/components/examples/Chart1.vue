@@ -22,8 +22,8 @@
     props: ['transaction', 'date_transaction', 'value', 'name'],
     data () {
     let pieData = this.transaction;
-    let Left =  pieData.reduce((a, b) => a + b, 0)
-    if (Left < 0); alert('Goal complete');
+    let Left =  pieData.reduce((a, b) => a + b, 0);
+    if (Left < 0);
     pieData.push(this.value - Left);
 
     let pieLabel = this.date_transaction;
@@ -55,7 +55,7 @@
 <style>
   .container {
     max-width: 600px;
-    margin: 0 auto;
+    margin: auto;
   }
 
   h1 {
