@@ -6,9 +6,9 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
-from .models import Group, UsersInGroups
 from utils.validators import is_valid_data_create_new_group
 from utils.transaction import save_new_group
+from .models import Group, UsersInGroups
 
 
 @require_http_methods(["GET"])
@@ -105,6 +105,13 @@ def filter_spending_history_by_spend_category(user_group):
 
 @require_http_methods(["POST"])
 def create_new_group(request):
+    """Handling request for creating of new user's group.
+    Args:
+        request (HttpRequest): request from server which contain
+            name, icon
+    Returns:
+        HttpResponse object.
+    """
     data = json.loads(request.body)
     user = request.user
     if not is_valid_data_create_new_group(data):

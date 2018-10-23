@@ -205,6 +205,12 @@ def is_valid_data_spending_history(data):
 
 
 def is_valid_data_create_new_group(data):
+    """validate data.
+        Args:
+            data (dict): contain name and icon
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
     if set(data.keys()) != SET_KEYS_GROUP_CREATE_DATA:
         return False
     try:
@@ -215,6 +221,12 @@ def is_valid_data_create_new_group(data):
 
 
 def is_valid_data_create_new_fund(data):
+    """validate data.
+        Args:
+            data (dict): contain name and icon
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
     if not set(data.keys()).difference(SET_KEYS_FUND_CREATE_DATA):
         return False
     try:
