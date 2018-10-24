@@ -19,18 +19,15 @@ def show_total(request):
                                   hour=datetime.time(0, 0, 0).hour,
                                   minute=datetime.time(0, 0, 0).minute,
                                   second=datetime.time(0, 0, 0).second)
-    print(start_date)
     total = 0
     incomes_to_date = IncomeHistory.objects.filter(date__range=(start_date, end_date),
                                                    income_id__owner_id=user_id)
 
     if not incomes_to_date:
         return HttpResponse('There are no incomes during this period', status=204)
-    print(incomes_to_date)
 
     for income in incomes_to_date:
         total = total+income.value
-    print(total)
     return HttpResponse(total)
 
 

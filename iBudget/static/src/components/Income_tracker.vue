@@ -80,19 +80,23 @@
 
         methods: {
             sub_dates: function(){
-            this.shownResult = true;
-                axios({
-                    method: "post",
-                    url: "api/v1/income_history/track/",
-                    data: {
-                        'start': this.start_date + "T00:00:00",
-                        'end': this.end_date + "T23:59:59"
-                    }
-                }).then(response => {
-                    this.list_with_incomes = response.data;
-                }).catch(error => {
-                    console.log(error.response.data);
-                })
+                if(this.start_date.length!=0 && this.end_date.length!=0){
+                    this.shownResult = true;
+                    axios({
+                        method: "post",
+                        url: "api/v1/income_history/track/",
+                        data: {
+                            'start': this.start_date + "T00:00:00",
+                            'end': this.end_date + "T23:59:59"
+                        }
+                    }).then(response => {
+                        this.list_with_incomes = response.data;
+                    }).catch(error => {
+                        console.log(error.response.data);
+                    })
+                }else{
+                    alert('You did not choose any dates or you chose only one date out of two required! Choose both dates!')
+                };
             },
             reRender: function(){
                 {this.$router.go('api/v1/income_history/track/');
