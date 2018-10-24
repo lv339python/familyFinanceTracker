@@ -1,15 +1,10 @@
 """
 This module provides functions for spending specifying.
 """
-import calendar
-import json
-from datetime import date
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.db.models import Q
 
-from utils.validators import is_valid_data_individual_limit, is_valid_data_new_spending
-from group.models import Group, SharedSpendingCategories
+from group.models import Group
 from .models import IncomeCategories
 
 

@@ -1,90 +1,65 @@
 <template>
     <div class="content" >
-        <div class="col-md-4" >
-            <hr>
-            <div class="form-group">
-                <label>Select income category:</label>
-                <select v-model="inc_category" class="form-control">
-                    <option v-for="income in income_list" v-bind:value="income.id"> {{ income.name }}
-                    </option>
-                </select>
-            </div>
+        <div class="form-group col-md-4">
+            <label>Select income category:</label>
+            <select v-model="inc_category" class="form-control">
+                <option v-for="income in income_list" v-bind:value="income.id"> {{ income.name }}
+                </option>
+            </select>
         </div>
-        <div class="col-md-4" v-if="is_shared===false">
-            <hr>
-            <div class="form-group">
-                <label>Choose your fund:</label>
-                <select v-model="fund_category" class="form-control">
-                    <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
-                    </option>
-                </select>
-            </div>
+        <div class="form-group col-md-4" v-if="is_shared===false">
+            <label>Choose your fund:</label>
+            <select v-model="fund_category" class="form-control">
+                <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
+                </option>
+            </select>
         </div>
-        <div class="col-md-4" v-if="is_shared===true">
-            <hr>
-            <div class="form-group">
-                <label>Chose group</label>
-                <select v-model="group" class="ourform">
-                    <option v-for="group in group_list"
-                            v-bind:value="group.id"
-                            v-on:click="is_active_group=group.id">
-                        {{ group.name }}
-                    </option>
-                </select>
-            </div>
-            <hr>
+        <div class="form-group col-md-4" v-if="is_shared===true">
+            <label>Chose group</label>
+            <select v-model="group" class="form-control">
+                <option v-for="group in group_list"
+                        v-bind:value="group.id"
+                        v-on:click="is_active_group=group.id">
+                    {{ group.name }}
+                </option>
+            </select>
         </div>
-        <div class="col-md-4" v-if="is_active_group !== null && is_shared===true">
-            <hr>
-            <div class="form-group">
-                <label>Chose category</label>
-                <select v-model="fund_category" class="ourform">
-                    <option v-for="fund in shared_list"
-                            v-if="fund.id_group === is_active_group"
-                            v-bind:value="fund.id_fund">
-                        {{fund.name_fund}}
-                    </option>
-                </select>
-            </div>
-            <hr>
+        <div class="form-group col-md-4" v-if="is_active_group !== null && is_shared===true">
+            <label>Chose category</label>
+            <select v-model="fund_category" class="form-control">
+                <option v-for="fund in shared_list"
+                        v-if="fund.id_group === is_active_group"
+                        v-bind:value="fund.id_fund">
+                    {{fund.name_fund}}
+                </option>
+            </select>
         </div>
-        <div>
-            <label for="shared_button">Choose among shared funds : </label>
-            <input type="checkbox" id="shared_button" v-model="is_shared">
+        <div class="form-group col-md-4">
+            <b-form-checkbox id="shared_button" v-model="is_shared">Choose among shared funds :</b-form-checkbox>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Input sum of your income </label>
+            <input v-model="value" type="number" min="1" class="form-control">
         </div>
         <div class="col-md-4">
-            <hr>
-            <div class="form-group">
-                <label>Input sum of your income </label>
-                <input v-model="value" type="number" min="1" class="form-control">
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <hr>
             <div class="form-group">
                 <label>Input comment</label>
                 <input v-model="comment" type="text" class="form-control">
             </div>
         </div>
 
-        <div class="col-md-4" >
-            <hr>
-            <div class="form-group">
+        <div class="col-md-4 form-group" >
                 <label>Choose date</label>
                 <input v-model="date" type="date">
-            </div>
-            <hr>
         </div>
-        <!--<span>{{ is_shared }}</span>-->
-
-        <button v-on:click="setData" :variant="secondary">Save</button>
+        <div>
+            <b-button v-on:click="setData" :variant="success">Save</b-button>
+        </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
-
     export default {
         name: "income_history",
         data() {
@@ -166,9 +141,12 @@
         flex-direction: column;
         flex-wrap: wrap;
     }
-
     .text {
         width: fit-content;
         margin: auto;
+    }
+    .content div {
+        margin: auto;
+        padding-top: 2%;
     }
 </style>

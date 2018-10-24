@@ -1,3 +1,6 @@
+"""
+This module provides functions for handling spending_history view.
+"""
 import json
 from decimal import Decimal
 
@@ -11,12 +14,13 @@ from .models import IncomeCategories, IncomeHistory, FundCategories
 
 @require_http_methods(["POST"])
 def register_income(request):
-    """Handling request for creating of spending categories list.
-        Args:
-            request (HttpRequest): request from server which contain
-            fund, category, sum, date, comment
-        Returns:
-            HttpResponse status.
+    """
+    Handling request for creating of spending categories list.
+    Args:
+        request (HttpRequest): request from server which contain
+        fund, category, sum, date, comment
+    Returns:
+        HttpResponse status.
     """
     data = json.loads(request.body)
     if not input_income_registration_validate(data):

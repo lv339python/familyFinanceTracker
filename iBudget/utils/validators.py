@@ -154,7 +154,7 @@ def input_income_registration_validate(data):
         data['value'] = Decimal(data['value'])
         data['comment'] = str(data['comment'])
         return True
-    except (ValidationError, AttributeError):
+    except (ValidationError, AttributeError, TypeError):
         return False
 
 def date_range_validate(data):
