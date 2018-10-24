@@ -13,7 +13,6 @@
             <hr>
             <div class="form-group">
                 <label >Choose icon</label>
-                <icon_getter @get_name='onGet_name'> </icon_getter>
             </div>
         </div>
 
@@ -45,7 +44,7 @@ import Icon_getter from './Icon_getter.vue'
             return{
                 name: null,
                 shared_group: null,
-                icon: null,
+                icon: 'abc',
                 group: null,
                 user_groups_list: []
             }
