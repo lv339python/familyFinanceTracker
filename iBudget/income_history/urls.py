@@ -1,7 +1,8 @@
-from django.urls import path, include
-from .views import test_track
+from django.urls import path
+from .views import track, show_total
 
 urlpatterns = [
-    path('track/', test_track)
+    path('track/', track),
+    path('get_cur_incomes/', show_total),
 
 ]

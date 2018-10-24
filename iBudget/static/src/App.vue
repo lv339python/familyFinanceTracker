@@ -25,5 +25,6 @@ export default {
     #canvas {
         margin-left: 250px;
         background-color: whitesmoke;
+        height: 800px;
     }
 </style>

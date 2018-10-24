@@ -1,14 +1,32 @@
 <template>
     <div id = "Income_tracker">
-        <p>Start date:</p>
-        <input v-model = "start_date" type = "date" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
-        required size = "9">
-        </input>
-        <p>End date:</p>
-        <input v-model = "end_date" type = "date" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
-        required size = "9">
-        </input>
-        <p><button v-on:click="sub_dates">submit</button></p>
+        <div id="total">
+        <p>The total amount of income from the 1-st of this month till today is {{this.cur_income}}</p>
+        </div>
+        <div id="form">
+            <p>Please choose dates below:</p>
+            <p>Start date:</p>
+            <input v-model = "start_date" type = "date" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+            required size = "9">
+            </input>
+            <p>End date:</p>
+            <input v-model = "end_date" type = "date" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+            required size = "9">
+            </input>
+            <p><button v-on:click="sub_dates">submit</button></p>
+        </div>
+
+        <div id= "result">
+            <table border='1px' v-if="shownResult">
+                <caption>All the incomes for the chosen period</caption>
+                <tr><th>Income</th><th>Fund</th><th>Date</th><th>Amount</th><th>Comments</th></tr>
+                <tr v-for="item in list_with_incomes">
+                    <td>{{item['income']}}</td> <td>{{item['fund']}}</td> <td>{{item['date']}}</td> <td>{{item['amount']}}</td>
+                    <td>{{item['comment']}}</td>
+                </tr>
+            </table>
+            <p><button v-on:click="reRender" v-if="shownResult">refresh</button></p>
+        </div>
 
     </div>
 </template>
@@ -21,28 +39,51 @@
             return{
                 start_date: '',
                 end_date: '',
-                response: ''
+                list_with_incomes: '',
+                shownResult: false,
+                cur_income: 0
             }
         },
         //props: ['tabName'],
+        created(){
+            axios.get('api/v1/income_history/get_cur_incomes/')
+            .then(response => {
+             this.cur_income = response.data;
+            })
+            .catch(e => {
+                alert(error.response.data);
+            });
+        },
         methods: {
             sub_dates: function(){
+            this.shownResult = true;
                 axios({
                     method: "post",
                     url: "api/v1/income_history/track/",
                     //params: {"tab": this.tabName},
                     data: {
-                        'start': this.start_date,
-                        'end': this.end_date
+                        'start': this.start_date + "T00:00:00",
+                        'end': this.end_date + "T23:59:59"
                     }
                 }).then(response => {
-                    this.response = response.data;
-                    alert(this.response)
+                    this.list_with_incomes = response.data;
                 }).catch(error => {
                     console.log(error.response.data);
                 })
+            },
+            reRender: function(){
+                {this.$router.go('api/v1/income_history/track/');
+                }
+            },
+            see_cur_income: function(){
+
             }
         }
     }
-
 </script>
+
+<style>
+    caption{
+        caption-side: top;
+    }
+</style>

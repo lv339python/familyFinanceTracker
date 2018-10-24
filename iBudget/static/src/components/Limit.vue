@@ -12,11 +12,11 @@
     <div id = "limit values">
       <form>
       <p>Start date:</p>
-          <input v-model = "start_date" type = "text" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          <input v-model = "start_date" type = "date" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           required size = "9">
           </input>
           <p>End date:</p>
-          <input v-model = "end_date" type = "text" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          <input v-model = "end_date" type = "date" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           required size = "9">
           </input>
           <p>Amount:</p>
