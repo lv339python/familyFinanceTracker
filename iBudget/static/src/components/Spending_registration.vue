@@ -4,7 +4,7 @@
             <hr>
             <div class="form-group">
                 <label>Select category:</label>
-                <select v-model="category"  required class="form-control">
+                <select v-model="category"  class="form-control">
                     <option v-for="spend in spending_list" v-bind:value="spend.id" > {{ spend.name }}
                     </option>
                 </select>

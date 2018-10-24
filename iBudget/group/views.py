@@ -55,9 +55,7 @@ def groups_balance(request):
     user_id = request.user.id
     group_balance = {}
     users_groups = Group.filter_groups_by_user_id(user_id)
-    print(users_groups)
     for user_group in users_groups:
-        print(user_group)
         group_balance[user_group.name] = {'Total income': 0, 'Total spending': 0}
         income_values = filter_income_history_by_fund(user_group)
         for i in income_values:
