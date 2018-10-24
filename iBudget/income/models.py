@@ -37,12 +37,3 @@ class IncomeCategories(models.Model):
 
         """
         return IncomeCategories.objects.filter(owner=owner, name=name)
-
-    @classmethod
-    def create(cls, name, icon, date, value, owner):
-        income = cls(name=name, icon=icon, date=date, value=value, owner=owner)
-        try:
-            income.save()
-            return income
-        except (ValueError, AttributeError):
-            return None

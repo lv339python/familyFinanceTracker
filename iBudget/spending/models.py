@@ -66,15 +66,6 @@ class SpendingCategories(models.Model):
         """
         return SpendingCategories.objects.filter(owner=owner, name=name)
 
-    @classmethod
-    def create(cls, name, icon, owner, is_shared):
-        spending = cls(name=name, icon=icon, owner=owner, is_shared=is_shared)
-        try:
-            spending.save()
-            return spending
-        except (ValueError, AttributeError):
-            return None
-
 
 class SpendingLimitationIndividual(models.Model):
     """Limitation of user's spending.

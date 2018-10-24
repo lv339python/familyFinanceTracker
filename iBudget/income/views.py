@@ -35,7 +35,9 @@ def create_category(request):
     if income:
         return HttpResponse("Sorry, but such category exists...\n OK", status=202)
 
-    income = IncomeCategories.create(name=name, icon=icon, date=date, value=value, owner=owner)
+    income = IncomeCategories(name=name, icon=icon, date=date, value=value, owner=owner)
     if not income:
         return HttpResponse(status=406)
+    else:
+        income.save()
     return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
