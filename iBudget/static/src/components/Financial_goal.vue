@@ -51,7 +51,6 @@
         <div class="col-md-4" id="start_date">
             <label>Start date</label>
             <div class="form-group">
-
                 <input v-model="start_date" type="date">
             </div>
             <hr>
@@ -60,12 +59,10 @@
         <div class="col-md-4" id="finish_date">
             <label>Finish date</label>
             <div class="form-group">
-
                 <input v-model="finish_date" type="date">
             </div>
             <hr>
         </div>
-
 
         <div id="reset">
             <button @click="reset">Reset</button>
@@ -118,7 +115,6 @@
                 }
             }
         },
-
 
         created() {
             axios.get('/api/v1/fund/users_shared_fund/')

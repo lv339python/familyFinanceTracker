@@ -24,3 +24,15 @@ class IncomeHistory(models.Model):
     date = models.DateTimeField()
     value = models.DecimalField(max_digits=17, decimal_places=2)
     comment = models.TextField(null=True, default="")
+
+    @staticmethod
+    def filter_by_fund_id(fund_name):
+        """
+            Args:
+                fund_name (int): The first parameter.
+            Returns:
+                IncomeHistory objects if database contains history
+                for this fund, None otherwise.
+
+        """
+        return IncomeHistory.objects.filter(pk=fund_name)
