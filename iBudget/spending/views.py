@@ -26,7 +26,6 @@ def show_spending_ind(request):
         user_categories = []
         for entry in SpendingCategories.filter_by_user(user):
             user_categories.append({'id': entry.id, 'name': entry.name})
-        print(user_categories)
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)
 
