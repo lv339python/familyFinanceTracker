@@ -204,6 +204,5 @@ def create_spending_category(request):
     spending = SpendingCategories(name=name, icon=icon, owner=owner, is_shared=is_shared)
     if not spending:
         return HttpResponse(status=406)
-    else:
-        spending.save()
+    spending.save()
     return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)

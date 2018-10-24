@@ -122,4 +122,3 @@ class SpendingLimitationGroup(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     value = models.DecimalField(max_digits=17, decimal_places=2)
-
