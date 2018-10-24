@@ -16,7 +16,10 @@
                 <icon_getter @get_name='onGet_name' :tabName="tab"> </icon_getter>
             </div>
         </div>
-        <button v-on:click="setData" :variant="secondary">Create</button>
+        <hr>
+        <div class="col-md-2">
+            <button v-on:click="setData" :variant="secondary">Create</button>
+        </div>
     </div>
 </template>
 

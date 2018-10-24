@@ -1,6 +1,6 @@
 <template>
     <div id="fund_registration">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <hr>
             <div class="form-group">
                 <label>Input name</label>
@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <hr>
             <div class="form-group">
                 <label >Shared to</label>
@@ -31,8 +31,10 @@
                 </select>
             </div>
         </div>
-
-        <button v-on:click="setData" :variant="secondary">Save</button>
+        <hr>
+        <div class="col-md-2">
+            <button v-on:click="setData" :variant="secondary">Save</button>
+        </div>
     </div>
 </template>
 
