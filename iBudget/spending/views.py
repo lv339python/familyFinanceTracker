@@ -11,7 +11,7 @@ from django.db.models import Q
 from utils.validators import is_valid_data_individual_limit, is_valid_data_new_spending
 from group.models import Group, SharedSpendingCategories
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
-
+from utils.aws_helper import AwsService
 
 @require_http_methods(["GET"])
 def show_spending_ind(request):
@@ -26,7 +26,8 @@ def show_spending_ind(request):
     if user:
         user_categories = []
         for entry in SpendingCategories.filter_by_user(user):
-            user_categories.append({'id': entry.id, 'name': entry.name})
+            user_categories.append({'id': entry.id, 'name': entry.name, 'icon': AwsService.get_image_url(entry.icon)})
+        print(user_categories)
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -46,6 +47,7 @@ def show_spending_group(request):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
                 users_group.append({'id_cat': shared_category.spending_categories.id,
                                     'name_cat': shared_category.spending_categories.name,
+                                    'icon_cat': shared_category.spending_categories.icon,
                                     'id_group': group.id
                                     })
         return JsonResponse(users_group, status=200, safe=False)
