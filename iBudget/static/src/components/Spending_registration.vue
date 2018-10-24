@@ -78,7 +78,7 @@
         <button @click="reset">Reset</button>
         </div>
 
-        <div id="save" v-show="isValidData" >
+        <div id="save" v-show="isValidData">
             <button @click="setData" :variant="secondary">Save</button>
         </div>
     </div>
@@ -224,8 +224,9 @@
     }
     #date{
         position: relative;
-        top: 5px;
-        left: -800px;
+        top: -150px;
+        left: -815px;
+
     }
     #reset{
         position: relative;
@@ -236,15 +237,15 @@
     }
     #save{
         position: relative;
-        left: -167px;
+        left: -170px;
         top: 532px;
-        width: 57px;
+        width: 55px;
         background: rgba(174, 23, 220, 0.67);
     }
     .toggle {
         position: relative;
-        left: 700px;
-        top: -180px;
+        left: 630px;
+        top: -280px;
         display: block;
         width: 40px;
         height: 20px;
