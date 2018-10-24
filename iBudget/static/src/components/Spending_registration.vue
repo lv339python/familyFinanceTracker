@@ -236,16 +236,16 @@
         background: rgba(82, 220, 69, 0.67);
     }
     #save{
-        position: relative;
-        left: -170px;
-        top: 532px;
+        position: absolute;
+        right: 370px;
+        top: 616px;
         width: 55px;
         background: rgba(174, 23, 220, 0.67);
     }
     .toggle {
-        position: relative;
-        left: 630px;
-        top: -280px;
+        position: absolute;
+        left: 710px;
+        top: 120px;
         display: block;
         width: 40px;
         height: 20px;
