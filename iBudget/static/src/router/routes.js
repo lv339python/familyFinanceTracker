@@ -1,5 +1,5 @@
 import {Home, Funds, Groups, Spendings, Incomes} from 'src/tabs';
-import {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add, Financial_goal, Funds_registration, Spending_history, Income_registration} from "src/components";
+import {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add, Financial_goal, Funds_registration, Spending_history, Income_registration, PasswordRecovery} from "src/components";
 
 
 export default [
@@ -47,6 +47,13 @@ export default [
     },
     {
     path: '/spending_history', component: Spending_history
+    },
+    {
+        path: '/password_recovery', component: PasswordRecovery
+    },
+    {
+        path: '/password_recovery/:token', component: PasswordRecovery
+    }
     },
      {
         path: '/Income_registration', component: Income_registration

@@ -63,7 +63,8 @@ ROOT_URLCONF = 'ibudget.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'static/public')],
+        'DIRS': [os.path.join(BASE_DIR, 'static/public'),
+                 os.path.join(BASE_DIR, 'templates/emails')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
             ],
         },
     },
@@ -169,3 +171,19 @@ try:
     from .local_settings import *
 except ImportError:
     print('Unable to load local_settings.py:')
+
+# Required settings for sending email.
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'lv339python@gmail.com'
+EMAIL_HOST_PASSWORD = '2324578a'
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'DEFAULT_FROM_EMAIL'
+
+# JWT Token required settings.
+
+JWT_TOKEN_KEY = 'any secret word'
+JWT_ALGORITHM = 'HS384'
+
+FRONT_HOST = 'localhost:8000'
