@@ -53,7 +53,6 @@ export default [
     },
     {
         path: '/password_recovery/:token', component: PasswordRecovery
-    }
     },
      {
         path: '/Income_registration', component: Income_registration
