@@ -12,12 +12,10 @@
 
 <script>
   import PieExample from './PieExample';
-  import LineExample from './LineExample';
 
   export default {
     components: {
       PieExample,
-      LineExample
     },
     props: ['transaction', 'date_transaction', 'value', 'name'],
     data () {
@@ -28,12 +26,6 @@
 
     let pieLabel = this.date_transaction;
     pieLabel.push('Left to goal');
-
-    console.log(this.transaction);
-    console.log(this.date_transaction);
-
-    console.log(pieData);
-    console.log(pieLabel);
 
       return {
         height:100,

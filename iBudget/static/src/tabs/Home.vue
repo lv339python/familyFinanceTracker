@@ -7,8 +7,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Chart1  from 'src/components/examples/Chart1';
+
     export default {
         name: "Home",
     }

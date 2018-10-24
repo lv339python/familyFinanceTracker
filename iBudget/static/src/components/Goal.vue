@@ -1,22 +1,27 @@
 <template>
     <div class="content" id="goal">
+
         <div class="text">
 
-            <ul>
-                <il v-for="goal in user_goal_list"> {{ goal.name}} - {{ goal.value
-                    }}-{{goal.transaction}}-{{goal.date_transaction}}- {{goal.finish_date}}
-                </il>
-            </ul>
+
+
             <ul>
                 <il v-for="goal in user_goal_list">
-                    <chart1 v-bind:transaction="goal.transaction" v-bind:date_transaction="goal.date_transaction"
+                    <chart1 v-bind:transaction="goal.transaction"
+                            v-bind:date_transaction="goal.date_transaction"
                             v-bind:value="goal.value"
                             v-bind:name="goal.name"></chart1>
 
                 </il>
             </ul>
-
+            <b-button :variant="secondary" to="/goaltable">Goal Table</b-button>
+           <ul>
+                    <il v-for="goal in user_goal_list"> {{ goal.name}} - {{ goal.value }}-
+                        {{goal.transaction}} - {{goal.date_transaction}} - {{goal.finish_date}}
+                    </il>
+           </ul>
         </div>
+
     </div>
 
 </template>
@@ -59,7 +64,7 @@
 <style scoped>
     .content {
         height: 100vh;
-        overflow: hidden;
+        overflow: scroll;
         display: flex;
     }
 
