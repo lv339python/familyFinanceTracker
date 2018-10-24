@@ -153,6 +153,9 @@ SCOPE = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleap
 AUTHORIZATION_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_URL = "https://www.googleapis.com/oauth2/v4/token"
 LOCAL_URL = "http://127.0.0.1:8000"
+JWT_TOKEN_KEY = 'any secret word'
+JWT_ALGORITHM = 'HS384'
+FRONT_HOST = 'localhost:8000'
 
 # AWS
 

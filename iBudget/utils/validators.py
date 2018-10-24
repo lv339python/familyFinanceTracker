@@ -7,9 +7,12 @@ from datetime import date
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.utils.dateparse import parse_date
 
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
+SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
+SET_KEYS_FUND_GOAL = {'fund', 'value'}
 
 def is_valid_password(password):
     """validate password
@@ -118,10 +121,35 @@ def input_spending_registration_validate(data):
     except (ValidationError, AttributeError):
         return False
 
+def input_fund_registration_validate(data):
+    """validate data.
+        Args:
+            data (dict): contain fund, value
+        Returns:
+            bool: The return value. True is data valid, else False.list([1,2,3])
+    """
+    if not set(data.keys()).difference(SET_KEYS_FUND_GOAL):
+        return False
+    try:
+        data['fund'] = int(data['fund'])
+        data['value'] = Decimal(data['value'])
+        return True
+    except (ValidationError, AttributeError):
+        return False
+
+def date_range_validate(data):
+    """
+    Function that provides data range validation
+    :param data: start_date, finish_date
+    :return: Raise validation error when the starting date is greater than the final one
+    """
+    if data["start_date"] > data["finish_date"]:
+        raise ValidationError("Finish time cannot be earlier than start time!")
+    return data
 
 def is_valid_data_individual_limit(data):
     """
-    Function that provides login data validation.
+    Function that provides data validation for defining new limitation.
     :type data: dict
     :return: 'True' if data is valid and 'None' if it is not.
     :rtype: bool
@@ -144,7 +172,7 @@ def is_valid_data_individual_limit(data):
 
 def is_valid_data_new_spending(data):
     """
-    Function that provides login data validation.
+    Function that provides data validation for creating new spending category.
     :type data: dict
     :return: 'True' if data is valid and 'None' if it is not.
     :rtype: bool
@@ -152,3 +180,23 @@ def is_valid_data_new_spending(data):
     if set(data.keys()) != {'name', 'icon'} or not data['name']:
         return False
     return True
+
+def is_valid_data_spending_history(data):
+    """
+    Function that provides data validation for creating spending history.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != {'start_date', 'finish_date', 'UTC'}:
+        return False
+    try:
+        parse_date(data['start_date'])
+        parse_date(data['finish_date'])
+        int(data['UTC'])
+        if data['start_date'] <= data['finish_date']:
+            return True
+        return False
+
+    except (ValidationError, AttributeError):
+        return False

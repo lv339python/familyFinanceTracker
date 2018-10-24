@@ -18,11 +18,11 @@ class FileHandler(View):
         :param - request object
         """
         if request.GET['tab'] == 'fund':
-             urls = AwsService.get_default_list_icons('standard_fund/')[1:]
+            urls = AwsService.get_default_list_icons('standard_fund/')[1:]
         if request.GET['tab'] == 'income':
-             urls = AwsService.get_default_list_icons('standard_income/')[1:]
+            urls = AwsService.get_default_list_icons('standard_income/')[1:]
         if request.GET['tab'] == 'spending':
-             urls = AwsService.get_default_list_icons('standard/')[1:]
+            urls = AwsService.get_default_list_icons('standard/')[1:]
         if request.GET['tab'] == 'group':
             urls = AwsService.get_default_list_icons('standard_group/')[1:]
         return JsonResponse(urls, status=200, safe=False)
