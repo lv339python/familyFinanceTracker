@@ -23,3 +23,17 @@ class IncomeCategories(models.Model):
     value = models.DecimalField(max_digits=17, decimal_places=2)
     icon = models.CharField(max_length=30)
     owner = models.ForeignKey(UserProfile, on_delete=True)
+
+    @staticmethod
+    def filter_by_owner_name(owner, name):
+        """
+        Args:
+            owner (UserProfile): owner of category,
+            name(bool): name of category.
+        Returns:
+            IncomeCategories object if database contain category for this user
+            and name, None otherwise.
+
+
+        """
+        return IncomeCategories.objects.filter(owner=owner, name=name)
