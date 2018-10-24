@@ -3,12 +3,13 @@ month till today and let a use track his incomes for the chose period of time
 """
 import json
 import datetime
+from decimal import Decimal
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_datetime
-from .models import IncomeCategories, FundCategories, IncomeHistory
-from decimal import Decimal
 from utils.validators import input_income_registration_validate
+from .models import IncomeCategories, FundCategories, IncomeHistory
+
 
 
 
@@ -66,23 +67,20 @@ def track(request):
             {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
     print(incomes_funds_ids)
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
-"""
-This module provides functions for handling spending_history view.
-"""
 
 @require_http_methods(["POST"])
 def register_income(request):
     """
-    Handling request for creating of spending categories list.
+    Handling request for creating of income categories list.
     Args:
-        request (HttpRequest): request from server which contain
-        fund, category, sum, date, comment
+        request (HttpRequest): request from server which contains
+        income category, fund category, value, date, comment
     Returns:
         HttpResponse status.
     """
     data = json.loads(request.body)
     if not input_income_registration_validate(data):
-        return HttpResponse('Please, fill all required fields', status=400)
+        return HttpResponse('Please, fill all required fields properly !', status=400)
 
     income = IncomeCategories.get_by_id(int(data["inc_category"]))
     if not income:

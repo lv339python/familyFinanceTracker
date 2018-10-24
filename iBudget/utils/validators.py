@@ -1,14 +1,13 @@
 """
 This module provides function for validations.
 """
-from decimal import Decimal
+from decimal import Decimal, DecimalException
 from datetime import date
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.dateparse import parse_date
-
 
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
@@ -146,11 +145,12 @@ def input_fund_registration_validate(data):
         return False
 
 def input_income_registration_validate(data):
-    """validate data.
-        Args:
-            data (dict): contain category, type of pay, sum, comment
-        Returns:
-            bool: The return value. True is data valid, else False.list([1,2,3])
+    """
+    validate data.
+    Args:
+        data (dict): contains   income category, fund category, value, comment
+    Returns:
+        bool: The return value. True is data valid, else False
     """
     if not set(data.keys()).difference(SET_KEYS_INCOME_REG_DATA):
         return False
@@ -160,7 +160,7 @@ def input_income_registration_validate(data):
         data['value'] = Decimal(data['value'])
         data['comment'] = str(data['comment'])
         return True
-    except (ValidationError, AttributeError, TypeError):
+    except (ValidationError, AttributeError, TypeError, DecimalException):
         return False
 
 def date_range_validate(data):

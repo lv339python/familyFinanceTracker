@@ -1,5 +1,5 @@
 <template>
-    <div class="content" >
+    <div class="content">
         <div class="form-group col-md-4">
             <label>Select income category:</label>
             <select v-model="inc_category" class="form-control">
@@ -14,7 +14,7 @@
                 </option>
             </select>
         </div>
-        <div class="form-group col-md-4" v-if="is_shared===true">
+        <div class="form-group col-md-4" v-else>
             <label>Chose group</label>
             <select v-model="group" class="form-control">
                 <option v-for="group in group_list"
@@ -35,7 +35,9 @@
             </select>
         </div>
         <div class="form-group col-md-4">
-            <b-form-checkbox id="shared_button" v-model="is_shared">Choose among shared funds :</b-form-checkbox>
+            <b-form-checkbox id="shared_button" v-model=
+                "is_shared">Choose among shared funds :
+            </b-form-checkbox>
         </div>
         <div class="form-group col-md-4">
             <label>Input sum of your income </label>
@@ -48,18 +50,24 @@
             </div>
         </div>
 
-        <div class="col-md-4 form-group" >
-                <label>Choose date</label>
-                <input v-model="date" type="date">
+        <div class="col-md-4 form-group">
+            <label>Choose date</label>
+            <input v-model="date" type="date">
         </div>
         <div>
-            <b-button v-on:click="setData" :variant="success">Save</b-button>
+            <b-button :disabled="DataValidation===false" class="save_button" v-on:click="setData" :variant="success">
+                Save
+            </b-button>
+        </div>
+        <div>
+            <b-button v-on:click="clear" :variant="warning">Clear form</b-button>
         </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
+
     export default {
         name: "income_history",
         data() {
@@ -75,6 +83,18 @@
                 comment: null,
                 is_active_group: null,
                 is_shared: false
+            }
+        },
+        computed: {
+            DataValidation: {
+                get: function () {
+                    let result =
+                        this.inc_category != null &&
+                        this.fund_category != null &&
+                        this.value != null &&
+                        this.date != null;
+                    return result;
+                }
             }
         },
         created() {
@@ -127,10 +147,18 @@
                     this.reply = response.data;
                     alert(this.reply);
                     this.$router.go('/Incomes/')
-                }).catch( error => {
+                }).catch(error => {
                     alert(error.response.data)
                 })
             },
+            clear() {
+                this.group = null;
+                this.inc_category = null;
+                this.fund_category = null;
+                this.date = null;
+                this.comment = null;
+                this.is_shared = null;
+            }
         }
     }
 </script>
@@ -141,10 +169,12 @@
         flex-direction: column;
         flex-wrap: wrap;
     }
+
     .text {
         width: fit-content;
         margin: auto;
     }
+
     .content div {
         margin: auto;
         padding-top: 2%;

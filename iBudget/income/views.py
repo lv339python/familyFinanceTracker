@@ -3,7 +3,7 @@ This module provides functions for income specifying.
 """
 import json
 
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from group.models import Group
 from utils.validators import is_valid_data_new_income
@@ -43,12 +43,12 @@ def create_category(request):
 
 @require_http_methods(["GET"])
 def show_income_ind(request):
-    """Handling request for creating of spending categories list.
-
+    """
+    Handling request for creating list of users incomes.
         Args:
-            request (HttpRequest): Limitation data.
-        Returns:
-            HttpResponse object.
+        request (HttpRequest): Limitation data.
+    Returns:
+        HttpResponse object.
     """
     user = request.user
     if user:
@@ -60,11 +60,12 @@ def show_income_ind(request):
 
 @require_http_methods(["GET"])
 def show_income_group(request):
-    """Handling request for creating of spending categories list in group.
-        Args:
-            request (HttpRequest): Limitation data.
-        Returns:
-            HttpResponse object.
+    """
+    Handling request for creating list of funds for specific group.
+    Args:
+        request (HttpRequest): Limitation data.
+    Returns:
+        HttpResponse object.
     """
 
     user = request.user
