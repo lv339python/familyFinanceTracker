@@ -14,7 +14,10 @@ SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
 SET_KEYS_INCOME_REG_DATA = {'inc_category', 'fund_category', 'value'}
+SET_KEYS_FUND_CREATE_DATA = {'name', 'icon'}
 SET_KEYS_FUND_GOAL = {'fund', 'value'}
+SET_KEYS_GROUP_CREATE_DATA = {'name', 'icon'}
+
 STR_MIN_LENGTH = 0
 STR_MAX_LENGTH = None
 
@@ -258,7 +261,7 @@ def updating_email_validate(data, email):
 
 def is_valid_data_new_spending(data):
     """
-    Function that provides login data validation.
+    Function that provides data validation for creating new spending category.
     :type data: dict
     :return: 'True' if data is valid and 'None' if it is not.
     :rtype: bool
@@ -286,3 +289,62 @@ def is_valid_data_spending_history(data):
 
     except (ValidationError, AttributeError):
         return False
+
+
+def is_valid_data_create_new_group(data):
+    """validate data.
+        Args:
+            data (dict): contain name and icon
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if set(data.keys()) != SET_KEYS_GROUP_CREATE_DATA:
+        return False
+    try:
+        data['name'] = str(data['name'])
+        return True
+    except(ValueError, AttributeError):
+        return False
+
+
+def is_valid_data_create_new_fund(data):
+    """validate data.
+        Args:
+            data (dict): contain name and icon
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if not set(data.keys()).difference(SET_KEYS_FUND_CREATE_DATA):
+        return False
+    try:
+        data['name'] = str(data['name'])
+        data['icon'] = str(data['icon'])
+        return True
+    except(ValueError, AttributeError):
+        return False
+
+
+def is_valid_data_new_income(data):
+    """
+    Function that provides income creation validation
+    :param data:
+    :return:
+    """
+    if set(data.keys()) != {'name', 'icon', 'date', 'value'} or not data['name']:
+        return False
+    if not is_valid_date(data['date']):
+        return False
+    return True
+
+
+def is_valid_date(date_to_validate):
+    """
+    Function that provides date validation
+    :param string
+    :return: True if date is date
+    """
+    try:
+        parse_date(date_to_validate)
+    except ValueError:
+        return False
+    return True

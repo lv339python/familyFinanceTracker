@@ -51,3 +51,17 @@ class IncomeCategories(models.Model):
             return IncomeCategories.objects.get(pk=income_category_id)
         except (IncomeCategories.DoesNotExist, ValueError):
             return None
+
+    @staticmethod
+    def filter_by_owner_name(owner, name):
+        """
+        Args:
+            owner (UserProfile): owner of category,
+            name(bool): name of category.
+        Returns:
+            IncomeCategories object if database contain category for this user
+            and name, None otherwise.
+
+
+        """
+        return IncomeCategories.objects.filter(owner=owner, name=name)

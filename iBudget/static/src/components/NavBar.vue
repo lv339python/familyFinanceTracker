@@ -10,6 +10,7 @@
             <b-navbar-brand to="/funds">Funds</b-navbar-brand>
             <b-navbar-brand to="/groups">Groups</b-navbar-brand>
             <b-navbar-brand to="/spendings">Spendings</b-navbar-brand>
+            <b-navbar-brand to="/groups">Groups</b-navbar-brand>
             <b-collapse is-nav id="nav_collapse">
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
