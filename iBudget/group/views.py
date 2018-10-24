@@ -22,7 +22,7 @@ def get_by_group(request):
     if user:
         user_groups = []
         for entry in Group.group_filter_by_owner_id(user):
-            user_groups.append({'id': entry.id, 'name': entry.name, 'icon': entry.icon})
+            user_groups.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 

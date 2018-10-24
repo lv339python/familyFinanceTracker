@@ -105,20 +105,7 @@
                 is_shared: null,
                 tax: '',
 
-
             }
-        },
-        props: {
-            isEnabled: Boolean,
-            color: {
-                type: String,
-                required: false,
-                default: "#4D4D4D"
-            }
-        },
-        model: {
-            prop: "isEnabled",
-            event: "toggle"
         },
 
         computed: {
@@ -202,13 +189,8 @@
                 this.category = null;
                 this.is_active_shared_cat = null;
 
-            },
-            toggle: function () {
-                this.$emit("toggle", !this.isEnabled);
             }
-
         }
-
     }
 </script>
 <style scoped>
