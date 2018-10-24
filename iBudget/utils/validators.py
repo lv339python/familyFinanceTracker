@@ -11,8 +11,13 @@ from django.utils.dateparse import parse_date
 
 SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
-SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
+SET_KEYS_FUND_CREATE_DATA = {'name', 'icon'}
 SET_KEYS_FUND_GOAL = {'fund', 'value'}
+SET_KEYS_GROUP_CREATE_DATA = {'name', 'icon'}
+
+STR_MIN_LENGTH = 0
+STR_MAX_LENGTH = None
+
 
 def is_valid_password(password):
     """validate password
@@ -170,6 +175,69 @@ def is_valid_data_individual_limit(data):
         return False
 
 
+def string_validator(value, min_length=STR_MIN_LENGTH, max_length=STR_MAX_LENGTH):
+    """
+    Function that provides string validation.
+    :param value: the string literal itself.
+    :type value: string
+    :param min_length: the minimal length of the received string value.
+    :type min_length: integer
+    :param max_length: the maximum length of the received string value.
+    :type max_length: integer
+    :return: `True` if value if valid and `False` if it is not.
+    """
+
+    if not isinstance(value, str):
+        return False
+
+    if len(value) < min_length:
+        return False
+
+    if max_length:
+        if len(value) > max_length:
+            return False
+
+    return True
+
+
+def updating_password_validate(data, new_password):
+    """
+    :param data: dict that we need to validate.
+    :type data: dict
+    :param new_password: new_password for required_keys_validator
+    :type new_password: str
+    :return: `True` if data is valid and `None` if it is not.
+    """
+
+    if data:
+        if not required_keys_validator(data, [new_password], False):
+            return False
+        string = data.get(new_password)
+        if not string_validator(string, 4):
+            return False
+        if is_valid_password(string):
+            return True
+    return False
+
+
+def updating_email_validate(data, email):
+    """
+    :param data: dict that we need to validate.
+    :type data: dict
+    :param email: email for required_keys_validator
+    :type email: str
+    :return: `True` if data is valid and `None` if it is not.
+    """
+    if data:
+        if not required_keys_validator(data, [email], False):
+            return False
+        if not string_validator(data.get(email), 4):
+            return False
+        if email_validator(data.get(email)):
+            return True
+    return False
+
+
 def is_valid_data_new_spending(data):
     """
     Function that provides data validation for creating new spending category.
@@ -200,3 +268,62 @@ def is_valid_data_spending_history(data):
 
     except (ValidationError, AttributeError):
         return False
+
+
+def is_valid_data_create_new_group(data):
+    """validate data.
+        Args:
+            data (dict): contain name and icon
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if set(data.keys()) != SET_KEYS_GROUP_CREATE_DATA:
+        return False
+    try:
+        data['name'] = str(data['name'])
+        return True
+    except(ValueError, AttributeError):
+        return False
+
+
+def is_valid_data_create_new_fund(data):
+    """validate data.
+        Args:
+            data (dict): contain name and icon
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if not set(data.keys()).difference(SET_KEYS_FUND_CREATE_DATA):
+        return False
+    try:
+        data['name'] = str(data['name'])
+        data['icon'] = str(data['icon'])
+        return True
+    except(ValueError, AttributeError):
+        return False
+
+
+def is_valid_data_new_income(data):
+    """
+    Function that provides income creation validation
+    :param data:
+    :return:
+    """
+    if set(data.keys()) != {'name', 'icon', 'date', 'value'} or not data['name']:
+        return False
+    if not is_valid_date(data['date']):
+        return False
+    return True
+
+
+def is_valid_date(date_to_validate):
+    """
+    Function that provides date validation
+    :param string
+    :return: True if date is date
+    """
+    try:
+        parse_date(date_to_validate)
+    except ValueError:
+        return False
+    return True

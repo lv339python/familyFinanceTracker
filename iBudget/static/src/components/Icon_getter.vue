@@ -7,12 +7,11 @@
             class="icon" alt="icon" v-if="! upload"></input>
             <br>
             <br>
-            <br>
             <button v-on:click="enable_upload" v-if="! upload">upload my own</button>
 
             <form enctype="multipart/form-data">
-            <input type="file" name="icon" v-if="upload"
-            v-on:change="get_img_name_validate($event.target.files)"></input>
+                <input type="file" name="icon" v-if="upload"
+                v-on:change="get_img_name_validate($event.target.files)"></input>
             </form>
             <br>
             <button v-if="upload" v-on:click="upload_emit_img(icon_name)"> upload </button>

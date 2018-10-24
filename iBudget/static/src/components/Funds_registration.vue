@@ -1,6 +1,6 @@
 <template>
     <div id="fund_registration">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <hr>
             <div class="form-group">
                 <label>Input name</label>
@@ -13,10 +13,11 @@
             <hr>
             <div class="form-group">
                 <label >Choose icon</label>
+                <icon_getter @get_name='onGet_name' :tabName="tab"> </icon_getter>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <hr>
             <div class="form-group">
                 <label >Shared to</label>
@@ -30,8 +31,10 @@
                 </select>
             </div>
         </div>
-
-        <button v-on:click="setData" :variant="secondary">Save</button>
+        <hr>
+        <div class="col-md-2">
+            <button v-on:click="setData" :variant="secondary">Save</button>
+        </div>
     </div>
 </template>
 
@@ -44,11 +47,14 @@ import Icon_getter from './Icon_getter.vue'
             return{
                 name: null,
                 shared_group: null,
-                icon: 'abc',
+                icon: null,
                 group: null,
-                user_groups_list: []
+                user_groups_list: [],
+                tab: 'fund',
+                selectedIcon: ''
             }
         },
+        props: ["tabName"],
         components:{
             'Icon_getter': Icon_getter
         },
@@ -68,7 +74,7 @@ import Icon_getter from './Icon_getter.vue'
                     url: '/api/v1/fund/create_new_fund/',
                     data: {
                         'name': this.name,
-                        'icon': this.icon,
+                        'icon': this.selectedIcon,
                         'shared_group': this.shared_group
                     }
                 }).then(response =>{
@@ -76,7 +82,7 @@ import Icon_getter from './Icon_getter.vue'
                 })
             },
             onGet_name (data) {
-                this.icon = data['icon_name']
+            this.selectedIcon = data['icon_name']
             }
         }
 }
