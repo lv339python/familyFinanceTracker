@@ -6,25 +6,29 @@
         <div id="form">
             <p>Please choose dates below:</p>
             <p>Start date:</p>
-            <input v-model = "start_date" type = "date" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
-            required size = "9">
+            <input v-model = "start_date" type = "date" required>
             </input>
             <p>End date:</p>
-            <input v-model = "end_date" type = "date" placeholder = "yyyy-mm-dd" pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
-            required size = "9">
+            <input v-model = "end_date" type = "date" required>
             </input>
             <p><button v-on:click="sub_dates">submit</button></p>
         </div>
 
         <div id= "result">
             <table border='1px' v-if="shownResult">
-                <caption>All the incomes for the chosen period</caption>
+                <caption>All the incomes for the chosen period:</caption>
                 <tr><th>Income</th><th>Fund</th><th>Date</th><th>Amount</th><th>Comments</th></tr>
-                <tr v-for="item in list_with_incomes">
+                <tr v-for="item in paginatedData">
                     <td>{{item['income']}}</td> <td>{{item['fund']}}</td> <td>{{item['date']}}</td> <td>{{item['amount']}}</td>
                     <td>{{item['comment']}}</td>
                 </tr>
             </table>
+            <div v-show="pageCount>1">
+                    <button :disabled="paginated_page_number === 0" @click="prevPage"> Previous
+                    </button>
+                    <button :disabled="paginated_page_number>= pageCount -1 " @click="nextPage"> Next
+                    </button>
+            </div>
             <p><button v-on:click="reRender" v-if="shownResult">refresh</button></p>
         </div>
 
@@ -41,7 +45,10 @@
                 end_date: '',
                 list_with_incomes: '',
                 shownResult: false,
-                cur_income: 0
+                cur_income: 0,
+                // this is the size of a paginated page
+                pagination_size: 3,
+                paginated_page_number: 0,
             }
         },
         //props: ['tabName'],
@@ -54,13 +61,29 @@
                 alert(error.response.data);
             });
         },
+
+        computed:{
+            pageCount(){
+                let l = this.list_with_incomes.length,
+                    s = this.pagination_size,
+                    pageMax=(l % s != 0) ? Math.floor(l/s)+1 : Math.floor(l/s);
+                return pageMax;
+            },
+            paginatedData(){
+                const start = this.paginated_page_number * this.pagination_size,
+                    end = (start + this.pagination_size <= this.list_with_incomes.length) ? start + this.pagination_size : this.list_with_incomes.length;
+                return this.list_with_incomes
+                .slice(start, end);
+            }
+        },
+
+
         methods: {
             sub_dates: function(){
             this.shownResult = true;
                 axios({
                     method: "post",
                     url: "api/v1/income_history/track/",
-                    //params: {"tab": this.tabName},
                     data: {
                         'start': this.start_date + "T00:00:00",
                         'end': this.end_date + "T23:59:59"
@@ -75,8 +98,11 @@
                 {this.$router.go('api/v1/income_history/track/');
                 }
             },
-            see_cur_income: function(){
-
+            nextPage(){
+                this.paginated_page_number++;
+            },
+            prevPage(){
+                this.paginated_page_number--;
             }
         }
     }
