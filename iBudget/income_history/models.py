@@ -27,4 +27,12 @@ class IncomeHistory(models.Model):
 
     @staticmethod
     def filter_by_fund_id(fund_name):
+        """
+            Args:
+                fund_name (int): The first parameter.
+            Returns:
+                IncomeHistory objects if database contains history
+                for this fund, None otherwise.
+
+        """
         return IncomeHistory.objects.filter(pk=fund_name)

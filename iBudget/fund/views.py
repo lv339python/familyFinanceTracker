@@ -2,7 +2,6 @@
 This module provides functions for handling fund view.
 """
 
-from django.http import JsonResponse
 import json
 
 from decimal import Decimal
@@ -36,25 +35,6 @@ def show_fund(request):
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 
-
-def list_goal_user(user):
-    """the functions finds all the user's goals associated with particular user and
-    returns them
-
-           Args:
-       """
-    list_fund = []
-    for entry in FundCategories.filter_by_user(user):
-        list_fund.append(entry.id)
-    list_goal = []
-    for entry in list_fund:
-        financial_goal = FinancialGoal.objects.filter(fund=entry)
-        if financial_goal:
-            list_goal.append(entry)
-    print(list_goal)
-    return list_goal
-
-
 @require_http_methods(["GET"])
 def show_goal_data(request):
     """Handling request for creating of goal data list.
@@ -62,7 +42,7 @@ def show_goal_data(request):
        Args:
            request (HttpRequest): Goal data.
        Returns:
-           HttpResponse object.
+           JsonResponse object.
    """
 
     user = request.user
@@ -72,8 +52,9 @@ def show_goal_data(request):
             fund_category = FundCategories.get_by_id(entry)
             list_transactions = []
             list_date_transactions = []
-            for item in IncomeHistory.objects.filter(fund=entry, date__range=[fund_category.goal.start_date,
-                                                                              fund_category.goal.finish_date]):
+            for item in IncomeHistory.objects.filter(fund=entry,
+                                                     date__range=[fund_category.goal.start_date,
+                                                                  fund_category.goal.finish_date]):
                 list_transactions.append(float(item.value))
                 list_date_transactions.append(item.date)
             user_goal_statistic.append({"id": entry,
@@ -92,6 +73,10 @@ def list_goal_user(user):
     returns them
 
            Args:
+               user (UserProfile): owner of this goal
+            Return:
+                Goals list
+
        """
     list_fund = []
     for entry in FundCategories.filter_by_user(user):
