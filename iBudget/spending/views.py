@@ -198,14 +198,11 @@ def create_spending_category(request):
         return HttpResponse("Bad request", status=400)
     spending = SpendingCategories.filter_by_owner_name(owner=owner, name=name)
 
-    if not spending:
-        spending = SpendingCategories(name=name, icon=icon, owner=owner, is_shared=is_shared)
-        try:
-            spending.save()
-        except(ValueError, AttributeError):
-            return HttpResponse(status=406)
-    else:
+    if spending:
         return HttpResponse("Sorry, but such category exists...\n OK", status=202)
 
-
+    spending = SpendingCategories(name=name, icon=icon, owner=owner, is_shared=is_shared)
+    if not spending:
+        return HttpResponse(status=406)
+    spending.save()
     return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)

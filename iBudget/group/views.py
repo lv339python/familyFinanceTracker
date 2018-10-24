@@ -1,12 +1,14 @@
 """
 This module provides functions for handling group view.
 """
-from django.http import JsonResponse
+import json
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
+from utils.validators import is_valid_data_create_new_group
+from utils.transaction import save_new_group
 from .models import Group, UsersInGroups
-
 
 
 @require_http_methods(["GET"])
@@ -43,6 +45,7 @@ def show_users_group(request):
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 
+
 def groups_balance(request):
     """
     Retrieving group`s budget information
@@ -68,6 +71,7 @@ def groups_balance(request):
             group_balance[user_group.name]['Total spending']
     return JsonResponse(group_balance)
 
+
 def filter_income_history_by_fund(user_group):
     """
     Retrieving income history information by users group for shared funds
@@ -83,6 +87,7 @@ def filter_income_history_by_fund(user_group):
                                   'fund_name': i.fund})
     return income_values
 
+
 def filter_spending_history_by_spend_category(user_group):
     """
     Retrieving spending history information by users group for shared spendings
@@ -96,3 +101,21 @@ def filter_spending_history_by_spend_category(user_group):
         for i in SpendingHistory.objects.filter(spending_categories_id=spend['id']):
             spend_values.append({'id': i.id, 'value': i.value, 'spend_name': i.spending_categories})
     return spend_values
+
+
+@require_http_methods(["POST"])
+def create_new_group(request):
+    """Handling request for creating of new user's group.
+    Args:
+        request (HttpRequest): request from server which contain
+            name, icon
+    Returns:
+        HttpResponse object.
+    """
+    data = json.loads(request.body)
+    user = request.user
+    if not is_valid_data_create_new_group(data):
+        return HttpResponse(status=400)
+    if save_new_group(name=data["name"], icon=data["icon"], owner=user):
+        return HttpResponse(status=201)
+    return HttpResponse(status=406)
