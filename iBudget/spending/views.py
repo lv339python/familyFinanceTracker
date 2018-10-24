@@ -206,6 +206,4 @@ def create_spending_category(request):
             return HttpResponse(status=406)
     else:
         return HttpResponse("Sorry, but such category exists...\n OK", status=202)
-
-
     return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
