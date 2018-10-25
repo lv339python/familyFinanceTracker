@@ -12,7 +12,6 @@ from utils.validators import is_valid_data_individual_limit, is_valid_data_new_s
 from group.models import Group, SharedSpendingCategories
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
-
 @require_http_methods(["GET"])
 def show_spending_ind(request):
     """Handling request for creating of spending categories list.

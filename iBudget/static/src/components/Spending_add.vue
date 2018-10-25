@@ -15,8 +15,8 @@
 
         <div v-show="isValidData">
             <hr>
-            <button v-on:click="createSpending" :variant="secondary" >Create spending</button>
-            <button v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}</button>
+            <button class="btn btn-outline-primary" v-on:click="createSpending" :variant="secondary" >Create spending</button>
+            <button class="btn btn-outline-dark" v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}</button>
         </div>
 
     </div>

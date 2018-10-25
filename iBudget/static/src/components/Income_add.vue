@@ -33,7 +33,7 @@
 
         <div class="col-md-2" v-show="isValidData">
             <hr>
-            <button v-on:click="createIncome" :variant="secondary">Create income</button>
+            <button class="btn btn-outline-primary" v-on:click="createIncome" :variant="secondary">Create income</button>
             <button v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}</button>
         </div>
 

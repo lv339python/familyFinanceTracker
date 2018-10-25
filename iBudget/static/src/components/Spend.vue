@@ -39,9 +39,9 @@
             </div>
             <hr>
             <div  v-show="isValidData">
-                <button v-on:click="setLimit" :variant="secondary" class="btn btn-secondary">Set limit</button>
+                <button v-on:click="setLimit" :variant="secondary" class="btn btn-outline-primary">Set limit</button>
                 <br>
-                <button v-on:click="createDone" :variant="secondary" v-show="isDone"class="btn btn-secondary">
+                <button v-on:click="createDone" :variant="secondary" v-show="isDone"class="btn btn-outline-primary">
                     {{msg}}
                 </button>
             </div>
