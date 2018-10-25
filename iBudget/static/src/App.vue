@@ -35,6 +35,7 @@ export default {
     }
     .flex-element{
         flex-grow: 1;
+
     }
     #view {
         background-color: whitesmoke;
@@ -43,3 +44,4 @@ export default {
         /*flex-direction: row;*/
     }
 </style>
+

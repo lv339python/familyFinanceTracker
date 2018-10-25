@@ -28,7 +28,7 @@
                     <label>Please enter your email to change your password.</label>
                     <br/>
                     <input required v-model="email" type="text" placeholder="Email"/>
-                    <b-button @click="sendData">Send</b-button>
+                    <b-button class="btn btn-outline-primary" @click="sendData">Send</b-button>
                 </form>
                 <form class="register" @submit.prevent="register" v-show="registerDisplay">
                     <h1>Register</h1>
@@ -44,7 +44,7 @@
                     <br/>
                     <input required v-model="password" type="password" placeholder="Confirm Password"/>
                     <hr/>
-                    <b-button type="submit" @click="registration">Register</b-button>
+                    <b-button class="btn btn-outline-primary" type="submit" @click="registration">Register</b-button>
                     <br/>
                     <br/>
                     <b-link @click="showLogin">Already registered?</b-link>
