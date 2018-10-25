@@ -8,8 +8,8 @@ from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
 from utils.validators import is_valid_data_create_new_group
 from utils.transaction import save_new_group
+from utils.get_role import groups_for_user
 from .models import Group, UsersInGroups
-
 
 @require_http_methods(["GET"])
 def get_by_group(request):
@@ -119,3 +119,12 @@ def create_new_group(request):
     if save_new_group(name=data["name"], icon=data["icon"], owner=user):
         return HttpResponse(status=201)
     return HttpResponse(status=406)
+
+
+@require_http_methods(["GET"])
+def users_groups(request):
+    user = request.user
+    if user:
+        return JsonResponse(groups_for_user(user), status=200, safe=False)
+    else:
+        return JsonResponse({}, safe=False)

@@ -23,13 +23,21 @@
         name: "Groups",
         data () {
             return {
-                cur_balance : []
+                cur_balance : [],
+                users_list: []
             }
         } ,
         created() {
             axios.get('api/v1/group/')
                 .then(response => {
                     this.cur_balance = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                });
+            axios.get('api/v1/group/users_groups/')
+                .then(response => {
+                    this.users_list = response.data
                 })
                 .catch(e => {
                     this.errors.push(e)
