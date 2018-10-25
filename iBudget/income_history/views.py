@@ -65,7 +65,6 @@ def track(request):
                        .name})
         incomes_funds_ids[counter[0]].update(
             {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
-    print(incomes_funds_ids)
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 @require_http_methods(["POST"])
