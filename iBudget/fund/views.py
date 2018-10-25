@@ -3,18 +3,19 @@ This module provides functions for handling fund view.
 """
 
 import json
-
 from decimal import Decimal
+
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-from income_history.models import IncomeHistory
+
 from group.models import Group, SharedFunds
+from income_history.models import IncomeHistory
+from utils.get_role import is_user_admin_group
+from utils.transaction import save_new_fund
 from utils.validators import \
     input_fund_registration_validate, \
     date_range_validate, \
     is_valid_data_create_new_fund
-from utils.transaction import save_new_fund
-from utils.get_role import is_user_admin_group
 from .models import FundCategories, FinancialGoal
 
 
@@ -34,6 +35,7 @@ def show_fund(request):
             user_funds.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
+
 
 @require_http_methods(["GET"])
 def show_goal_data(request):
@@ -81,12 +83,14 @@ def list_goal_user(user):
     list_fund = []
     for entry in FundCategories.filter_by_user(user):
         list_fund.append(entry.id)
+    for entry in FundCategories.filter_by_user(user, True):
+        list_fund.append(entry.id)
     list_goal = []
+
     for entry in list_fund:
         financial_goal = FinancialGoal.objects.filter(fund=entry)
         if financial_goal:
             list_goal.append(entry)
-    print(list_goal)
     return list_goal
 
 

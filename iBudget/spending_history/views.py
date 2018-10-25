@@ -33,8 +33,6 @@ def register_spending(request):
     spending = SpendingCategories.get_by_id(int(data["category"]))
     if not spending:
         return HttpResponse(status=400)
-    if not spending.owner == user:
-        return HttpResponse(status=403)
     fund = FundCategories.get_by_id(int(data["type_of_pay"]))
     if not fund:
         return HttpResponse(status=400)
@@ -101,6 +99,7 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
                                                'history': history_individual_entry})
 
     return history_individual
+
 
 def create_spending_history_for_admin(user, start_date, finish_date, utc_difference):
     """Creating array of spending history data for admin.
