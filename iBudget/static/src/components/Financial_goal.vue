@@ -68,17 +68,18 @@
 
 
         <div id="reset">
-            <button @click="reset">Reset</button>
+            <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
         </div>
 
-        <div id="save" v-show="isValidData"  >
-            <button v-on:click="setData" :variant="secondary">Save</button>
+        <div id="save" v-show="isValidData">
+            <button type="button" class="btn btn-outline-success" @click="setData" :variant="secondary">Save</button>
         </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
+
     export default {
         name: "Financial_goal",
         data() {
@@ -176,42 +177,47 @@
         flex-direction: column;
         flex-wrap: wrap;
     }
+
     .text {
         width: fit-content;
         margin: auto;
     }
+
     .group {
         margin: 50px;
     }
+
     #value {
         position: relative;
         left: 50px;
         top: -150px;
     }
+
     #start_date {
         position: relative;
         top: 50px;
         left: 10px;
     }
+
     #finish_date {
         position: relative;
         top: 9px;
         left: 10px;
     }
-     #reset{
+
+    #reset {
         position: absolute;
-        right: 426px;
+        right: 435px;
         top: 616px;
-        width: 60px;
-        background: rgba(82, 220, 69, 0.67);
+
     }
-    #save{
+
+    #save {
         position: absolute;
         right: 370px;
         top: 616px;
-        width: 55px;
-        background: rgba(174, 23, 220, 0.67);
     }
+
     .toggle {
         position: absolute;
         left: 740px;
@@ -223,6 +229,7 @@
         -webkit-tap-highlight-color: transparent;
         transform: translate3d(0, 0, 0);
     }
+
     .toggle:before {
         content: "";
         position: relative;
@@ -235,6 +242,7 @@
         border-radius: 8px;
         transition: background 0.2s ease;
     }
+
     .toggle span {
         position: absolute;
         top: 0;
@@ -247,6 +255,7 @@
         box-shadow: 0 3px 8px rgba(154, 153, 153, 0.5);
         transition: all 0.2s ease;
     }
+
     .toggle span:before {
         content: "";
         position: absolute;
@@ -260,15 +269,18 @@
         opacity: 1;
         pointer-events: none;
     }
+
     #cbx:checked + .toggle:before {
         background: #947ADA;
     }
+
     #cbx:checked + .toggle span {
         background: #4F2EDC;
         transform: translateX(20px);
         transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
         box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
     }
+
     #cbx:checked + .toggle span:before {
         transform: scale(1);
         opacity: 0;

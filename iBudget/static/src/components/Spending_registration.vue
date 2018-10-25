@@ -36,7 +36,6 @@
             </div>
         </div>
 
-
         <div class="center">
             <input type="checkbox" id="cbx" style="display:none" v-model="is_shared"/>
             <label for="cbx" class="toggle"><span></span>Shared</label>
@@ -75,11 +74,11 @@
         </div>
 
         <div id="reset">
-        <button @click="reset">Reset</button>
+            <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
         </div>
 
         <div id="save" v-show="isValidData">
-            <button @click="setData" :variant="secondary">Save</button>
+            <button type="button" class="btn btn-outline-success" @click="setData" :variant="secondary">Save</button>
         </div>
     </div>
 </template>
@@ -221,17 +220,15 @@
     }
     #reset{
         position: absolute;
-        right: 426px;
+        right: 435px;
         top: 616px;
-        width: 60px;
-        background: rgba(82, 220, 69, 0.67);
+
     }
     #save{
         position: absolute;
         right: 370px;
         top: 616px;
-        width: 55px;
-        background: rgba(174, 23, 220, 0.67);
+
     }
     .toggle {
         position: absolute;
