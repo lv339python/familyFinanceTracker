@@ -1,6 +1,6 @@
 <template>
-    <div id="spending_registration">
-        <div class="col-md-4">
+    <div id="spending_registration" class="content">
+        <div class="col-md-2">
             <hr>
             <div class="form-group">
                 <label>Select category:</label>
@@ -11,7 +11,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
             <hr>
             <div class="form-group">
                 <label>Choose type of pay:</label>
@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
             <hr>
             <div class="form-group">
                 <label>Input sum</label>
@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
             <hr>
             <div class="form-group">
                 <label>Input comment</label>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-1">
             <hr>
             <div class="form-group">
                 <label>Choose date</label>
@@ -47,7 +47,7 @@
             <hr>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-1">
             <hr>
             <div class="form-group">
                 <label>Chose group</label>
@@ -62,7 +62,7 @@
             <hr>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-1">
             <hr>
             <div class="form-group">
                 <label>Chose category</label>
@@ -162,6 +162,7 @@
         height: 100vh;
         overflow: hidden;
         display: flex;
+        flex-direction: column;
     }
 
     .text {

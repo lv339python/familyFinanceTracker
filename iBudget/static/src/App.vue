@@ -1,6 +1,5 @@
 <template>
   <div class="flex-container" id="app">
-    <!--<sidebar></sidebar>-->
       <navbar class="flex-element" id="navbar"></navbar>
       <router-view class="flex-element" id="view"></router-view>
 
@@ -8,7 +7,6 @@
 </template>
 
 <script>
-import SideBar from './components/SideBar'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import NavBar from './components/NavBar'
@@ -16,7 +14,6 @@ import Calendar from "./components/Calendar";
 
 export default {
     components: {
-        'sidebar' : SideBar,
         'navbar' : NavBar,
         'cal': Calendar
     }
@@ -45,3 +42,4 @@ export default {
         display: flex;
     }
 </style>
+

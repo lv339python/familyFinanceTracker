@@ -1,6 +1,7 @@
 <template>
     <div id="spend">
-        <div class="col-md-4">
+        <div class="div">
+        <div class="oak">
             <hr>
             <div class="form-group">
                 <label>Chose your goal:</label>
@@ -9,9 +10,9 @@
                     </option>
                 </select>
             </div>
-        </div>
 
-        <div class="col-md-4">
+
+        <div>
             <hr>
             <div class="form-group">
                 <label>Chose group</label>
@@ -26,7 +27,7 @@
             <hr>
         </div>
 
-        <div class="col-md-4">
+        <div>
             <hr>
             <div class="form-group">
                 <label>Chose your group goal</label>
@@ -41,7 +42,7 @@
             <hr>
         </div>
 
-        <div class="col-md-4">
+        <div>
             <hr>
             <div class="form-group">
                 <label>Start date</label>
@@ -50,7 +51,7 @@
             <hr>
         </div>
 
-        <div class="col-md-4">
+        <div>
             <hr>
             <div class="form-group">
                 <label>Finish date</label>
@@ -59,7 +60,7 @@
             <hr>
         </div>
 
-        <div class="col-md-4">
+        <div>
             <hr>
             <div class="form-group">
                 <label>Input value</label>
@@ -68,6 +69,8 @@
         </div>
         <div v-show="isValidData">
             <button v-on:click="setData" :variant="secondary">Save</button>
+        </div>
+        </div>
         </div>
     </div>
 </template>
@@ -151,5 +154,12 @@
 </script>
 
 <style scoped>
+.oak{
+    width: 400px;
+    margin-right: 200px;
 
+}
+.div{
+    display:flex;
+}
 </style>
