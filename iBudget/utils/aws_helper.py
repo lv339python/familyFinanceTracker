@@ -49,6 +49,7 @@ class AwsService:
         """the method accepts the name of the file(string), generates its
         URL and returns it
         """
+        print(key)
         url = cls.boto_client.generate_presigned_url(
             ClientMethod='get_object',
             Params={
