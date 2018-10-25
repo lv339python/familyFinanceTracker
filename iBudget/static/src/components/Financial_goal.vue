@@ -66,13 +66,12 @@
             <hr>
         </div>
 
-
         <div id="reset">
             <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
         </div>
 
         <div id="save" v-show="isValidData">
-            <button type="button" class="btn btn-outline-success" @click="setData" :variant="secondary">Save</button>
+            <button type="button" class="btn btn-outline-primary" @click="setData" :variant="secondary">Save</button>
         </div>
     </div>
 </template>

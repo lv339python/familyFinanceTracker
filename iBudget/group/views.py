@@ -71,7 +71,6 @@ def groups_balance(request):
         group_balance[user_group.name]["Current balance"] = \
             group_balance[user_group.name]['Total income'] - \
             group_balance[user_group.name]['Total spending']
-    print(group_balance)
     return JsonResponse(group_balance)
 
 
