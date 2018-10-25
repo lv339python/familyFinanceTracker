@@ -82,7 +82,7 @@ class Group(models.Model):
         group_funds = []
         shared_funds = SharedFunds.objects.filter(group=group_object)
         for fund in shared_funds:
-            for i in FundCategories.objects.filter(id=fund.id):
+            for i in FundCategories.objects.filter(id=fund.fund_id):
                 group_funds.append({'id': i.id, 'name': i.name})
         return group_funds
 

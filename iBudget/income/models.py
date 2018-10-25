@@ -24,6 +24,34 @@ class IncomeCategories(models.Model):
     icon = models.CharField(max_length=30)
     owner = models.ForeignKey(UserProfile, on_delete=True)
 
+
+    @staticmethod
+    def filter_by_user(user):
+        """
+        Args:
+            user (UserProfile): user of category,
+            is_shared(bool): which category we need(shared or not shared).
+        Returns:
+            SpendingCategories object if database contain category for this user
+            and is_shared value, None otherwise.
+        """
+        return IncomeCategories.objects.filter(owner=user)
+
+    @staticmethod
+    def get_by_id(income_category_id):
+        """
+        Args:
+            spending_category_id (int): The first parameter.
+        Returns:
+            SpendingCategories object if database contain spending
+            category with id, None otherwise.
+
+        """
+        try:
+            return IncomeCategories.objects.get(pk=income_category_id)
+        except (IncomeCategories.DoesNotExist, ValueError):
+            return None
+
     @staticmethod
     def filter_by_owner_name(owner, name):
         """
