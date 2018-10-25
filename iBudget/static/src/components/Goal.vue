@@ -1,9 +1,10 @@
 <template>
     <div id='goaltable'>
-        <div class="row">
+        <div class="row" >
 
             <div class="ger" v-for="item in user_goal_list">
-                <h3>{{item.value}} for '{{item.name}}' </h3>
+                <div class="wrapper">
+                    <h4>{{item.value}} for {{item.name}}  should be achieved before {{item.finish_date}}</h4>
                 <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -17,14 +18,17 @@
                         <td>{{item.date_transaction[index]}}</td>
                     </tr>
                     </tbody>
-                </table>
+                    </table>
+                </div>
+
+
             </div>
         </div>
 
 
         <div class="content" id="goal">
 
-            <div class="text">
+
 
                 <div class="chartcontainer">
 
@@ -35,7 +39,7 @@
                                 v-bind:name="goal.name"></chart1>
                     </div>
                 </div>
-            </div>
+
         </div>
     </div>
 </template>
@@ -87,7 +91,6 @@
     }
 
     #goal {
-        margin-right: 200px;
         width: 100%;
         height: 100vh;
         overflow: hidden;
@@ -96,15 +99,19 @@
 
     .chartcontainer {
         display: flex;
-        float: right;
+        justify-content:flex-end;
+        position:absolute;
+        left: 400px;
+
+
+
     }
 
     .row {
         flex-direction: column;
+         position:absolute;
+         right:400px;
 
     }
 
-    .ger {
-        width: 30%;
-    }
 </style>

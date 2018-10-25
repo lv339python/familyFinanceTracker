@@ -3,9 +3,9 @@ This module provides functions for income specifying.
 """
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-
+from group.models import Group
 from utils.validators import is_valid_data_new_income
 from .models import IncomeCategories
 
@@ -40,3 +40,43 @@ def create_category(request):
         return HttpResponse(status=406)
     income.save()
     return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
+
+@require_http_methods(["GET"])
+def show_income_ind(request):
+    """
+    Handling request for creating list of users incomes.
+        Args:
+        request (HttpRequest): Limitation data.
+    Returns:
+        HttpResponse object.
+    """
+    user = request.user
+    if user:
+        user_categories = []
+        for entry in IncomeCategories.filter_by_user(user):
+            user_categories.append({'id': entry.id, 'name': entry.name})
+        return JsonResponse(user_categories, status=200, safe=False)
+    return JsonResponse({}, status=400)
+
+@require_http_methods(["GET"])
+def show_income_group(request):
+    """
+    Handling request for creating list of funds for specific group.
+    Args:
+        request (HttpRequest): Limitation data.
+    Returns:
+        HttpResponse object.
+    """
+
+    user = request.user
+    users_funds = []
+    if user:
+        for group in Group.filter_groups_by_user_id(user):
+            for shared_fund in Group.filter_funds_by_group(group):
+                users_funds.append({'id_fund': shared_fund['id'],
+                                    'name_fund': shared_fund['name'],
+                                    'id_group': group.id,
+                                    'group_name': group.name
+                                    })
+        return JsonResponse(users_funds, status=200, safe=False)
+    return JsonResponse({}, status=400)

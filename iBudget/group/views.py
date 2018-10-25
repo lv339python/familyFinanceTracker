@@ -8,6 +8,7 @@ from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
 from utils.validators import is_valid_data_create_new_group
 from utils.transaction import save_new_group
+from utils.aws_helper import AwsService
 from .models import Group, UsersInGroups
 
 
@@ -59,7 +60,8 @@ def groups_balance(request):
     group_balance = {}
     users_groups = Group.filter_groups_by_user_id(user_id)
     for user_group in users_groups:
-        group_balance[user_group.name] = {'Total income': 0, 'Total spending': 0}
+        group_balance[user_group.name] = {'Total income': 0, 'Total spending': 0,
+                                          'Group icon': AwsService.get_image_url(user_group.icon)}
         income_values = filter_income_history_by_fund(user_group)
         for i in income_values:
             group_balance[user_group.name]['Total income'] += i['value']
@@ -69,6 +71,7 @@ def groups_balance(request):
         group_balance[user_group.name]["Current balance"] = \
             group_balance[user_group.name]['Total income'] - \
             group_balance[user_group.name]['Total spending']
+    print(group_balance)
     return JsonResponse(group_balance)
 
 
