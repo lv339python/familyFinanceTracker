@@ -3,12 +3,15 @@
         <div class="text">
             <b-button :variant="secondary" to="../Groups_registration">Create new group</b-button>
             <p>There are your groups: </p>
-            <ul id="groups">
-                <li v-for="(content,group) in cur_balance" >
-                  {{group}}
+            <ul class="groups">
+                <li v-for="(content,group) in cur_balance" class="group_display">
+                    {{group}}
                     <ul>
-                        <li v-for="(item,value) in content" >
-                            {{value}} : {{item}}
+                        <li v-for="(icon,item) in content" v-if="item==='Group icon'">
+                            {{item}} : <img class='image' :src="icon">
+                        </li>
+                        <li v-else>
+                            {{item}} : {{icon}}
                         </li>
                     </ul>
                 </li>
@@ -19,13 +22,14 @@
 
 <script>
     import axios from 'axios';
+
     export default {
         name: "Groups",
-        data () {
+        data() {
             return {
-                cur_balance : []
+                cur_balance: []
             }
-        } ,
+        },
         created() {
             axios.get('api/v1/group/')
                 .then(response => {
@@ -40,12 +44,19 @@
 
 <style scoped>
     .content {
-        overflow: hidden;
         display: flex;
     }
+
     .text {
         width: fit-content;
-        margin:  auto;
-        font-size: x-large;
+        margin: auto;
+        font-size: large;
+    }
+
+    .image {
+        height: 15vh;
+        width: 15vh;
+        background-color: aqua;
+        border-radius: 5vh;
     }
 </style>

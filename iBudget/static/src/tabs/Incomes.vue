@@ -3,6 +3,7 @@
       <div class="text">
           <b-button :variant="secondary" to="../income_registration">Income Registration</b-button>
           <b-button :variant="secondary" to="/track_incomes">Track your incomes</b-button>
+          <b-button :variant="secondary" to="/income_add">Add income category</b-button>
     </div>
   </div>
 

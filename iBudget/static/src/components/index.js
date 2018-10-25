@@ -13,9 +13,10 @@ import Funds_registration from './Funds_registration';
 import Income_registration from './Income_registration';
 import Income_tracker from './Income_tracker';
 import Groups_registration from './Groups_registration';
+import Income_add from './Income_add';
 
-export {Login, SideBar, Spending_registration, Spend, Limit, Icon_getter, Spending_add,
-    Financial_goal, Funds_registration, Spending_history, PasswordRecovery, Income_registration, Income_tracker, Groups_registration, Goal};
+export {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add,
+    Financial_goal, Funds_registration, Spending_history, PasswordRecovery, Income_registration, Income_tracker, Groups_registration, Goal, Income_add};
 
 import {Pie, generateChart} from './BaseCharts'
 
