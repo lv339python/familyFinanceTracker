@@ -67,7 +67,6 @@ class SpendingCategories(models.Model):
         return SpendingCategories.objects.filter(owner=owner, name=name)
 
 
-
 class SpendingLimitationIndividual(models.Model):
     """Limitation of user's spending.
 
