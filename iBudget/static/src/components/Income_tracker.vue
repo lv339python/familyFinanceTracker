@@ -115,5 +115,10 @@
 <style>
     caption{
         caption-side: top;
+    },
+    #Income_tracker{
+        display:flex;
+        flex-direction:column;
+
     }
 </style>
