@@ -39,6 +39,7 @@ export default {
     #view {
         background-color: whitesmoke;
         height: 100%;
-        display: flex;
+        /*display: flex;*/
+        /*flex-direction: row;*/
     }
 </style>

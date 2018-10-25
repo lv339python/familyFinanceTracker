@@ -26,6 +26,7 @@
 <script>
     import Calendar from './Calendar'
     import Account from './Account'
+    import 'v-calendar/lib/v-calendar.min.css'
 
     export default {
         name: "NavBar",
@@ -49,8 +50,4 @@
         height: fit-content;
     }
 
-    /*#collapse1 {*/
-    /*width: 250px;*/
-    /*height: fit-content;*/
-    /*}*/
 </style>
