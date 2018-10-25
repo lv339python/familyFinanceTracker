@@ -1,52 +1,52 @@
 <template>
-    <div id="Income_tracker">
-        <div id="total">
-            <p>The total amount of income from the 1-st of this month till today is {{this.cur_income}}</p>
-        </div>
-        <div id="form">
-            <p>Please choose dates below:</p>
-            <p>Start date:</p>
-            <input v-model="start_date" type="date" required>
-            </input>
-            <p>End date:</p>
-            <input v-model="end_date" type="date" required>
-            </input>
-            <p>
-                <button class="btn btn-outline-primary" v-on:click="sub_dates">submit</button>
-            </p>
-        </div>
-
-        <div id="result">
-            <table border='1px' v-if="shownResult">
-                <caption>All the incomes for the chosen period:</caption>
-                <tr>
-                    <th>Income</th>
-                    <th>Fund</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Comments</th>
-                </tr>
-                <tr v-for="item in paginatedData">
-                    <td>{{item['income']}}</td>
-                    <td>{{item['fund']}}</td>
-                    <td>{{item['date']}}</td>
-                    <td>{{item['amount']}}</td>
-                    <td>{{item['comment']}}</td>
-                </tr>
-            </table>
-            <div v-show="pageCount>1">
-                <button :disabled="paginated_page_number === 0" class="btn btn-outline-secondary" @click="prevPage">
-                    Previous
-                </button>
-                <button :disabled="paginated_page_number>= pageCount -1 " class="btn btn-outline-secondary"
-                        @click="nextPage"> Next
-                </button>
+    <div class="Income_tracker">
+        <div class="wrapper">
+            <div id="total">
+                <p>The total amount of income from the 1-st of this month till today is {{this.cur_income}}</p>
             </div>
-            <p>
-                <button class="btn btn-outline-success" v-on:click="reRender" v-if="shownResult">refresh</button>
-            </p>
-        </div>
+            <div id="form">
+                <p>Please choose dates below:</p>
+                <p>Start date:</p>
+                <input v-model="start_date" type="date" required>
+                </input>
+                <p>End date:</p>
+                <input v-model="end_date" type="date" required>
+                </input>
+                <p>
+                    <button v-on:click="sub_dates">submit</button>
+                </p>
+            </div>
 
+            <div id="result">
+                <table border='1px' v-if="shownResult">
+                    <caption>All the incomes for the chosen period:</caption>
+                    <tr>
+                        <th>Income</th>
+                        <th>Fund</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Comments</th>
+                    </tr>
+                    <tr v-for="item in paginatedData">
+                        <td>{{item['income']}}</td>
+                        <td>{{item['fund']}}</td>
+                        <td>{{item['date']}}</td>
+                        <td>{{item['amount']}}</td>
+                        <td>{{item['comment']}}</td>
+                    </tr>
+                </table>
+                <div v-show="pageCount>1">
+                    <button :disabled="paginated_page_number === 0" @click="prevPage"> Previous
+                    </button>
+                    <button :disabled="paginated_page_number>= pageCount -1 " @click="nextPage"> Next
+                    </button>
+                </div>
+                <p>
+                    <button v-on:click="reRender" v-if="shownResult">refresh</button>
+                </p>
+            </div>
+
+        </div>
     </div>
 </template>
 
@@ -131,7 +131,18 @@
 </script>
 
 <style>
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        margin: 0px auto;
+
+    }
+
     caption {
         caption-side: top;
+    }
+
+    .Income_tracker {
+        display: flex;
     }
 </style>

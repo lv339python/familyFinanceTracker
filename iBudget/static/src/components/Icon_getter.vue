@@ -7,14 +7,14 @@
                class="icon" alt="icon" v-if="! upload"></input>
         <br>
         <br>
-        <button class="btn btn-outline-success" v-on:click="enable_upload" v-if="! upload">upload my own</button>
+        <button v-on:click="enable_upload" v-if="! upload">upload my own</button>
 
         <form enctype="multipart/form-data">
             <input type="file" name="icon" v-if="upload"
                    v-on:change="get_img_name_validate($event.target.files)"></input>
         </form>
         <br>
-        <button v-if="upload" v-on:click="upload_emit_img(icon_name)"> upload</button>
+        <button v-if="upload" v-on:click="upload_emit_img(icon_name)"> upload chosen file</button>
     </div>
 </template>
 
@@ -73,10 +73,10 @@
                 }
                 ;
                 this.icon_name = img.name;
+                this.$emit('get_name', {icon_name: this.icon_name});
             },
 
             upload_emit_img: function (icon_name) {
-                this.$emit('get_name', {icon_name: this.icon_name});
                 let formData = new FormData();
                 formData.append('icon', this.image);
                 axios({

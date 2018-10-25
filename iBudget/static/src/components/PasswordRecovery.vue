@@ -34,7 +34,7 @@
 
                     }
                 }).then(response => {
-                    this.$router.go('/Login/')
+                    this.$router.push('/Login/')
                 })
             }
         }

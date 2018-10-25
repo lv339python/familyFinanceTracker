@@ -1,37 +1,41 @@
 <template>
     <div id="limit">
-        <div id="available_spendings">
-            <p>You can set limits for the following group spendings:
-                <select v-model="spending_category" required>
-                    <option v-for="item in list_of_spendings">{{item}}</option>
-                </select>
+        <div class="wrapper">
+            <div id="available_spendings">
+                <p>You can set limits for the following group spendings:
+                    <select v-model="spending_category" required>
+                        <option v-for="item in list_of_spendings">{{item}}</option>
+                    </select>
+                </p>
+
+            </div>
+
+            <div id="limit values">
+                <form>
+                    <p>Start date:</p>
+                    <input v-model="start_date" type="date" placeholder="yyyy-mm-dd"
+                           pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'
+                           required size="9">
+                    </input>
+                    <p>End date:</p>
+                    <input v-model="end_date" type="date" placeholder="yyyy-mm-dd" pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'
+                           required size="9">
+                    </input>
+                    <p>Amount:</p>
+                    <input v-model="value" type="number" required>
+                    </input>
+                </form>
+            </div>
+            <p>
+                <button v-on:click='set_limit'>set</button>
             </p>
-
+            <p>{{reply}}</p>
+            <p>
+                <button v-show='isShown' v-on:click="reRender">OK</button>
+            </p>
         </div>
-
-        <div id="limit values">
-            <form>
-                <p>Start date:</p>
-                <input v-model="start_date" type="date" placeholder="yyyy-mm-dd" pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'
-                       required size="9">
-                </input>
-                <p>End date:</p>
-                <input v-model="end_date" type="date" placeholder="yyyy-mm-dd" pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}'
-                       required size="9">
-                </input>
-                <p>Amount:</p>
-                <input v-model="value" type="number" required>
-                </input>
-            </form>
-        </div>
-        <p>
-            <button class="btn btn-outline-primary" v-on:click='set_limit'>set</button>
-        </p>
-        <p>{{reply}}</p>
-        <p>
-            <button class="btn btn-outline-dark" v-show='isShown' v-on:click="reRender">OK</button>
-        </p>
     </div>
+
 </template>
 
 <script>
@@ -90,5 +94,14 @@
 </script>
 
 <style scoped>
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        margin: 0px auto;
+    }
+
+    .limit {
+        display: flex;
+    }
 
 </style>

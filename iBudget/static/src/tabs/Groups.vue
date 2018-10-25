@@ -1,17 +1,17 @@
 <template>
     <div class="content">
         <div class="text">
-            <b-button :variant="secondary" to="../Groups_registration">Create new group</b-button>
+            <b-button :variant="secondary" to="../Groups_registration">Create New Group</b-button>
             <p>There are your groups: </p>
             <ul class="groups">
                 <li v-for="(content,group) in cur_balance" class="group_display">
                     {{group}}
                     <ul>
-                        <li v-for="(icon,item) in content" v-if="item==='Group icon'">
-                            {{item}} : <img class='image' :src="icon">
+                        <li v-for="(value,item) in content" v-if="item==='Group icon'">
+                            {{item}} : <img class='image' :src="value">
                         </li>
                         <li v-else>
-                            {{item}} : {{icon}}
+                            {{item}} : {{value}}
                         </li>
                     </ul>
                 </li>
@@ -50,13 +50,17 @@
     .text {
         width: fit-content;
         margin: auto;
-        font-size: large;
     }
 
     .image {
-        height: 15vh;
-        width: 15vh;
-        background-color: aqua;
-        border-radius: 5vh;
+        height: 8vh;
+        width: 8vh;
+        background-color: lightskyblue;
+        border-radius: 25%;
+    }
+
+    .groups {
+        display: flex;
+        flex-wrap: wrap;
     }
 </style>

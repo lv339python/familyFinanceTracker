@@ -85,6 +85,7 @@
 
 <script>
     import axios from 'axios';
+
     export default {
         name: "spending_history",
         data() {
@@ -193,43 +194,52 @@
         flex-direction: column;
         flex-wrap: wrap;
     }
+
     .text {
         width: fit-content;
         margin: auto;
     }
+
     .group {
         margin: 20px;
     }
+
     #type_of_pay {
         position: relative;
         left: 20px;
         top: -50px;
     }
-    #sum{
+
+    #sum {
         position: relative;
         top: 20px;
     }
-    #comment{
+
+    #comment {
         position: relative;
         top: 20px;
     }
-    #date{
+
+    #date {
         position: relative;
         top: -150px;
         left: -815px;
     }
-    #reset{
+
+    #reset {
         position: absolute;
         right: 435px;
         top: 616px;
 
     }
-    #save{
+
+    #save {
         position: absolute;
         right: 370px;
         top: 616px;
 
     }
+
     .toggle {
         position: absolute;
         left: 710px;
@@ -241,6 +251,7 @@
         -webkit-tap-highlight-color: transparent;
         transform: translate3d(0, 0, 0);
     }
+
     .toggle:before {
         content: "";
         position: relative;
@@ -253,6 +264,7 @@
         border-radius: 8px;
         transition: background 0.2s ease;
     }
+
     .toggle span {
         position: absolute;
         top: 0;
@@ -265,6 +277,7 @@
         box-shadow: 0 3px 8px rgba(154, 153, 153, 0.5);
         transition: all 0.2s ease;
     }
+
     .toggle span:before {
         content: "";
         position: absolute;
@@ -278,15 +291,18 @@
         opacity: 1;
         pointer-events: none;
     }
+
     #cbx:checked + .toggle:before {
         background: #947ADA;
     }
+
     #cbx:checked + .toggle span {
         background: #4F2EDC;
         transform: translateX(20px);
         transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
         box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
     }
+
     #cbx:checked + .toggle span:before {
         transform: scale(1);
         opacity: 0;
