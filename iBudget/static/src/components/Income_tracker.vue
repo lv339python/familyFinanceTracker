@@ -1,5 +1,6 @@
 <template>
-    <div id = "Income_tracker">
+    <div class="Income_tracker">
+    <div class="wrapper">
         <div id="total">
         <p>The total amount of income from the 1-st of this month till today is {{this.cur_income}}</p>
         </div>
@@ -32,6 +33,7 @@
             <p><button v-on:click="reRender" v-if="shownResult">refresh</button></p>
         </div>
 
+    </div>
     </div>
 </template>
 
@@ -113,12 +115,16 @@
 </script>
 
 <style>
-    caption{
-        caption-side: top;
-    },
-    #Income_tracker{
+    .wrapper{
         display:flex;
         flex-direction:column;
+        margin: 0px auto;
 
+    }
+    caption{
+        caption-side: top;
+    }
+    .Income_tracker{
+        display:flex;
     }
 </style>

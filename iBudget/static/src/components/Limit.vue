@@ -1,5 +1,6 @@
 <template>
 <div id = "limit">
+<div class="wrapper">
     <div id="available_spendings">
       <p>You can set limits for the following group spendings:
         <select v-model = "spending_category" required>
@@ -28,6 +29,8 @@
      <p>{{reply}}</p>
      <p><button v-show='isShown' v-on:click="reRender">OK</button></p>
 </div>
+</div>
+
 </template>
 
 <script>
@@ -85,5 +88,14 @@
 </script>
 
 <style scoped>
+.wrapper{
+        display:flex;
+        flex-direction:column;
+        margin: 0px auto;
+}
+
+.limit{
+        display:flex;
+}
 
 </style>
