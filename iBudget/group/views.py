@@ -2,12 +2,15 @@
 This module provides functions for handling group view.
 """
 import json
+
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
+
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
-from utils.validators import is_valid_data_create_new_group
+from utils.aws_helper import AwsService
 from utils.transaction import save_new_group
+from utils.validators import is_valid_data_create_new_group
 from .models import Group, UsersInGroups
 
 
@@ -23,7 +26,7 @@ def get_by_group(request):
     user = request.user
     if user:
         user_groups = []
-        for entry in Group.group_filter_by_owner_id(user):
+        for entry in Group.filter_groups_by_user_id(user):
             user_groups.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_groups, status=200, safe=False)
     return JsonResponse({}, status=400)
@@ -59,7 +62,8 @@ def groups_balance(request):
     group_balance = {}
     users_groups = Group.filter_groups_by_user_id(user_id)
     for user_group in users_groups:
-        group_balance[user_group.name] = {'Total income': 0, 'Total spending': 0}
+        group_balance[user_group.name] = {'Total income': 0, 'Total spending': 0,
+                                          'Group icon': AwsService.get_image_url(user_group.icon)}
         income_values = filter_income_history_by_fund(user_group)
         for i in income_values:
             group_balance[user_group.name]['Total income'] += i['value']

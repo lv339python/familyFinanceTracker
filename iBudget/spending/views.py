@@ -4,12 +4,13 @@ This module provides functions for spending specifying.
 import calendar
 import json
 from datetime import date
+
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.db.models import Q
 
-from utils.validators import is_valid_data_individual_limit, is_valid_data_new_spending
 from group.models import Group, SharedSpendingCategories
+from utils.validators import is_valid_data_individual_limit, is_valid_data_new_spending
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 
@@ -30,6 +31,7 @@ def show_spending_ind(request):
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)
 
+
 @require_http_methods(["GET"])
 def show_spending_group(request):
     """Handling request for creating of spending categories list in group.
@@ -42,7 +44,7 @@ def show_spending_group(request):
     user = request.user
     users_group = []
     if user:
-        for group in Group.group_filter_by_owner_id(user):
+        for group in Group.filter_groups_by_user_id(user):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
                 users_group.append({'id_cat': shared_category.spending_categories.id,
                                     'name_cat': shared_category.spending_categories.name,
@@ -192,7 +194,6 @@ def create_spending_category(request):
     icon = data['icon']
     owner = user
     is_shared = False
-
 
     if not is_valid_data_new_spending(data):
         return HttpResponse("Bad request", status=400)

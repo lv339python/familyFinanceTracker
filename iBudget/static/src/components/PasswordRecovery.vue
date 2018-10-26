@@ -7,7 +7,7 @@
                 <label>Please enter new password</label>
                 <br/>
                 <input required v-model="new_password" type="password" placeholder="New password"/>
-                <b-button @click="setData">Submit</b-button>
+                <b-button class="btn btn-outline-primary" @click="setData">Submit</b-button>
 
             </div>
         </div>
@@ -34,7 +34,7 @@
 
                     }
                 }).then(response => {
-                    this.$router.go('/Login/')
+                    this.$router.push('/Login/')
                 })
             }
         }
