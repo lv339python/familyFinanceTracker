@@ -12,6 +12,7 @@
                 <div>
                     <label>Select start date</label>
                     <input v-model="start_date" type="date" @change="blockButtom()">
+                    {{start_date}}
                 </div>
                 <hr>
             </div>
@@ -89,8 +90,8 @@
                 listValues: [],
                 pageNumber: 0,
                 size: 2,
-                start_date: null,
-                finish_date: null,
+                start_date: new Date().toJSON().slice(0,10),
+                finish_date: new Date().toJSON().slice(0,10),
                 selected: [],
                 spending_history_individual: {},
                 spending_history_admin: {},
@@ -195,5 +196,8 @@
 <style scoped>
     #total {
         text-align: center
+    }
+    #spending_history {
+
     }
 </style>

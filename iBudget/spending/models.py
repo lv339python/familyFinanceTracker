@@ -105,6 +105,28 @@ class SpendingLimitationIndividual(models.Model):
             finish_date=finish_date)
         return notice
 
+    @staticmethod
+    def get_value_by_data(user, spending_category, start_date, finish_date):
+        """
+        Args:
+            user (FK): Owner of this category.
+            spending_category (FK): Spending category for individual purpose.
+            start_date: The beginning of time period.
+            finish_date: The end of time period.
+        Returns:
+            Limit value if such exists, 0 otherwise.
+
+
+        """
+        value = 0
+        for item in SpendingLimitationIndividual.objects.filter(
+                user=user,
+                spending_category=spending_category,
+                start_date=start_date,
+                finish_date=finish_date):
+            value += item.value
+        return value
+
 
 class SpendingLimitationGroup(models.Model):
     """Limitation of group's spending.
