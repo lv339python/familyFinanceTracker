@@ -1,8 +1,6 @@
 <template>
     <div class="content">
         <div class="text" class="coll-md-4">
-            <b-button :variant="secondary" to="../Groups_registration">Create new group</b-button>
-        <div class="text">
             <b-button :variant="secondary" to="/groups/add">Create New Group</b-button>
             <p>There are your groups: </p>
             <ul class="list-group">
@@ -20,7 +18,6 @@
                 </button>
             </div>
         </div>
-
         <div class="text" class="coll-md-4">
             <ul class="groups">
                 <li
@@ -37,6 +34,7 @@
                     </ul>
                 </li>
             </ul>
+        </div>
     </div>
 </template>
 
