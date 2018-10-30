@@ -1,9 +1,12 @@
 <template>
     <div class="content">
-        <div class="text">
-            <b-button :variant="secondary" to="../Financial_goal">Financial Goal</b-button>
-            <b-button :variant="secondary" to="../funds_registration">Create New Fund</b-button>
-            <b-button :variant="secondary" to="/goal">Tracking Financial Goal</b-button>
+        <div id="left" class="text column">
+            <b-button :variant="secondary" to="/funds/tracking_goal">Tracking Goal</b-button>
+            <b-button :variant="secondary" to="/funds/new_goal">New Goal</b-button>
+            <b-button :variant="secondary" to="/funds/new">New Fund</b-button>
+        </div>
+          <div  id="right" class="column">
+              <router-view></router-view>
         </div>
     </div>
 
@@ -17,8 +20,28 @@
 
 <style scoped>
     .content {
-        overflow: scroll;
+        height: 100%;
+        overflow: hidden;
+        margin: 0px;
         display: flex;
+    }
+    .column {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    #left {
+        flex-shrink: 0;
+        background-color: whitesmoke;
+        margin: 5px;
+        padding: 5px;
+        width: 16%;
+    }
+    #right {
+        background-color: #f3f3f3;
+        padding: 5px;
+        margin: 0;
+        width: 100%;
     }
 
     .text {

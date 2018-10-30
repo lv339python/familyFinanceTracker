@@ -1,11 +1,11 @@
 <template>
     <div class="content">
         <div id="left" class="text column">
-            <b-button :variant="secondary" to="/spendings/spending_registration">Spending Registration</b-button>
-            <b-button :variant="secondary" to="/spendings/spend">Set Individual Limitation</b-button>
-            <b-button :variant="secondary" to="/spendings/limit">Set Group Limitation</b-button>
-            <b-button :variant="secondary" to="/spendings/spending_add">Add Spending</b-button>
-            <b-button :variant="secondary" to="/spendings/spending_history">Spending History</b-button>
+            <b-button :variant="secondary" to="/spendings/add">Add</b-button>
+            <b-button :variant="secondary" to="/spendings/limit_ind">Set Individual Limitation</b-button>
+            <b-button :variant="secondary" to="/spendings/limit_group">Set Group Limitation</b-button>
+            <b-button :variant="secondary" to="/spendings/history">History</b-button>
+            <b-button :variant="secondary" to="/spendings/new">New</b-button>
         </div>
         <div  id="right" class="column">
               <router-view></router-view>
@@ -36,6 +36,7 @@
         background-color: whitesmoke;
         margin: 5px;
         padding: 5px;
+        width: 16%;
     }
     #right {
         background-color: #f3f3f3;

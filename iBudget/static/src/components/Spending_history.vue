@@ -12,7 +12,6 @@
                 <div>
                     <label>Select start date</label>
                     <input v-model="start_date" type="date" @change="blockButtom()">
-                    {{start_date}}
                 </div>
                 <hr>
             </div>

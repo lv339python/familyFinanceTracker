@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+    <div class="cont">
         <div class="form-group col-md-4">
             <label>Select income category:</label>
             <select v-model="inc_category" class="form-control">
@@ -165,7 +165,7 @@
     }
 </script>
 <style scoped>
-    .content {
+    .cont {
         height: 100vh;
         display: flex;
         flex-direction: column;
@@ -177,7 +177,7 @@
         margin: auto;
     }
 
-    .content div {
+    .cont div {
         margin: auto;
         padding-top: 2%;
     }
