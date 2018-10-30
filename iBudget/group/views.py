@@ -9,6 +9,7 @@ from spending_history.models import SpendingHistory
 from utils.validators import is_valid_data_create_new_group
 from utils.transaction import save_new_group
 from utils.aws_helper import AwsService
+from utils.get_role import groups_for_user, is_user_admin_group
 from .models import Group, UsersInGroups
 
 
@@ -47,6 +48,32 @@ def show_users_group(request):
     return JsonResponse({}, status=400)
 
 
+@require_http_methods(["GET"])
+def show_users_group_data(request):
+    """Handling request for creating of user's groups list.
+    Args:
+        request (HttpRequest): request from server which ask list of groups data for user.
+    Returns:
+        HttpResponse object.
+    """
+    user = request.user
+    if user:
+        groups = []
+        user_role = None
+        for item in groups_for_user(user):
+            group = Group.get_group_by_id(item)
+            if group.owner == user:
+                user_role = "Owner"
+            else:
+                if is_user_admin_group(item, user):
+                    user_role = "Admin"
+                else:
+                    user_role = "Member"
+            groups.append({'id': item, 'user_role': user_role, 'group_name': group.name})
+        return JsonResponse(groups, status=200, safe=False)
+    return JsonResponse({}, status=400)
+
+
 def groups_balance(request):
     """
     Retrieving group`s budget information
@@ -60,8 +87,10 @@ def groups_balance(request):
     group_balance = {}
     users_groups = Group.filter_groups_by_user_id(user_id)
     for user_group in users_groups:
-        group_balance[user_group.name] = {'Total income': 0, 'Total spending': 0,
-                                          'Group icon': AwsService.get_image_url(user_group.icon)}
+        group_balance[user_group.name] = {'Total income': 0,
+                                          'Total spending': 0,
+                                          'Group icon': AwsService.get_image_url(user_group.icon),
+                                          'Group_id': user_group.id}
         income_values = filter_income_history_by_fund(user_group)
         for i in income_values:
             group_balance[user_group.name]['Total income'] += i['value']
@@ -71,7 +100,6 @@ def groups_balance(request):
         group_balance[user_group.name]["Current balance"] = \
             group_balance[user_group.name]['Total income'] - \
             group_balance[user_group.name]['Total spending']
-    print(group_balance)
     return JsonResponse(group_balance)
 
 
@@ -125,3 +153,17 @@ def create_new_group(request):
 
 
 
+# <ul class="groups">
+#                 <li
+#                     v-for="(content,group) in cur_balance" class="group_display">
+#                     {{group}}
+#                     <ul>
+#                         <li v-for="(icon,item) in content" v-if="item==='Group icon'">
+#                             {{item}} : <img class='image' :src="icon">
+#                         </li>
+#                         <li v-else>
+#                             {{item}} : {{icon}}
+#                         </li>
+#                     </ul>
+#                 </li>
+#             </ul>
