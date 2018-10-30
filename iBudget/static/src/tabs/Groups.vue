@@ -1,7 +1,7 @@
 <template>
     <div class="content">
         <div class="text">
-            <b-button :variant="secondary" to="../Groups_registration">Create New Group</b-button>
+            <b-button :variant="secondary" to="/groups/add">Create New Group</b-button>
             <p>There are your groups: </p>
             <ul class="groups">
                 <li v-for="(content,group) in cur_balance" class="group_display">

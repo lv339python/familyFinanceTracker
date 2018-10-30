@@ -1,11 +1,11 @@
 <template>
     <div class="content">
         <div class="text">
-            <b-button :variant="secondary" to="../spending_registration">Spending Registration</b-button>
-            <b-button :variant="secondary" to="../spend">Set Individual Limitation</b-button>
-            <b-button :variant="secondary" to="/limit">Set Group Limitation</b-button>
-            <b-button :variant="secondary" to="/spending_add">Add Spending</b-button>
-            <b-button :variant="secondary" to="/spending_history">Spending History</b-button>
+            <b-button :variant="secondary" to="/spendings/add">Add</b-button>
+            <b-button :variant="secondary" to="/spendings/limit_ind">Set Individual Limitation</b-button>
+            <b-button :variant="secondary" to="/spendings/limit_group">Set Group Limitation</b-button>
+            <b-button :variant="secondary" to="/spendings/history">History</b-button>
+            <b-button :variant="secondary" to="/spendings/new">New</b-button>
         </div>
     </div>
 </template>

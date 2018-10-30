@@ -3,9 +3,17 @@ import {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add, F
 
 
 export default [
+    //login
+    {
+        path: '/password_recovery', component: PasswordRecovery
+    },
+    {
+        path: '/password_recovery/:token', component: PasswordRecovery
+    },
     {
         path: '/', redirect: '/login'
     },
+    //tabs
     {
         path: '/incomes', component: Incomes
     },
@@ -24,49 +32,47 @@ export default [
     {
         path: '/login', component: Login
     },
+    //spending
     {
-        path: '/Spending_registration', component: Spending_registration
+        path: '/spendings/add', component: Spending_registration
     },
     {
-        path: '/spend', component: Spend
+        path: '/spendings/limit_ind', component: Spend
     },
     {
-        path: '/limit', component: Limit
+        path: '/spendings/limit_group', component: Limit
     },
     {
-        path: '/add_spending', component: Icon_getter
+        path: '/spendings/new', component: Spending_add
     },
     {
-        path: '/spending_add', component: Spending_add
+        path: '/spendings/history', component: Spending_history
+    },
+    //Group
+    {
+        path: '/groups/add', component: Groups_registration
+    },
+
+    //funds
+    {
+        path: '/funds/new', component: Funds_registration
     },
     {
-        path: '/Financial_goal', component:Financial_goal
+        path: '/funds/new_goal', component:Financial_goal
     },
-    {
-        path: '/funds_registration', component: Funds_registration
+      {
+        path: '/funds/tracking_goal', component: Goal
     },
+    //incomes
     {
-         path: '/spending_history', component: Spending_history
+        path: '/incomes/tracking', component: Income_tracker
     },
+
     {
-         path: '/track_incomes', component: Income_tracker
+        path: '/incomes/add', component: Income_registration
     },
+
     {
-        path: '/password_recovery', component: PasswordRecovery
-    },
-    {
-        path: '/groups_registration', component: Groups_registration
-    },
-    {
-        path: '/password_recovery/:token', component: PasswordRecovery
-    },
-    {
-        path: '/Income_registration', component: Income_registration
-    },
-    {
-        path: '/goal', component: Goal
-    },
-    {
-        path: '/income_add', component: Income_add
+        path: '/incomes/new', component: Income_add
     }
 ];

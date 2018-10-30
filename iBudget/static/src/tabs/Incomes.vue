@@ -1,9 +1,9 @@
 <template>
     <div class="content">
         <div class="text">
-            <b-button :variant="secondary" to="../income_registration">Income Registration</b-button>
-            <b-button :variant="secondary" to="/track_incomes">Track Your Incomes</b-button>
-            <b-button :variant="secondary" to="/income_add">Add Income Category</b-button>
+            <b-button :variant="secondary" to="/incomes/add">Add</b-button>
+            <b-button :variant="secondary" to="/incomes/tracking">Tracking</b-button>
+            <b-button :variant="secondary" to="/incomes/new">New</b-button>
         </div>
     </div>
 
