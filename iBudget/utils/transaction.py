@@ -4,7 +4,6 @@ from fund.models import FundCategories
 from group.models import SharedFunds, Group, UsersInGroups
 
 
-@transaction.atomic
 def save_new_fund(name, icon, is_shared, owner, shared_group):
     """Function for safe save FundCategories and SharedFunds
     Args:
@@ -36,7 +35,6 @@ def save_new_fund(name, icon, is_shared, owner, shared_group):
     return True
 
 
-@transaction.atomic
 def save_new_group(name, icon, owner):
     """Function for safe save FundCategories and SharedFunds
     Args:
