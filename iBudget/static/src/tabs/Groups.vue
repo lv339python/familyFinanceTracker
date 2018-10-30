@@ -1,12 +1,9 @@
 <template>
     <div class="content">
-<<<<<<< HEAD
         <div class="text" class="coll-md-4">
             <b-button :variant="secondary" to="../Groups_registration">Create new group</b-button>
-=======
         <div class="text">
             <b-button :variant="secondary" to="../Groups_registration">Create New Group</b-button>
->>>>>>> master
             <p>There are your groups: </p>
             <ul class="list-group">
             <li
