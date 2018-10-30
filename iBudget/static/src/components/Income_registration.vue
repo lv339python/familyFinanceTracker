@@ -54,13 +54,15 @@
             <label>Choose date</label>
             <input v-model="date" type="date">
         </div>
+
         <div>
-            <b-button :disabled="DataValidation===false" class="save_button" v-on:click="setData" :variant="success">
-                Save
+            <b-button :disabled="DataValidation===false" class="btn btn-outline-primary"
+                      @click="setData" :variant="success">Save
             </b-button>
         </div>
+
         <div>
-            <b-button v-on:click="clear" :variant="warning">Clear form</b-button>
+            <b-button class="btn btn-outline-danger" @click="clear" :variant="warning">Clear form</b-button>
         </div>
     </div>
 </template>

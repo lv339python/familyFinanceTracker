@@ -8,11 +8,11 @@
         </b-button>
         <b-modal ref="myModalRef" hide-footer title="Account">
             <div class="d-block text-center">
-                <b-card >
+                <b-card>
                     <img id="profile-photo" rounded="circle" blank width="75" height="75"
                          blank-color="orange" alt="img" class="m-1"
                          src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>
-                    <p class="card-text" >
+                    <p class="card-text">
                         <b>Email: </b>{{user.email}}
                         <br/>
                         <b>First Name: </b>{{user.first_name}}
@@ -34,7 +34,7 @@
         name: "Account",
 
         data() {
-            return{
+            return {
                 user: null,
             }
         },
@@ -45,8 +45,7 @@
             hideModal() {
                 this.$refs.myModalRef.hide()
             },
-            logout: function (event)
-            {
+            logout: function (event) {
                 axios({
                     method: 'get',
                     url: '/api/v1/authentication/logout/',
@@ -57,15 +56,15 @@
                 });
             }
         },
-        created(){
+        created() {
             axios.get('api/v1/authentication/profile/')
                 .then(response => {
-            // JSON responses are automatically parsed.
-            this.user = response.data
-          })
-          .catch(e => {
-            this.errors.push(e)
-          })
+                    // JSON responses are automatically parsed.
+                    this.user = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
         }
     }
 </script>
@@ -74,14 +73,17 @@
     #profile-photo {
         float: left;
     }
-    .card-text{
+
+    .card-text {
         text-align: left;
         margin-left: 150px;
     }
+
     #acc {
         margin-right: 20px;
     }
-    #profile-thumbnail{
+
+    #profile-thumbnail {
         margin-right: 5px;
     }
 </style>

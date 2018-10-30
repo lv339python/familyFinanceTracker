@@ -2,14 +2,16 @@
 This module provides functions for handling group view.
 """
 import json
+
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
+
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
-from utils.validators import is_valid_data_create_new_group
-from utils.transaction import save_new_group
 from utils.aws_helper import AwsService
 from utils.get_role import groups_for_user, is_user_admin_group
+from utils.transaction import save_new_group
+from utils.validators import is_valid_data_create_new_group
 from .models import Group, UsersInGroups
 
 
@@ -25,7 +27,7 @@ def get_by_group(request):
     user = request.user
     if user:
         user_groups = []
-        for entry in Group.group_filter_by_owner_id(user):
+        for entry in Group.filter_groups_by_user_id(user):
             user_groups.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_groups, status=200, safe=False)
     return JsonResponse({}, status=400)
@@ -151,19 +153,3 @@ def create_new_group(request):
         return HttpResponse(status=201)
     return HttpResponse(status=406)
 
-
-
-# <ul class="groups">
-#                 <li
-#                     v-for="(content,group) in cur_balance" class="group_display">
-#                     {{group}}
-#                     <ul>
-#                         <li v-for="(icon,item) in content" v-if="item==='Group icon'">
-#                             {{item}} : <img class='image' :src="icon">
-#                         </li>
-#                         <li v-else>
-#                             {{item}} : {{icon}}
-#                         </li>
-#                     </ul>
-#                 </li>
-#             </ul>
