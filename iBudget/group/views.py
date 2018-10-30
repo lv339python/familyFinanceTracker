@@ -152,4 +152,3 @@ def create_new_group(request):
     if save_new_group(name=data["name"], icon=data["icon"], owner=user):
         return HttpResponse(status=201)
     return HttpResponse(status=406)
-
