@@ -118,14 +118,11 @@ class SpendingLimitationIndividual(models.Model):
 
 
         """
-        value = 0
-        for item in SpendingLimitationIndividual.objects.filter(
-                user=user,
-                spending_category=spending_category,
-                start_date=start_date,
-                finish_date=finish_date):
-            value += item.value
-        return value
+        return sum(SpendingLimitationIndividual.objects.filter(
+            user=user,
+            spending_category=spending_category,
+            start_date=start_date,
+            finish_date=finish_date).values_list('value', flat=True))
 
 
 class SpendingLimitationGroup(models.Model):
