@@ -41,7 +41,7 @@ export default {
         background-color: whitesmoke;
         height: 100%;
         /*display: flex;*/
-        /*flex-direction: row;*/
+        flex-direction: row;
     }
 </style>
 
