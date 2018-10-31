@@ -4,9 +4,9 @@
             <div id="form">
                 <form class="login" @submit.prevent="login" v-show="loginDisplay">
                     <h1>Login</h1>
-                    <label>User name</label>
+                    <label>Email</label>
                     <br/>
-                    <input required v-model="username" type="text" placeholder="Username"/>
+                    <input required v-model="username" type="text" placeholder="Email"/>
                     <br/>
                     <label>Password</label>
                     <br/>
@@ -17,9 +17,7 @@
                     <br/>
                     <b-link @click="showForgotPassword">Forgot your password ?</b-link>
                     <br>
-
-
-                    <b-link @click="showRegister">Create a new account</b-link>
+                    <b-link @click="showRegister">Create new account</b-link>
                     <hr/>
                     <b-button @click="google">Sign in With Google</b-button>
                 </form>
@@ -32,9 +30,9 @@
                 </form>
                 <form class="register" @submit.prevent="register" v-show="registerDisplay">
                     <h1>Register</h1>
-                    <label>User name</label>
+                    <label>Email</label>
                     <br/>
-                    <input required v-model="username" type="text" placeholder="Username"/>
+                    <input required v-model="username" type="text" placeholder="Email"/>
                     <br/>
                     <label>Password</label>
                     <br/>
@@ -42,15 +40,23 @@
                     <br/>
                     <label>Password Confirmation</label>
                     <br/>
-                    <input required v-model="password" type="password" placeholder="Confirm Password"/>
+                    <input required v-model="confirm_password" type="password" placeholder="Confirm Password"/>
                     <hr/>
-                    <b-button class="btn btn-outline-primary" type="submit" @click="registration">Register</b-button>
+                    <b-button class="btn btn-outline-primary" type="submit" v-if:isValidPassword @click="registration">Register</b-button>
                     <br/>
                     <br/>
                     <b-link @click="showLogin">Already registered?</b-link>
                 </form>
             </div>
         </div>
+        <b-modal ref="myModalRef" hide-footer>
+            <div class="d-block text-center">
+                <p>We sent a letter  on your email. Please check your email to continue changing password !</p>
+            </div>
+            <div class="d-block text-right">
+            <b-button variant="primary"@click="hideModal">ok</b-button>
+
+        </b-modal>
     </div>
 
 </template>
@@ -66,7 +72,18 @@
                 loginDisplay: true,
                 registerDisplay: false,
                 forgotpasswordDisplay: false,
+                password: null,
+                confirm_password: null
 
+            }
+        },
+        computed: {
+            isValidPassword: {
+                get: function () {
+                    var result =
+                        this.password === this.confirm_password;
+                    return result;
+                }
             }
         },
         methods: {
@@ -106,7 +123,8 @@
                     url: '/api/v1/authentication/registration/',
                     data: {
                         'email': this.username,
-                        'password': this.password
+                        'password': this.password,
+                        'confirm_password': this.password
                     }
                 }).then(response => {
                     this.loginDisplay = true;
@@ -132,6 +150,12 @@
                     this.error = true;
                 })
             },
+            showModal() {
+                this.$refs.myModalRef.show()
+                },
+                hideModal() {
+                    this.$refs.myModalRef.hide()
+                },
             sendData: function (event) {
                 axios({
                     method: 'post',
@@ -141,9 +165,8 @@
 
                     }
                 }).then(response => {
-                    this.$router.go('/home');
-                }).catch(e => {
-                    this.error = true;
+                    this.reply = response.data;
+                    this.showModal()
                 })
             },
             google: function (event) {
@@ -161,14 +184,12 @@
 
     }
 </script>
-
 <style scoped>
     #body {
         text-align: center;
         display: flex;
-        margin: auto;
+        margin-top: 240px;
     }
-
     #form {
         margin: auto;
         width: fit-content;

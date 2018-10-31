@@ -1,24 +1,22 @@
 """
 This module provides functions for handling Auth view.
 """
-
 import json
 import random
 import string
 
-
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
+from django.views.decorators.http import require_http_methods
 from requests_oauthlib import OAuth2Session
 
 from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
-  LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
-from utils.validators import login_validate, is_valid_registration_data, updating_email_validate, \
-    updating_password_validate
+    LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
 from utils.jwttoken import create_token, handle_token
 from utils.password_reseting import send_password_update_letter, send_successful_update_letter
+from utils.validators import login_validate, is_valid_registration_data, updating_email_validate, \
+    updating_password_validate
 from .models import UserProfile
 
 TTL_SEND_PASSWORD_TOKEN = 60 * 60
@@ -119,6 +117,7 @@ def google_sign_in(request):
         return redirect("/")
     return HttpResponse(status=400)
 
+
 @require_http_methods(['GET'])
 def get_profile(request):
     """
@@ -136,7 +135,6 @@ def get_profile(request):
 @require_http_methods(["POST"])
 def forgot_password(request):
     """
-
     :param request: Handles method POST
     :return: HttpResponse 400 if its bad request and HttpResponse 200 if everything is alright
     """
@@ -145,37 +143,41 @@ def forgot_password(request):
         email = data.get('email')
 
     user = UserProfile.get_by_email(email=email)
+
     if user:
         arg = {'user_id': user.id}
         token = create_token(data=arg, expiration_time=TTL_SEND_PASSWORD_TOKEN)
+        user.update(one_time_token=token)
         send_password_update_letter(user, token)
         return HttpResponse(status=200)
+
     return HttpResponse(status=400)
 
 
 @require_http_methods(["PUT"])
 def update_password(request, token=None):
     """
-
-    :param request: Handles method PUT
-    :return: :param request: method POST
-    :return: HttpResponse 400 if it is bad request and HttpResponse 200 if everything is good
+    :param request: Handle method PUT,
+    :param token:status 200 if user successfully updated his password,
+    status 400  if token fetching was unsuccessful, status 498 if invalid token,
+    status 404 if user does not exist in database
     """
-
-    data = json.loads(request.body)
-    if not token:
-        return HttpResponse(status=400)
     identifier = handle_token(token)
     if not identifier:
         return HttpResponse(status=498)
     user = UserProfile.get_by_id(identifier['user_id'])
     if not user:
         return HttpResponse(status=404)
+    if user.one_time_token == '':
+        return HttpResponse(status=400)
+    data = json.loads(request.body)
+    if not token:
+        return HttpResponse(status=400)
     if updating_password_validate(data, 'new_password'):
         new_password = data.get('new_password')
-        if not user.check_password(new_password):
-            user.update(password=new_password)
+        if not user.check_password(new_password) and user.one_time_token == str(token):
+            user.update(password=new_password,
+                        one_time_token="")
             send_successful_update_letter(user)
             return HttpResponse(status=200)
-        return HttpResponse(status=400)
     return HttpResponse(status=400)
