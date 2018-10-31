@@ -36,6 +36,27 @@ def show_fund(request):
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 
+@require_http_methods(["GET"])
+def show_fund_by_group(request):
+    """Handling request for creating of spending categories list in group.
+        Args:
+            request (HttpRequest): Limitation data.
+        Returns:
+            HttpResponse object.
+    """
+
+    user = request.user
+    users_group = []
+    if user:
+        for group in Group.filter_groups_by_user_id(user):
+            for shared_fund in SharedFunds.objects.filter(group=group.id):
+                users_group.append({'id_fund': shared_fund.fund.id,
+                                    'name_fund': shared_fund.fund.name,
+                                    'id_group': group.id
+                                    })
+        print(users_group)
+        return JsonResponse(users_group, status=200, safe=False)
+    return JsonResponse({}, status=400)
 
 @require_http_methods(["GET"])
 def show_goal_data(request):
