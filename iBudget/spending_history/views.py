@@ -217,3 +217,61 @@ def get_month_spending(request):
                                                                          finish_date),
                             status=200)
     return HttpResponse('Bad Request', status=400)
+
+def create_spending_chart(user, start_date, finish_date, utc_difference):
+    """Creating array of data for spending history chart.
+        Args:
+            user (UserProfile): user.
+            start_date (date): The beginning of statistic period
+            finish_date (date): The end of statistic period
+            utc_difference(int): difference between user's time and UTC
+        Returns:
+            Array of data for individual spending history statistic.
+    """
+
+    set_spending_id = set()
+    list_spending_value = list()
+    list_spending_name = list()
+    for entry in SpendingHistory.filter_by_user_date(user, start_date, finish_date):
+        set_spending_id.add(entry.spending_categories_id)
+    for item in list(set_spending_id):
+        list_spending_name.append(SpendingCategories.get_by_id(item).name)
+        total = 0
+        for entry in SpendingHistory.filter_by_user_date_spending(user, start_date, finish_date,
+                                                                  SpendingCategories.get_by_id(item)):
+            total += float(entry.value)
+        list_spending_value.append(total)
+    return {'value': list_spending_value, 'name': list_spending_name}
+
+@require_http_methods(["POST"])
+def get_spending_chart(request):
+    """Handling request for creating spending history data.
+
+        Args:
+            request (HttpRequest): contains start date, final date and UTC information.
+        Returns:
+            JsonResponse object.
+    """
+    user = request.user
+    data = json.loads(request.body)
+    # if not is_valid_data_spending_history(data):
+    #     return HttpResponse(status=400)
+    start_date = parse_date(data['start_date'])
+    finish_date = parse_date(data['finish_date'])
+    utc_difference = int(data['UTC'])
+
+    # if start_date > finish_date:
+    #     return JsonResponse({}, status=400)
+
+    if not start_date:
+        start_date = date(date.today().year, date.today().month, 1)
+    if not finish_date:
+        finish_date = date.today()
+
+    start_date = start_date - timedelta(hours=utc_difference)
+
+    if user:
+        return JsonResponse(create_spending_chart(user, start_date, finish_date,
+                                                       utc_difference),
+                            status=200, safe=False)
+    return JsonResponse({}, status=400)
