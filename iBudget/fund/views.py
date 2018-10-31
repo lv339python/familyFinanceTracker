@@ -54,7 +54,6 @@ def show_fund_by_group(request):
                                     'name_fund': shared_fund.fund.name,
                                     'id_group': group.id
                                     })
-        print(users_group)
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
 

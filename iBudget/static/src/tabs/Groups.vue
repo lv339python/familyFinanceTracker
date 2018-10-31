@@ -11,6 +11,7 @@
                 :class="{'active': selected_group_index===index}">
                 {{ item.group_name }} - {{ item.user_role }}
             </li>
+            </ul>
             <div v-show="pageCount>1">
                 <button :disabled="pageNumber === 0" @click="prevPage"> Previous
                 </button>
