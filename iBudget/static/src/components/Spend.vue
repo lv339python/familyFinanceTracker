@@ -4,7 +4,7 @@
             <hr>
             <div class="form-group">
                 <label for="monthYear">Your spending:</label>
-                <select v-model="selectedSpending" class="form-control" id="spendings">
+                <select v-model="selectedSpending" class="form-control" id="spendings" required>
                     <option v-for="spend in spending_list" v-bind:value="spend.id"> {{ spend.name }}
                     </option>
                 </select>
@@ -14,7 +14,7 @@
             <hr>
             <div class="form-group">
                 <label for="years">Year:</label>
-                <select v-model="selectedYear" class="form-control" id="years">
+                <select v-model="selectedYear" class="form-control" id="years" required>
                     <option v-for="item in 10">{{yyyy-1 + item}}</option>
                 </select>
             </div>
@@ -23,7 +23,7 @@
             <hr>
             <div class="form-group">
                 <label for="monthYear">Month:</label>
-                <select v-model="selectedMonth" class="form-control" id="monthYear">
+                <select v-model="selectedMonth" class="form-control" id="monthYear" required>
                     <option v-for="month in months" v-bind:value="month.valueM"> {{ month.nameM }}</option>
                 </select>
             </div>
@@ -35,11 +35,15 @@
                 <br>
                 <input v-model.number="selectedValueQ" id="value"
                        type="number" min="0" max="999999999"
-                       placeholder="Your limit" pattern="^\d+(\.\d+)?$">
+                       placeholder="Your limit" pattern="^\d+(\.\d+)?$" required>
             </div>
             <hr>
-            <div v-show="isValidData">
-                <button v-on:click="setLimit" :variant="secondary" class="btn btn-outline-primary">Set limit</button>
+            <div>
+                <button v-on:click="setLimit"
+                    :variant="secondary"
+                    class="btn btn-outline-primary"
+                    :disabled="isValidData===false">Set limit
+                </button>
                 <br>
                 <button v-on:click="createDone" :variant="secondary" v-show="isDone" class="btn btn-outline-primary">
                     {{msg}}
