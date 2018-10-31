@@ -9,7 +9,7 @@
                 v-for="(item, index) in paginatedData"
                 v-on:click="selected_group(index, item.id)"
                 :class="{'active': selected_group_index===index}">
-                {{ item.group_name }} - {{ item.user_role }}
+                {{ item.group_name }} | {{ item.user_role }} | amount: {{ item.count }}
             </li>
             <div v-show="pageCount>1">
                 <button :disabled="pageNumber === 0" @click="prevPage"> Previous
@@ -63,7 +63,7 @@
             },
             prevPage(){
                 this.pageNumber--;
-            }
+            },
         },
         computed:{
             pageCount(){
@@ -118,5 +118,6 @@
     .groups {
         display: flex;
         flex-wrap: wrap;
+        background-color: rgb(213, 221, 234);
     }
 </style>
