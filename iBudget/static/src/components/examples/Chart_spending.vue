@@ -1,20 +1,9 @@
 <template>
     <div class="container">
-
         <div class="Chart">
             <h1 style="text-align:center;">This month spending</h1>
-
-
-            <h3 style="text-align:center;">2 {{value}} </h3>
-            <h3 style="text-align:center;">3 {{this.value}} </h3>
-            <h3 style="text-align:center;">4 {{this.name}} </h3>
-            <h3 style="text-align:center;">35 {{myData}} </h3>
-
-            <pie-example v-bind:pieData="myData" v-bind:pieLabel="myLabel"/>
+            <pie-example v-bind:pieData="value" v-bind:pieLabel="name"/>
         </div>
-
-
-
     </div>
 </template>
 
@@ -27,15 +16,8 @@
         },
         props: ['value', 'name'],
         data() {
-            var myData = value;
-
-            let myLabel = [];
-
-
             return {
-                height: 100,
-                myData: this.value,
-                myLabel: this.name,
+                height: 80,
             }
         },
         computed: {
@@ -44,7 +26,7 @@
                     height: `${this.height}px`,
                     position: 'relative'
                 }
-            },
+            }
         }
     }
 </script>
