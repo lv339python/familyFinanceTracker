@@ -174,7 +174,9 @@ def add_new_users_to_group(request):
         return HttpResponse(status=400)
     user_add = UserProfile.get_by_email(data["users_email"])
     is_admin = data["is_admin"]
-    group = Group.get_group_by_id(data["group"])
+    group = Group.get_group_by_id(data["group_id"])
+    if not is_user_admin_group(group.id, user):
+        return HttpResponse(status=403)
     if is_user_in_group(group, user_add):
         return HttpResponse(status=409)
     if not user_add:

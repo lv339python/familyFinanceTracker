@@ -16,7 +16,7 @@ SET_KEYS_INCOME_REG_DATA = {'inc_category', 'fund_category', 'value'}
 SET_KEYS_FUND_CREATE_DATA = {'name', 'icon'}
 SET_KEYS_FUND_GOAL = {'fund', 'value'}
 SET_KEYS_GROUP_CREATE_DATA = {'name', 'icon'}
-KEYS_SET_ADD_USER_TO_GROUP = {'users_email', 'group', 'is_admin'}
+KEYS_SET_ADD_USER_TO_GROUP = {'users_email', 'group_id', 'is_admin'}
 STR_MIN_LENGTH = 0
 STR_MAX_LENGTH = None
 
@@ -34,7 +34,8 @@ def is_valid_password(password):
     try:
         validate_password(password)
         return True
-    except ValidationError:
+    except ValidationError as err:
+        print(err)
         return False
 
 
@@ -365,7 +366,7 @@ def is_valid_data_add_user_to_group(data):
     if set(data.keys()) != KEYS_SET_ADD_USER_TO_GROUP:
         return False
     try:
-        data['group'] = int(data['group'])
+        data['group_id'] = int(data['group_id'])
         data['is_admin'] = bool(data['is_admin'])
         validate_email(data['users_email'])
     except(ValueError, AttributeError):

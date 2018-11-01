@@ -7,18 +7,15 @@
             <div class="d-block text-center">
                 <b-card>
                     <p class="card-text">
-                        <b>{{group_id1}}</b>
                         <b>User's email</b>
-                        <input type="email">
+                        <input type="email" v-model="email">
                         <br/>
                         <b>Admin </b>
-                        <select>
-                        <option>True</option>
-                        <option>False</option>
+                        <input type="checkbox" id="one" value="Admin" v-model="is_admin">
                         <br/>
                     </p>
-                    <b-button @click="addNewUser">Add</b-button>
-                    <b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Close Me</b-btn>
+                    <b-btn class="mt-3" variant="outline-primary" block @click="saveData">Save</b-btn>
+                    <b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Close</b-btn>
                 </b-card>
             </div>
         </b-modal>
@@ -31,19 +28,33 @@
 
     export default {
         name: "new_user",
-        props: ['group_id1'],
+        data() {
+            return {
+                is_admin: false,
+                email: null
+            }
+        },
+        props: ['group_id'],
         methods: {
             showModal() {
-                this.$refs.myModalRef.show()
-            },
-            addNewUser() {
-                group_id: this.group_id1
+                this.$refs.myModalRef.show();
             },
             hideModal() {
-                console.log("hide");
-
                 this.$refs.myModalRef.hide();
-            }
+            },
+            saveData: function (event) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/group/add_new_users_to_group/',
+                    data: {
+                        'group_id': this.group_id,
+                        'users_email': this.email,
+                        'is_admin': this.is_admin
+                    }
+                }).then(response => {
+                    this.$router.go('/groups/')
+                })
+            },
         },
     }
 </script>

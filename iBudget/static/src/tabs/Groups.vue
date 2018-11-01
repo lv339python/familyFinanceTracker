@@ -1,7 +1,7 @@
 <template>
     <div class="content">
         <div  id="left" class="text column">
-            <b-button :variant="secondary" to="/groups/add" v-on:click="group_index=null">Create New Group</b-button>
+            <create_new_group></create_new_group>
             <p>There are your groups: </p>
             <ul class="list-group">
             <li
@@ -35,7 +35,7 @@
                         <li v-else>
                             {{item}} : {{value}}
                         </li>
-                        <add_user v-bind:group_id1="selected_group_id"></add_user>
+                        <add_user v-bind:group_id="selected_group_id"></add_user>
                     </ul>
                 </li>
             </ul>
@@ -46,6 +46,7 @@
 <script>
     import axios from 'axios';
     import Add_new_user_to_group from '../components/Add_new_user_to_group';
+    import Groups_registration from '../components/Groups_registration';
     export default {
         name: "Groups",
         data() {
@@ -56,18 +57,18 @@
                 group_index: 0,
                 pageNumber: 0,
                 size:5,
-                group_id1: null,
-                current_group_id: null
+                group_id: null,
             }
         },
         components: {
-            'add_user': Add_new_user_to_group
+            'add_user': Add_new_user_to_group,
+            'create_new_group': Groups_registration
         },
         methods: {
             selected_group: function(index, item){
-                this.selected_group_index = index
-                this.group_index = item
-                this.selected_group_id = item
+                this.selected_group_index = index;
+                this.group_index = item;
+                this.selected_group_id = item;
             },
             nextPage(){
                 this.pageNumber++;
@@ -92,19 +93,6 @@
                 return this.users_group_list
                 .slice(start, end);
             },
-
-            selected_group_id: {
-
-                get: function () {
-                     console.log("s_g_i get");
-                  return this.current_group_id;
-                },
-
-                set: function (newValue) {
-                 console.log("s_g_i set")
-                  this.current_group_id = newValue;
-                }
-              }
         },
         created() {
             axios.get('api/v1/group/')
