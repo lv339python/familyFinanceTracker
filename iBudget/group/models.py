@@ -136,10 +136,13 @@ class UsersInGroups(models.Model):
 
     @staticmethod
     def count_of_user_in_group(group_id):
-        count = 0
-        for i in UsersInGroups.objects.filter(group=group_id):
-            count += 1
-        return count
+        """
+        Args:
+            group_id(PK): Group's ID.
+        Returns:
+            Count of users in group
+        """
+        return UsersInGroups.objects.filter(group=group_id).count()
 
     @staticmethod
     def get_by_id(user_id):

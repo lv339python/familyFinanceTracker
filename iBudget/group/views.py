@@ -76,7 +76,10 @@ def show_users_group_data(request):
                     user_role = "Admin"
                 else:
                     user_role = "Member"
-            groups.append({'id': item, 'user_role': user_role, 'group_name': group.name, 'count': count})
+            groups.append({'id': item,
+                           'user_role': user_role,
+                           'group_name': group.name,
+                           'count': count})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -179,9 +182,7 @@ def add_new_users_to_group(request):
         return HttpResponse(status=403)
     if is_user_in_group(group, user_add):
         return HttpResponse(status=409)
-    if not user_add:
-        return HttpResponse(status=406)
-    if not group:
+    if not user_add and not group:
         return HttpResponse(status=406)
     if user:
         new_user = UsersInGroups(
@@ -191,6 +192,6 @@ def add_new_users_to_group(request):
         )
         try:
             new_user.save()
-            return HttpResponse(status=201)
         except(AttributeError, ValueError):
             return HttpResponse(status=400)
+    return HttpResponse(status=201)
