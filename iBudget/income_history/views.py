@@ -7,6 +7,7 @@ from decimal import Decimal
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_datetime
+from django.core.exceptions import ValidationError
 from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
@@ -34,7 +35,6 @@ def show_total(request):
     for income in incomes_to_date:
         total = total+income.value
     return HttpResponse(total)
-
 
 
 @require_http_methods(['POST'])
@@ -100,6 +100,6 @@ def register_income(request):
     )
     try:
         income_history.save()
-    except(ValueError, AttributeError):
-        return HttpResponse(status=406)
+    except(ValueError, AttributeError, ValidationError):
+        return HttpResponse('Check all required fields', status=406)
     return HttpResponse('Your income was successfully registered', status=201)

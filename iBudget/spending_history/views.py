@@ -31,11 +31,16 @@ def register_spending(request):
 
     user = request.user
     spending = SpendingCategories.get_by_id(int(data["category"]))
-    if not spending:
-        return HttpResponse(status=400)
     fund = FundCategories.get_by_id(int(data["type_of_pay"]))
-    if not fund:
+    if not spending and not fund:
         return HttpResponse(status=400)
+    if spending.is_shared:
+        if not SharedSpendingCategories.get_by_spending_id(spending.id):
+            return HttpResponse(status=403)
+    else:
+        if not spending.owner == user:
+            return HttpResponse(status=403)
+
     value = Decimal(data["value"])
     comment = data["comment"]
 
