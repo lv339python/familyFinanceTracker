@@ -18,6 +18,8 @@ class UserProfile(AbstractBaseUser):
         icon (str, optional): Name of the file with user's avatar.
         is_sys_admin (bool):  "True" if user has right of administrator, "False" in other way.
         one_time_token(HttpResponse): for deactivating update_password.
+        is_fixed_period (bool): "True" if user chooses monthly/yearly limitation period,
+            "False" in other way.
     """
     email = models.EmailField(max_length=50, unique=True)
     password = models.CharField(max_length=128)
@@ -26,6 +28,7 @@ class UserProfile(AbstractBaseUser):
     icon = models.CharField(blank=True, max_length=30)
     is_sys_admin = models.BooleanField(default=False)
     one_time_token = models.CharField(blank=True, max_length=255)
+    ind_period_fixed = models.BooleanField(null=True)
     objects = BaseUserManager()
     USERNAME_FIELD = 'email'
 
