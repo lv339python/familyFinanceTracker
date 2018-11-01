@@ -123,8 +123,7 @@
                     url: '/api/v1/authentication/registration/',
                     data: {
                         'email': this.username,
-                        'password': this.password,
-                        'confirm_password': this.password
+                        'password': this.password
                     }
                 }).then(response => {
                     this.loginDisplay = true;
@@ -140,7 +139,8 @@
                     url: '/api/v1/authentication/login/',
                     data: {
                         'email': this.username,
-                        'password': this.password
+                        'password': this.password,
+                        'confirm_password': this.confirm_password
                     }
 
                 }).then(response => {

@@ -1,7 +1,7 @@
 <template>
     <div class="content">
         <div  id="left" class="text column">
-            <b-button :variant="secondary" to="/groups/add" v-on:click="group_index=null">Create New Group</b-button>
+            <create_new_group></create_new_group>
             <p>There are your groups: </p>
             <ul class="list-group">
             <li
@@ -9,7 +9,9 @@
                 v-for="(item, index) in paginatedData"
                 v-on:click="selected_group(index, item.id)"
                 :class="{'active': selected_group_index===index}">
-                {{ item.group_name }} - {{ item.user_role }}
+                <b> name </b>: <i> {{ item.group_name }} </i> <br>
+                <b>your role </b>: <i> {{ item.user_role }} </i> <br>
+                <b>count of users </b>: <i> {{ item.count }} </i>
             </li>
             </ul>
             <div v-show="pageCount>1">
@@ -33,6 +35,7 @@
                         <li v-else>
                             {{item}} : {{value}}
                         </li>
+                        <add_user v-bind:group_id="selected_group_id"></add_user>
                     </ul>
                 </li>
             </ul>
@@ -42,7 +45,8 @@
 
 <script>
     import axios from 'axios';
-
+    import Add_new_user_to_group from '../components/Add_new_user_to_group';
+    import Groups_registration from '../components/Groups_registration';
     export default {
         name: "Groups",
         data() {
@@ -52,19 +56,28 @@
                 selected_group_index: 0,
                 group_index: 0,
                 pageNumber: 0,
-                size:5
+                size:5,
+                group_id: null,
             }
+        },
+        components: {
+            'add_user': Add_new_user_to_group,
+            'create_new_group': Groups_registration
         },
         methods: {
             selected_group: function(index, item){
-                this.selected_group_index = index
-                this.group_index = item
+                this.selected_group_index = index;
+                this.group_index = item;
+                this.selected_group_id = item;
             },
             nextPage(){
                 this.pageNumber++;
             },
             prevPage(){
                 this.pageNumber--;
+            },
+            showModal() {
+                this.$refs.myModalRef.show()
             }
         },
         computed:{
@@ -79,7 +92,7 @@
                     end = (start + this.size <= this.users_group_list.length) ? start + this.size : this.users_group_list.length;
                 return this.users_group_list
                 .slice(start, end);
-            }
+            },
         },
         created() {
             axios.get('api/v1/group/')
