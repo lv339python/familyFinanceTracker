@@ -51,7 +51,7 @@ def register_spending(request):
         spending_history.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    return HttpResponse(status=201)
+    return HttpResponse(f"You've just register spending {spending.name}.", status=201)
 
 
 def create_spending_history_individual(user, start_date, finish_date, utc_difference):
