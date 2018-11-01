@@ -1,7 +1,7 @@
 <template>
     <div class="content">
-        <div class="text" class="coll-md-4">
-            <b-button :variant="secondary" to="/groups/add">Create New Group</b-button>
+        <div  id="left" class="text column">
+            <b-button :variant="secondary" to="/groups/add" v-on:click="group_index=null">Create New Group</b-button>
             <p>There are your groups: </p>
             <ul class="list-group">
             <li
@@ -9,7 +9,9 @@
                 v-for="(item, index) in paginatedData"
                 v-on:click="selected_group(index, item.id)"
                 :class="{'active': selected_group_index===index}">
-                {{ item.group_name }} | {{ item.user_role }} | amount: {{ item.count }}
+                <b> name </b>: <i> {{ item.group_name }} </i> <br>
+                <b>your role </b>: <i> {{ item.user_role }} </i> <br>
+                <b>count of users </b>: <i> {{ item.count }} </i>
             </li>
             <div v-show="pageCount>1">
                 <button :disabled="pageNumber === 0" @click="prevPage"> Previous
@@ -18,7 +20,8 @@
                 </button>
             </div>
         </div>
-        <div class="text" class="coll-md-4">
+
+        <div id="right" class="column">
             <ul class="groups">
                 <li
                     v-for="(content,group) in cur_balance" class="group_display"
@@ -31,6 +34,7 @@
                         <li v-else>
                             {{item}} : {{value}}
                         </li>
+                        <add_user v-bind:group_id1="selected_group_id"></add_user>
                     </ul>
                 </li>
             </ul>
@@ -40,7 +44,7 @@
 
 <script>
     import axios from 'axios';
-
+    import Add_new_user_to_group from '../components/Add_new_user_to_group';
     export default {
         name: "Groups",
         data() {
@@ -50,13 +54,19 @@
                 selected_group_index: 0,
                 group_index: 0,
                 pageNumber: 0,
-                size:5
+                size:5,
+                group_id1: null,
+                current_group_id: null
             }
+        },
+        components: {
+            'add_user': Add_new_user_to_group
         },
         methods: {
             selected_group: function(index, item){
                 this.selected_group_index = index
                 this.group_index = item
+                this.selected_group_id = item
             },
             nextPage(){
                 this.pageNumber++;
@@ -64,6 +74,9 @@
             prevPage(){
                 this.pageNumber--;
             },
+            showModal() {
+                this.$refs.myModalRef.show()
+            }
         },
         computed:{
             pageCount(){
@@ -77,7 +90,20 @@
                     end = (start + this.size <= this.users_group_list.length) ? start + this.size : this.users_group_list.length;
                 return this.users_group_list
                 .slice(start, end);
-            }
+            },
+
+            selected_group_id: {
+
+                get: function () {
+                     console.log("s_g_i get");
+                  return this.current_group_id;
+                },
+
+                set: function (newValue) {
+                 console.log("s_g_i set")
+                  this.current_group_id = newValue;
+                }
+              }
         },
         created() {
             axios.get('api/v1/group/')
@@ -100,7 +126,28 @@
 
 <style scoped>
     .content {
+        height: 100%;
+        overflow: hidden;
+        margin: 0px;
         display: flex;
+    }
+    .column {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    #left {
+        flex-shrink: 0;
+        background-color: whitesmoke;
+        margin: 5px;
+        padding: 5px;
+        width: 16%;
+    }
+    #right {
+        background-color: #f3f3f3;
+        padding: 5px;
+        margin: 0;
+        width: 100%;
     }
 
     .text {
@@ -118,6 +165,5 @@
     .groups {
         display: flex;
         flex-wrap: wrap;
-        background-color: rgb(213, 221, 234);
     }
 </style>
