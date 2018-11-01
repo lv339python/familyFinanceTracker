@@ -13,6 +13,7 @@
                 <b>your role </b>: <i> {{ item.user_role }} </i> <br>
                 <b>count of users </b>: <i> {{ item.count }} </i>
             </li>
+            </ul>
             <div v-show="pageCount>1">
                 <button :disabled="pageNumber === 0" @click="prevPage"> Previous
                 </button>

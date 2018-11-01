@@ -61,3 +61,20 @@ class SpendingHistory(models.Model):
                                                                 finish_date]):
             total += float(item.value)
         return total
+
+
+    @staticmethod
+    def filter_by_user_date(user, start_date, finish_date):
+        """
+        Args:
+            user (UserProfile): owner of transaction,
+            start_date (date): The beginning of statistic period
+            finish_date (date): The end of statistic period
+        Returns:
+            SpendingHistory objects if database contains such, None otherwise.
+
+
+        """
+        return SpendingHistory.objects.filter(owner=user,
+                                              date__range=[start_date -datetime.timedelta(days=1),
+                                                           finish_date])

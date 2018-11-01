@@ -128,6 +128,7 @@ def input_spending_registration_validate(data):
     except (ValidationError, AttributeError):
         return False
 
+
 def input_fund_registration_validate(data):
     """validate data.
         Args:
@@ -143,6 +144,7 @@ def input_fund_registration_validate(data):
         return True
     except (ValidationError, AttributeError):
         return False
+
 
 def input_income_registration_validate(data):
     """
@@ -163,6 +165,7 @@ def input_income_registration_validate(data):
     except (ValidationError, AttributeError, TypeError, DecimalException):
         return False
 
+
 def date_range_validate(data):
     """
     Function that provides data range validation
@@ -172,6 +175,7 @@ def date_range_validate(data):
     if data["start_date"] > data["finish_date"]:
         raise ValidationError("Finish time cannot be earlier than start time!")
     return data
+
 
 def is_valid_data_individual_limit(data):
     """
