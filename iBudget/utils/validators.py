@@ -14,7 +14,7 @@ SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
 SET_KEYS_INCOME_REG_DATA = {'inc_category', 'fund_category', 'value'}
 SET_KEYS_FUND_CREATE_DATA = {'name', 'icon'}
-SET_KEYS_FUND_GOAL = {'fund', 'value'}
+SET_KEYS_FUND_GOAL = {'value', 'name', 'icon'}
 SET_KEYS_GROUP_CREATE_DATA = {'name', 'icon'}
 KEYS_SET_ADD_USER_TO_GROUP = {'users_email', 'group_id', 'is_admin'}
 STR_MIN_LENGTH = 0
@@ -140,12 +140,12 @@ def input_fund_registration_validate(data):
     if not set(data.keys()).difference(SET_KEYS_FUND_GOAL):
         return False
     try:
-        data['fund'] = int(data['fund'])
+        data['name'] = str(data['name'])
+        data['icon'] = str(data['icon'])
         data['value'] = Decimal(data['value'])
         return True
-    except (ValidationError, AttributeError):
+    except (ValueError, AttributeError):
         return False
-
 
 def input_income_registration_validate(data):
     """
