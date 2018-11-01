@@ -180,7 +180,7 @@ def create_new_goal(request):
     data = json.loads(request.body)
     if not input_fund_registration_validate(data):
         return HttpResponse(status=400)
-    if not is_valid_data_create_new_fund(data):
+    if not date_range_validate(data):
         return HttpResponse(status=400)
     user = request.user
     shared_group = data["shared_group"]
