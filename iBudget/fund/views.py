@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 from group.models import Group, SharedFunds
 from income_history.models import IncomeHistory
 from utils.get_role import is_user_admin_group
-from utils.transaction import save_new_fund
+from utils.transaction import save_new_fund, save_new_goal
 from utils.validators import \
     input_fund_registration_validate, \
     date_range_validate, \
@@ -36,6 +36,7 @@ def show_fund(request):
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 
+
 @require_http_methods(["GET"])
 def show_fund_by_group(request):
     """Handling request for creating of spending categories list in group.
@@ -56,6 +57,7 @@ def show_fund_by_group(request):
                                     })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
+
 
 @require_http_methods(["GET"])
 def show_goal_data(request):
@@ -200,3 +202,40 @@ def create_new_fund(request):
                      shared_group=shared_group):
         return HttpResponse(status=201)
     return HttpResponse(status=406)
+
+
+@require_http_methods(["POST"])
+def create_new_goal(request):
+    """Handling request for creating of new goal category.
+    Args:
+        request (HttpRequest): request from server which contain
+            value, start_date, finish_date, shred_group, name, icon
+    Returns:
+        HttpResponse object.
+    """
+    data = json.loads(request.body)
+    if not input_fund_registration_validate(data):
+        return HttpResponse(status=400)
+    if not is_valid_data_create_new_fund(data):
+        return HttpResponse(status=400)
+    user = request.user
+    shared_group = data["shared_group"]
+    is_shared = False
+    if shared_group:
+        is_shared = True
+        group = Group.get_group_by_id(shared_group)
+        if not group:
+            return HttpResponse(status=400)
+        if not is_user_admin_group(group.id, user):
+            return HttpResponse(status=406)
+    if save_new_goal(
+            value=Decimal(data["value"]),
+            start_date=data["start_date"],
+            finish_date=data["finish_date"],
+            name=data["name"],
+            icon=data["icon"],
+            is_shared=is_shared,
+            owner=user,
+            shared_group=shared_group):
+        return HttpResponse(status=201)
+    return HttpResponse(status=409)

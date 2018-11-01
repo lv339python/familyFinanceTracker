@@ -138,7 +138,7 @@ def input_fund_registration_validate(data):
     if not set(data.keys()).difference(SET_KEYS_FUND_GOAL):
         return False
     try:
-        data['fund'] = int(data['fund'])
+
         data['value'] = Decimal(data['value'])
         return True
     except (ValidationError, AttributeError):
