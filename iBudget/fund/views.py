@@ -137,42 +137,6 @@ def users_shared_fund(request):
         return JsonResponse(users_fund, status=200, safe=False)
     return JsonResponse({}, status=400)
 
-
-@require_http_methods(["POST"])
-def register_financial_goal(request):
-    """Handling request for creating of fund list.
-        Args:
-            request (HttpRequest): request from server which contain
-            fund, value, start_date, finish_date
-        Returns:
-            HttpResponse status.
-    """
-    data = json.loads(request.body)
-    if not input_fund_registration_validate(data):
-        return HttpResponse(status=400)
-
-    user = request.user
-    fund = FundCategories.get_by_id(int(data["fund"]))
-    if not fund:
-        return HttpResponse(status=400)
-    if not fund.owner == user:
-        return HttpResponse(status=403)
-    value = Decimal(data["value"])
-    if not date_range_validate(data):
-        return HttpResponse(status=400)
-
-    financial_goal_group = FinancialGoal(value=value,
-                                         start_date=data["start_date"],
-                                         finish_date=data["finish_date"],
-                                         fund=fund
-                                         )
-    try:
-        financial_goal_group.save()
-    except(ValueError, AttributeError):
-        return HttpResponse(status=406)
-    return HttpResponse(status=201)
-
-
 @require_http_methods(["POST"])
 def create_new_fund(request):
     """Handling request for creating of new fund category.
