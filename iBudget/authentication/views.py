@@ -39,6 +39,8 @@ def registration(request):
         return HttpResponse(status=400)
     if UserProfile.get_by_email(data.get("email")):
         return HttpResponse(status=409)
+    if not data["password"] == data["confirm_password"]:
+        return HttpResponse(status=409)
     UserProfile.create(data.get("email"), data.get("password"))
     return HttpResponse(status=201)
 

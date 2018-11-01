@@ -6,12 +6,16 @@ import json
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 
+from authentication.models import UserProfile
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
 from utils.aws_helper import AwsService
-from utils.get_role import groups_for_user, is_user_admin_group
+from utils.get_role import groups_for_user, \
+    is_user_admin_group, \
+    is_user_in_group
 from utils.transaction import save_new_group
-from utils.validators import is_valid_data_create_new_group
+from utils.validators import is_valid_data_create_new_group, \
+    is_valid_data_add_user_to_group
 from .models import Group, UsersInGroups
 
 
@@ -64,6 +68,7 @@ def show_users_group_data(request):
         user_role = None
         for item in groups_for_user(user):
             group = Group.get_group_by_id(item)
+            count = UsersInGroups.count_of_user_in_group(group.id)
             if group.owner == user:
                 user_role = "Owner"
             else:
@@ -71,7 +76,10 @@ def show_users_group_data(request):
                     user_role = "Admin"
                 else:
                     user_role = "Member"
-            groups.append({'id': item, 'user_role': user_role, 'group_name': group.name})
+            groups.append({'id': item,
+                           'user_role': user_role,
+                           'group_name': group.name,
+                           'count': count})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -152,3 +160,38 @@ def create_new_group(request):
     if save_new_group(name=data["name"], icon=data["icon"], owner=user):
         return HttpResponse(status=201)
     return HttpResponse(status=406)
+
+
+@require_http_methods(["POST"])
+def add_new_users_to_group(request):
+    """Handling request for adding new user to group.
+   Args:
+       request (HttpRequest): request from server which contain
+           email, group and is_admin(True or False)
+   Returns:
+       HttpResponse object.
+   """
+    data = json.loads(request.body)
+    user = request.user
+    if not is_valid_data_add_user_to_group(data):
+        return HttpResponse(status=400)
+    user_add = UserProfile.get_by_email(data["users_email"])
+    is_admin = data["is_admin"]
+    group = Group.get_group_by_id(data["group_id"])
+    if not is_user_admin_group(group.id, user):
+        return HttpResponse(status=403)
+    if is_user_in_group(group, user_add):
+        return HttpResponse(status=409)
+    if not user_add and not group:
+        return HttpResponse(status=406)
+    if user:
+        new_user = UsersInGroups(
+            user=user_add,
+            group=group,
+            is_admin=is_admin
+        )
+        try:
+            new_user.save()
+        except(AttributeError, ValueError):
+            return HttpResponse(status=400)
+    return HttpResponse(status=201)
