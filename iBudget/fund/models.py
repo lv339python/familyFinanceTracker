@@ -88,3 +88,15 @@ class FinancialGoal(models.Model):
             finish_date=finish_date,
             fund=fund)
         return goals
+
+    @staticmethod
+    def filter_goals_by_fund_id(fund_id):
+        """
+        Args:
+            fund_id(int): Current session fund`s id.
+        Returns:
+            List of Goal objects .
+
+        """
+        filter_goal_by_fund = FinancialGoal.objects.filter(fund=fund_id)
+        return filter_goal_by_fund
