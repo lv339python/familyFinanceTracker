@@ -59,7 +59,7 @@
 
     .text {
         width: fit-content;
-        margin: auto;
+        margin: ;
         text-align: center;
     }
 

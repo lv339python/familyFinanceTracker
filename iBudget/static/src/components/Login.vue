@@ -54,8 +54,8 @@
                 <p>We sent a letter  on your email. Please check your email to continue changing password !</p>
             </div>
             <div class="d-block text-right">
-            <b-button variant="primary"@click="hideModal">ok</b-button>
-
+                <b-button variant="primary"@click="hideModal">ok</b-button>
+            </div>
         </b-modal>
     </div>
 
@@ -140,7 +140,6 @@
                     data: {
                         'email': this.username,
                         'password': this.password,
-                        'confirm_password': this.confirm_password
                     }
 
                 }).then(response => {
