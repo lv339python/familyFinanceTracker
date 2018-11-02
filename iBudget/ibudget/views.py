@@ -19,11 +19,11 @@ class FileHandler(View):
         """
         if request.GET['tab'] == 'fund':
             urls = AwsService.get_default_list_icons('standard_fund/')[1:]
-        if request.GET['tab'] == 'income':
+        elif request.GET['tab'] == 'income':
             urls = AwsService.get_default_list_icons('standard_income/')[1:]
-        if request.GET['tab'] == 'spending':
+        elif request.GET['tab'] == 'spending':
             urls = AwsService.get_default_list_icons('standard/')[1:]
-        if request.GET['tab'] == 'group':
+        elif request.GET['tab'] == 'group':
             urls = AwsService.get_default_list_icons('standard_group/')[1:]
         return JsonResponse(urls, status=200, safe=False)
 
@@ -34,16 +34,16 @@ class FileHandler(View):
         <input type='file' name = 'icon'>
         """
         try:
-            print(request.FILES)
             if request.FILES:
                 pic = request.FILES['icon']
-                if AwsService.check_if_in_bucket(pic):
-                    if AwsService.upload(pic):
-                        pic = str(pic)
-                        url = AwsService.get_image_url(pic)
-                        return HttpResponse(url)
-                    return RESPONSE_500_NO_SUCCESS
-                return RESPONSE_400_INVALID_DATA
+                while AwsService.check_if_in_bucket(pic) != True:
+                    pic.name = AwsService.change_filename(pic)
+                    # return RESPONSE_400_INVALID_DATA
+                if AwsService.upload(pic):
+                    pic = str(pic)
+                    url = AwsService.get_image_url(pic)
+                    return HttpResponse(url, status=201)
+                return RESPONSE_500_NO_SUCCESS
             return RESPONSE_400_UPLOAD_ERROR
         except datastructures.MultiValueDictKeyError:
             return RESPONSE_400_NO_FILE

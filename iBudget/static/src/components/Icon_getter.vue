@@ -62,7 +62,7 @@
                 this.image = img;
                 //here we validate the file type and size
                 if (img.size > this.maxFileSize * 1024) {
-                    alert('The file you want to upload is too large. Please choose file smaller than 100 KB');
+                    alert('The file you want to upload is too large. Please choose file smaller than 60 KB');
                     return;
                 }
                 ;
@@ -72,8 +72,7 @@
                     return;
                 }
                 ;
-                this.icon_name = img.name;
-                this.$emit('get_name', {icon_name: this.icon_name});
+
             },
 
             upload_emit_img: function (icon_name) {
@@ -82,11 +81,13 @@
                 axios({
                     method: 'post',
                     url: 'api/v1/files/',
-                    data: formData,
+                    data: formData
                 })
                     .then(response => {
                         this.reply = response.data;
-                        alert(this.reply)
+                        alert(this.reply.slice(55))
+                        this.icon_name = this.reply.slice(55);
+                        this.$emit('get_name', {icon_name: this.icon_name});
                     })
                     .catch(function (error) {
                         alert(error.response.data);

@@ -68,7 +68,7 @@ export function generateChart(chartId, chartType) {
                 }
             },
             renderChart(data, options) {
-                if (this.$data._chart) this.$data._chart.destroy()
+                if (this.$data._chart) this.$data._chart.destroy();
                 this.$data._chart = new Chart(
                     this.$refs.canvas.getContext('2d'), {
                         type: chartType,
@@ -87,9 +87,9 @@ export function generateChart(chartId, chartType) {
     }
 }
 
-export const Pie = generateChart('pie-chart', 'pie');
+export const Line = generateChart('line-chart', 'line')
 
 export default {
-    Pie,
+    Line,
 
 }

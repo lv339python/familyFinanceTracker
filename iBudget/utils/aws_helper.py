@@ -3,7 +3,8 @@ File Handler
 Provides methods for upload and download processes of the object to Amazon S3 service
 """
 import boto3
-
+from random import choice
+from string import ascii_letters
 from ibudget.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, \
     AWS_STORAGE_BUCKET_NAME
 
@@ -85,3 +86,13 @@ class AwsService:
                  "path": cls.get_image_url(img['Key'])} for img in bucket_list['Contents'] if
                 img['Key'].startswith(tab)]
         return urls
+
+    @classmethod
+    def change_filename(cls, filename):
+        """the method changes the uploaded file name in case it already exist in a bucket
+        :param - name of the filed being uploaded
+        :returns - the new file name
+        """
+        filename = str(filename)
+        filename = ''.join(choice(ascii_letters) for count in range(6)) + filename
+        return filename
