@@ -306,6 +306,8 @@ def is_valid_data_create_new_group(data):
     """
     if set(data.keys()) != SET_KEYS_GROUP_CREATE_DATA:
         return False
+    if not data['name']:
+        return False
     try:
         data['name'] = str(data['name'])
         return True

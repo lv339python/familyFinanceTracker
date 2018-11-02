@@ -1,7 +1,7 @@
 <template>
     <div class="content">
         <div  id="left" class="text column">
-            <create_new_group></create_new_group>
+            <create_new_group v-bind:getData="getData"></create_new_group>
             <p>There are your groups: </p>
             <ul class="list-group">
             <li
@@ -35,7 +35,7 @@
                         <li v-else>
                             {{item}} : {{value}}
                         </li>
-                        <add_user v-bind:group_id="selected_group_id"></add_user>
+                        <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
                     </ul>
                 </li>
             </ul>
@@ -78,6 +78,22 @@
             },
             showModal() {
                 this.$refs.myModalRef.show()
+            },
+            getData(){
+                 axios.get('api/v1/group/')
+                .then(response => {
+                    this.cur_balance = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                }),
+                axios.get('api/v1/group/show_users_group_data')
+                .then(response => {
+                    this.users_group_list = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
             }
         },
         computed:{
@@ -95,20 +111,7 @@
             },
         },
         created() {
-            axios.get('api/v1/group/')
-                .then(response => {
-                    this.cur_balance = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                }),
-            axios.get('api/v1/group/show_users_group_data')
-                .then(response => {
-                    this.users_group_list = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
+            this.getData();
         }
     }
 </script>
