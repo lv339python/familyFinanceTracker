@@ -31,11 +31,16 @@ def register_spending(request):
 
     user = request.user
     spending = SpendingCategories.get_by_id(int(data["category"]))
-    if not spending:
-        return HttpResponse(status=400)
     fund = FundCategories.get_by_id(int(data["type_of_pay"]))
-    if not fund:
+    if not spending and not fund:
         return HttpResponse(status=400)
+    if spending.is_shared:
+        if not SharedSpendingCategories.get_by_spending_id(spending.id):
+            return HttpResponse(status=403)
+    else:
+        if not spending.owner == user:
+            return HttpResponse(status=403)
+
     value = Decimal(data["value"])
     comment = data["comment"]
 
@@ -51,7 +56,7 @@ def register_spending(request):
         spending_history.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    return HttpResponse(status=201)
+    return HttpResponse(f"You've just register spending {spending.name}.", status=201)
 
 
 def create_spending_history_individual(user, start_date, finish_date, utc_difference):
@@ -217,3 +222,59 @@ def get_month_spending(request):
                                                                          finish_date),
                             status=200)
     return HttpResponse('Bad Request', status=400)
+
+def create_spending_chart(user, start_date, finish_date):
+    """Creating array of data for spending history chart.
+        Args:
+            user (UserProfile): user.
+            start_date (date): The beginning of statistic period
+            finish_date (date): The end of statistic period
+        Returns:
+            Array of data for individual spending history statistic.
+    """
+    list_spending_value = list()
+    list_spending_name = list()
+    list_spending_id = list(set(SpendingHistory.filter_by_user_date(
+        user,
+        start_date,
+        finish_date).values_list('spending_categories_id', flat=True)))
+    for item in list_spending_id:
+        list_spending_name.append(SpendingCategories.get_by_id(item).name)
+        total = sum(SpendingHistory.filter_by_user_date_spending(
+            user,
+            start_date,
+            finish_date,
+            SpendingCategories.get_by_id(item)).values_list('value', flat=True))
+        list_spending_value.append(total)
+    return {'value': list_spending_value, 'name': list_spending_name}
+
+@require_http_methods(["POST"])
+def get_spending_chart(request):
+    """Handling request for creating spending history data.
+
+        Args:
+            request (HttpRequest): contains start date, final date and UTC information.
+        Returns:
+            JsonResponse object.
+    """
+    user = request.user
+    data = json.loads(request.body)
+    if not is_valid_data_spending_history(data):
+        return HttpResponse(status=400)
+    start_date = parse_date(data['start_date'])
+    finish_date = parse_date(data['finish_date'])
+    utc_difference = int(data['UTC'])
+
+    if start_date > finish_date:
+        return JsonResponse({}, status=400)
+    if not start_date:
+        start_date = date(date.today().year, date.today().month, 1)
+    if not finish_date:
+        finish_date = date.today()
+
+    start_date = start_date - timedelta(hours=utc_difference)
+
+    if user:
+        return JsonResponse(create_spending_chart(user, start_date, finish_date),
+                            status=200, safe=False)
+    return JsonResponse({}, status=400)
