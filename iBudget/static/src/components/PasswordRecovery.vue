@@ -22,7 +22,7 @@
             </div>
             <div class="d-block text-right">
             <b-button variant="primary"@click="hideModal">ok</b-button>
-
+            </div>
         </b-modal>
     </div>
 </template>
