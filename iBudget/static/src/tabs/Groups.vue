@@ -36,6 +36,8 @@
                             {{item}} : {{value}}
                         </li>
                         <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
+                        <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
+                        <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
                     </ul>
                 </li>
             </ul>
@@ -47,6 +49,8 @@
     import axios from 'axios';
     import Add_new_user_to_group from '../components/Add_new_user_to_group';
     import Groups_registration from '../components/Groups_registration';
+    import Add_shared_fund_to_group from '../components/Add_shared_fund_to_group';
+    import Add_shared_category_to_group from '../components/Add_shared_category_to_group';
     export default {
         name: "Groups",
         data() {
@@ -62,7 +66,9 @@
         },
         components: {
             'add_user': Add_new_user_to_group,
-            'create_new_group': Groups_registration
+            'create_new_group': Groups_registration,
+            'add_shared_fund': Add_shared_fund_to_group,
+            'add_shared_spending': Add_shared_category_to_group
         },
         methods: {
             selected_group: function(index, item){
