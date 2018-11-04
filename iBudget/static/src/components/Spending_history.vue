@@ -71,6 +71,8 @@
                 </div>
             </div>
         </div>
+        <button class="btn btn-outline-warning" v-on:click="createFile" :variant="secondary">Download history
+        </button>
     </div>
 </template>
 
@@ -131,6 +133,25 @@
                         this.spending_history_individual = response.data.individual;
                         this.isCategory = true
 
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    })
+            },
+            createFile: function (event) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/spending_history/download_file/',
+                    data: {
+                        'start_date': this.start_date,
+                        'finish_date': this.finish_date,
+                        'UTC': UTC
+                    },
+                })
+                    .then(response => {
+                        let blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
+                            url = window.URL.createObjectURL(blob);
+                        window.open(url)
                     })
                     .catch(e => {
                         this.errors.push(e)

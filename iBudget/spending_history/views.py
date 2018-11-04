@@ -2,6 +2,7 @@
 This module provides functions for handling spending_history view.
 """
 
+import io
 import json
 import xlsxwriter
 from datetime import date, timedelta, datetime
@@ -15,7 +16,7 @@ from group.models import SharedSpendingCategories, Group, UsersInGroups, SharedF
 from utils.get_role import groups_for_user, is_user_member_group, is_user_admin_group
 from utils.validators import input_spending_registration_validate, is_valid_data_spending_history
 from .models import SpendingCategories, SpendingHistory, FundCategories
-
+from django.http import StreamingHttpResponse
 
 @require_http_methods(["POST"])
 def register_spending(request):
@@ -161,23 +162,41 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                       + ' / '
                                                       + Group.get_group_by_id(group).name,
                                           'history': history_spending_category})
-    print(history_for_admin)
     return history_for_admin
 
 
-def create_xlsx():
-    sample = [{'spending': 'kek', 'history': [{'value': 125.5, 'date': date(2018, 11, 14), 'fund': 'kredo'}]}, {'spending': 'kekos',
-            'history': [{'value': 678.1255, 'date': date(2018, 11, 7), 'fund': 'kredo'}, {'value': 225.5, 'date': date(2018, 11, 21), 'fund': 'privat'}]}]
-    sample1 = [{'spending': 'lil / football', 'history': [{'member': 'abysho666@gmail.com', 'value': 1234.0, 'date': date(2018, 11, 13), 'fund': 'lilka'}, {'member': 'abysho666@gmail.com', 'value': 123123.0, 'date': date(2018, 11, 6), 'fund': 'lilka'}, {'member': 'abysho666@gmail.com', 'value': 1.0, 'date': date(2018, 11, 13), 'fund': 'lilka'}]}]
+def create_xlsx(request):
 
+    output = io.BytesIO()
 
-    workbook = xlsxwriter.Workbook(r'demo.xlsx')
+    user = request.user
+    data = json.loads(request.body)
+    if not is_valid_data_spending_history(data):
+        return HttpResponse(status=400)
+    start_date = parse_date(data['start_date'])
+    finish_date = parse_date(data['finish_date'])
+    utc_difference = int(data['UTC'])
+
+    if start_date > finish_date:
+        return JsonResponse({}, status=400)
+
+    if not start_date:
+        start_date = date(date.today().year, date.today().month, 1)
+    if not finish_date:
+        finish_date = date.today()
+
+    start_date = start_date - timedelta(hours=utc_difference)
+    sample = create_spending_history_individual(user, start_date, finish_date,  utc_difference)
+    sample1 = create_spending_history_for_admin(user, start_date, finish_date, utc_difference)
+
+    workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet('Spending_history')
 
-    head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center'})
-    value_format = workbook.add_format({'num_format': '$#.#0'})
-    date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
-    worksheet.set_row(1, 20, head_format)
+    head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center', 'border': 5})
+    value_format = workbook.add_format({'num_format': '$#.#0', 'align': 'center', 'border': 1})
+    date_format = workbook.add_format({'num_format': 'mmmm d yyyy', 'align': 'center', 'border': 1})
+    cell_format = workbook.add_format({'align': 'center', 'border': 1})
+    worksheet.set_column(0, 5, 25)
 
     head_row, head_col = 1, 1
     row, col = 2, 1
@@ -188,46 +207,42 @@ def create_xlsx():
 
     for dicty in sample:
         for history_dict in dicty['history']:
-            worksheet.write(row, col, dicty['spending'])
+            worksheet.write(row, col, dicty['spending'], cell_format)
             worksheet.write_number(row, col + 1, history_dict['value'], value_format)
             worksheet.write(row, col + 2, history_dict['date'], date_format)
-            worksheet.write(row, col + 3, history_dict['fund'])
+            worksheet.write(row, col + 3, history_dict['fund'], cell_format)
             row += 1
-            col = 1
 
     head_row, head_col = row + 1, 1
-    worksheet.write(head_row, head_col - 1, 'Group spending', head_format)
+    worksheet.write(head_row, head_col, 'Group spending', head_format)
     for i in sample1[0]['history'][0]:
-        worksheet.write(head_row, head_col, i, head_format)
-        head_col += 1
+        if i == 'member':
+            worksheet.write(head_row, head_col - 1, 'Member', head_format)
+        else:
+            worksheet.write(head_row, head_col + 1, i, head_format)
+            head_col += 1
 
-    for dicty in sample:
+    row += 2
+    for dicty in sample1:
         for history_dict in dicty['history']:
-            worksheet.write(row, col, dicty['spending'])
+            worksheet.write(row, col-1, history_dict['member'], cell_format)
+            worksheet.write(row, col, dicty['spending'], cell_format)
             worksheet.write_number(row, col + 1, history_dict['value'], value_format)
             worksheet.write(row, col + 2, history_dict['date'], date_format)
-            worksheet.write(row, col + 3, history_dict['fund'])
+            worksheet.write(row, col + 3, history_dict['fund'], cell_format)
             row += 1
-            col = 1
 
-    # for dicty in sample:
-    #     for i in dicty:
-    #         if i == 'amount':
-    #             worksheet.write_number(row, col, dicty[i], value_format)
-    #         elif i == 'date':
-    #             date = datetime.strptime(dicty[i], "%Y-%m-%d")
-    #             worksheet.write_datetime(row, col, date, date_format)
-    #         else:
-    #             worksheet.write(row, col, dicty[i])
-    #         col += 1
-    #     col = 1
-    #     row += 1
-#
-# import xlsxwriter
-# from spending_history.views import create_xlsx
-# create_xlsx()
     workbook.close()
 
+    output.seek(0)
+
+    filename = 'django_simple.xlsx'
+    response = StreamingHttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    return response
 
 @require_http_methods(["POST"])
 def create_spending_history(request):
