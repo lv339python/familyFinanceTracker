@@ -19,6 +19,14 @@ def is_user_sys_admin(user):
     return False
 
 
+def users_email_for_group(group_id):
+    group = UsersInGroups.objects.filter(group=group_id)
+    list_users_email = []
+    for item in group:
+        list_users_email.append(item.user.email)
+    return list_users_email
+
+
 def groups_for_user(user):
 
     """

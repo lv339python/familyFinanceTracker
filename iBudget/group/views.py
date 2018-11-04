@@ -13,7 +13,8 @@ from spending_history.models import SpendingHistory
 from utils.aws_helper import AwsService
 from utils.get_role import groups_for_user, \
     is_user_admin_group, \
-    is_user_in_group
+    is_user_in_group, \
+    users_email_for_group
 from utils.transaction import save_new_group
 from utils.validators import is_valid_data_create_new_group, \
     is_valid_data_add_user_to_group, \
@@ -85,6 +86,14 @@ def show_users_group_data(request):
                            'count': count})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+# def show_users_in_group(request):
+#     users_in_group = []
+#     user = request.user
+#     if user:
+#         for item in groups_for_user(user):
+
 
 
 def groups_balance(request):
