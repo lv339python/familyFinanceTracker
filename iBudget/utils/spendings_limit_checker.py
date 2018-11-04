@@ -3,7 +3,8 @@ them with existing limits in that group.
 If the limit is close/exceeded - it warns a user.
 """
 
-from spending.models import SpendingLimitationGroup
+from django.db.models import Q
+from spending.models import SpendingLimitationGroup, SpendingLimitationIndividual
 from spending_history.models import SpendingHistory
 
 
@@ -46,3 +47,53 @@ def comp_gr_spends_w_limit(group_id):
 
 
     return None
+
+def compare_ind_spend_limit(user, current_date, spending, current_value):
+    """Creating data for spending limitation tracking.
+        Args:
+            user (UserProfile): user.
+            current_date (date): date for limitation tracking
+            spending (SpendingCategories): spending category for tracking
+        Returns:
+            ... about current spending limitation on this category.
+    """
+    find_limit = \
+    SpendingLimitationIndividual.objects.filter(
+        Q(start_date__lte=current_date) &
+        Q(finish_date__gte=current_date)).filter(user=user, spending_category=spending)
+    if not find_limit:
+        return 'There are no individual limits on including this date period.'
+
+    response=''
+    for item in find_limit:
+        total = sum(SpendingHistory.objects.filter(
+            owner=user,
+            spending_categories=spending,
+            date__range=[item.start_date, item.finish_date]).values_list('value', flat=True))
+        if total >= item.value:
+            response += "Warning! Your spending limit {} " \
+                        "for the period from {} to {} is exceeded. " \
+                        "You have already spent {}! \n".format(
+                item.value,
+                item.start_date,
+                item.finish_date,
+                total)
+        elif current_value >= item.value - total:
+            response += "Warning! You've set spending limit {} " \
+                        "for the period from {} to {} on this category. " \
+                        "Registering value {} exceeds " \
+                        "specified limit. \n".format(
+                item.value,
+                item.start_date,
+                item.finish_date,
+                current_value)
+        else:
+            response += "You've set spending limit {} " \
+                        "for the period from {} to {} on this category. " \
+                        "Now your spendings are  {}\% " \
+                        "of the specified limit. \n".format(
+                item.value,
+                item.start_date,
+                item.finish_date,
+                round((current_value+total)/item.value*100, 2))
+    return response
