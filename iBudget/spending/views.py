@@ -4,12 +4,13 @@ This module provides functions for spending specifying.
 import calendar
 import json
 from datetime import date
+
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.db.models import Q
 
-from utils.validators import is_valid_data_individual_limit, is_valid_data_new_spending
 from group.models import Group, SharedSpendingCategories
+from utils.validators import is_valid_data_individual_limit, is_valid_data_new_spending
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 
@@ -30,6 +31,7 @@ def show_spending_ind(request):
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)
 
+
 @require_http_methods(["GET"])
 def show_spending_group(request):
     """Handling request for creating of spending categories list in group.
@@ -42,7 +44,7 @@ def show_spending_group(request):
     user = request.user
     users_group = []
     if user:
-        for group in Group.group_filter_by_owner_id(user):
+        for group in Group.filter_groups_by_user_id(user):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
                 users_group.append({'id_cat': shared_category.spending_categories.id,
                                     'name_cat': shared_category.spending_categories.name,
@@ -75,9 +77,48 @@ def set_spending_limitation_ind(request):
     if month:
         start_date = date(year, month, 1)
         finish_date = date(year, month, (calendar.monthrange(year, month))[1])
+        year_limit = SpendingLimitationIndividual.get_value_by_data(user,
+                                                                    spending,
+                                                                    date(year, 1, 1),
+                                                                    date(year, 12, 31))
+        if year_limit:
+            total_limit = - SpendingLimitationIndividual.get_value_by_data(
+                user,
+                spending,
+                date(year, month, 1),
+                date(year, month, (calendar.monthrange(year, month))[1]))
+            for item in range(1, 13):
+                total_limit += SpendingLimitationIndividual.get_value_by_data(
+                    user,
+                    spending,
+                    date(year, item, 1),
+                    date(year, item, (calendar.monthrange(year, item))[1]))
+            if year_limit - total_limit < value:
+                return HttpResponse(
+                    "The yearly limit is {}, \n "
+                    "the total monthly limit is {}.\n "
+                    "Therefore, your limit {} can not be set.\n OK".format(
+                        year_limit,
+                        total_limit,
+                        value), status=202)
+
     else:
         start_date = date(year, 1, 1)
         finish_date = date(year, 12, 31)
+        total_limit = 0
+        for item in range(1, 13):
+            total_limit += SpendingLimitationIndividual.get_value_by_data(
+                user,
+                spending,
+                date(year, item, 1),
+                date(year, item, (calendar.monthrange(year, item))[1]))
+        if total_limit > value:
+            return HttpResponse(
+                "The total monthly limit is {}. "
+                "Therefore, your limit {} can not be set.\n OK".format(total_limit,
+                                                                       value),
+                status=202)
+
 
     spending_limitation = SpendingLimitationIndividual.filter_by_data(
         user,
@@ -86,18 +127,19 @@ def set_spending_limitation_ind(request):
         finish_date)
     if spending_limitation:
         spending_limitation.update(value=value)
-        return HttpResponse("The limit {} has been updated...\n OK".format(value), status=201)
-    spending_limitation_ind = SpendingLimitationIndividual(user=user,
-                                                           spending_category=spending,
-                                                           start_date=start_date,
-                                                           finish_date=finish_date,
-                                                           value=value)
-    try:
-        spending_limitation_ind.save()
-    except(ValueError, AttributeError):
-        return HttpResponse(status=406)
-
-    return HttpResponse("The limit {} has been set...\n OK".format(value), status=201)
+        response = "The limit {} has been updated...\n OK".format(value)
+    else:
+        spending_limitation_ind = SpendingLimitationIndividual(user=user,
+                                                               spending_category=spending,
+                                                               start_date=start_date,
+                                                               finish_date=finish_date,
+                                                               value=value)
+        try:
+            spending_limitation_ind.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=406)
+        response = "The limit {} has been set...\n OK".format(value)
+    return HttpResponse(response, status=201)
 
 
 def group_limit(request):
@@ -192,7 +234,6 @@ def create_spending_category(request):
     icon = data['icon']
     owner = user
     is_shared = False
-
 
     if not is_valid_data_new_spending(data):
         return HttpResponse("Bad request", status=400)

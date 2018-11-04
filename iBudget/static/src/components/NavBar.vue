@@ -8,7 +8,6 @@
             <b-navbar-brand to="/home">Home</b-navbar-brand>
             <b-navbar-brand to="/incomes">Incomes</b-navbar-brand>
             <b-navbar-brand to="/funds">Funds</b-navbar-brand>
-            <b-navbar-brand to="/groups">Groups</b-navbar-brand>
             <b-navbar-brand to="/spendings">Spendings</b-navbar-brand>
             <b-navbar-brand to="/groups">Groups</b-navbar-brand>
             <b-collapse is-nav id="nav_collapse">
@@ -27,6 +26,7 @@
 <script>
     import Calendar from './Calendar'
     import Account from './Account'
+    import 'v-calendar/lib/v-calendar.min.css'
 
     export default {
         name: "NavBar",
@@ -50,8 +50,4 @@
         height: fit-content;
     }
 
-    /*#collapse1 {*/
-    /*width: 250px;*/
-    /*height: fit-content;*/
-    /*}*/
 </style>

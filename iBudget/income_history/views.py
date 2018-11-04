@@ -2,11 +2,13 @@
 month till today and let a use track his incomes for the chose period of time
 """
 import json
-import datetime
+from datetime import datetime
+import xlsxwriter
 from decimal import Decimal
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_datetime
+from django.core.exceptions import ValidationError
 from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
@@ -34,7 +36,6 @@ def show_total(request):
     for income in incomes_to_date:
         total = total+income.value
     return HttpResponse(total)
-
 
 
 @require_http_methods(['POST'])
@@ -101,6 +102,41 @@ def register_income(request):
     )
     try:
         income_history.save()
-    except(ValueError, AttributeError):
-        return HttpResponse(status=406)
+    except(ValueError, AttributeError, ValidationError):
+        return HttpResponse('Check all required fields', status=406)
     return HttpResponse('Your income was successfully registered', status=201)
+
+def create_xlsx():
+    sample=[{'income': 'premiya', 'fund': 'something', 'date': '2018-10-29', 'amount': 1.2345, 'comment': '1'}, {'income': 'zarplata', 'fund': 'privat', 'date': '2018-10-31', 'amount': 100.0, 'comment': 'bilo delo'}, {'income': 'premiya',
+    'fund': 'privat', 'date': '2018-10-29', 'amount': 5.0, 'comment': 'd'}, {'income': 'premiya', 'fund': 'kredo', 'date': '2018-10-28', 'amount': 123.0, 'comment': 'd'}]
+
+
+
+    workbook = xlsxwriter.Workbook(r'demo.xlsx')
+    worksheet = workbook.add_worksheet('Income_history')
+
+    head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center'})
+    value_format = workbook.add_format({'num_format': '$#,##0'})
+    date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
+    worksheet.set_row(1, 20, head_format)
+
+    head_row, head_col = 1, 1
+    row, col = 2, 1
+    for i in sample[0]:
+        worksheet.write(head_row, head_col, i, head_format)
+        head_col += 1
+
+    for dicty in sample:
+        for i in dicty:
+            if i == 'amount':
+                worksheet.write_number(row, col, dicty[i], value_format)
+            elif i == 'date':
+                date = datetime.strptime(dicty[i], "%Y-%m-%d")
+                worksheet.write_datetime(row, col, date, date_format)
+            else:
+                worksheet.write(row, col, dicty[i])
+            col += 1
+        col = 1
+        row += 1
+
+    workbook.close()

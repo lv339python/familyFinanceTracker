@@ -35,11 +35,13 @@ export default {
     }
     .flex-element{
         flex-grow: 1;
+
     }
     #view {
         background-color: whitesmoke;
         height: 100%;
-        display: flex;
+        /*display: flex;*/
+        flex-direction: row;
     }
 </style>
 

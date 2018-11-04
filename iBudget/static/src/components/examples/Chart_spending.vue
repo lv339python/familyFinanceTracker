@@ -1,12 +1,9 @@
 <template>
     <div class="container">
-
         <div class="Chart">
-            <h1 style="text-align:center;">{{name}}</h1>
-            <pie-example v-bind:pieData="myPieData" v-bind:pieLabel="myPieLabel"/>
+            <h1 style="text-align:center;">This month spending</h1>
+            <pie-example v-bind:pieData="value" v-bind:pieLabel="name"/>
         </div>
-
-
     </div>
 </template>
 
@@ -17,20 +14,10 @@
         components: {
             PieExample,
         },
-        props: ['transaction', 'date_transaction', 'value', 'name'],
+        props: ['value', 'name'],
         data() {
-            let pieData = this.transaction;
-            let Left = pieData.reduce((a, b) => a + b, 0);
-            if (Left < 0) ;
-            pieData.push(this.value - Left);
-
-            let pieLabel = this.date_transaction;
-            pieLabel.push('Left to goal');
-
             return {
-                height: 100,
-                myPieData: pieData,
-                myPieLabel: pieLabel,
+                height: 80,
             }
         },
         computed: {

@@ -1,11 +1,14 @@
 <template>
-  <div class="content">
-      <div class="text">
-          <b-button :variant="secondary" to="../income_registration">Income Registration</b-button>
-          <b-button :variant="secondary" to="/track_incomes">Track your incomes</b-button>
-          <b-button :variant="secondary" to="/income_add">Add income category</b-button>
+    <div class="content">
+        <div id="left" class="text column">
+            <b-button :variant="secondary" to="/incomes/add">Add</b-button>
+            <b-button :variant="secondary" to="/incomes/tracking">Tracking</b-button>
+            <b-button :variant="secondary" to="/incomes/new">New</b-button>
+        </div>
+         <div  id="right" class="column">
+              <router-view></router-view>
+        </div>
     </div>
-  </div>
 
 </template>
 
@@ -17,8 +20,28 @@
 
 <style scoped>
     .content {
+        height: 100%;
         overflow: hidden;
+        margin: 0px;
         display: flex;
+    }
+    .column {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    #left {
+        flex-shrink: 0;
+        background-color: whitesmoke;
+        margin: 5px;
+        padding: 5px;
+        width: 16%;
+    }
+    #right {
+        background-color: #f3f3f3;
+        padding: 5px;
+        margin: 0;
+        width: 100%;
     }
 
     .text {

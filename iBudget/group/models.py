@@ -134,7 +134,15 @@ class UsersInGroups(models.Model):
             list_members.append(item.user)
         return list_members
 
-
+    @staticmethod
+    def count_of_user_in_group(group_id):
+        """
+        Args:
+            group_id(PK): Group's ID.
+        Returns:
+            Count of users in group
+        """
+        return UsersInGroups.objects.filter(group=group_id).count()
 
     @staticmethod
     def get_by_id(user_id):
@@ -221,3 +229,17 @@ class SharedSpendingCategories(models.Model):
         for item in SharedSpendingCategories.objects.filter(group=group):
             list_spendings.append(item.spending_categories)
         return list_spendings
+    @staticmethod
+    def get_by_spending_id(spending_id):
+        """
+        Args:
+            spending_id(FK): The first parameter.
+        Returns:
+            SharedSpendingCategories object if database contain category with category_id,
+             None otherwise.
+
+        """
+        try:
+            return SharedSpendingCategories.objects.get(spending_categories=spending_id)
+        except SharedSpendingCategories.DoesNotExist:
+            return None

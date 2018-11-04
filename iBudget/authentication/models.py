@@ -17,6 +17,9 @@ class UserProfile(AbstractBaseUser):
         last_name (str): User's last name
         icon (str, optional): Name of the file with user's avatar.
         is_sys_admin (bool):  "True" if user has right of administrator, "False" in other way.
+        one_time_token(HttpResponse): for deactivating update_password.
+        is_fixed_period (bool): "True" if user chooses monthly/yearly limitation period,
+            "False" in other way.
     """
     email = models.EmailField(max_length=50, unique=True)
     password = models.CharField(max_length=128)
@@ -24,6 +27,8 @@ class UserProfile(AbstractBaseUser):
     last_name = models.CharField(blank=True, max_length=20)
     icon = models.CharField(blank=True, max_length=30)
     is_sys_admin = models.BooleanField(default=False)
+    one_time_token = models.CharField(blank=True, max_length=255)
+    ind_period_fixed = models.BooleanField(null=True)
     objects = BaseUserManager()
     USERNAME_FIELD = 'email'
 
@@ -52,7 +57,8 @@ class UserProfile(AbstractBaseUser):
             'is_sys_admin': self.is_sys_admin,
         }
 
-    def update(self, password, first_name=None, last_name=None, icon=None):
+    def update(self, password=None, one_time_token=None, first_name=None,
+               last_name=None, icon=None):
         """
         Method which changes an information except email as it is an id of an user.
         """
@@ -64,6 +70,8 @@ class UserProfile(AbstractBaseUser):
             self.last_name = last_name
         if password:
             self.set_password(password)
+        if one_time_token is not None:
+            self.one_time_token = one_time_token
         self.save()
 
     @classmethod

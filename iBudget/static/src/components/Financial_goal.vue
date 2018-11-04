@@ -1,165 +1,152 @@
 <template>
-    <div id="spend">
-        <div class="div">
-        <div class="oak">
-            <hr>
-            <div class="form-group">
-                <label>Chose your goal:</label>
-                <select v-model="fund" class="form-control">
-                    <option v-for="fund in fund_list_ind" v-bind:value="fund.id"> {{ fund.name }}
-                    </option>
-                </select>
+    <div class="content">
+        <div class="col-md-4 form-group">
+            <div>
+                <label>Input name</label>
+                <input type="text" v-model="name" class="form-control">
             </div>
-
-
-        <div>
-            <hr>
-            <div class="form-group">
-                <label>Chose group</label>
-                <select v-model="group" class="form-control">
-                    <option v-for="group in group_list"
-                            v-bind:value="group.id"
-                            v-on:click="is_active_shared_fund=group.id">
-                        {{ group.name }}
-                    </option>
-                </select>
-            </div>
-            <hr>
         </div>
 
-        <div>
-            <hr>
-            <div class="form-group">
-                <label>Chose your group goal</label>
-                <select v-model="fund" class="form-control">
-                    <option v-for="fund in fund_list"
-                            v-if="fund.id_group === is_active_shared_fund"
-                            v-bind:value="fund.id_fund">
-                        {{fund.name_fund}}
-                    </option>
-                </select>
-            </div>
-            <hr>
-        </div>
-
-        <div>
-            <hr>
-            <div class="form-group">
-                <label>Start date</label>
-                <input v-model="start_date" type="date">
-            </div>
-            <hr>
-        </div>
-
-        <div>
-            <hr>
-            <div class="form-group">
-                <label>Finish date</label>
-                <input v-model="finish_date" type="date">
-            </div>
-            <hr>
-        </div>
-
-        <div>
-            <hr>
-            <div class="form-group">
+         <div class="col-md-4 form-group">
+            <div>
                 <label>Input value</label>
                 <input v-model="value" type="number" min="1" class="form-control">
             </div>
         </div>
-        <div v-show="isValidData">
-            <button v-on:click="setData" :variant="secondary">Save</button>
+
+        <div class="col-md-4 form-group">
+            <div>
+                <label>Choose icon</label>
+                <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
+            </div>
         </div>
+
+        <div class="col-md-4 form-group">
+            <div>
+                <label>Shared to</label>
+                <select v-model="shared_group" class="form-control">
+                    <option
+                        v-for="group in user_groups_list"
+                        v-bind:value="group.id">
+                        {{ group.name }}
+                    </option>
+                </select>
+            </div>
         </div>
+
+        <div class="col-md-4">
+            <label>Start date</label>
+            <div class="form-group">
+                <input v-model="start_date" type="date">
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label>Finish date</label>
+            <div class="form-group">
+                <input v-model="finish_date" type="date">
+            </div>
+        </div>
+
+        <div>
+            <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
+            <button :disabled="isValidData===false" type="button" class="btn btn-outline-primary" @click="setData" :variant="secondary">Save</button>
         </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
+    import Icon_getter from './Icon_getter.vue'
 
     export default {
-        name: "Financial_goal",
+        name: "fund_registration",
         data() {
             return {
-                fund_list: [],
-                fund_list_ind: [],
-                group_list: null,
-                fund: null,
                 start_date: null,
                 finish_date: null,
                 value: null,
-                is_active_shared_fund: null
+                name: null,
+                shared_group: null,
+                icon: null,
+                group: null,
+                user_groups_list: [],
+                tab: 'fund',
+                selectedIcon: ''
             }
         },
-
         computed: {
             isValidData: {
                 get: function () {
                     var result =
-                        this.fund_list != null &&
-                        this.fund_list_ind != null &&
                         this.start_date != null &&
                         this.finish_date != null &&
                         this.value != null &&
-                        this.start_date < this.finish_date;
+                        this.name != null;
                     return result;
                 }
-            }
+            },
         },
-
+        props: ["tabName"],
+        components: {
+            'Icon_getter': Icon_getter
+        },
         created() {
-            axios.get('/api/v1/fund/users_shared_fund/')
+            axios.get('/api/v1/group/show_users_group/')
                 .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.fund_list = response.data
+                    this.user_groups_list = response.data
                 })
                 .catch(e => {
                     this.errors.push(e)
-                });
-            axios.get('/api/v1/fund/')
-                .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.fund_list_ind = response.data
                 })
-                .catch(e => {
-                    this.errors.push(e)
-                });
-            axios.get('/api/v1/group/get_by_group/')
-                .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.group_list = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
         },
         methods: {
             setData: function (event) {
                 axios({
                     method: 'post',
-                    url: '/api/v1/fund/register_financial_goal/',
+                    url: '/api/v1/fund/create_new_goal/',
                     data: {
                         'value': this.value,
                         'start_date': this.start_date,
                         'finish_date': this.finish_date,
-                        'fund': this.fund
+                        'fund': this.fund,
+                        'name': this.name,
+                        'icon': this.selectedIcon,
+                        'shared_group': this.shared_group
                     }
                 }).then(response => {
-                    this.$router.go('fund/register_financial_goal')
+                    this.$router.go('fund/')
                 })
+
+            },
+            onGet_name(data) {
+                this.selectedIcon = data['icon_name']
+            },
+            reset() {
+                this.shared_group = null;
+                this.start_date = null;
+                this.finish_date = null;
+                this.value = null;
+                this.name = null;
+                this.icon = null;
+
             }
+
         }
+
     }
 </script>
 
 <style scoped>
-.oak{
-    width: 400px;
-    margin-right: 200px;
+    .content {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
 
-}
-.div{
-    display:flex;
-}
+    .text {
+        width: fit-content;
+        margin: auto;
+    }
 </style>

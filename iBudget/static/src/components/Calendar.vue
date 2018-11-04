@@ -1,9 +1,9 @@
 <template>
     <div id="calendar">
         <b-btn id="popoverButton-sync" variant="primary">Show Calendar</b-btn>
-                    <b-popover id="popover" :show.sync="show" target="popoverButton-sync" placement="bottom">
-                        <v-calendar :attributes='attrs'></v-calendar>
-                    </b-popover>
+        <b-popover id="popover" :show.sync="show" target="popoverButton-sync" placement="bottom">
+            <v-calendar :attributes='attrs'></v-calendar>
+        </b-popover>
     </div>
 </template>
 
@@ -14,7 +14,7 @@
         data() {
             return {
                 // Attributes are supplied as an array
-                show:false,
+                show: false,
                 attrs: [
                     // This is a single attribute
                     {
@@ -137,14 +137,16 @@
     #calendar {
         position: relative;
         /*bottom: 0;*/
-        top:0;
+        top: 0;
         margin-left: auto;
 
     }
+
     .c-pane-container {
-        float:right;
+        float: right;
     }
-    .bs-popover-bottom{
+
+    .bs-popover-bottom {
         padding-bottom: 0.5rem;
     }
 </style>
