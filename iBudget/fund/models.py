@@ -88,3 +88,14 @@ class FinancialGoal(models.Model):
             finish_date=finish_date,
             fund=fund)
         return goals
+
+    @staticmethod
+    def has_goals(fund_id):
+        """
+        Args:
+            fund_id(int): Current session fund`s id.
+        Returns:
+            'True' if goal exist, and return 'False' if it is not.
+
+        """
+        return FinancialGoal.objects.filter(fund=fund_id).exists()
