@@ -3,16 +3,15 @@ This module provides functions for spending specifying.
 """
 import calendar
 import json
-from datetime import date, timedelta
+from datetime import date
 
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
-from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group, SharedSpendingCategories
 from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_new_spending, \
-    is_valid_data_individual_limit_arb
+    is_valid_data_individual_limit_arb, date_parse
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 
@@ -188,27 +187,18 @@ def set_spending_limitation_ind_arb(request):
     if not spending:
         return HttpResponse('Bad request', status=400)
 
-    start_date = parse_date(data['start_date'])
-    finish_date = parse_date(data['finish_date'])
-    utc_difference = int(data['UTC'])
+    start_date, finish_date = date_parse(data)
 
     if start_date > finish_date:
         return JsonResponse({}, status=400)
-
-    if not start_date:
-        start_date = date(date.today().year, date.today().month, 1)
-    if not finish_date:
-        finish_date = date.today()
-
-    start_date = start_date - timedelta(hours=utc_difference)
 
     value = round(float(data['value']), 2)
 
     current_limit_ind = SpendingLimitationIndividual.objects.filter(
         Q(start_date__range=[start_date, finish_date]) |
         Q(finish_date__range=[start_date, finish_date])).filter(
-        user=user,
-        spending_category=spending)
+            user=user,
+            spending_category=spending)
 
     if current_limit_ind:
         return HttpResponse("The limit for these dates already exists. \n"
