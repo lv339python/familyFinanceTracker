@@ -32,7 +32,8 @@ def show_fund(request):
     if user:
         user_funds = []
         for entry in FundCategories.filter_by_user(user):
-            user_funds.append({'id': entry.id, 'name': entry.name})
+            if not FinancialGoal.has_goals(fund_id=entry.id):
+                user_funds.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -51,10 +52,11 @@ def show_fund_by_group(request):
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_fund in SharedFunds.objects.filter(group=group.id):
-                users_group.append({'id_fund': shared_fund.fund.id,
-                                    'name_fund': shared_fund.fund.name,
-                                    'id_group': group.id
-                                    })
+                if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id):
+                    users_group.append({'id_fund': shared_fund.fund.id,
+                                        'name_fund': shared_fund.fund.name,
+                                        'id_group': group.id
+                                        })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
 
