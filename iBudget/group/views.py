@@ -229,8 +229,10 @@ def add_shared_spending_to_group(request):
         group=group,
         spending_categories=spending
     )
+    spending.is_shared = True
     try:
         new_shared_category.save()
+        spending.save()
     except(AttributeError, ValueError):
         return HttpResponse(status=400)
     return HttpResponse(status=201)
@@ -256,8 +258,10 @@ def add_shared_fund_to_group(request):
         group=group,
         fund=fund
     )
+    fund.is_shared = True
     try:
         new_shared_fund.save()
+        fund.save()
     except(AttributeError, ValueError):
         return HttpResponse(status=400)
     return HttpResponse(status=201)
