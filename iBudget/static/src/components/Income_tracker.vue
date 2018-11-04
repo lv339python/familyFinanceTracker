@@ -77,6 +77,14 @@
                     alert(error.response.data);
                 });
         },
+        //     axios.post('api/v1/income_history/get_cur_incomes/')
+        //         .then(response => {
+        //             this.cur_income = response.data;
+        //         })
+        //         .catch(e => {
+        //             alert(error.response.data);
+        //         });
+        // },
 
         computed: {
             pageCount() {

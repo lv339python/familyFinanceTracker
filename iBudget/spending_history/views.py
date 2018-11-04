@@ -3,7 +3,8 @@ This module provides functions for handling spending_history view.
 """
 
 import json
-from datetime import date, timedelta
+import xlsxwriter
+from datetime import date, timedelta, datetime
 from decimal import Decimal
 
 from django.http import HttpResponse, JsonResponse
@@ -103,6 +104,7 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
                                                            + Group.get_group_by_id(group).name,
                                                'history': history_individual_entry})
 
+
     return history_individual
 
 
@@ -159,7 +161,72 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                       + ' / '
                                                       + Group.get_group_by_id(group).name,
                                           'history': history_spending_category})
+    print(history_for_admin)
     return history_for_admin
+
+
+def create_xlsx():
+    sample = [{'spending': 'kek', 'history': [{'value': 125.5, 'date': date(2018, 11, 14), 'fund': 'kredo'}]}, {'spending': 'kekos',
+            'history': [{'value': 678.1255, 'date': date(2018, 11, 7), 'fund': 'kredo'}, {'value': 225.5, 'date': date(2018, 11, 21), 'fund': 'privat'}]}]
+    sample1 = [{'spending': 'lil / football', 'history': [{'member': 'abysho666@gmail.com', 'value': 1234.0, 'date': date(2018, 11, 13), 'fund': 'lilka'}, {'member': 'abysho666@gmail.com', 'value': 123123.0, 'date': date(2018, 11, 6), 'fund': 'lilka'}, {'member': 'abysho666@gmail.com', 'value': 1.0, 'date': date(2018, 11, 13), 'fund': 'lilka'}]}]
+
+
+    workbook = xlsxwriter.Workbook(r'demo.xlsx')
+    worksheet = workbook.add_worksheet('Spending_history')
+
+    head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center'})
+    value_format = workbook.add_format({'num_format': '$#.#0'})
+    date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
+    worksheet.set_row(1, 20, head_format)
+
+    head_row, head_col = 1, 1
+    row, col = 2, 1
+    worksheet.write(head_row, head_col, 'Individual spending', head_format)
+    for i in sample[0]['history'][0]:
+        worksheet.write(head_row, head_col+1, i, head_format)
+        head_col += 1
+
+    for dicty in sample:
+        for history_dict in dicty['history']:
+            worksheet.write(row, col, dicty['spending'])
+            worksheet.write_number(row, col + 1, history_dict['value'], value_format)
+            worksheet.write(row, col + 2, history_dict['date'], date_format)
+            worksheet.write(row, col + 3, history_dict['fund'])
+            row += 1
+            col = 1
+
+    head_row, head_col = row + 1, 1
+    worksheet.write(head_row, head_col - 1, 'Group spending', head_format)
+    for i in sample1[0]['history'][0]:
+        worksheet.write(head_row, head_col, i, head_format)
+        head_col += 1
+
+    for dicty in sample:
+        for history_dict in dicty['history']:
+            worksheet.write(row, col, dicty['spending'])
+            worksheet.write_number(row, col + 1, history_dict['value'], value_format)
+            worksheet.write(row, col + 2, history_dict['date'], date_format)
+            worksheet.write(row, col + 3, history_dict['fund'])
+            row += 1
+            col = 1
+
+    # for dicty in sample:
+    #     for i in dicty:
+    #         if i == 'amount':
+    #             worksheet.write_number(row, col, dicty[i], value_format)
+    #         elif i == 'date':
+    #             date = datetime.strptime(dicty[i], "%Y-%m-%d")
+    #             worksheet.write_datetime(row, col, date, date_format)
+    #         else:
+    #             worksheet.write(row, col, dicty[i])
+    #         col += 1
+    #     col = 1
+    #     row += 1
+#
+# import xlsxwriter
+# from spending_history.views import create_xlsx
+# create_xlsx()
+    workbook.close()
 
 
 @require_http_methods(["POST"])
