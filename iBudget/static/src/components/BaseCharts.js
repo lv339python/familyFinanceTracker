@@ -76,7 +76,7 @@ export function generateChart(chartId, chartType) {
                         options: options,
                         plugins: this.$data._plugins
                     }
-                )
+                );
             }
         },
         beforeDestroy() {

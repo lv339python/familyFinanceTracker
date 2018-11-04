@@ -38,7 +38,6 @@ class FileHandler(View):
                 pic = request.FILES['icon']
                 while AwsService.check_if_in_bucket(pic) != True:
                     pic.name = AwsService.change_filename(pic)
-                    # return RESPONSE_400_INVALID_DATA
                 if AwsService.upload(pic):
                     pic = str(pic)
                     url = AwsService.get_image_url(pic)

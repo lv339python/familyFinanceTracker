@@ -75,10 +75,8 @@
                 //this is the time which is added to the user provided date
                 start_date_time: "T00:00:00",
                 end_date_time: "T23:59:59",
-                date_to_props: [],
-                amount_to_props: [],
-                income_to_props: []
-                //fund_to_props: []
+                date_to_props: 'fake1',
+                amount_to_props: 'fake2',
             }
         },
         created() {
@@ -118,7 +116,11 @@
                     temp[funds[item]] = list_in_list;
                     dates_for_funds.push(temp);
                 }
+                                console.log('computer1', this.date_to_props);
+
                 this.date_to_props = dates_for_funds;
+                                                console.log('computer2', this.date_to_props);
+
                 return this.date_to_props
 
             },
@@ -139,31 +141,6 @@
                 this.amount_to_props = amounts_for_funds;
                 return this.amount_to_props
             },
-            make_list_incomes(){
-                let funds = this.list_with_incomes[this.list_with_incomes.length-1];
-                let incomes_for_funds = [];
-                for (var item in funds){
-                    let temp = {};
-                    let list_in_list = [];
-                    for (var val in this.list_with_incomes){
-                        if (funds[item]==this.list_with_incomes[val]['fund']){
-                            list_in_list.push(this.list_with_incomes[val]['income']);
-                        }
-                    }
-                    temp[funds[item]] = list_in_list;
-                    incomes_for_funds.push(temp);
-                }
-                this.income_to_props = incomes_for_funds;
-                return this.income_to_props
-            },
-            // make_list_funds(){
-            //     var item;
-            //     for (item in this.list_with_incomes){
-            //         this.fund_to_props.push(this.list_with_incomes[item]['fund']);
-            //     }
-            //     return this.fund_to_props
-            // },
-
         },
 
 
@@ -221,5 +198,6 @@
 
     div #chartcontainer{
         margin-right: 600px;
+        width: 800px;
     }
 </style>

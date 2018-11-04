@@ -3,11 +3,10 @@
 
          <div class="Chart">
           <h1 style="text-align:center;">Chart with incomes to funds:</h1>
-          <line-example v-for="(dict, index) in amount_to_props"
-                        v-bind:fund_name="Object.keys(dict)"
+          <line-example
                         v-bind:x_axis="get_x"
-                        v-bind:amounts="Object.values(dict)"
-                        v-bind:color="getColor[index]"/>
+                        v-bind:amounts="amounts"
+                        v-bind:color="getColor"/>
         </div>
 
 
@@ -20,12 +19,16 @@
         components: {
             LineExample,
         },
-        props: ['date_to_props', 'amount_to_props', 'income_to_props'],
+        props: ['date_to_props', 'amount_to_props'],
         data() {
-
+            console.log('2',this.date_to_props);
+            console.log('2a',this.amount_to_props);
 
             return {
                 height: 100,
+                amounts:this.amount_to_props,
+                x:'fake',
+                dates_from_props: this.date_to_props
             }
         },
         computed: {
@@ -45,20 +48,19 @@
             get_x(){
                 var x = [];
                 for(var i=0; i<=this.date_to_props.length-1; i++){
-                    x = x.concat(this.date_to_props[i][Object.keys(this.date_to_props[i])]);
+                    x=x.concat(this.date_to_props[i][Object.keys(this.date_to_props[i])]);
                 }
+                // this.date_to_props = x;
                 return x
             }
-
-            }
-
+            },
 
     }
 </script>
 
 <style>
     .container {
-        max-width: 400px;
+        max-width: 800px;
         margin: auto;
     }
 

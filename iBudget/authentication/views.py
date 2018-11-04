@@ -52,8 +52,8 @@ def login_user(request):
     :return: status 200 if login was successful, status 400 if unsuccessful
     """
     data = json.loads(request.body.decode("utf-8"))
-    if not login_validate(data):
-        return HttpResponse('received data is not valid', status=400)
+    # if not login_validate(data):
+    #     return HttpResponse('received data is not valid', status=400)
     email = data['email'].strip().lower()
     user = authenticate(email=email, password=data['password'])
     if user is not None:
