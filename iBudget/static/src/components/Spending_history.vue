@@ -72,6 +72,8 @@
             </div>
         </div>
         <button class="btn btn-outline-warning" v-on:click="createFile" :variant="secondary">Download history
+        <!--<a v-bind:href="'/api/v1/spending_history/create/?start_date=' + start_date + '&ed=' + finish_date + '&utc=' + UTC">Download </a>-->
+            <a :href="'/api/v1/spending_history/download_file/?start_date=' + start_date + '&finish_date=' + finish_date + '&utc=' + UTC">Download </a>
         </button>
     </div>
 </template>
@@ -81,6 +83,7 @@
     var UTC = -x.getTimezoneOffset() / 60
 
     import axios from 'axios';
+    import saveAs from 'file-saver';
 
     export default {
         name: "Spending_history",
@@ -140,7 +143,7 @@
             },
             createFile: function (event) {
                 axios({
-                    method: 'post',
+                    method: 'get',
                     url: '/api/v1/spending_history/download_file/',
                     data: {
                         'start_date': this.start_date,
@@ -148,11 +151,30 @@
                         'UTC': UTC
                     },
                 })
-                    .then(response => {
-                        let blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
-                            url = window.URL.createObjectURL(blob);
-                        window.open(url)
-                    })
+                    .then((function(response) {
+                        // let blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
+                        //     url = window.URL.createObjectURL(blob);
+                        // window.open(url)
+
+                        // function s2ab(s) {
+                        //   var buf = new ArrayBuffer(s.length);
+                        //   var view = new Uint8Array(buf);
+                        //   for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+                        //   return buf;
+                        // }
+
+                        let blob = new Blob([response.data], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+                        let FileSaver = require('file-saver');
+                        FileSaver.saveAs(blob, "hello world.xlsx");
+
+                        // let file = new File([response.data], "hello world.xlsx", {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+                        // FileSaver.saveAs(file);
+
+                        // let link = document.createElement('a');
+                        // link.href = window.URL.createObjectURL(blob);
+                        // link.download = 'Report.xlsx';
+                        // link.click()
+                    }))
                     .catch(e => {
                         this.errors.push(e)
                     })
