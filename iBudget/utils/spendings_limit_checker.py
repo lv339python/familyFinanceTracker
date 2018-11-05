@@ -71,27 +71,19 @@ def compare_ind_spend_limit(user, current_date, spending, current_value):
             spending_categories=spending,
             date__range=[item.start_date, item.finish_date]).values_list('value', flat=True))
         if total >= item.value:
-            response += "Warning! Your spending limit {} " \
-                        "for the period from {} to {} is exceeded. " \
-                        "You have already spent {}! \n".format(item.value,
-                                                               item.start_date,
-                                                               item.finish_date,
-                                                               total)
+            response += f"Warning! Your spending limit {item.value} " \
+                        f"for the period from {item.start_date} to " \
+                        f"{item.finish_date} is exceeded. " \
+                        f"You have already spent {total}! \n"
         elif current_value >= item.value - total:
-            response += "Warning! You've set spending limit {} " \
-                        "for the period from {} to {} on this category. " \
-                        "Registering value {} exceeds " \
-                        "specified limit. \n".format(item.value,
-                                                     item.start_date,
-                                                     item.finish_date,
-                                                     current_value)
+            response += f"Warning! You've set spending limit {item.value} " \
+                        f"for the period from {item.start_date} to {item.finish_date} " \
+                        f"on this category. " \
+                        f"Registering value {current_value} exceeds specified limit. \n"
         else:
-            response += "You've set spending limit {} " \
-                        "for the period from {} to {} on this category. " \
-                        "Now your spendings are  {} percentages" \
-                        "of the specified limit. \n".format(item.value,
-                                                            item.start_date,
-                                                            item.finish_date,
-                                                            round((current_value +
-                                                                   total)/item.value*100, 2))
+            response += f"You've set spending limit {item.value} " \
+                        f"for the period from {item.start_date} to {item.finish_date} " \
+                        f"on this category. " \
+                        f"Now your spending are {round((current_value +total)/item.value*100, 2)}" \
+                        f"percentages of the specified limit. \n"
     return response

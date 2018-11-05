@@ -71,7 +71,6 @@ def set_limitation_period(request):
         return HttpResponse('Bad request', status=400)
     data = data['fixed']
     user.ind_period_fixed = data
-    print(data)
     try:
         user.save()
     except(ValueError, AttributeError):
