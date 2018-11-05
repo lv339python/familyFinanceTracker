@@ -15,7 +15,7 @@ from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
     LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
 from utils.jwttoken import create_token, handle_token
 from utils.password_reseting import send_password_update_letter, send_successful_update_letter
-from utils.validators import is_valid_registration_data, updating_email_validate, \
+from utils.validators import login_validate, is_valid_registration_data, updating_email_validate, \
     updating_password_validate
 from .models import UserProfile
 
@@ -39,8 +39,6 @@ def registration(request):
         return HttpResponse(status=400)
     if UserProfile.get_by_email(data.get("email")):
         return HttpResponse(status=409)
-    if not data["password"] == data["confirm_password"]:
-        return HttpResponse(status=409)
     UserProfile.create(data.get("email"), data.get("password"))
     return HttpResponse(status=201)
 
@@ -52,8 +50,8 @@ def login_user(request):
     :return: status 200 if login was successful, status 400 if unsuccessful
     """
     data = json.loads(request.body.decode("utf-8"))
-    # if not login_validate(data):
-    #     return HttpResponse('received data is not valid', status=400)
+    if not login_validate(data):
+        return HttpResponse('received data is not valid', status=400)
     email = data['email'].strip().lower()
     user = authenticate(email=email, password=data['password'])
     if user is not None:

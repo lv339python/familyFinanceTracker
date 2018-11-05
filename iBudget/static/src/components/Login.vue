@@ -140,7 +140,6 @@
                     data: {
                         'email': this.username,
                         'password': this.password,
-                        'confirm_password': this.confirm_password
                     }
 
                 }).then(response => {

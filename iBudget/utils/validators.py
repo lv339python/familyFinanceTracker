@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.dateparse import parse_date
 
-SET_KEYS_REG_DATA = {"email", "password", "confirm_password"}
+SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
 SET_KEYS_INCOME_REG_DATA = {'inc_category', 'fund_category', 'value'}
@@ -101,7 +101,6 @@ def login_validate(data):
     :return: `True` if data is valid and `None` if it is not.
     :rtype: bool
     """
-
     if not data:
         return False
     if not required_keys_validator(data, ['email', 'password']):
