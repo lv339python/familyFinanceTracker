@@ -5,7 +5,7 @@
             <p>There are your groups: </p>
             <ul class="list-group">
             <li
-                class="list-group-item list-group-item-action pointer
+                class="list-group-item list-group-item-action pointer"
                 v-for="(item, index) in paginatedData"
                 v-on:click="selected_group(index, item.id)"
                 :class="{'active': selected_group_index===index}">
