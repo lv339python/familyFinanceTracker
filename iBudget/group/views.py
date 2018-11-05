@@ -88,12 +88,24 @@ def show_users_group_data(request):
     return JsonResponse({}, status=400)
 
 
-# def show_users_in_group(request):
-#     users_in_group = []
-#     user = request.user
-#     if user:
-#         for item in groups_for_user(user):
-
+def show_users_in_group(request):
+    users_in_group = []
+    user = request.user
+    user_role = None
+    if user:
+        for item in groups_for_user(user):
+            group = Group.get_group_by_id(item)
+            for user in users_email_for_group(group.id):
+                if group.owner == user:
+                    user_role = "Owner"
+                else:
+                    if is_user_admin_group(item, user):
+                        user_role = "Admin"
+                    else:
+                        user_role = "Member"
+                users_in_group.append({'email': user.email, 'user_role': user_role, 'group_id': group.id})
+        return JsonResponse(users_in_group, status=200, safe=False)
+    return HttpResponse(status=400)
 
 
 def groups_balance(request):

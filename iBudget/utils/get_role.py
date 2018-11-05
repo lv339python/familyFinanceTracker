@@ -23,7 +23,7 @@ def users_email_for_group(group_id):
     group = UsersInGroups.objects.filter(group=group_id)
     list_users_email = []
     for item in group:
-        list_users_email.append(item.user.email)
+        list_users_email.append(item.user)
     return list_users_email
 
 
