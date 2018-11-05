@@ -69,14 +69,14 @@ def set_limitation_period(request):
     data = json.loads(request.body)
     if data['fixed'] == 'null':
         return HttpResponse('Bad request', status=400)
-    data = data['fixed']
-    user.ind_period_fixed = data
+    period_type = data['fixed']
+    user.ind_period_fixed = period_type
     try:
         user.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
     response = "{} type of limitation period has been set...\n OK".format("Monthly/yearly"
-                                                                          if data
+                                                                          if period_type
                                                                           else "Arbitrary")
     return HttpResponse(response, status=201)
 
