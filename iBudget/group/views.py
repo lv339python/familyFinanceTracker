@@ -89,6 +89,12 @@ def show_users_group_data(request):
 
 
 def show_users_in_group(request):
+    """Handling request for creating of group's users list.
+    Args:
+        request (HttpRequest): request from server which ask list of users for group.
+    Returns:
+        HttpResponse object.
+    """
     users_in_group = []
     user = request.user
     user_role = None
@@ -103,7 +109,9 @@ def show_users_in_group(request):
                         user_role = "Admin"
                     else:
                         user_role = "Member"
-                users_in_group.append({'email': user.email, 'user_role': user_role, 'group_id': group.id})
+                users_in_group.append({'email': user.email,
+                                       'user_role': user_role,
+                                       'group_id': group.id})
         return JsonResponse(users_in_group, status=200, safe=False)
     return HttpResponse(status=400)
 
@@ -223,6 +231,13 @@ def add_new_users_to_group(request):
 
 @require_http_methods(["POST"])
 def add_shared_spending_to_group(request):
+    """Handling request for adding new shared SpendingCategories to group.
+    Args:
+        request (HttpRequest): request from server which contain
+        shared_spending and group_id
+    Returns:
+        HttpResponse object.
+    """
     user = request.user
     data = json.loads(request.body)
     shared_category = data["shared_spending"]
@@ -252,6 +267,13 @@ def add_shared_spending_to_group(request):
 
 @require_http_methods(["POST"])
 def add_shared_fund_to_group(request):
+    """Handling request for adding new shared SpendingCategories to group.
+    Args:
+        request (HttpRequest): request from server which contain
+        shared_spending and group_id
+    Returns:
+        HttpResponse object.
+    """
     user = request.user
     data = json.loads(request.body)
     shared_category = data["shared_fund"]

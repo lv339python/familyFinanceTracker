@@ -203,6 +203,13 @@ class SharedFunds(models.Model):
 
     @staticmethod
     def get_by_fund(fund):
+        """
+        Args:
+            fund(FK): FundCategories ID
+        Returns:
+            SharedFund object if database contain user with fund , None otherwise.
+
+        """
         try:
             return SharedFunds.objects.get(fund=fund)
         except SharedFunds.DoesNotExist:
