@@ -4,7 +4,6 @@ export default {
   extends: Line,
     props: ['x_axis', "amounts", "color"],
     data(){
-      console.log('3',this.x_axis);
       return{
           datasets:{}
       }

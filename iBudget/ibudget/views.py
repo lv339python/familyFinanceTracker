@@ -5,7 +5,7 @@ from django.utils import datastructures
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from utils.aws_helper import AwsService
-from utils.response_helper import (RESPONSE_400_INVALID_DATA, RESPONSE_400_NO_FILE,
+from utils.response_helper import (RESPONSE_400_NO_FILE,
                                    RESPONSE_404_NOT_FOUND, RESPONSE_200_SUCCESS,
                                    RESPONSE_500_NO_SUCCESS, RESPONSE_400_UPLOAD_ERROR)
 
@@ -17,13 +17,14 @@ class FileHandler(View):
         """the method retrieves default icons from AWS S3
         :param - request object
         """
-        if request.GET['tab'] == 'fund':
+        tab = request.GET['tab']
+        if tab == 'fund':
             urls = AwsService.get_default_list_icons('standard_fund/')[1:]
-        elif request.GET['tab'] == 'income':
+        elif tab == 'income':
             urls = AwsService.get_default_list_icons('standard_income/')[1:]
-        elif request.GET['tab'] == 'spending':
+        elif tab == 'spending':
             urls = AwsService.get_default_list_icons('standard/')[1:]
-        elif request.GET['tab'] == 'group':
+        elif tab == 'group':
             urls = AwsService.get_default_list_icons('standard_group/')[1:]
         return JsonResponse(urls, status=200, safe=False)
 
@@ -36,10 +37,9 @@ class FileHandler(View):
         try:
             if request.FILES:
                 pic = request.FILES['icon']
-                while AwsService.check_if_in_bucket(pic) != True:
+                while not AwsService.check_if_in_bucket(pic):
                     pic.name = AwsService.change_filename(pic)
                 if AwsService.upload(pic):
-                    pic = str(pic)
                     url = AwsService.get_image_url(pic)
                     return HttpResponse(url, status=201)
                 return RESPONSE_500_NO_SUCCESS

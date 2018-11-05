@@ -2,7 +2,7 @@
     <div class="container">
 
          <div class="Chart">
-          <h1 style="text-align:center;">Chart with incomes to funds:</h1>
+          <h1 style="text-align:center;">Funds info:</h1>
           <line-example
                         v-bind:x_axis="get_x"
                         v-bind:amounts="amounts"
@@ -21,9 +21,6 @@
         },
         props: ['date_to_props', 'amount_to_props'],
         data() {
-            console.log('2',this.date_to_props);
-            console.log('2a',this.amount_to_props);
-
             return {
                 height: 100,
                 amounts:this.amount_to_props,
@@ -50,7 +47,6 @@
                 for(var i=0; i<=this.date_to_props.length-1; i++){
                     x=x.concat(this.date_to_props[i][Object.keys(this.date_to_props[i])]);
                 }
-                // this.date_to_props = x;
                 return x
             }
             },

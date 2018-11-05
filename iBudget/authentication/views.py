@@ -15,7 +15,7 @@ from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
     LOCAL_URL, SCOPE, REDIRECT_URL, TOKEN_URL
 from utils.jwttoken import create_token, handle_token
 from utils.password_reseting import send_password_update_letter, send_successful_update_letter
-from utils.validators import login_validate, is_valid_registration_data, updating_email_validate, \
+from utils.validators import is_valid_registration_data, updating_email_validate, \
     updating_password_validate
 from .models import UserProfile
 

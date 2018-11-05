@@ -85,7 +85,6 @@
                 })
                     .then(response => {
                         this.reply = response.data;
-                        alert(this.reply.slice(55))
                         this.icon_name = this.reply.slice(55);
                         this.$emit('get_name', {icon_name: this.icon_name});
                     })

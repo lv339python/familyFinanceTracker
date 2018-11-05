@@ -2,9 +2,9 @@
 File Handler
 Provides methods for upload and download processes of the object to Amazon S3 service
 """
-import boto3
 from random import choice
 from string import ascii_letters
+import boto3
 from ibudget.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, \
     AWS_STORAGE_BUCKET_NAME
 
@@ -47,9 +47,10 @@ class AwsService:
 
     @classmethod
     def get_image_url(cls, key):
-        """the method accepts the name of the file(string), generates its
-        URL and returns it
+        """the method accepts the name of the file, converts it to string, generates its URL and
+         returns it
         """
+        key = str(key)
         url = cls.boto_client.generate_presigned_url(
             ClientMethod='get_object',
             Params={

@@ -46,7 +46,10 @@
 
         </div>
         <div class="chartcontainer" v-if="shownResult">
-                    <Income_chart
+                    <!--v-if is necessary to render the chart correctly, because computed is called with default
+                    data first and the chart is not rendered; here it's called twice and only the valid result is
+                    rendered-->
+                    <Income_chart v-if="make_list_dates.length !== 0"
                         v-bind:date_to_props="make_list_dates"
                         v-bind:amount_to_props="make_list_amounts">
                     </Income_chart>
@@ -75,8 +78,8 @@
                 //this is the time which is added to the user provided date
                 start_date_time: "T00:00:00",
                 end_date_time: "T23:59:59",
-                date_to_props: 'fake1',
-                amount_to_props: 'fake2',
+                date_to_props: [],
+                amount_to_props: []
             }
         },
         created() {
@@ -116,11 +119,7 @@
                     temp[funds[item]] = list_in_list;
                     dates_for_funds.push(temp);
                 }
-                                console.log('computer1', this.date_to_props);
-
                 this.date_to_props = dates_for_funds;
-                                                console.log('computer2', this.date_to_props);
-
                 return this.date_to_props
 
             },
