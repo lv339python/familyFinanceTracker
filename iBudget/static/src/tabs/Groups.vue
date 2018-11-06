@@ -36,6 +36,7 @@
                             {{item}} : {{value}}
                         </li>
                         <add_user v-bind:group_id="selected_group_id"></add_user>
+                        <delete_group v-bind:group_id="selected_group_id"></delete_group>
                     </ul>
                 </li>
             </ul>
@@ -47,6 +48,7 @@
     import axios from 'axios';
     import Add_new_user_to_group from '../components/Add_new_user_to_group';
     import Groups_registration from '../components/Groups_registration';
+    import Delete_group from '../components/Delete_group';
     export default {
         name: "Groups",
         data() {
@@ -62,7 +64,8 @@
         },
         components: {
             'add_user': Add_new_user_to_group,
-            'create_new_group': Groups_registration
+            'create_new_group': Groups_registration,
+            'delete_group':Delete_group
         },
         methods: {
             selected_group: function(index, item){

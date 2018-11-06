@@ -21,9 +21,18 @@ class FundCategories(models.Model):
     icon = models.CharField(max_length=30)
     is_shared = models.BooleanField(default=False)
     owner = models.ForeignKey(UserProfile, on_delete=True)
+    is_active = models.BooleanField(default=True)
+
+    def update(self, is_active=None):
+        """
+        Method which changes an information except email as it is an id of an user.
+        """
+        if is_active:
+            self.is_active = is_active
+        self.save()
 
     @staticmethod
-    def filter_by_user(user, is_shared=False):
+    def filter_by_user(user, is_shared=False, is_active=True):
         """
         Args:
             user (FK): user of fund,
@@ -33,7 +42,22 @@ class FundCategories(models.Model):
             and is_shared value, None otherwise.
 
         """
-        return FundCategories.objects.filter(owner=user, is_shared=is_shared)
+        return FundCategories.objects.filter(owner=user, is_shared=is_shared, is_active=is_active)
+
+    @staticmethod
+    def filter_by_id(fund_id, is_active=True):
+        """
+        Args:
+            fund_id (int): The first parameter.
+             is_active(bool): which category is active.
+        Returns:
+            FundCategories object if database contain fund
+            category with id, None otherwise.
+
+        """
+        return FundCategories.objects.filter(pk=fund_id, is_active=is_active)
+
+
 
     @staticmethod
     def get_by_id(fund_id):

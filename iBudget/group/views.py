@@ -195,3 +195,20 @@ def add_new_users_to_group(request):
         except(AttributeError, ValueError):
             return HttpResponse(status=400)
     return HttpResponse(status=201)
+
+@require_http_methods(["PUT"])
+def delete_group(request, group_id):
+    """Handling request for update group.
+
+        Args:
+            request (HttpRequest): Data for new category.
+            group_id: Group Id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    group = Group.filter_by_id(group_id)
+    if not group:
+        return HttpResponse(status=406)
+    group.update(is_active=False)
+    return HttpResponse("You've just deleted category ", status=201)

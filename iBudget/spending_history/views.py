@@ -50,7 +50,8 @@ def register_spending(request):
         date=data["date"],
         value=value,
         owner=user,
-        comment=comment
+        comment=comment,
+        is_active=True,
     )
     try:
         spending_history.save()
@@ -178,7 +179,6 @@ def create_spending_history(request):
     start_date = parse_date(data['start_date'])
     finish_date = parse_date(data['finish_date'])
     utc_difference = int(data['UTC'])
-
     if start_date > finish_date:
         return JsonResponse({}, status=400)
 
@@ -223,6 +223,7 @@ def get_month_spending(request):
                             status=200)
     return HttpResponse('Bad Request', status=400)
 
+
 def create_spending_chart(user, start_date, finish_date):
     """Creating array of data for spending history chart.
         Args:
@@ -247,6 +248,7 @@ def create_spending_chart(user, start_date, finish_date):
             SpendingCategories.get_by_id(item)).values_list('value', flat=True))
         list_spending_value.append(total)
     return {'value': list_spending_value, 'name': list_spending_name}
+
 
 @require_http_methods(["POST"])
 def get_spending_chart(request):
@@ -278,3 +280,22 @@ def get_spending_chart(request):
         return JsonResponse(create_spending_chart(user, start_date, finish_date),
                             status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+@require_http_methods(["PUT"])
+def delete_spending_history(request, spending_history_id):
+    """Handling request for update group.
+
+        Args:
+            request (HttpRequest): Data for new category.
+            spending_history_id: Spending history id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    spending_history = SpendingHistory.filter_by_id(spending_history_id)
+    if not spending_history:
+        return HttpResponse(status=406)
+    spending_history.update(is_active=False)
+    return HttpResponse(status=201)
+

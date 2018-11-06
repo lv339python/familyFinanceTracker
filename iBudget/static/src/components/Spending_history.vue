@@ -59,6 +59,7 @@
                         <td>{{ p.value}}</td>
                         <td>{{ p.date }}</td>
                         <td>{{ p.fund }}</td>
+                        <td>{{ p.id }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -69,6 +70,14 @@
                         Next
                     </button>
                 </div>
+            </div>
+            <div >
+               <button v-for="spend in spending_history_individual"
+                        type="button"
+                        class="btn btn-outline-danger"
+                        v-bind:value="spend.history"
+                        @click="Delete">
+                    Delete</button>
             </div>
         </div>
     </div>
@@ -89,13 +98,17 @@
                 listValues: [],
                 pageNumber: 0,
                 size: 2,
-                start_date: new Date().toJSON().slice(0,10),
-                finish_date: new Date().toJSON().slice(0,10),
+                start_date: new Date().toJSON().slice(0, 10),
+                finish_date: new Date().toJSON().slice(0, 10),
                 selected: [],
                 spending_history_individual: {},
                 spending_history_admin: {},
                 errors: [],
-                UTC: null
+                UTC: null,
+                is_active: null,
+                // spending_categories: null,
+
+
             }
         },
         created() {
@@ -168,6 +181,20 @@
                         this.errors.push(e)
                     })
             },
+            Delete: function (event) {
+                axios({
+                    method: 'put',
+                    url: '/api/v1/spending_history/delete_spending_history/',
+                    data: {
+                        'is_active': this.is_active,
+                        // 'spending_categories': this.spending_categories,
+
+                    }
+                }).then(response => {
+                    this.$router.go('spending/')
+                })
+
+            },
             nextPage() {
                 this.pageNumber++;
             },
@@ -196,6 +223,7 @@
     #total {
         text-align: center
     }
+
     #spending_history {
 
     }

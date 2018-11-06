@@ -42,7 +42,9 @@
                     <br/>
                     <input required v-model="confirm_password" type="password" placeholder="Confirm Password"/>
                     <hr/>
-                    <b-button class="btn btn-outline-primary" type="submit" v-if:isValidPassword @click="registration">Register</b-button>
+                    <b-button class="btn btn-outline-primary" type="submit" v-if:isValidPassword @click="registration">
+                        Register
+                    </b-button>
                     <br/>
                     <br/>
                     <b-link @click="showLogin">Already registered?</b-link>
@@ -51,10 +53,11 @@
         </div>
         <b-modal ref="myModalRef" hide-footer>
             <div class="d-block text-center">
-                <p>We sent a letter  on your email. Please check your email to continue changing password !</p>
+                <p>We sent a letter on your email. Please check your email to continue changing password !</p>
             </div>
             <div class="d-block text-right">
-            <b-button variant="primary"@click="hideModal">ok</b-button>
+                <b-button variant="primary" @click="hideModal">ok</b-button>
+            </div>
 
         </b-modal>
     </div>
@@ -139,8 +142,7 @@
                     url: '/api/v1/authentication/login/',
                     data: {
                         'email': this.username,
-                        'password': this.password,
-                        'confirm_password': this.confirm_password
+                        'password': this.password
                     }
 
                 }).then(response => {
@@ -152,10 +154,10 @@
             },
             showModal() {
                 this.$refs.myModalRef.show()
-                },
-                hideModal() {
-                    this.$refs.myModalRef.hide()
-                },
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide()
+            },
             sendData: function (event) {
                 axios({
                     method: 'post',
@@ -190,6 +192,7 @@
         display: flex;
         margin-top: 240px;
     }
+
     #form {
         margin: auto;
         width: fit-content;

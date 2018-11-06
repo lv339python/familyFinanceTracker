@@ -27,7 +27,7 @@ def show_spending_ind(request):
     if user:
         user_categories = []
         for entry in SpendingCategories.filter_by_user(user):
-            user_categories.append({'id': entry.id, 'name': entry.name})
+            user_categories.append({'id': entry.id, 'name': entry.name, 'is_active':entry.is_active})
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -247,3 +247,22 @@ def create_spending_category(request):
         return HttpResponse(status=406)
     spending.save()
     return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
+
+
+
+@require_http_methods(["PUT"])
+def delete_spending_category(request, spending_id):
+    """Handling request for update spending category.
+
+        Args:
+            request (HttpRequest): Data for new category.
+            spending_id: Spending category Id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    spending = SpendingCategories.filter_by_id(spending_id)
+    if not spending:
+        return HttpResponse(status=406)
+    spending.update(is_active=False)
+    return HttpResponse("You've just deleted category ", status=201)

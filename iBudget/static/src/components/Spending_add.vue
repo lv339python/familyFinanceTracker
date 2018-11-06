@@ -20,6 +20,19 @@
             <button class="btn btn-outline-dark" v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}
             </button>
         </div>
+        <div>
+            <label>Select category:</label>
+            <select v-model="spending_id" class="form-control">
+                <option v-for="spend in spending_list" v-bind:value="spend.id">
+                    {{ spend.name }}
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+        <button type="button" class="btn btn-outline-danger" v-on:click="Delete" :variant="secondary">Delete spending
+        </button>
+        </div>
 
     </div>
 </template>
@@ -43,7 +56,12 @@
                     'icon': ''
                 },
                 msg: '',
-                tab: 'spending'
+                tab: 'spending',
+                is_active: null,
+                spending_list: [],
+                // spending_id: this.$route.params["spending_id"]
+                // spenId: this.$route.params["spen_id"]
+                spending_id: null
 
             }
         },
@@ -54,6 +72,16 @@
                     return result;
                 }
             }
+        },
+        created() {
+            axios.get('/api/v1/spending/')
+                .then(response => {
+                    // JSON responses are automatically parsed.
+                    this.spending_list = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                });
         },
         methods: {
             createSpending: function (event) {
@@ -72,6 +100,21 @@
             },
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']
+            },
+
+            Delete: function (event) {
+                axios({
+                    method: 'put',
+                    url: '/api/v1/spending/delete_spending_category/'+ this.spending_id,
+                    data: {
+                        'is_active': this.is_active
+
+
+                    }
+                }).then(response => {
+                    this.$router.go('/spendings/new/')
+                })
+
             }
         }
     }

@@ -32,6 +32,28 @@ class Group(models.Model):
     shared_spendings = models.ManyToManyField(SpendingCategories,
                                               through='SharedSpendingCategories',
                                               related_name="groups")
+    is_active = models.BooleanField(default=True)
+
+    def update(self, is_active=None):
+        """
+        Method which changes an information.
+        """
+        if is_active:
+            self.is_active = is_active
+        self.save()
+
+    @staticmethod
+    def filter_by_id(group_id, is_active=True):
+        """
+        Args:
+            group_id (int): The first parameter.
+            is_active(bool): which category is active.
+        Returns:
+            Group object if database contain spending
+            category with id, None otherwise.
+
+        """
+        return Group.objects.filter(pk=group_id, is_active=is_active)
 
     @staticmethod
     def group_filter_by_owner_id(user):
@@ -59,7 +81,7 @@ class Group(models.Model):
             return None
 
     @staticmethod
-    def filter_groups_by_user_id(user_id):
+    def filter_groups_by_user_id(user_id, is_active=True):
         """
         Args:
             user_id(int): Current session user`s id.
@@ -67,7 +89,7 @@ class Group(models.Model):
             List of Groups objects .
 
         """
-        users_groups = Group.objects.filter(members=user_id)
+        users_groups = Group.objects.filter(members=user_id, is_active=is_active)
         return users_groups
 
     @staticmethod

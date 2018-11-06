@@ -205,3 +205,21 @@ def create_new_goal(request):
             shared_group=shared_group):
         return HttpResponse(status=201)
     return HttpResponse(status=409)
+
+
+@require_http_methods(["PUT"])
+def delete_fund_category(request, fund_id):
+    """Handling request for update spending category.
+
+        Args:
+            request (HttpRequest): Data for new category.
+            fund_id: Fund category Id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    fund = FundCategories.filter_by_id(fund_id)
+    if not fund:
+        return HttpResponse(status=406)
+    fund.update(is_active=False)
+    return HttpResponse("You've just deleted fund ", status=201)

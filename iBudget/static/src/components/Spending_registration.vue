@@ -4,29 +4,28 @@
             <div class="col-md-8 form-group " v-if="is_shared===true">
                 <div>
                     <label>Chose group</label>
-                    <select v-model="group" class="form-control">
+                    <select v-model="groupId" class="form-control">
                         <option v-for="group in group_list"
-                                v-bind:value="group.id"
-                                v-on:click="is_active_shared_cat=group.id">
+                                v-bind:value="group.id">
                             {{ group.name }}
                         </option>
                     </select>
                 </div>
                 <hr>
-                <div v-show="isSharedSpending">
+                <div v-show="groupId">
                     <label>Select category</label>
                     <select v-model="category" class="form-control">
                         <option v-for="category in shared_list"
-                                v-if="category.id_group === is_active_shared_cat"
+                                v-if="category.id_group === groupId"
                                 v-bind:value="category.id_cat">
                             {{category.name_cat}}
                         </option>
                     </select>
-                    <hr/>
+                    <hr>
                     <label>Choose type of pay:</label>
                     <select v-model="type_of_pay" class="form-control">
                         <option v-for="type_of_pay in shared_fund_list"
-                                v-if="type_of_pay.id_group===is_active_shared_cat"
+                                v-if="type_of_pay.id_group===groupId"
                                 v-bind:value="type_of_pay.id_fund">
                             {{ type_of_pay.name_fund }}
                         </option>
@@ -43,7 +42,7 @@
                         </option>
                     </select>
                 </div>
-                <hr/>
+                <hr>
                 <div>
                     <label>Choose type of pay:</label>
                     <select v-model="type_of_pay" class="form-control">
@@ -88,7 +87,6 @@
 
 <script>
     import axios from 'axios';
-
     export default {
         name: "spending_history",
         data() {
@@ -98,14 +96,13 @@
                 group_list: [],
                 shared_list: [],
                 shared_fund_list: [],
-                group: null,
+                groupId: null,
                 category: null,
                 type_of_pay: null,
                 value: null,
-                date: null,
+                date: new Date().toJSON().slice(0,10),
                 comment: null,
-                is_active_shared_cat: null,
-                is_shared: null,
+                is_shared: false,
             }
         },
         computed: {
@@ -117,13 +114,6 @@
                         this.value != null &&
                         this.date != null;
                     return result;
-                }
-            },
-            isSharedSpending: {
-                get: function () {
-                    var result =
-                        this.group = this.is_active_shared_cat;
-                    return result
                 }
             }
         },
@@ -184,13 +174,13 @@
                 }).then(response => {
                     this.reply = response.data;
                     alert(this.reply);
-                    this.$router.go('/Spendings/')
+                    this.$router.go('/spendings/add/')
                 }).catch(error => {
                     alert(error.response.data)
                 })
             },
             reset() {
-                this.group = null;
+                this.groupId = null;
                 this.type_of_pay = null;
                 this.value = null;
                 this.date = null;

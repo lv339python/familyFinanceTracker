@@ -22,6 +22,15 @@ class SpendingCategories(models.Model):
     icon = models.CharField(max_length=30)
     owner = models.ForeignKey(UserProfile, on_delete=True)
     is_shared = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    def update(self, is_active=None):
+        """
+        Method which changes an information.
+        """
+        if is_active:
+            self.is_active = is_active
+        self.save()
 
     @staticmethod
     def get_by_id(spending_category_id):
@@ -34,23 +43,38 @@ class SpendingCategories(models.Model):
 
         """
         try:
-            return SpendingCategories.objects.get(pk=spending_category_id)
+            return SpendingCategories.objects.filter(pk=spending_category_id)
         except (SpendingCategories.DoesNotExist, ValueError):
             return None
 
     @staticmethod
-    def filter_by_user(user, is_shared=False):
+    def filter_by_id(spending_category_id, is_active=True):
+        """
+        Args:
+            spending_category_id (int): The first parameter.
+            is_active(bool): which category is active.
+        Returns:
+            SpendingCategories object if database contain spending
+            category with id, None otherwise.
+
+        """
+        return SpendingCategories.objects.filter(pk=spending_category_id, is_active=is_active)
+
+
+    @staticmethod
+    def filter_by_user(user, is_shared=False, is_active=True):
         """
         Args:
             user (UserProfile): user of category,
             is_shared(bool): which category we need(shared or not shared).
+            is_active(bool): which category is active.
         Returns:
             SpendingCategories object if database contain category for this user
             and is_shared value, None otherwise.
 
 
         """
-        return SpendingCategories.objects.filter(owner=user, is_shared=is_shared)
+        return SpendingCategories.objects.filter(owner=user, is_shared=is_shared, is_active=is_active)
 
     @staticmethod
     def filter_by_owner_name(owner, name):
