@@ -17,6 +17,8 @@ SET_KEYS_FUND_CREATE_DATA = {'name', 'icon'}
 SET_KEYS_FUND_GOAL = {'value', 'name', 'icon'}
 SET_KEYS_GROUP_CREATE_DATA = {'name', 'icon'}
 KEYS_SET_ADD_USER_TO_GROUP = {'users_email', 'group_id', 'is_admin'}
+KEYS_SET_SHARED_FUND_FOR_GROUP = {'shared_fund', 'group_id'}
+KEYS_SET_SHARED_SPENDING_FOR_GROUP = {'shared_spending', 'group_id'}
 STR_MIN_LENGTH = 0
 STR_MAX_LENGTH = None
 
@@ -145,6 +147,7 @@ def input_fund_registration_validate(data):
         return True
     except (ValueError, AttributeError):
         return False
+
 
 def input_income_registration_validate(data):
     """
@@ -327,6 +330,8 @@ def is_valid_data_create_new_group(data):
     """
     if set(data.keys()) != SET_KEYS_GROUP_CREATE_DATA:
         return False
+    if not data['name']:
+        return False
     try:
         data['name'] = str(data['name'])
         return True
@@ -413,3 +418,37 @@ def date_parse(data):
 
     start_date = start_date - timedelta(hours=utc_difference)
     return start_date, finish_date
+
+
+def is_valid_data_shared_fund_to_group(data):
+    """validate data.
+        Args:
+            data (dict): contain group id and shared spending
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if set(data.keys()) != KEYS_SET_SHARED_FUND_FOR_GROUP:
+        return False
+    try:
+        data['group_id'] = int(data['group_id'])
+        data['shared_fund'] = int(data['shared_fund'])
+    except(ValueError, AttributeError):
+        return False
+    return True
+
+
+def is_valid_data_shared_spending_to_group(data):
+    """validate data.
+        Args:
+            data (dict): contain group id and shared spending
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if set(data.keys()) != KEYS_SET_SHARED_SPENDING_FOR_GROUP:
+        return False
+    try:
+        data['group_id'] = int(data['group_id'])
+        data['shared_spending'] = int(data['shared_spending'])
+    except(ValueError, AttributeError):
+        return False
+    return True

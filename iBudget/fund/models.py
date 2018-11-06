@@ -22,6 +22,7 @@ class FundCategories(models.Model):
     is_shared = models.BooleanField(default=False)
     owner = models.ForeignKey(UserProfile, on_delete=True)
 
+
     @staticmethod
     def filter_by_user(user, is_shared=False):
         """
