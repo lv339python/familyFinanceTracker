@@ -3,9 +3,9 @@
         <div class="wrapper">
             <div id="available_spendings" v-if="brand_new_user">
                 <p>You want to set limits by day or by month/year:</p>
-                <form>
-                    <input type="radio"> monthly/yearly limits
-                    <input type="radio"> daily limits
+                <form v-on:change="set_date_choice">
+                    <input type="radio" value="v1"> monthly/yearly limits
+                    <input type="radio" value="v2"> daily limits
 
                 </form>
             </div>
@@ -30,10 +30,10 @@
                     <input v-model="value" type="number" required>
                     </input>
                 </form>
-            </div>
-            <p>
+                <p>
                 <button v-on:click='set_limit'>set</button>
-            </p>
+                </p>
+            </div>
             <p>{{reply}}</p>
             <p>
                 <button v-show='isShown' v-on:click="reRender">OK</button>
@@ -93,6 +93,9 @@
                 if (this.isShown = true) {
                     this.$router.go('api/v1/spending/admin/set_limit/');
                 }
+            },
+            set_date_choice: function (event) {
+                alert('test')
             }
 
         }
