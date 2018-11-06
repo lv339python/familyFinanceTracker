@@ -2,14 +2,14 @@
 This module provides function for validations.
 """
 from decimal import Decimal, DecimalException
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.dateparse import parse_date
 
-SET_KEYS_REG_DATA = {"email", "password", "confirm_password"}
+SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
 SET_KEYS_INCOME_REG_DATA = {'inc_category', 'fund_category', 'value'}
@@ -178,7 +178,7 @@ def date_range_validate(data):
     return data
 
 
-def is_valid_data_individual_limit(data):
+def is_valid_data_individual_limit_fix(data):
     """
     Function that provides data validation for defining new limitation.
     :type data: dict
@@ -197,6 +197,28 @@ def is_valid_data_individual_limit(data):
                 data['year'] >= date.today().year and
                 data['value'] > 0)
 
+    except (ValidationError, AttributeError):
+        return False
+
+
+def is_valid_data_individual_limit_arb(data):
+    """
+    Function that provides data validation for defining new limitation.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != {'spending_id', 'start_date', 'finish_date', 'UTC', 'value'}:
+        return False
+    try:
+        data['spending_id'] = int(data['spending_id'])
+        data['start_date'] = parse_date(data['start_date'])
+        data['finish_date'] = parse_date(data['finish_date'])
+        int(data['UTC'])
+        data['value'] = round(float(data['value']), 2)
+        return (data['spending_id'] > 0 and
+                data['start_date'] <= data['finish_date'] and
+                data['value'] > 0)
     except (ValidationError, AttributeError):
         return False
 
@@ -372,3 +394,23 @@ def is_valid_data_add_user_to_group(data):
     except(ValueError, AttributeError):
         return False
     return True
+
+
+def date_parse(data):
+    """Parse dates.
+        Args:
+            data (dict): contain some dictionary
+        Returns:
+            (dict): parsed values
+    """
+    start_date = parse_date(data['start_date'])
+    finish_date = parse_date(data['finish_date'])
+    utc_difference = int(data['UTC'])
+
+    if not start_date:
+        start_date = date(date.today().year, date.today().month, 1)
+    if not finish_date:
+        finish_date = date.today()
+
+    start_date = start_date - timedelta(hours=utc_difference)
+    return start_date, finish_date
