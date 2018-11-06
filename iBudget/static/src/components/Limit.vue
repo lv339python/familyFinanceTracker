@@ -2,6 +2,12 @@
     <div id="limit">
         <div class="wrapper">
             <div id="available_spendings">
+                <p>Choose limits by date or by month/year:</p>
+                <form>
+                    <input type="radio"> monthly/yearly limits
+                    <input type="radio"> daily limits
+
+                </form>
                 <p>You can set limits for the following group spendings:
                     <select v-model="spending_category" required>
                         <option v-for="item in list_of_spendings">{{item}}</option>

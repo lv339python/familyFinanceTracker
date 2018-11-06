@@ -101,7 +101,6 @@ def login_validate(data):
     :return: `True` if data is valid and `None` if it is not.
     :rtype: bool
     """
-
     if not data:
         return False
     if not required_keys_validator(data, ['email', 'password']):
