@@ -139,7 +139,7 @@
                     url: '/api/v1/authentication/login/',
                     data: {
                         'email': this.username,
-                        'password': this.password,
+                        'password': this.password
                     }
 
                 }).then(response => {
