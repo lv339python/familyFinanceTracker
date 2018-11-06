@@ -1,9 +1,11 @@
 """this module provides information about a customer's amount of incomes from the beginning of this
 month till today and let a use track his incomes for the chose period of time
 """
+import io
 import json
-from datetime import datetime
 import xlsxwriter
+import datetime
+
 from decimal import Decimal
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
@@ -11,9 +13,27 @@ from django.utils.dateparse import parse_datetime
 from django.core.exceptions import ValidationError
 from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, FundCategories, IncomeHistory
+from django.http import StreamingHttpResponse
 
 
 
+def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
+    incomes_funds = IncomeHistory.objects.filter(date__range=(date_start, date_end),
+                                                 income_id__owner_id=user_id)
+    incomes_funds_ids = [
+        {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
+         'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
+
+    for counter in enumerate(incomes_funds_ids):
+        incomes_funds_ids[counter[0]].update({'income': IncomeCategories.objects.get(
+            id=incomes_funds_ids[counter[0]]['income']).name})
+        incomes_funds_ids[counter[0]].update(
+            {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
+    set_for_chart = set()
+    for counter in enumerate(incomes_funds_ids):
+        set_for_chart.add(incomes_funds_ids[counter[0]]['fund'])
+    incomes_funds_ids.append(list(set_for_chart))
+    return incomes_funds_ids
 
 @require_http_methods(['GET'])
 def show_total(request):
@@ -43,30 +63,20 @@ def track(request):
     """this function accepts dates and returns the list of incomes with the funds they went to,
     amounts, dates and comments
     """
-    content = request.body
-    content = json.loads(content)
+
+    content = json.loads(request.body)
     user_id = request.user
     if len(content) <= 1:
         return HttpResponse('You did not choose any dates or you chose only one date out of two',
                             status=400)
     time_diff = datetime.timedelta(hours=2)
-    start_to_parse = content['start']
-    end_to_parse = content['end']
-    parsed_start = parse_datetime(start_to_parse) - time_diff
-    parsed_end = parse_datetime(end_to_parse) - time_diff
-    incomes_funds = IncomeHistory.objects.filter(date__range=(parsed_start, parsed_end),
-                                                 income_id__owner_id=user_id)
-    incomes_funds_ids = [
-        {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
-         'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
+    parsed_start = parse_datetime(content['start']) - time_diff
+    parsed_end = parse_datetime(content['end']) - time_diff
+    incomes_funds_ids = get_incomes_funds_ids(user_id=user_id,
+                                              date_start=parsed_start,
+                                              date_end=parsed_end,
+                                              time_diff=time_diff)
 
-    for counter in enumerate(incomes_funds_ids):
-        incomes_funds_ids[counter[0]].update(
-            {'income': IncomeCategories.objects.get(id=incomes_funds_ids[counter[0]]['income'])
-                       .name})
-        incomes_funds_ids[counter[0]].update(
-            {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
-    print(incomes_funds_ids)
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 @require_http_methods(["POST"])
@@ -106,19 +116,26 @@ def register_income(request):
         return HttpResponse('Check all required fields', status=406)
     return HttpResponse('Your income was successfully registered', status=201)
 
-def create_xlsx():
-    sample=[{'income': 'premiya', 'fund': 'something', 'date': '2018-10-29', 'amount': 1.2345, 'comment': '1'}, {'income': 'zarplata', 'fund': 'privat', 'date': '2018-10-31', 'amount': 100.0, 'comment': 'bilo delo'}, {'income': 'premiya',
-    'fund': 'privat', 'date': '2018-10-29', 'amount': 5.0, 'comment': 'd'}, {'income': 'premiya', 'fund': 'kredo', 'date': '2018-10-28', 'amount': 123.0, 'comment': 'd'}]
+def create_xlsx(request):
 
+    output = io.BytesIO()
 
+    user = request.user
+    start_date = parse_datetime(request.GET['start_date']+"T00:00:00")
+    finish_date = parse_datetime(request.GET['finish_date']+"T23:59:59")
+    utc_difference = datetime.timedelta(hours=2)
 
-    workbook = xlsxwriter.Workbook(r'demo.xlsx')
-    worksheet = workbook.add_worksheet('Income_history')
+    sample = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
+    del sample[-1]
+    print(sample)
+    workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+    worksheet = workbook.add_worksheet('history')
 
-    head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center'})
-    value_format = workbook.add_format({'num_format': '$#,##0'})
-    date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
-    worksheet.set_row(1, 20, head_format)
+    head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center', 'border': 5})
+    value_format = workbook.add_format({'num_format': '$#.#0', 'align': 'center', 'border': 1})
+    date_format = workbook.add_format({'num_format': 'mmmm d yyyy', 'align': 'center', 'border': 1})
+    cell_format = workbook.add_format({'align': 'center', 'border': 1})
+    worksheet.set_column(0, 5, 20)
 
     head_row, head_col = 1, 1
     row, col = 2, 1
@@ -126,17 +143,27 @@ def create_xlsx():
         worksheet.write(head_row, head_col, i, head_format)
         head_col += 1
 
-    for dicty in sample:
-        for i in dicty:
+    for history_dict in sample:
+        for i in history_dict:
             if i == 'amount':
-                worksheet.write_number(row, col, dicty[i], value_format)
+                worksheet.write_number(row, col, history_dict[i], value_format)
             elif i == 'date':
-                date = datetime.strptime(dicty[i], "%Y-%m-%d")
+                date = datetime.datetime.strptime(history_dict[i], "%Y-%m-%d")
                 worksheet.write_datetime(row, col, date, date_format)
             else:
-                worksheet.write(row, col, dicty[i])
+                worksheet.write(row, col, history_dict[i], cell_format)
             col += 1
         col = 1
         row += 1
 
     workbook.close()
+
+    output.seek(0)
+
+    filename = 'Income_history.xlsx'
+    response = StreamingHttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    return response

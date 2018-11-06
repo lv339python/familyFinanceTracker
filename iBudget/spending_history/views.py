@@ -189,11 +189,12 @@ def create_xlsx(request):
         finish_date = date.today()
 
     start_date = start_date - timedelta(hours=utc_difference)
+
     sample = create_spending_history_individual(user, start_date, finish_date,  utc_difference)
     sample1 = create_spending_history_for_admin(user, start_date, finish_date, utc_difference)
 
     workbook = xlsxwriter.Workbook(output)
-    worksheet = workbook.add_worksheet('Spending_history')
+    worksheet = workbook.add_worksheet('history')
 
     head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center', 'border': 5})
     value_format = workbook.add_format({'num_format': '$#.#0', 'align': 'center', 'border': 1})
@@ -239,7 +240,7 @@ def create_xlsx(request):
 
     output.seek(0)
 
-    filename = 'django_simple.xlsx'
+    filename = 'Spending_history.xlsx'
     response = StreamingHttpResponse(
         output,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
