@@ -19,6 +19,19 @@ def is_user_sys_admin(user):
     return False
 
 
+def users_email_for_group(group_id):
+    """
+    Checks user's email for group
+    :param group_id:foreign key User ID
+    :return:list list_users_email
+    """
+    group = UsersInGroups.objects.filter(group=group_id)
+    list_users_email = []
+    for item in group:
+        list_users_email.append(item.user)
+    return list_users_email
+
+
 def groups_for_user(user):
 
     """

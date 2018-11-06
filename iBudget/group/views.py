@@ -5,17 +5,21 @@ import json
 
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
-
+from fund.models import FundCategories
+from group.models import SpendingCategories, SharedSpendingCategories, SharedFunds
 from authentication.models import UserProfile
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
 from utils.aws_helper import AwsService
 from utils.get_role import groups_for_user, \
     is_user_admin_group, \
-    is_user_in_group
+    is_user_in_group, \
+    users_email_for_group
 from utils.transaction import save_new_group
 from utils.validators import is_valid_data_create_new_group, \
-    is_valid_data_add_user_to_group
+    is_valid_data_add_user_to_group, \
+    is_valid_data_shared_spending_to_group, \
+    is_valid_data_shared_fund_to_group
 from .models import Group, UsersInGroups
 
 
@@ -82,6 +86,34 @@ def show_users_group_data(request):
                            'count': count})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+def show_users_in_group(request):
+    """Handling request for creating of group's users list.
+    Args:
+        request (HttpRequest): request from server which ask list of users for group.
+    Returns:
+        HttpResponse object.
+    """
+    users_in_group = []
+    user = request.user
+    user_role = None
+    if user:
+        for item in groups_for_user(user):
+            group = Group.get_group_by_id(item)
+            for user in users_email_for_group(group.id):
+                if group.owner == user:
+                    user_role = "Owner"
+                else:
+                    if is_user_admin_group(item, user):
+                        user_role = "Admin"
+                    else:
+                        user_role = "Member"
+                users_in_group.append({'email': user.email,
+                                       'user_role': user_role,
+                                       'group_id': group.id})
+        return JsonResponse(users_in_group, status=200, safe=False)
+    return HttpResponse(status=400)
 
 
 def groups_balance(request):
@@ -194,4 +226,76 @@ def add_new_users_to_group(request):
             new_user.save()
         except(AttributeError, ValueError):
             return HttpResponse(status=400)
+    return HttpResponse(status=201)
+
+
+@require_http_methods(["POST"])
+def add_shared_spending_to_group(request):
+    """Handling request for adding new shared SpendingCategories to group.
+    Args:
+        request (HttpRequest): request from server which contain
+        shared_spending and group_id
+    Returns:
+        HttpResponse object.
+    """
+    user = request.user
+    data = json.loads(request.body)
+    shared_category = data["shared_spending"]
+    group_id = data["group_id"]
+    spending = SpendingCategories.get_by_id(shared_category)
+    group = Group.get_group_by_id(group_id)
+    if not is_valid_data_shared_spending_to_group(data):
+        return HttpResponse(status=400)
+    if not is_user_admin_group(group_id, user) and not spending.owner == user:
+        return HttpResponse(status=409)
+    if not spending and not group:
+        return HttpResponse(status=406)
+    if SharedSpendingCategories.get_by_spending_id(spending):
+        return HttpResponse(status=409)
+    new_shared_category = SharedSpendingCategories(
+        group=group,
+        spending_categories=spending
+    )
+    spending.is_shared = True
+    try:
+        new_shared_category.save()
+        spending.save()
+    except(AttributeError, ValueError):
+        return HttpResponse(status=400)
+    return HttpResponse(status=201)
+
+
+@require_http_methods(["POST"])
+def add_shared_fund_to_group(request):
+    """Handling request for adding new shared SpendingCategories to group.
+    Args:
+        request (HttpRequest): request from server which contain
+        shared_spending and group_id
+    Returns:
+        HttpResponse object.
+    """
+    user = request.user
+    data = json.loads(request.body)
+    shared_category = data["shared_fund"]
+    group_id = data["group_id"]
+    fund = FundCategories.get_by_id(shared_category)
+    group = Group.get_group_by_id(group_id)
+    if not is_valid_data_shared_fund_to_group(data):
+        return HttpResponse(status=400)
+    if not is_user_admin_group(group_id, user) and not fund.owner == user:
+        return HttpResponse(status=409)
+    if not fund and not group:
+        return HttpResponse(status=406)
+    if SharedFunds.get_by_fund(fund):
+        return HttpResponse(status=409)
+    new_shared_fund = SharedFunds(
+        group=group,
+        fund=fund
+    )
+    fund.is_shared = True
+    try:
+        new_shared_fund.save()
+        fund.save()
+    except(AttributeError, ValueError):
+        return HttpResponse(status=400)
     return HttpResponse(status=201)

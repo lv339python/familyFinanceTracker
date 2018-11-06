@@ -139,6 +139,7 @@ def users_shared_fund(request):
         return JsonResponse(users_fund, status=200, safe=False)
     return JsonResponse({}, status=400)
 
+
 @require_http_methods(["POST"])
 def create_new_fund(request):
     """Handling request for creating of new fund category.
