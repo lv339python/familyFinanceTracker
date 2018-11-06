@@ -1,22 +1,21 @@
 <template>
     <div id="limit">
         <div class="wrapper">
-            <div id="available_spendings">
-                <p>Choose limits by date or by month/year:</p>
+            <div id="available_spendings" v-if="brand_new_user">
+                <p>You want to set limits by day or by month/year:</p>
                 <form>
                     <input type="radio"> monthly/yearly limits
                     <input type="radio"> daily limits
 
                 </form>
+            </div>
+
+            <div id="limit values" v-if="!brand_new_user">
                 <p>You can set limits for the following group spendings:
                     <select v-model="spending_category" required>
                         <option v-for="item in list_of_spendings">{{item}}</option>
                     </select>
                 </p>
-
-            </div>
-
-            <div id="limit values">
                 <form>
                     <p>Start date:</p>
                     <input v-model="start_date" type="date" placeholder="yyyy-mm-dd"
@@ -57,7 +56,8 @@
                 value: '',
                 spending_category: '',
                 reply: '',
-                isShown: false
+                isShown: false,
+                brand_new_user: true
             }
         },
         created() {
