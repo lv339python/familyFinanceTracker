@@ -168,23 +168,20 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
 def create_xlsx(request):
 
     output = io.BytesIO()
-    print(request)
+
     user = request.user
-    start_date = request.GET['start_date']
-    print(start_date)
+    start_date = parse_date(request.GET['start_date'])
     finish_date = parse_date(request.GET['finish_date'])
+    utc_difference = int(request.GET['UTC'])
     # data = json.loads(request.body)
     # if not is_valid_data_spending_history(data):
     #     return HttpResponse(status=400)
     # start_date = parse_date(data['start_date'])
     # finish_date = parse_date(data['finish_date'])
     # utc_difference = int(data['UTC'])
-    # start_date = datetime(2017, 9, 1)
-    # finish_date = datetime(2019, 9, 1)
-    utc_difference = int(request.GET['utc'])
 
     if start_date > finish_date:
-        return JsonResponse({}, status=400)
+        return HttpResponse('What the hell?', status=400)
 
     if not start_date:
         start_date = date(date.today().year, date.today().month, 1)
@@ -195,7 +192,7 @@ def create_xlsx(request):
     sample = create_spending_history_individual(user, start_date, finish_date,  utc_difference)
     sample1 = create_spending_history_for_admin(user, start_date, finish_date, utc_difference)
 
-    workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+    workbook = xlsxwriter.Workbook(output)
     worksheet = workbook.add_worksheet('Spending_history')
 
     head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center', 'border': 5})
@@ -242,9 +239,6 @@ def create_xlsx(request):
 
     output.seek(0)
 
-    # xlsx_data = output.getvalue()
-
-    print(output.getvalue())
     filename = 'django_simple.xlsx'
     response = StreamingHttpResponse(
         output,

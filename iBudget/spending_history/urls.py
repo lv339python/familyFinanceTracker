@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import register_spending, create_spending_history, get_month_spending, \
-    get_spending_chart,create_xlsx
+    get_spending_chart, create_xlsx
 
 urlpatterns = [
     path('register_spending/', register_spending),
