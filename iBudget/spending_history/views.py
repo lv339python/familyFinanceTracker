@@ -174,12 +174,6 @@ def create_xlsx(request):
     start_date = parse_date(request.GET['start_date'])
     finish_date = parse_date(request.GET['finish_date'])
     utc_difference = int(request.GET['UTC'])
-    # data = json.loads(request.body)
-    # if not is_valid_data_spending_history(data):
-    #     return HttpResponse(status=400)
-    # start_date = parse_date(data['start_date'])
-    # finish_date = parse_date(data['finish_date'])
-    # utc_difference = int(data['UTC'])
 
     if start_date > finish_date:
         return HttpResponse('What the hell?', status=400)
@@ -205,37 +199,38 @@ def create_xlsx(request):
 
     head_row, head_col = 1, 1
     row, col = 2, 1
-    worksheet.write(head_row, head_col, 'Individual spending', head_format)
-    for i in sample[0]['history'][0]:
-        worksheet.write(head_row, head_col+1, i, head_format)
-        head_col += 1
 
-    for dicty in sample:
-        for history_dict in dicty['history']:
-            worksheet.write(row, col, dicty['spending'], cell_format)
-            worksheet.write_number(row, col + 1, history_dict['value'], value_format)
-            worksheet.write(row, col + 2, history_dict['date'], date_format)
-            worksheet.write(row, col + 3, history_dict['fund'], cell_format)
-            row += 1
-
-    head_row, head_col = row + 1, 1
-    worksheet.write(head_row, head_col, 'Group spending', head_format)
-    for i in sample1[0]['history'][0]:
-        if i == 'member':
-            worksheet.write(head_row, head_col - 1, 'Member', head_format)
-        else:
-            worksheet.write(head_row, head_col + 1, i, head_format)
+    if sample:
+        worksheet.write(head_row, head_col, 'Individual spending', head_format)
+        for i in sample[0]['history'][0]:
+            worksheet.write(head_row, head_col+1, i, head_format)
             head_col += 1
 
-    row += 2
-    for dicty in sample1:
-        for history_dict in dicty['history']:
-            worksheet.write(row, col-1, history_dict['member'], cell_format)
-            worksheet.write(row, col, dicty['spending'], cell_format)
-            worksheet.write_number(row, col + 1, history_dict['value'], value_format)
-            worksheet.write(row, col + 2, history_dict['date'], date_format)
-            worksheet.write(row, col + 3, history_dict['fund'], cell_format)
-            row += 1
+        for dicty in sample:
+            for history_dict in dicty['history']:
+                worksheet.write(row, col, dicty['spending'], cell_format)
+                worksheet.write_number(row, col + 1, history_dict['value'], value_format)
+                worksheet.write(row, col + 2, history_dict['date'], date_format)
+                worksheet.write(row, col + 3, history_dict['fund'], cell_format)
+                row += 1
+    if sample1:
+        head_row, head_col = row + 1, 1
+        worksheet.write(head_row, head_col, 'Group spending', head_format)
+        for i in sample1[0]['history'][0]:
+            if i == 'member':
+                worksheet.write(head_row, head_col - 1, 'Member', head_format)
+            else:
+                worksheet.write(head_row, head_col + 1, i, head_format)
+                head_col += 1
+        row += 2
+        for dicty in sample1:
+            for history_dict in dicty['history']:
+                worksheet.write(row, col-1, history_dict['member'], cell_format)
+                worksheet.write(row, col, dicty['spending'], cell_format)
+                worksheet.write_number(row, col + 1, history_dict['value'], value_format)
+                worksheet.write(row, col + 2, history_dict['date'], date_format)
+                worksheet.write(row, col + 3, history_dict['fund'], cell_format)
+                row += 1
 
     workbook.close()
 
@@ -267,22 +262,35 @@ def create_csv(request):
     sample = create_spending_history_individual(user, start_date, finish_date, utc_difference)
     sample1 = create_spending_history_for_admin(user, start_date, finish_date, utc_difference)
 
-    print(sample, sample1)
+    output = io.StringIO()
 
-    buffer = io.StringIO()
+    if sample1:
+        headers = ['spending', 'group']
+        [headers.append(i) for i in sample1[0]['history'][0]]
+    elif sample:
+        headers = ['spending']
+        [headers.append(i) for i in sample[0]['history'][0]]
+    else:
+        headers = []
 
-    headers = ['spending']
-    [headers.append(i) for i in sample[0]['history'][0]]
-
-    writer = csv.DictWriter(buffer, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
+    writer = csv.DictWriter(output, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
     writer.writeheader()
 
-    for dicty in sample:
+    if sample:
+        for dicty in sample:
+            for i in dicty['history']:
+                i['spending'] = dicty['spending']
+            writer.writerows(dicty['history'])
 
-        writer.writerows(dicty['history'])
+    if sample1:
+        for dicty in sample1:
+            for i in dicty['history']:
+                i['spending'] = dicty['spending'].split('/')[0]
+                i['group'] = dicty['spending'].split('/')[1]
+            writer.writerows(dicty['history'])
 
-    buffer.seek(0)
-    response = HttpResponse(buffer, content_type='text/csv')
+    output.seek(0)
+    response = HttpResponse(output, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=income_history.csv'
 
     return response

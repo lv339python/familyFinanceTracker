@@ -72,12 +72,18 @@
                 </div>
             </div>
         </div>
-        <!--<button class="btn btn-outline-warning" @click='createFile' :variant="secondary">Download history-->
-        <!--</button>-->
-            <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + 2'>
-                <button class="btn btn-outline-warning" :disabled="isCategory===false&&(finish_date<=start_date)" :variant="secondary">Download </button> </a>
-            <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + 2'>
-                    <button class="btn btn-outline-warning" :disabled="isCategory===false&&(finish_date<=start_date)" :variant="secondary">Download </button> </a>
+     <div class="download_buttons">
+        <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + 2'>
+            <button class="btn btn-outline-warning" :disabled="isCategory===false&&(finish_date<=start_date)"
+                    :variant="secondary">Download xlsx
+            </button>
+        </a>
+        <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + UTC'>
+            <button class="btn btn-outline-warning" :disabled="isCategory===false&&(finish_date<=start_date)"
+                    :variant="secondary">Download csv
+            </button>
+        </a>
+    </div>
     </div>
 </template>
 
@@ -103,7 +109,7 @@
                 spending_history_individual: {},
                 spending_history_admin: {},
                 errors: [],
-                UTC: null
+                UTC: UTC = -new Date().getTimezoneOffset() / 60
             }
         },
         created() {
@@ -143,44 +149,6 @@
                         this.errors.push(e)
                     })
             },
-            // createFile: function (event) {
-            //     axios({
-            //         method: 'get',
-            //         url: '/api/v1/spending_history/download_file/',
-            //         params: {
-            //             'start_date': this.start_date,
-            //             'finish_date': this.finish_date,
-            //             'UTC': UTC
-            //         },
-            //     })
-                    // .then((function(response) {
-                    //     // let blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
-                    //     //     url = window.URL.createObjectURL(blob);
-                    //     // window.open(url)
-                    //
-                    //     // function s2ab(s) {
-                    //     //   var buf = new ArrayBuffer(s.length);
-                    //     //   var view = new Uint8Array(buf);
-                    //     //   for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-                    //     //   return buf;
-                    //     // }
-                    //
-                    //     let blob = new Blob([response.data], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-                    //     let FileSaver = require('file-saver');
-                    //     FileSaver.saveAs(blob, "hello world.xlsx");
-                    //
-                    //     // let file = new File([response.data], "hello world.xlsx", {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-                    //     // FileSaver.saveAs(file);
-                    //
-                    //     // let link = document.createElement('a');
-                    //     // link.href = window.URL.createObjectURL(blob);
-                    //     // link.download = 'Report.xlsx';
-                    //     // link.click()
-                    // }))
-            //         .catch(e => {
-            //             this.errors.push(e)
-            //         })
-            // },
             blockButtom: function () {
                 this.isCategory = false;
                 this.listValues = [];

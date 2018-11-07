@@ -138,24 +138,25 @@ def create_xlsx(request):
     cell_format = workbook.add_format({'align': 'center', 'border': 1})
     worksheet.set_column(0, 5, 20)
 
-    head_row, head_col = 1, 1
-    row, col = 2, 1
-    for i in sample[0]:
-        worksheet.write(head_row, head_col, i, head_format)
-        head_col += 1
+    if sample:
+        head_row, head_col = 1, 1
+        row, col = 2, 1
+        for i in sample[0]:
+            worksheet.write(head_row, head_col, i, head_format)
+            head_col += 1
 
-    for history_dict in sample:
-        for i in history_dict:
-            if i == 'amount':
-                worksheet.write_number(row, col, history_dict[i], value_format)
-            elif i == 'date':
-                date = datetime.datetime.strptime(history_dict[i], "%Y-%m-%d")
-                worksheet.write_datetime(row, col, date, date_format)
-            else:
-                worksheet.write(row, col, history_dict[i], cell_format)
-            col += 1
-        col = 1
-        row += 1
+        for history_dict in sample:
+            for i in history_dict:
+                if i == 'amount':
+                    worksheet.write_number(row, col, history_dict[i], value_format)
+                elif i == 'date':
+                    date = datetime.datetime.strptime(history_dict[i], "%Y-%m-%d")
+                    worksheet.write_datetime(row, col, date, date_format)
+                else:
+                    worksheet.write(row, col, history_dict[i], cell_format)
+                col += 1
+            col = 1
+            row += 1
 
     workbook.close()
 
@@ -173,25 +174,28 @@ def create_xlsx(request):
 def create_csv(request):
 
     user = request.user
-    start_date = parse_datetime(request.GET['start_date'] + "T00:00:00")
-    finish_date = parse_datetime(request.GET['finish_date'] + "T23:59:59")
+    start_time, end_time = "T00:00:00", "T23:59:59"
+    start_date = parse_datetime(request.GET['start_date'] + start_time)
+    finish_date = parse_datetime(request.GET['finish_date'] + end_time)
     utc_difference = datetime.timedelta(hours=2)
 
     sample = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
     del sample[-1]
 
-    buffer = io.StringIO()
+    output = io.StringIO()
 
     headers = []
-    [headers.append(i) for i in sample[0]]
+    if sample:
+        [headers.append(i) for i in sample[0]]
 
-    writer = csv.DictWriter(buffer, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
+    writer = csv.DictWriter(output, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
     writer.writeheader()
 
-    writer.writerows(sample)
+    if sample:
+        writer.writerows(sample)
 
-    buffer.seek(0)
-    response = HttpResponse(buffer, content_type='text/csv')
+    output.seek(0)
+    response = HttpResponse(output, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=income_history.csv'
 
     return response

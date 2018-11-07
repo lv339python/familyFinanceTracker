@@ -45,12 +45,20 @@
                     <button v-on:click="reRender" v-if="shownResult">refresh</button>
                 </p>
             </div>
-                 <a v-bind:href='"/api/v1/income_history/download_xlsx_file/?start_date=" + this.start_date  + "&finish_date=" +  this.end_date
+            <div class="download_buttons">
+                <a v-bind:href='"/api/v1/income_history/download_xlsx_file/?start_date=" + this.start_date  + "&finish_date=" +  this.end_date
                   + "&UTC=" + 2'>
-                <button class="btn btn-outline-warning" :disabled="list_with_incomes&&(end_date<=start_date)" :variant="secondary">Download </button> </a>
+                    <button class="btn btn-outline-warning" :disabled="list_with_incomes&&(end_date<=start_date)"
+                            :variant="secondary">Download xlsx
+                    </button>
+                </a>
                 <a v-bind:href='"/api/v1/income_history/download_csv_file/?start_date=" + this.start_date  + "&finish_date=" +  this.end_date
                   + "&UTC=" + 2'>
-                <button class="btn btn-outline-warning" :disabled="list_with_incomes&&(end_date<=start_date)" :variant="secondary">Download </button> </a>
+                    <button class="btn btn-outline-warning" :disabled="list_with_incomes&&(end_date<=start_date)"
+                            :variant="secondary">Download csv
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 </template>
