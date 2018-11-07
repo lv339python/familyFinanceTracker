@@ -49,9 +49,13 @@
                             <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
                         </div>
                   </b-tab>
-                  <b-tab title="Shared fund and spending categories">
-                        <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
-                        <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
+                  <b-tab title="Shared fund">
+                      <div v-for="fund in shared_fund_list" v-if="group_index===fund.id_group"> {{ fund.name_fund }} </div>
+                      <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
+                  </b-tab>
+                  <b-tab title="Shared spending categories">
+                      <div v-for="spend in shared_spending_list" v-if="group_index===spend.id_group"> {{spend.name_cat }} </div>
+                      <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
                   </b-tab>
             </b-tabs>
         </div>
@@ -75,7 +79,9 @@
                 pageNumber: 0,
                 size:5,
                 group_id: null,
-                users_in_group: []
+                users_in_group: [],
+                shared_fund_list: [],
+                shared_spending_list: []
             }
         },
         components: {
@@ -117,6 +123,22 @@
                 axios.get('api/v1/group/show_users_in_group/')
                 .then(response => {
                     this.users_in_group = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                }),
+                axios.get('api/v1/fund/show_fund_by_group/')
+                .then(response => {
+                    // JSON responses are automatically parsed.
+                    this.shared_fund_list = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                }),
+                axios.get('api/v1/spending/show_spending_group/')
+                .then(response => {
+                    // JSON responses are automatically parsed.
+                    this.shared_spending_list = response.data
                 })
                 .catch(e => {
                     this.errors.push(e)
