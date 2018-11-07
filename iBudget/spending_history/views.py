@@ -223,6 +223,7 @@ def get_month_spending(request):
                             status=200)
     return HttpResponse('Bad Request', status=400)
 
+
 def create_spending_chart(user, start_date, finish_date):
     """Creating array of data for spending history chart.
         Args:
@@ -247,6 +248,7 @@ def create_spending_chart(user, start_date, finish_date):
             SpendingCategories.get_by_id(item)).values_list('value', flat=True))
         list_spending_value.append(total)
     return {'value': list_spending_value, 'name': list_spending_name}
+
 
 @require_http_methods(["POST"])
 def get_spending_chart(request):

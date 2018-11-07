@@ -19,6 +19,20 @@
                         <br/>
                         <b>Last Name: </b>{{user.last_name}}
                     </p>
+                    <b-btn class="mt-4" variant="outline-success" block @click="showInfo">Show more info</b-btn>
+
+                        <div v-show="more_info">
+
+                            <p class="card-text" v-for="item in custom">
+                                <br/>
+                                <b>Bio:</b>{{item.bio}}
+                                <br/>
+                                <b>Hobby:</b>{{item.hobby}}
+                                <br/>
+                                <b>Birthday:</b>{{item.birthday}}
+
+                            </p>
+                        </div>
                 </b-card>
             </div>
             <b-btn class="mt-3" variant="outline-danger" block @click="logout">Log Out</b-btn>
@@ -36,9 +50,14 @@
         data() {
             return {
                 user: null,
+                more_info:false,
+                custom: []
             }
         },
         methods: {
+            showInfo() {
+                this.more_info=!this.more_info
+            },
             showModal() {
                 this.$refs.myModalRef.show()
             },
@@ -64,6 +83,10 @@
                 })
                 .catch(e => {
                     this.errors.push(e)
+                })
+            axios.get('api/v1/custom_profile/show_custom_user_data')
+                .then(response => {
+                    this.custom = response.data
                 })
         }
     }

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'spending',
     'spending_history',
     'webpack_loader',
+    'custom_profile',
 ]
 
 MIDDLEWARE = [

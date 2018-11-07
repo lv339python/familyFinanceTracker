@@ -16,7 +16,7 @@ from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
 from utils.jwttoken import create_token, handle_token
 from utils.password_reseting import send_password_update_letter, send_successful_update_letter
 from utils.validators import login_validate, is_valid_registration_data, updating_email_validate, \
-    updating_password_validate
+    updating_password_validate, is_valid_password
 from .models import UserProfile
 
 TTL_SEND_PASSWORD_TOKEN = 60 * 60
@@ -182,4 +182,17 @@ def update_password(request, token=None):
                         one_time_token="")
             send_successful_update_letter(user)
             return HttpResponse(status=200)
+    return HttpResponse(status=400)
+
+
+@require_http_methods(["POST"])
+def change_password(request):
+    """Change_password UserProfile"""
+    user = request.user
+    data = json.loads(request.body)
+    if user.check_password(data['OldPassword']):
+        if is_valid_password(data['NewPassword']):
+            user.update(password=data['NewPassword'])
+            return HttpResponse(status=200)
+        return HttpResponse(status=400)
     return HttpResponse(status=400)

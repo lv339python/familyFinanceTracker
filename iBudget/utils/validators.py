@@ -17,6 +17,7 @@ SET_KEYS_FUND_CREATE_DATA = {'name', 'icon'}
 SET_KEYS_FUND_GOAL = {'value', 'name', 'icon'}
 SET_KEYS_GROUP_CREATE_DATA = {'name', 'icon'}
 KEYS_SET_ADD_USER_TO_GROUP = {'users_email', 'group_id', 'is_admin'}
+SET_KEYS_PERSONAL_REG_DATA = {'first_name', 'last_name', 'hobby', 'photo'}
 STR_MIN_LENGTH = 0
 STR_MAX_LENGTH = None
 
@@ -146,6 +147,7 @@ def input_fund_registration_validate(data):
         return True
     except (ValueError, AttributeError):
         return False
+
 
 def input_income_registration_validate(data):
     """
@@ -372,3 +374,23 @@ def is_valid_data_add_user_to_group(data):
     except(ValueError, AttributeError):
         return False
     return True
+
+
+def input_personal_details_validate(data):
+    """validate data.
+        Args:
+            data (dict): contain category, type of pay, sum, comment
+        Returns:
+            bool: The return value. True is data valid, else False.list([1,2,3])
+    """
+    if not set(data.keys()).difference(SET_KEYS_PERSONAL_REG_DATA):
+        return False
+    try:
+        data['first_name'] = str(data['first_name'])
+        data['last_name'] = str(data['last_name'])
+        data['hobby'] = str(data['hobby'])
+        data['photo'] = str(data['photo'])
+
+        return True
+    except (ValidationError, AttributeError):
+        return False
