@@ -14,7 +14,7 @@
                         <input type="checkbox" id="one" value="Admin" v-model="is_admin">
                         <br/>
                     </p>
-                    <b-btn class="mt-3" variant="outline-primary" block @click="saveData">Save</b-btn>
+                    <b-btn class="mt-3" variant="outline-primary" block @click="saveData" aria-disabled="true">Save</b-btn>
                     <b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Close</b-btn>
                 </b-card>
             </div>
@@ -34,13 +34,18 @@
                 email: null
             }
         },
-        props: ['group_id'],
+        props: ["group_id", "getData"],
         methods: {
             showModal() {
                 this.$refs.myModalRef.show();
             },
             hideModal() {
                 this.$refs.myModalRef.hide();
+                this.clearAll();
+            },
+            clearAll(){
+                this.email = null;
+                this.is_admin = false;
             },
             saveData: function (event) {
                 axios({
@@ -52,7 +57,9 @@
                         'is_admin': this.is_admin
                     }
                 }).then(response => {
-                    this.$router.go('/groups/')
+                    this.getData();
+                    this.hideModal();
+                    this.clearAll();
                 })
             },
         },
