@@ -22,6 +22,7 @@ class FundCategories(models.Model):
     is_shared = models.BooleanField(default=False)
     owner = models.ForeignKey(UserProfile, on_delete=True)
 
+
     @staticmethod
     def filter_by_user(user, is_shared=False):
         """
@@ -88,3 +89,14 @@ class FinancialGoal(models.Model):
             finish_date=finish_date,
             fund=fund)
         return goals
+
+    @staticmethod
+    def has_goals(fund_id):
+        """
+        Args:
+            fund_id(int): Current session fund`s id.
+        Returns:
+            'True' if goal exist, and return 'False' if it is not.
+
+        """
+        return FinancialGoal.objects.filter(fund=fund_id).exists()

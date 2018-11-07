@@ -43,13 +43,18 @@
         components: {
             'Icon_getter': Icon_getter
         },
-        props: ["tabName"],
+        props: ["tabName", "getData"],
         methods: {
             showModal() {
                 this.$refs.myModalRef.show();
             },
             hideModal() {
                 this.$refs.myModalRef.hide();
+                this.clearAll();
+            },
+            clearAll() {
+                this.name = null;
+                this.icon = null;
             },
             setData: function (event) {
                 axios({
@@ -58,9 +63,11 @@
                     data: {
                         'name': this.name,
                         'icon': this.selectedIcon
-                    }
+                    },
                 }).then(response => {
-                    this.$router.go('/group_registration/')
+                    this.hideModal();
+                    this.getData();
+                    this.clearAll();
                 })
             },
             onGet_name(data) {

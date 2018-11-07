@@ -7,12 +7,13 @@ from datetime import date, timedelta
 from decimal import Decimal
 
 from django.http import HttpResponse, JsonResponse
-from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_http_methods
 
 from group.models import SharedSpendingCategories, Group, UsersInGroups, SharedFunds
 from utils.get_role import groups_for_user, is_user_member_group, is_user_admin_group
-from utils.validators import input_spending_registration_validate, is_valid_data_spending_history
+from utils.spendings_limit_checker import compare_ind_spend_limit
+from utils.validators import input_spending_registration_validate, is_valid_data_spending_history, \
+    date_parse
 from .models import SpendingCategories, SpendingHistory, FundCategories
 
 
@@ -56,7 +57,9 @@ def register_spending(request):
         spending_history.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    return HttpResponse(f"You've just register spending {spending.name}.", status=201)
+    response = f"You've just register spending {spending.name}. \n" +\
+               compare_ind_spend_limit(user, data["date"], spending, value)
+    return HttpResponse(response, status=201)
 
 
 def create_spending_history_individual(user, start_date, finish_date, utc_difference):
@@ -175,19 +178,11 @@ def create_spending_history(request):
     data = json.loads(request.body)
     if not is_valid_data_spending_history(data):
         return HttpResponse(status=400)
-    start_date = parse_date(data['start_date'])
-    finish_date = parse_date(data['finish_date'])
-    utc_difference = int(data['UTC'])
 
+    start_date, finish_date = date_parse(data)
+    utc_difference = int(data['UTC'])
     if start_date > finish_date:
         return JsonResponse({}, status=400)
-
-    if not start_date:
-        start_date = date(date.today().year, date.today().month, 1)
-    if not finish_date:
-        finish_date = date.today()
-
-    start_date = start_date - timedelta(hours=utc_difference)
 
     if user:
         return JsonResponse({'individual':
@@ -263,18 +258,10 @@ def get_spending_chart(request):
     data = json.loads(request.body)
     if not is_valid_data_spending_history(data):
         return HttpResponse(status=400)
-    start_date = parse_date(data['start_date'])
-    finish_date = parse_date(data['finish_date'])
-    utc_difference = int(data['UTC'])
+    start_date, finish_date = date_parse(data)
 
     if start_date > finish_date:
         return JsonResponse({}, status=400)
-    if not start_date:
-        start_date = date(date.today().year, date.today().month, 1)
-    if not finish_date:
-        finish_date = date.today()
-
-    start_date = start_date - timedelta(hours=utc_difference)
 
     if user:
         return JsonResponse(create_spending_chart(user, start_date, finish_date),

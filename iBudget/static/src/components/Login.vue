@@ -55,7 +55,7 @@
             </div>
             <div class="d-block text-right">
             <b-button variant="primary"@click="hideModal">ok</b-button>
-
+            </div>
         </b-modal>
     </div>
 
@@ -139,8 +139,7 @@
                     url: '/api/v1/authentication/login/',
                     data: {
                         'email': this.username,
-                        'password': this.password,
-
+                        'password': this.password
                     }
 
                 }).then(response => {
