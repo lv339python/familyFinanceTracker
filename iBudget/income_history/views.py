@@ -122,13 +122,14 @@ def create_xlsx(request):
     output = io.BytesIO()
 
     user = request.user
-    start_date = parse_datetime(request.GET['start_date']+"T00:00:00")
-    finish_date = parse_datetime(request.GET['finish_date']+"T23:59:59")
-    utc_difference = datetime.timedelta(hours=2)
-    print(utc_difference)
+    start_time, end_time = "T00:00:00", "T23:59:59"
+    start_date = parse_datetime(request.GET['start_date'] + start_time)
+    finish_date = parse_datetime(request.GET['finish_date'] + end_time)
+    utc = int(request.GET['UTC'])
+    utc_difference = datetime.timedelta(hours=utc)
 
-    sample = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
-    del sample[-1]
+    income_history = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
+    del income_history[-1]
 
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet('history')
@@ -139,14 +140,14 @@ def create_xlsx(request):
     cell_format = workbook.add_format({'align': 'center', 'border': 1})
     worksheet.set_column(0, 5, 20)
 
-    if sample:
+    if income_history:
         head_row, head_col = 1, 1
         row, col = 2, 1
-        for i in sample[0]:
+        for i in income_history[0]:
             worksheet.write(head_row, head_col, i, head_format)
             head_col += 1
 
-        for history_dict in sample:
+        for history_dict in income_history:
             for i in history_dict:
                 if i == 'amount':
                     worksheet.write_number(row, col, history_dict[i], value_format)
@@ -178,22 +179,23 @@ def create_csv(request):
     start_time, end_time = "T00:00:00", "T23:59:59"
     start_date = parse_datetime(request.GET['start_date'] + start_time)
     finish_date = parse_datetime(request.GET['finish_date'] + end_time)
-    utc_difference = datetime.timedelta(hours=2)
+    utc = int(request.GET['UTC'])
+    utc_difference = datetime.timedelta(hours=utc)
 
-    sample = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
-    del sample[-1]
+    income_history = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
+    del income_history[-1]
 
     output = io.StringIO()
 
     headers = []
-    if sample:
-        [headers.append(i) for i in sample[0]]
+    if income_history:
+        [headers.append(i) for i in income_history[0]]
 
     writer = csv.DictWriter(output, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
     writer.writeheader()
 
-    if sample:
-        writer.writerows(sample)
+    if income_history:
+        writer.writerows(income_history)
 
     output.seek(0)
     response = HttpResponse(output, content_type='text/csv')
