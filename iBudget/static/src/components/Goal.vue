@@ -95,7 +95,7 @@
 <style>
  .goaltable wrapper{
       width: fit-content;
-        margin-top: auto;
+        margin:0 ;
         text-align: center;
  }
 
