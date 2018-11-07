@@ -5,6 +5,7 @@ import io
 import json
 import xlsxwriter
 import datetime
+import csv
 
 from decimal import Decimal
 from django.http import JsonResponse, HttpResponse
@@ -127,7 +128,7 @@ def create_xlsx(request):
 
     sample = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
     del sample[-1]
-    print(sample)
+
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet('history')
 
@@ -160,10 +161,37 @@ def create_xlsx(request):
 
     output.seek(0)
 
-    filename = 'Income_history.xlsx'
+    filename = 'income_history.xlsx'
     response = StreamingHttpResponse(
         output,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    return response
+
+
+def create_csv(request):
+
+    user = request.user
+    start_date = parse_datetime(request.GET['start_date'] + "T00:00:00")
+    finish_date = parse_datetime(request.GET['finish_date'] + "T23:59:59")
+    utc_difference = datetime.timedelta(hours=2)
+
+    sample = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
+    del sample[-1]
+
+    buffer = io.StringIO()
+
+    headers = []
+    [headers.append(i) for i in sample[0]]
+
+    writer = csv.DictWriter(buffer, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
+    writer.writeheader()
+
+    writer.writerows(sample)
+
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=income_history.csv'
+
     return response

@@ -5,6 +5,7 @@ This module provides functions for handling spending_history view.
 import io
 import json
 import xlsxwriter
+import csv
 from datetime import date, timedelta, datetime
 from decimal import Decimal
 
@@ -246,6 +247,44 @@ def create_xlsx(request):
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    return response
+
+def create_csv(request):
+
+    user = request.user
+    start_date = parse_date(request.GET['start_date'])
+    finish_date = parse_date(request.GET['finish_date'])
+    utc_difference = int(request.GET['UTC'])
+
+    if start_date > finish_date:
+        return HttpResponse('What the hell?', status=400)
+
+    if not start_date:
+        start_date = date(date.today().year, date.today().month, 1)
+    if not finish_date:
+        finish_date = date.today()
+
+    sample = create_spending_history_individual(user, start_date, finish_date, utc_difference)
+    sample1 = create_spending_history_for_admin(user, start_date, finish_date, utc_difference)
+
+    print(sample, sample1)
+
+    buffer = io.StringIO()
+
+    headers = ['spending']
+    [headers.append(i) for i in sample[0]['history'][0]]
+
+    writer = csv.DictWriter(buffer, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
+    writer.writeheader()
+
+    for dicty in sample:
+
+        writer.writerows(dicty['history'])
+
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=income_history.csv'
+
     return response
 
 @require_http_methods(["POST"])

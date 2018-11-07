@@ -74,8 +74,10 @@
         </div>
         <!--<button class="btn btn-outline-warning" @click='createFile' :variant="secondary">Download history-->
         <!--</button>-->
-            <a v-bind:href='"/api/v1/spending_history/download_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + 2'>
+            <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + 2'>
                 <button class="btn btn-outline-warning" :disabled="isCategory===false&&(finish_date<=start_date)" :variant="secondary">Download </button> </a>
+            <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + 2'>
+                    <button class="btn btn-outline-warning" :disabled="isCategory===false&&(finish_date<=start_date)" :variant="secondary">Download </button> </a>
     </div>
 </template>
 
