@@ -174,6 +174,7 @@ def create_xlsx(request):
     start_date = parse_date(request.GET['start_date'])
     finish_date = parse_date(request.GET['finish_date'])
     utc_difference = int(request.GET['UTC'])
+    print(utc_difference)
 
     if start_date > finish_date:
         return HttpResponse('What the hell?', status=400)

@@ -125,6 +125,7 @@ def create_xlsx(request):
     start_date = parse_datetime(request.GET['start_date']+"T00:00:00")
     finish_date = parse_datetime(request.GET['finish_date']+"T23:59:59")
     utc_difference = datetime.timedelta(hours=2)
+    print(utc_difference)
 
     sample = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
     del sample[-1]

@@ -73,12 +73,12 @@
             </div>
         </div>
      <div class="download_buttons">
-        <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + 2'>
+        <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
             <button class="btn btn-outline-warning" :disabled="isCategory===false&&(finish_date<=start_date)"
                     :variant="secondary">Download xlsx
             </button>
         </a>
-        <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + this.start_date + "&finish_date=" +  this.finish_date + "&UTC=" + UTC'>
+        <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
             <button class="btn btn-outline-warning" :disabled="isCategory===false&&(finish_date<=start_date)"
                     :variant="secondary">Download csv
             </button>
