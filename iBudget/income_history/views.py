@@ -3,18 +3,19 @@ month till today and let a use track his incomes for the chose period of time
 """
 import io
 import json
-import xlsxwriter
 import datetime
 import csv
-
 from decimal import Decimal
+
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_datetime
 from django.core.exceptions import ValidationError
+
 from utils.validators import input_income_registration_validate
+from utils.download_history_file import creating_empty_xlsx_file, \
+    file_streaming_response, income_date_parser
 from .models import IncomeCategories, FundCategories, IncomeHistory
-from django.http import StreamingHttpResponse
 
 
 def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
@@ -135,56 +136,42 @@ def create_xlsx(request):
     Returns:
         StreamingHttpResponse xlsx file.
     """
-    output = io.BytesIO()
 
-    user = request.user
-    start_date = parse_datetime(request.GET['start_date'])
-    finish_date = parse_datetime(request.GET['finish_date'])
-    utc = int(request.GET['UTC'])
-    utc_difference = datetime.timedelta(hours=utc)
+    date_dict = income_date_parser(request)
 
-    income_history = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
+    income_history = get_incomes_funds_ids(user_id=date_dict['user_id'],
+                                           date_start=date_dict['start_date'],
+                                           date_end=date_dict['finish_date'],
+                                           time_diff=date_dict['utc_difference'])
     del income_history[-1]
 
-    workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-    worksheet = workbook.add_worksheet('history')
-
-    head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center', 'border': 5})
-    value_format = workbook.add_format({'num_format': '$#.#0', 'align': 'center', 'border': 1})
-    date_format = workbook.add_format({'num_format': 'mmmm d yyyy', 'align': 'center', 'border': 1})
-    cell_format = workbook.add_format({'align': 'center', 'border': 1})
-    worksheet.set_column(0, 5, 20)
+    output, worksheet, workbook, formats_dict = creating_empty_xlsx_file()
 
     if income_history:
         head_row, head_col = 1, 1
         row, col = 2, 1
         for i in income_history[0]:
-            worksheet.write(head_row, head_col, i, head_format)
+            worksheet.write(head_row, head_col, i, formats_dict['head_format'])
             head_col += 1
 
         for history_dict in income_history:
             for i in history_dict:
                 if i == 'amount':
-                    worksheet.write_number(row, col, history_dict[i], value_format)
+                    worksheet.write_number(row, col, history_dict[i], formats_dict['value_format'])
                 elif i == 'date':
                     date = datetime.datetime.strptime(history_dict[i], "%Y-%m-%d")
-                    worksheet.write_datetime(row, col, date, date_format)
+                    worksheet.write_datetime(row, col, date, formats_dict['date_format'])
                 else:
-                    worksheet.write(row, col, history_dict[i], cell_format)
+                    worksheet.write(row, col, history_dict[i], formats_dict['cell_format'])
                 col += 1
             col = 1
             row += 1
 
     workbook.close()
 
-    output.seek(0)
-
-    filename = 'income_history.xlsx'
-    response = StreamingHttpResponse(
-        output,
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    response = file_streaming_response \
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+         'income_history.xlsx', output)
     return response
 
 
@@ -197,20 +184,20 @@ def create_csv(request):
     Returns:
         StreamingHttpResponse csv file.
     """
-    user = request.user
-    start_date = parse_datetime(request.GET['start_date'])
-    finish_date = parse_datetime(request.GET['finish_date'])
-    utc = int(request.GET['UTC'])
-    utc_difference = datetime.timedelta(hours=utc)
+    date_dict = income_date_parser(request)
 
-    income_history = get_incomes_funds_ids(user, start_date, finish_date, utc_difference)
+    income_history = get_incomes_funds_ids(user_id=date_dict['user_id'],
+                                           date_start=date_dict['start_date'],
+                                           date_end=date_dict['finish_date'],
+                                           time_diff=date_dict['utc_difference'])
     del income_history[-1]
 
     output = io.StringIO()
 
     headers = []
     if income_history:
-        [headers.append(i) for i in income_history[0]]
+        for i in income_history[0]:
+            headers.append(i)
 
     writer = csv.DictWriter(output, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
     writer.writeheader()
@@ -218,8 +205,5 @@ def create_csv(request):
     if income_history:
         writer.writerows(income_history)
 
-    output.seek(0)
-    response = HttpResponse(output, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=income_history.csv'
-
+    response = file_streaming_response('text/csv', 'income_history.csv', output)
     return response

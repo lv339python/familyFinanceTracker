@@ -4,22 +4,21 @@ This module provides functions for handling spending_history view.
 
 import io
 import json
-import xlsxwriter
 import csv
 from datetime import date, timedelta
 from decimal import Decimal
 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-
 from group.models import SharedSpendingCategories, Group, UsersInGroups, SharedFunds
+
 from utils.get_role import groups_for_user, is_user_member_group, is_user_admin_group
 from utils.spendings_limit_checker import compare_ind_spend_limit
 from utils.validators import input_spending_registration_validate, is_valid_data_spending_history, \
     date_parse
-from django.utils.dateparse import parse_date
+from utils.download_history_file import creating_empty_xlsx_file, \
+    file_streaming_response, spending_date_parser
 from .models import SpendingCategories, SpendingHistory, FundCategories
-from django.http import StreamingHttpResponse
 
 @require_http_methods(["POST"])
 def register_spending(request):
@@ -177,78 +176,65 @@ def create_xlsx(request):
     Returns:
         StreamingHttpResponse xlsx file.
     """
-    output = io.BytesIO()
 
-    user = request.user
-    start_date = parse_date(request.GET['start_date'])
-    finish_date = parse_date(request.GET['finish_date'])
-    utc_difference = int(request.GET['UTC'])
+    print(request)
+    date_dict = spending_date_parser(request)
 
-    if start_date > finish_date:
-        start_date = finish_date
-    if not start_date:
-        start_date = date(date.today().year, date.today().month, 1)
-    if not finish_date:
-        finish_date = date.today()
-    start_date = start_date - timedelta(hours=utc_difference)
+    individual_spending_history = create_spending_history_individual\
+        (user=date_dict['user_id'],
+         start_date=date_dict['start_date'],
+         finish_date=date_dict['finish_date'],
+         utc_difference=date_dict['utc_difference'])
+    group_spending_history = create_spending_history_for_admin\
+        (user=date_dict['user_id'],
+         start_date=date_dict['start_date'],
+         finish_date=date_dict['finish_date'],
+         utc_difference=date_dict['utc_difference'])
 
-    individual_spending_history = create_spending_history_individual(user, start_date, finish_date,  utc_difference)
-    group_spending_history = create_spending_history_for_admin(user, start_date, finish_date, utc_difference)
+    output, worksheet, workbook, formats_dict = creating_empty_xlsx_file()
 
-    workbook = xlsxwriter.Workbook(output)
-    worksheet = workbook.add_worksheet('history')
-
-    head_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center', 'border': 5})
-    value_format = workbook.add_format({'num_format': '$#.#0', 'align': 'center', 'border': 1})
-    date_format = workbook.add_format({'num_format': 'mmmm d yyyy', 'align': 'center', 'border': 1})
-    cell_format = workbook.add_format({'align': 'center', 'border': 1})
-    worksheet.set_column(0, 5, 25)
-
-    head_row, head_col = 1, 1
     row, col = 2, 1
 
     if individual_spending_history:
-        worksheet.write(head_row, head_col, 'Individual spending', head_format)
+        worksheet.write(row - 1, col, 'Individual spending', formats_dict['head_format'])
         for i in individual_spending_history[0]['history'][0]:
-            worksheet.write(head_row, head_col+1, i, head_format)
-            head_col += 1
+            worksheet.write(row - 1, col + 1, i, formats_dict['head_format'])
+            col += 1
 
+        col = 1
         for spending_dicts in individual_spending_history:
             for history_dict in spending_dicts['history']:
-                worksheet.write(row, col, spending_dicts['spending'], cell_format)
-                worksheet.write_number(row, col + 1, history_dict['value'], value_format)
-                worksheet.write(row, col + 2, history_dict['date'], date_format)
-                worksheet.write(row, col + 3, history_dict['fund'], cell_format)
+                worksheet.write(row, col, spending_dicts['spending'], formats_dict['cell_format'])
+                worksheet.write_number\
+                    (row, col + 1, history_dict['value'], formats_dict['value_format'])
+                worksheet.write(row, col + 2, history_dict['date'], formats_dict['date_format'])
+                worksheet.write(row, col + 3, history_dict['fund'], formats_dict['cell_format'])
                 row += 1
     if group_spending_history:
-        head_row, head_col = row + 1, 1
-        worksheet.write(head_row, head_col, 'Group spending', head_format)
+        row = row + 1
+        worksheet.write(row, col, 'Group spending', formats_dict['head_format'])
         for i in group_spending_history[0]['history'][0]:
             if i == 'member':
-                worksheet.write(head_row, head_col - 1, 'Member', head_format)
+                worksheet.write(row, col - 1, 'Member', formats_dict['head_format'])
             else:
-                worksheet.write(head_row, head_col + 1, i, head_format)
-                head_col += 1
-        row += 2
+                worksheet.write(row, col + 1, i, formats_dict['head_format'])
+                col += 1
+        row, col = row + 1, 1
         for spending_dicts in group_spending_history:
             for history_dict in spending_dicts['history']:
-                worksheet.write(row, col-1, history_dict['member'], cell_format)
-                worksheet.write(row, col, spending_dicts['spending'], cell_format)
-                worksheet.write_number(row, col + 1, history_dict['value'], value_format)
-                worksheet.write(row, col + 2, history_dict['date'], date_format)
-                worksheet.write(row, col + 3, history_dict['fund'], cell_format)
+                worksheet.write(row, col-1, history_dict['member'], formats_dict['cell_format'])
+                worksheet.write(row, col, spending_dicts['spending'], formats_dict['cell_format'])
+                worksheet.write_number\
+                    (row, col + 1, history_dict['value'], formats_dict['value_format'])
+                worksheet.write(row, col + 2, history_dict['date'], formats_dict['date_format'])
+                worksheet.write(row, col + 3, history_dict['fund'], formats_dict['cell_format'])
                 row += 1
 
     workbook.close()
 
-    output.seek(0)
-
-    filename = 'Spending_history.xlsx'
-    response = StreamingHttpResponse(
-        output,
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    response = file_streaming_response \
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+         'spending_history.xlsx', output)
     return response
 
 def create_csv(request):
@@ -260,29 +246,29 @@ def create_csv(request):
     Returns:
         StreamingHttpResponse csv file.
     """
-    user = request.user
-    start_date = parse_date(request.GET['start_date'])
-    finish_date = parse_date(request.GET['finish_date'])
-    utc_difference = int(request.GET['UTC'])
+    date_dict = spending_date_parser(request)
 
-    if start_date > finish_date:
-        start_date = finish_date
-    if not start_date:
-        start_date = date(date.today().year, date.today().month, 1)
-    if not finish_date:
-        finish_date = date.today()
-
-    individual_spending_history = create_spending_history_individual(user, start_date, finish_date, utc_difference)
-    group_spending_history = create_spending_history_for_admin(user, start_date, finish_date, utc_difference)
+    individual_spending_history = create_spending_history_individual \
+        (user=date_dict['user_id'],
+         start_date=date_dict['start_date'],
+         finish_date=date_dict['finish_date'],
+         utc_difference=date_dict['utc_difference'])
+    group_spending_history = create_spending_history_for_admin \
+        (user=date_dict['user_id'],
+         start_date=date_dict['start_date'],
+         finish_date=date_dict['finish_date'],
+         utc_difference=date_dict['utc_difference'])
 
     output = io.StringIO()
 
     if group_spending_history:
         headers = ['spending', 'group']
-        [headers.append(i) for i in group_spending_history[0]['history'][0]]
+        for i in group_spending_history[0]['history'][0]:
+            headers.append(i)
     elif individual_spending_history:
         headers = ['spending']
-        [headers.append(i) for i in individual_spending_history[0]['history'][0]]
+        for i in group_spending_history[0]['history'][0]:
+            headers.append(i)
     else:
         headers = []
 
@@ -302,10 +288,7 @@ def create_csv(request):
                 i['group'] = spending_dicts['spending'].split('/')[1]
             writer.writerows(spending_dicts['history'])
 
-    output.seek(0)
-    response = HttpResponse(output, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=income_history.csv'
-
+    response = file_streaming_response('text/csv', 'spending_history.csv', output)
     return response
 
 @require_http_methods(["POST"])
