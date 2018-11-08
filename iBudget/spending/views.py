@@ -217,6 +217,12 @@ def set_spending_limitation_ind_arb(request):
 
 @require_http_methods(["GET"])
 def check_dates_choice(request):
+    """
+    a function which checks if the user is a brand-new one who has not chosen the way of displaying
+    date periods for setting group limits
+    :param request
+    :return: True - if the user already chose the way of displaying dates, otherwise - False
+    """
     already_chosen = UserProfile.objects.filter(id=request.user.id).exclude(
         ind_period_fixed__isnull=True)
     if already_chosen:
@@ -225,6 +231,11 @@ def check_dates_choice(request):
 
 @require_http_methods(["POST"])
 def set_dates_choice(request):
+    """
+    the function which sets the way of displaying date periods for setting group limits
+    :param request
+    :return: HTTP status code 201
+    """
     choice = json.loads(request.body)
     UserProfile.objects.filter(id=request.user.id).update(ind_period_fixed=choice['choice'])
     return HttpResponse(status=201)

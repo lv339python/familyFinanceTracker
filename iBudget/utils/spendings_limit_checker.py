@@ -27,7 +27,6 @@ def comp_gr_spends_w_limit(group_id, category):
         list_of_limits[i[0]].setdefault('start_date', start_date)
         end_date = i[1].end_date
         list_of_limits[i[0]].setdefault('end_date', end_date)
-    print('33', list_of_limits)
 
     for item in enumerate(list_of_limits):
         spendings = \
@@ -36,7 +35,6 @@ def comp_gr_spends_w_limit(group_id, category):
                                        group_id, id=category, date__range=
                                        (list_of_limits[item[0]]['start_date'],
                                         list_of_limits[item[0]]['end_date']))
-        print(spendings)
         if spendings:
             spent_sum = 0
             for i in spendings:
@@ -46,7 +44,7 @@ def comp_gr_spends_w_limit(group_id, category):
             if spent_sum > list_of_limits[item[0]]['limit_amount']:
                 return 'Warning! The group limit for this spendings is exceeded! Do not spend' \
                        ' more on this category!!!'
-            elif spent_sum - list_of_limits[item[0]]['limit_amount'] <= ten_percent_of_limit:
+            if spent_sum - list_of_limits[item[0]]['limit_amount'] <= ten_percent_of_limit:
                 return 'Attention! You approached the limit for this spending very closely! Cut' \
                        ' your spendings!!!'
 

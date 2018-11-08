@@ -13,6 +13,10 @@ from .models import IncomeCategories, FundCategories, IncomeHistory
 
 
 def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
+    """
+    a function which accepts parameters defined in the function 'track'
+    :return: list of all user's incomes, funds, dates, comments and sums within a chosen period
+    """
     incomes_funds = IncomeHistory.objects.filter(date__range=(date_start, date_end),
                                                  income_id__owner_id=user_id)
     incomes_funds_ids = [
