@@ -139,8 +139,7 @@
                     url: '/api/v1/authentication/login/',
                     data: {
                         'email': this.username,
-                        'password': this.password,
-                        'confirm_password': this.confirm_password
+                        'password': this.password
                     }
 
                 }).then(response => {

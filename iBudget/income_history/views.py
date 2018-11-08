@@ -17,8 +17,14 @@ from .models import IncomeCategories, FundCategories, IncomeHistory
 from django.http import StreamingHttpResponse
 
 
-
 def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
+    """
+    Getting income history information.
+    Args:
+        user_id , start date, final date and UTC information.
+    Returns:
+        dictionary with income history info
+    """
     incomes_funds = IncomeHistory.objects.filter(date__range=(date_start, date_end),
                                                  income_id__owner_id=user_id)
     incomes_funds_ids = [
@@ -61,10 +67,13 @@ def show_total(request):
 
 @require_http_methods(['POST'])
 def track(request):
-    """this function accepts dates and returns the list of incomes with the funds they went to,
-    amounts, dates and comments
     """
-
+    Handling request for returning income history data.
+    Args:
+        request (HttpRequest): contains start date, final date and UTC information.
+    Returns:
+        JsonResponse object.
+    """
     content = json.loads(request.body)
     user_id = request.user
     if len(content) <= 1:
@@ -77,7 +86,6 @@ def track(request):
                                               date_start=parsed_start,
                                               date_end=parsed_end,
                                               time_diff=time_diff)
-
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 @require_http_methods(["POST"])
@@ -117,14 +125,21 @@ def register_income(request):
         return HttpResponse('Check all required fields', status=406)
     return HttpResponse('Your income was successfully registered', status=201)
 
-def create_xlsx(request):
 
+def create_xlsx(request):
+    """
+    Creating xlsx file with income history for specific period
+    Args:
+        request (HttpRequest): request from server which contains
+        user info and date params : start_date, finish_date, UTC
+    Returns:
+        StreamingHttpResponse xlsx file.
+    """
     output = io.BytesIO()
 
     user = request.user
-    start_time, end_time = "T00:00:00", "T23:59:59"
-    start_date = parse_datetime(request.GET['start_date'] + start_time)
-    finish_date = parse_datetime(request.GET['finish_date'] + end_time)
+    start_date = parse_datetime(request.GET['start_date'])
+    finish_date = parse_datetime(request.GET['finish_date'])
     utc = int(request.GET['UTC'])
     utc_difference = datetime.timedelta(hours=utc)
 
@@ -174,11 +189,17 @@ def create_xlsx(request):
 
 
 def create_csv(request):
-
+    """
+    Creating csv file with income history for specific period
+    Args:
+        request (HttpRequest): request from server which contains
+        user info and date params : start_date, finish_date, UTC
+    Returns:
+        StreamingHttpResponse csv file.
+    """
     user = request.user
-    start_time, end_time = "T00:00:00", "T23:59:59"
-    start_date = parse_datetime(request.GET['start_date'] + start_time)
-    finish_date = parse_datetime(request.GET['finish_date'] + end_time)
+    start_date = parse_datetime(request.GET['start_date'])
+    finish_date = parse_datetime(request.GET['finish_date'])
     utc = int(request.GET['UTC'])
     utc_difference = datetime.timedelta(hours=utc)
 

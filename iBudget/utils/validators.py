@@ -2,14 +2,14 @@
 This module provides function for validations.
 """
 from decimal import Decimal, DecimalException
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.dateparse import parse_date
 
-SET_KEYS_REG_DATA = {"email", "password", "confirm_password"}
+SET_KEYS_REG_DATA = {"email", "password"}
 SET_KEYS_SPENDING_REG_DATA = {'category', 'type_of_pay', 'value'}
 SET_KEYS_CREATE_FUND_DATA = {'name', 'icon'}
 SET_KEYS_INCOME_REG_DATA = {'inc_category', 'fund_category', 'value'}
@@ -17,6 +17,8 @@ SET_KEYS_FUND_CREATE_DATA = {'name', 'icon'}
 SET_KEYS_FUND_GOAL = {'value', 'name', 'icon'}
 SET_KEYS_GROUP_CREATE_DATA = {'name', 'icon'}
 KEYS_SET_ADD_USER_TO_GROUP = {'users_email', 'group_id', 'is_admin'}
+KEYS_SET_SHARED_FUND_FOR_GROUP = {'shared_fund', 'group_id'}
+KEYS_SET_SHARED_SPENDING_FOR_GROUP = {'shared_spending', 'group_id'}
 STR_MIN_LENGTH = 0
 STR_MAX_LENGTH = None
 
@@ -101,7 +103,6 @@ def login_validate(data):
     :return: `True` if data is valid and `None` if it is not.
     :rtype: bool
     """
-
     if not data:
         return False
     if not required_keys_validator(data, ['email', 'password']):
@@ -147,6 +148,7 @@ def input_fund_registration_validate(data):
     except (ValueError, AttributeError):
         return False
 
+
 def input_income_registration_validate(data):
     """
     validate data.
@@ -178,7 +180,7 @@ def date_range_validate(data):
     return data
 
 
-def is_valid_data_individual_limit(data):
+def is_valid_data_individual_limit_fix(data):
     """
     Function that provides data validation for defining new limitation.
     :type data: dict
@@ -197,6 +199,28 @@ def is_valid_data_individual_limit(data):
                 data['year'] >= date.today().year and
                 data['value'] > 0)
 
+    except (ValidationError, AttributeError):
+        return False
+
+
+def is_valid_data_individual_limit_arb(data):
+    """
+    Function that provides data validation for defining new limitation.
+    :type data: dict
+    :return: 'True' if data is valid and 'None' if it is not.
+    :rtype: bool
+    """
+    if set(data.keys()) != {'spending_id', 'start_date', 'finish_date', 'UTC', 'value'}:
+        return False
+    try:
+        data['spending_id'] = int(data['spending_id'])
+        data['start_date'] = parse_date(data['start_date'])
+        data['finish_date'] = parse_date(data['finish_date'])
+        int(data['UTC'])
+        data['value'] = round(float(data['value']), 2)
+        return (data['spending_id'] > 0 and
+                data['start_date'] <= data['finish_date'] and
+                data['value'] > 0)
     except (ValidationError, AttributeError):
         return False
 
@@ -306,6 +330,8 @@ def is_valid_data_create_new_group(data):
     """
     if set(data.keys()) != SET_KEYS_GROUP_CREATE_DATA:
         return False
+    if not data['name']:
+        return False
     try:
         data['name'] = str(data['name'])
         return True
@@ -369,6 +395,60 @@ def is_valid_data_add_user_to_group(data):
         data['group_id'] = int(data['group_id'])
         data['is_admin'] = bool(data['is_admin'])
         validate_email(data['users_email'])
+    except(ValueError, AttributeError):
+        return False
+    return True
+
+
+def date_parse(data):
+    """Parse dates.
+        Args:
+            data (dict): contain some dictionary
+        Returns:
+            (dict): parsed values
+    """
+    start_date = parse_date(data['start_date'])
+    finish_date = parse_date(data['finish_date'])
+    utc_difference = int(data['UTC'])
+
+    if not start_date:
+        start_date = date(date.today().year, date.today().month, 1)
+    if not finish_date:
+        finish_date = date.today()
+
+    start_date = start_date - timedelta(hours=utc_difference)
+    return start_date, finish_date
+
+
+def is_valid_data_shared_fund_to_group(data):
+    """validate data.
+        Args:
+            data (dict): contain group id and shared spending
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if set(data.keys()) != KEYS_SET_SHARED_FUND_FOR_GROUP:
+        return False
+    try:
+        data['group_id'] = int(data['group_id'])
+        data['shared_fund'] = int(data['shared_fund'])
+    except(ValueError, AttributeError):
+        return False
+    return True
+
+
+def is_valid_data_shared_spending_to_group(data):
+    """validate data.
+        Args:
+            data (dict): contain group id and shared spending
+        Returns:
+            bool: The return value. True is data valid, else False.
+    """
+    if set(data.keys()) != KEYS_SET_SHARED_SPENDING_FOR_GROUP:
+        return False
+    try:
+        data['group_id'] = int(data['group_id'])
+        data['shared_spending'] = int(data['shared_spending'])
     except(ValueError, AttributeError):
         return False
     return True

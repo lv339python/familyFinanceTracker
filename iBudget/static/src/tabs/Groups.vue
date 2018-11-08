@@ -1,7 +1,7 @@
 <template>
     <div class="content">
         <div  id="left" class="text column">
-            <create_new_group></create_new_group>
+            <create_new_group v-bind:getData="getData"></create_new_group>
             <p>There are your groups: </p>
             <ul class="list-group">
             <li
@@ -21,24 +21,39 @@
                 </button>
             </div>
         </div>
-
         <div id="right" class="column">
-            <ul class="groups">
-                <li
-                    v-for="(content,group) in cur_balance" class="group_display"
-                    v-if="group_index===content.Group_id">
-                    {{group}}
-                    <ul>
-                        <li v-for="(value,item) in content" v-if="item==='Group icon'">
-                            {{item}} : <img class='image' :src="value">
-                        </li>
-                        <li v-else>
-                            {{item}} : {{value}}
-                        </li>
-                        <add_user v-bind:group_id="selected_group_id"></add_user>
-                    </ul>
-                </li>
-            </ul>
+            <b-tabs>
+                  <b-tab title="Info" active>
+                        <ul class="groups">
+                            <li
+                                v-for="(content,group) in cur_balance" class="group_display"
+                                v-if="group_index===content.Group_id">
+                                <ul>
+                                    <li v-for="(value,item) in content" v-if="item==='Group icon'">
+                                        <b>{{item}}</b> : <img class='image' :src="value">
+                                    </li>
+                                    <li v-else>
+                                        <b>{{item}}</b> : <i>{{value}}</i>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                  </b-tab>
+                  <b-tab title="User's in group" >
+                        <div>
+                            <ul class="list-group-item"
+                            v-for="user in users_in_group" class="group_display"
+                            v-if="user.group_id===group_index">
+                                <li> {{ user.email }} - {{ user.user_role }} </li>
+                            </ul>
+                            <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
+                        </div>
+                  </b-tab>
+                  <b-tab title="Shared fund and spending categories">
+                        <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
+                        <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
+                  </b-tab>
+            </b-tabs>
         </div>
     </div>
 </template>
@@ -47,6 +62,8 @@
     import axios from 'axios';
     import Add_new_user_to_group from '../components/Add_new_user_to_group';
     import Groups_registration from '../components/Groups_registration';
+    import Add_shared_fund_to_group from '../components/Add_shared_fund_to_group';
+    import Add_shared_category_to_group from '../components/Add_shared_category_to_group';
     export default {
         name: "Groups",
         data() {
@@ -58,11 +75,14 @@
                 pageNumber: 0,
                 size:5,
                 group_id: null,
+                users_in_group: []
             }
         },
         components: {
             'add_user': Add_new_user_to_group,
-            'create_new_group': Groups_registration
+            'create_new_group': Groups_registration,
+            'add_shared_fund': Add_shared_fund_to_group,
+            'add_shared_spending': Add_shared_category_to_group
         },
         methods: {
             selected_group: function(index, item){
@@ -78,6 +98,29 @@
             },
             showModal() {
                 this.$refs.myModalRef.show()
+            },
+            getData(){
+                 axios.get('api/v1/group/')
+                .then(response => {
+                    this.cur_balance = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                }),
+                axios.get('api/v1/group/show_users_group_data')
+                .then(response => {
+                    this.users_group_list = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                }),
+                axios.get('api/v1/group/show_users_in_group/')
+                .then(response => {
+                    this.users_in_group = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
             }
         },
         computed:{
@@ -95,20 +138,7 @@
             },
         },
         created() {
-            axios.get('api/v1/group/')
-                .then(response => {
-                    this.cur_balance = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                }),
-            axios.get('api/v1/group/show_users_group_data')
-                .then(response => {
-                    this.users_group_list = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
+            this.getData();
         }
     }
 </script>
