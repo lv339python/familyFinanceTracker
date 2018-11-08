@@ -14,7 +14,6 @@
                    v-on:change="get_img_name_validate($event.target.files)"></input>
         </form>
         <br>
-        <button v-if="upload" v-on:click="upload_emit_img(icon_name)"> upload chosen file</button>
     </div>
 </template>
 
@@ -59,19 +58,20 @@
 
             get_img_name_validate: function (file_list) {
                 let img = file_list[0];
+                let needed_type = /^\/*image/;
                 this.image = img;
                 //here we validate the file type and size
                 if (img.size > this.maxFileSize * 1024) {
                     alert('The file you want to upload is too large. Please choose file smaller than 60 KB');
                     return;
                 }
-                ;
-                let needed_type = /^\/*image/;
-                if (!needed_type.test(img.type)) {
+                else if (!needed_type.test(img.type)) {
                     alert('You chose incorrect file type, please choose image');
-                    return;
+                    return
                 }
-                ;
+                else{
+                    this.upload_emit_img(this.icon_name)
+                }
 
             },
 
