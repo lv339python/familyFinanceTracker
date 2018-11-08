@@ -121,7 +121,7 @@
             axios.get('/api/v1/spending/')
                 .then(response => {
                     // JSON responses are automatically parsed.
-                    this.spending_list = response.data
+                    this.spending_list = response.data.categories
                 })
                 .catch(e => {
                     this.errors.push(e)

@@ -65,6 +65,10 @@ def track(request):
                        .name})
         incomes_funds_ids[counter[0]].update(
             {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
+    set_for_chart = set()
+    for counter in enumerate(incomes_funds_ids):
+        set_for_chart.add(incomes_funds_ids[counter[0]]['fund'])
+    incomes_funds_ids.append(list(set_for_chart))
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 @require_http_methods(["POST"])

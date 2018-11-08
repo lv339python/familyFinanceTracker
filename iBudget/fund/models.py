@@ -41,6 +41,7 @@ class FundCategories(models.Model):
         except (ValueError, AttributeError):
             pass
 
+
     @staticmethod
     def filter_by_user(user, is_shared=False, is_active=True):
         """

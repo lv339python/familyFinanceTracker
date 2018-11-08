@@ -10,7 +10,8 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group, SharedSpendingCategories
-from utils.validators import is_valid_data_individual_limit, is_valid_data_new_spending
+from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_new_spending, \
+    is_valid_data_individual_limit_arb, date_parse
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 
@@ -27,8 +28,9 @@ def show_spending_ind(request):
     if user:
         user_categories = []
         for entry in SpendingCategories.filter_by_user(user):
-            user_categories.append({'id': entry.id, 'name': entry.name, 'is_active':entry.is_active})
-        return JsonResponse(user_categories, status=200, safe=False)
+            user_categories.append({'id': entry.id, 'name': entry.name})
+        return JsonResponse({'categories': user_categories, 'fixed': user.ind_period_fixed},
+                            status=200, safe=False)
     return JsonResponse({}, status=400)
 
 
@@ -48,15 +50,41 @@ def show_spending_group(request):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
                 users_group.append({'id_cat': shared_category.spending_categories.id,
                                     'name_cat': shared_category.spending_categories.name,
-                                    'id_group': group.id
+                                    'id_group': group.id,
+                                    'name_group': group.name
                                     })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
 
 
 @require_http_methods(["POST"])
-def set_spending_limitation_ind(request):
-    """Handling request for create spending limitation.
+def set_limitation_period(request):
+    """Handling request for defining limitation period.
+
+        Args:
+            request (HttpRequest): Type of period.
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    data = json.loads(request.body)
+    if data['fixed'] == 'null':
+        return HttpResponse('Bad request', status=400)
+    period_type = data['fixed']
+    user.ind_period_fixed = period_type
+    try:
+        user.save()
+    except(ValueError, AttributeError):
+        return HttpResponse(status=406)
+    response = "{} type of limitation period has been set...\n OK".format("Monthly/yearly"
+                                                                          if period_type
+                                                                          else "Arbitrary")
+    return HttpResponse(response, status=201)
+
+
+@require_http_methods(["POST"])
+def set_spending_limitation_ind_fix(request):
+    """Handling request for create spending limitation monthly/yearly.
 
         Args:
             request (HttpRequest): Limitation data.
@@ -65,7 +93,7 @@ def set_spending_limitation_ind(request):
     """
     user = request.user
     data = json.loads(request.body)
-    if not is_valid_data_individual_limit(data):
+    if not is_valid_data_individual_limit_fix(data):
         return HttpResponse('Bad request', status=400)
     spending = SpendingCategories.get_by_id(int(data['spending_id']))
     if not spending:
@@ -140,6 +168,52 @@ def set_spending_limitation_ind(request):
             return HttpResponse(status=406)
         response = "The limit {} has been set...\n OK".format(value)
     return HttpResponse(response, status=201)
+
+
+@require_http_methods(["POST"])
+def set_spending_limitation_ind_arb(request):
+    """Handling request for create spending limitation arbitrary.
+
+        Args:
+            request (HttpRequest): Limitation data.
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    data = json.loads(request.body)
+    if not is_valid_data_individual_limit_arb(data):
+        return HttpResponse('Bad request', status=400)
+    spending = SpendingCategories.get_by_id(int(data['spending_id']))
+    if not spending:
+        return HttpResponse('Bad request', status=400)
+
+    start_date, finish_date = date_parse(data)
+
+    if start_date > finish_date:
+        return JsonResponse({}, status=400)
+
+    value = round(float(data['value']), 2)
+
+    current_limit_ind = SpendingLimitationIndividual.objects.filter(
+        Q(start_date__range=[start_date, finish_date]) |
+        Q(finish_date__range=[start_date, finish_date])).filter(
+            user=user,
+            spending_category=spending)
+
+    if current_limit_ind:
+        return HttpResponse("The limit for these dates already exists. \n"
+                            "Please change dates or category.",
+                            status=202)
+    spending_limitation_ind = SpendingLimitationIndividual(user=user,
+                                                           spending_category=spending,
+                                                           start_date=start_date,
+                                                           finish_date=finish_date,
+                                                           value=value)
+    try:
+        spending_limitation_ind.save()
+    except(ValueError, AttributeError):
+        return HttpResponse(status=406)
+    return HttpResponse("The limit {} has been set...\n OK".format(value), status=201)
 
 
 def group_limit(request):
