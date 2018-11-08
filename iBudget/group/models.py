@@ -90,16 +90,17 @@ class Group(models.Model):
         return users_groups
 
     @staticmethod
-    def filter_funds_by_group(group_object):
+    def filter_funds_by_group(group_object, is_active=True):
         """
         Args:
             group_object: users group object.
+            is_active(bool): 'True' if group exist
         Returns:
             List of fund objects for current group.
 
         """
         group_funds = []
-        shared_funds = SharedFunds.objects.filter(group=group_object)
+        shared_funds = SharedFunds.objects.filter(group=group_object, is_active=is_active)
         for fund in shared_funds:
             for i in FundCategories.objects.filter(id=fund.fund_id):
                 group_funds.append({'id': i.id, 'name': i.name})
@@ -110,6 +111,7 @@ class Group(models.Model):
         """
         Args:
             group_object: users group object.
+            is_active(bool): 'True' if group exist
         Returns:
             List of spend objects for current group.
 

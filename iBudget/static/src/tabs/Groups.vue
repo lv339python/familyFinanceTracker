@@ -84,7 +84,7 @@
             'add_user': Add_new_user_to_group,
             'create_new_group': Groups_registration,
             'add_shared_fund': Add_shared_fund_to_group,
-            'add_shared_spending': Add_shared_category_to_group
+            'add_shared_spending': Add_shared_category_to_group,
             'delete_group':Delete_group
         },
         methods: {
