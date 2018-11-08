@@ -83,7 +83,7 @@ def show_users_group_data(request):
             groups.append({'id': item,
                            'user_role': user_role,
                            'group_name': group.name,
-                           'count': count.__len__()})
+                           'count': len(count)})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -299,3 +299,30 @@ def add_shared_fund_to_group(request):
     except(AttributeError, ValueError):
         return HttpResponse(status=400)
     return HttpResponse(status=201)
+
+
+@require_http_methods(["POST"])
+def change_users_role_in_group(request):
+    data = json.loads(request.body)
+    user_email = data["email"]
+    print(user_email)
+    user_to_change = UserProfile.get_by_email(user_email)
+    group_id = data["group_id"]
+    is_admin = data["is_admin"]
+    if is_admin == 'Admin':
+        is_admin = True
+    else:
+        is_admin = False
+    user = request.user
+    if user:
+        if not is_user_admin_group(group_id, user):
+            return HttpResponse(status=409)
+        if not is_user_in_group(group_id, user_to_change.id):
+            return HttpResponse(status=406)
+        group = UsersInGroups.get_by_id(user_to_change.id)
+        group.is_admin = is_admin
+        try:
+            group.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
+    return HttpResponse(status=200)
