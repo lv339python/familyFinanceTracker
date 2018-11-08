@@ -224,7 +224,7 @@ def check_dates_choice(request):
     :return: True - if the user already chose the way of displaying dates, otherwise - False
     """
     already_chosen = UserProfile.objects.filter(id=request.user.id).exclude(
-        ind_period_fixed__isnull=True)
+        ind_period_fixed__isnull=False)
     if already_chosen:
         return HttpResponse(True, status=200)
     return HttpResponse(False, status=200)
@@ -242,8 +242,8 @@ def set_dates_choice(request):
 
 
 def group_limit(request):
-    """the functions finds all the shared spendings associated with particular user and
-    returns them
+    """the functions finds all the shared spendings associated with particular user in the groups
+    in which this user is an admin and returns them
     :param request object
     """
     if request.method == 'GET':

@@ -2,6 +2,7 @@
     <div id="limit">
         <div class="wrapper">
             <div id="available_spendings" v-if="brand_new_user">
+                <br>
                 <p>You want to set limits by day or by month/year? Choose below:</p>
                 <form v-on:change="set_date_choice">
                     <input type="radio" value="True" v-model="picked"> monthly/yearly limits
@@ -113,7 +114,7 @@
                 });
             axios.get('api/v1/spending/admin/check_choice/')
                 .then(response => {
-                    if(response.data === 'True'){
+                    if(response.data === 'False'){
                         this.brand_new_user = false;
                         this.daily = false
                     }
@@ -191,7 +192,6 @@
             },
             set_date_choice: function (event) {
                 this.brand_new_user = false;
-                alert(this.picked);
                 axios({
                     method: 'post',
                     url: 'api/v1/spending/admin/set_choice/',
@@ -199,7 +199,6 @@
                         'choice': this.picked,
                     },
                 }).then(response => {
-                    alert(response.data)
                 })
                     .catch(function (error) {
                         alert(error.response.data);
