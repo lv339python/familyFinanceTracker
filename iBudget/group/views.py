@@ -72,7 +72,7 @@ def show_users_group_data(request):
         user_role = None
         for item in groups_for_user(user):
             group = Group.get_group_by_id(item)
-            count = UsersInGroups.count_of_user_in_group(group.id)
+            count = users_email_for_group(group.id)
             if group.owner == user:
                 user_role = "Owner"
             else:
@@ -83,7 +83,7 @@ def show_users_group_data(request):
             groups.append({'id': item,
                            'user_role': user_role,
                            'group_name': group.name,
-                           'count': count})
+                           'count': count.__len__()})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 

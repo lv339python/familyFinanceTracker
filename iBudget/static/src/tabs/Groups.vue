@@ -2,7 +2,7 @@
     <div class="content">
         <div  id="left" class="text column">
             <create_new_group v-bind:getData="getData"></create_new_group>
-            <p>There are your groups: </p>
+            <p>There are your groups: {{ users_group_list.length }}</p>
             <ul class="list-group">
             <li
                 class="list-group-item list-group-item-action pointer"
@@ -39,6 +39,7 @@
                             </li>
                         </ul>
                   </b-tab>
+
                   <b-tab title="User's in group" >
                         <div>
                             <ul class="list-group-item"
@@ -81,7 +82,8 @@
                 group_id: null,
                 users_in_group: [],
                 shared_fund_list: [],
-                shared_spending_list: []
+                shared_spending_list: [],
+                is_admin: false
             }
         },
         components: {
