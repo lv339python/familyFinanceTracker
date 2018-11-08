@@ -8,45 +8,49 @@ from spending.models import SpendingLimitationGroup, SpendingLimitationIndividua
 from spending_history.models import SpendingHistory
 
 
-def comp_gr_spends_w_limit(group_id):
+def comp_gr_spends_w_limit(group_id, category):
     """params:
-    group_id - the id of the group for which the spending is added
+    group_id - the id of the group for which the spending is added;
+    category - the id of the category for which we check the group limits
     """
-    find_limit = \
+    found_limit = \
     SpendingLimitationGroup.objects.filter(spending_category_id__is_shared=True,
                                            spending_category_id__sharedspendingcategories__group_id=
-                                           group_id).distinct('value')
-    if not find_limit:
+                                           group_id)
+    if not found_limit:
         return 'There are no limits for this group'
-    list_of_values = {}
-    for i in find_limit:
-        limit_amount = i.value
-        list_of_values.setdefault('limit_amount', limit_amount)
-        start_date = i.start_date
-        list_of_values.setdefault('start_date', start_date)
-        end_date = i.end_date
-        list_of_values.setdefault('end_date', end_date)
+    list_of_limits = []
+    for i in enumerate(found_limit):
+        limit_amount = i[1].value
+        list_of_limits.append({'limit_amount': limit_amount})
+        start_date = i[1].start_date
+        list_of_limits[i[0]].setdefault('start_date', start_date)
+        end_date = i[1].end_date
+        list_of_limits[i[0]].setdefault('end_date', end_date)
+    print('33', list_of_limits)
 
-    spendings = \
-    SpendingHistory.objects.filter(spending_categories_id__is_shared=True,
-                                   spending_categories_id__sharedspendingcategories__group_id=
-                                   group_id, date__range=(list_of_values['start_date'],
-                                                          list_of_values['end_date']))
-    spent_sum = 0
-    for i in spendings:
-        spent_sum = spent_sum + i.value
-        print(spent_sum)
-    spent_sum = int(spent_sum)
-    print(spent_sum)
+    for item in enumerate(list_of_limits):
+        spendings = \
+        SpendingHistory.objects.filter(spending_categories_id__is_shared=True,
+                                       spending_categories_id__sharedspendingcategories__group_id=
+                                       group_id, id=category, date__range=
+                                       (list_of_limits[item[0]]['start_date'],
+                                        list_of_limits[item[0]]['end_date']))
+        print(spendings)
+        if spendings:
+            spent_sum = 0
+            for i in spendings:
+                spent_sum = spent_sum + i.value
+            spent_sum = int(spent_sum)
+            ten_percent_of_limit = list_of_limits[item[0]]['limit_amount']/10
+            if spent_sum > list_of_limits[item[0]]['limit_amount']:
+                return 'Warning! The group limit for this spendings is exceeded! Do not spend' \
+                       ' more on this category!!!'
+            elif spent_sum - list_of_limits[item[0]]['limit_amount'] <= ten_percent_of_limit:
+                return 'Attention! You approached the limit for this spending very closely! Cut' \
+                       ' your spendings!!!'
 
-
-    if spent_sum > list_of_values['limit_amount']:
-        return 'Warning! The limit is exceeded! Do not spend more on this category'
-    if spent_sum - list_of_values['limit_amount'] <= 100:
-        return 'Attention! You approach the limit for this category! Cut your spendings!'
-
-
-    return None
+    return 'Group limits are fine for now!'
 
 def compare_ind_spend_limit(user, current_date, spending, current_value):
     """Creating data for spending limitation tracking.

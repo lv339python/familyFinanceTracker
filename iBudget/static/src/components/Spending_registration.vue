@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-8 form-group " v-if="is_shared===true">
                 <div>
-                    <label>Chose group</label>
+                    <label>Choose group</label>
                     <select v-model="groupId" class="form-control">
                         <option v-for="group in group_list"
                                 v-bind:value="group.id">
@@ -171,6 +171,7 @@
                         'date': this.date,
                         'value': this.value,
                         'comment': this.comment,
+                        'group_id':this.groupId
                     }
                 }).then(response => {
                     this.reply = response.data;

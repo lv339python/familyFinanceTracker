@@ -91,5 +91,4 @@ export const Line = generateChart('line-chart', 'line')
 
 export default {
     Line,
-
 }
