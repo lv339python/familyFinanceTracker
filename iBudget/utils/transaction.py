@@ -3,6 +3,7 @@ from django.db import transaction, IntegrityError
 
 from fund.models import FundCategories, FinancialGoal
 from group.models import SharedFunds, Group, UsersInGroups
+from spending.models import SpendingCategories
 
 
 def save_new_fund(name, icon, is_shared, owner, shared_group):
@@ -109,3 +110,23 @@ def save_new_group(name, icon, owner):
     except IntegrityError:
         return False
     return True
+
+# def delete_group_with_spending(group_id, spending_id):
+#     """Function for safe save FundCategories and SharedFunds
+#     Args:
+#         name(str): name of group.
+#         icon(str): name of icon.
+#         owner(UserProfile): transaction owner.
+#     Returns:
+#         True if success, False else
+#     """
+#
+#     del_group = Group.get_group_by_id(group_id)
+#     try:
+#         with transaction.atomic():
+#             del_group.update(is_active=False)
+#             del_spending = SpendingCategories.get_by_id(spending_id)
+#             del_spending.update(is_active=False)
+#     except IntegrityError:
+#         return False
+#     return True

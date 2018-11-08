@@ -20,6 +20,7 @@ class UserProfile(AbstractBaseUser):
         one_time_token(HttpResponse): for deactivating update_password.
         is_fixed_period (bool): "True" if user chooses monthly/yearly limitation period,
             "False" in other way.
+        is_active(bool): "True" if user exist, "false" in other way.
     """
     email = models.EmailField(max_length=50, unique=True)
     password = models.CharField(max_length=128)
@@ -29,6 +30,7 @@ class UserProfile(AbstractBaseUser):
     is_sys_admin = models.BooleanField(default=False)
     one_time_token = models.CharField(blank=True, max_length=255)
     ind_period_fixed = models.BooleanField(null=True)
+    is_active = models.BooleanField(default=True)
     objects = BaseUserManager()
     USERNAME_FIELD = 'email'
 
@@ -58,7 +60,7 @@ class UserProfile(AbstractBaseUser):
         }
 
     def update(self, password=None, one_time_token=None, first_name=None,
-               last_name=None, icon=None):
+               last_name=None, icon=None, is_active=None):
         """
         Method which changes an information except email as it is an id of an user.
         """
@@ -72,7 +74,12 @@ class UserProfile(AbstractBaseUser):
             self.set_password(password)
         if one_time_token is not None:
             self.one_time_token = one_time_token
-        self.save()
+        if is_active is not None:
+            self.is_active = is_active
+        try:
+            self.save()
+        except(ValueError, AttributeError):
+            pass
 
     @classmethod
     def create(cls, email, password, first_name=None, last_name=None, icon=None):

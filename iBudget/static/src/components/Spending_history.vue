@@ -59,7 +59,13 @@
                         <td>{{ p.value}}</td>
                         <td>{{ p.date }}</td>
                         <td>{{ p.fund }}</td>
-                        <td>{{ p.id }}</td>
+                        <td v-model="spending_history_id">
+                            <button type="button" class="btn btn-outline-danger" v-on:click="Delete"
+                                    :variant="secondary">Delete
+
+                            </button>
+                        </td>
+
                     </tr>
                     </tbody>
                 </table>
@@ -69,16 +75,9 @@
                     <button class="btn btn-outline-secondary" :disabled="pageNumber >= pageCount -1 " @click="nextPage">
                         Next
                     </button>
-                </div>
+
             </div>
-            <div >
-               <button v-for="spend in spending_history_individual"
-                        type="button"
-                        class="btn btn-outline-danger"
-                        v-bind:value="spend.history"
-                        @click="Delete">
-                    Delete</button>
-            </div>
+
         </div>
     </div>
 </template>
@@ -105,8 +104,9 @@
                 spending_history_admin: {},
                 errors: [],
                 UTC: null,
-                is_active: null,
-                // spending_categories: null,
+
+
+                spending_history_id: null
 
 
             }
@@ -181,20 +181,22 @@
                         this.errors.push(e)
                     })
             },
+
+
+
             Delete: function (event) {
                 axios({
                     method: 'put',
-                    url: '/api/v1/spending_history/delete_spending_history/',
-                    data: {
-                        'is_active': this.is_active,
-                        // 'spending_categories': this.spending_categories,
+                    url: '/api/v1/spending_history/delete_spending_history/' + this.spending_history_id,
 
-                    }
                 }).then(response => {
                     this.$router.go('spending/')
                 })
 
             },
+
+
+
             nextPage() {
                 this.pageNumber++;
             },
@@ -223,7 +225,6 @@
     #total {
         text-align: center
     }
-
     #spending_history {
 
     }

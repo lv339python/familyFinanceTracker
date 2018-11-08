@@ -65,11 +65,8 @@
 
             Delete: function (event) {
                 axios({
-                    method: 'put',
+                    method: 'delete',
                     url: '/api/v1/group/delete_group/' + this.group_id,
-                    data: {
-                        'is_active': this.is_active
-                    }
                 }).then(response => {
                     this.$router.go('/groups/')
                 })

@@ -250,19 +250,21 @@ def create_spending_category(request):
 
 
 
-@require_http_methods(["PUT"])
+@require_http_methods(["DELETE"])
 def delete_spending_category(request, spending_id):
-    """Handling request for update spending category.
-
+    """Handling request for delete spending category.
         Args:
-            request (HttpRequest): Data for new category.
+            request (HttpRequest): Data for delete category.
             spending_id: Spending category Id
         Returns:
             HttpResponse object.
     """
     user = request.user
-    spending = SpendingCategories.filter_by_id(spending_id)
+    spending = SpendingCategories.get_by_id(spending_id)
     if not spending:
         return HttpResponse(status=406)
+    if not spending.owner == user:
+        return HttpResponse(status=400)
     spending.update(is_active=False)
-    return HttpResponse("You've just deleted category ", status=201)
+
+    return HttpResponse(f"You've just deleted category{spending.name}", status=200)

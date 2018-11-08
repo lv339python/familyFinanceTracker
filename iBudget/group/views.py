@@ -8,6 +8,7 @@ from django.views.decorators.http import require_http_methods
 
 from authentication.models import UserProfile
 from income_history.models import IncomeHistory
+from spending.models import SpendingCategories
 from spending_history.models import SpendingHistory
 from utils.aws_helper import AwsService
 from utils.get_role import groups_for_user, \
@@ -16,7 +17,7 @@ from utils.get_role import groups_for_user, \
 from utils.transaction import save_new_group
 from utils.validators import is_valid_data_create_new_group, \
     is_valid_data_add_user_to_group
-from .models import Group, UsersInGroups
+from .models import Group, UsersInGroups, SharedSpendingCategories
 
 
 @require_http_methods(["GET"])
@@ -196,19 +197,20 @@ def add_new_users_to_group(request):
             return HttpResponse(status=400)
     return HttpResponse(status=201)
 
-@require_http_methods(["PUT"])
+@require_http_methods(["DELETE"])
 def delete_group(request, group_id):
-    """Handling request for update group.
-
+    """Handling request for delete group.
         Args:
-            request (HttpRequest): Data for new category.
+            request (HttpRequest): Data for delete group.
             group_id: Group Id
         Returns:
             HttpResponse object.
     """
     user = request.user
-    group = Group.filter_by_id(group_id)
+    group = Group.get_group_by_id(group_id)
     if not group:
         return HttpResponse(status=406)
+    if not group.owner == user:
+        return HttpResponse(status=400)
     group.update(is_active=False)
-    return HttpResponse("You've just deleted category ", status=201)
+    return HttpResponse(f"You've just deleted group {group.name}", status=200)

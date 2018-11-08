@@ -80,3 +80,22 @@ def show_income_group(request):
                                     })
         return JsonResponse(users_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+@require_http_methods(["DELETE"])
+def delete_income(request, income_category_id):
+    """Handling request for delete income.
+        Args:
+            request (HttpRequest): Data for delete income.
+            income_category_id: IncomeCategories Id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    income = IncomeCategories.get_by_id(income_category_id)
+    if not income:
+        return HttpResponse(status=406)
+    if not income.owner == user:
+        return HttpResponse(status=400)
+    income.update(is_active=False)
+    return HttpResponse(f"You've just deleted income {income.name}", status=200)

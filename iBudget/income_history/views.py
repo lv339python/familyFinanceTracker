@@ -103,3 +103,21 @@ def register_income(request):
     except(ValueError, AttributeError, ValidationError):
         return HttpResponse('Check all required fields', status=406)
     return HttpResponse('Your income was successfully registered', status=201)
+
+@require_http_methods(["DELETE"])
+def delete_income_history(request, income_history_id):
+    """Handling request for delete income history.
+        Args:
+            request (HttpRequest): Data for delete income history.
+            income_history_id: Income History Id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    income_history = IncomeHistory.get_by_id(income_history_id)
+    if not income_history:
+        return HttpResponse(status=406)
+    if not income_history.income.owner == user:
+        return HttpResponse(status=400)
+    income_history.update(is_active=False)
+    return HttpResponse("You've just deleted this income from your history", status=200)

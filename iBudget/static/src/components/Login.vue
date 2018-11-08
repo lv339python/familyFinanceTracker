@@ -13,6 +13,13 @@
                     <input required v-model="password" type="password" placeholder="Password"/>
                     <hr/>
                     <b-button @click="login">Login</b-button>
+
+
+
+                    <b-button @click="Delete">delete</b-button>
+
+
+
                     <br/>
                     <br/>
                     <b-link @click="showForgotPassword">Forgot your password ?</b-link>
@@ -180,10 +187,25 @@
                 }).catch(e => {
                     this.error = true;
                 })
+            },
+
+
+
+
+            Delete: function (event) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/authentication/delete_user/',
+
+                }).then(response => {
+                    this.$router.go('/login/')
+                })
             }
-        },
 
 
+
+
+        }
     }
 </script>
 <style scoped>

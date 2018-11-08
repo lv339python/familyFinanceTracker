@@ -18,6 +18,4 @@ urlpatterns = [
     path('admin/change_limit/<str:category_name>', change_group_limit),
     re_path(r'^add/', create_spending_category),
     path('delete_spending_category/<str:spending_id>', delete_spending_category),
-    # url(r'^delete_spending_category/(?P<spending_id>.+)$', delete_spending_category, name="delete_spending")
-    # path('delete_spending_category/', delete_spending_category),
 ]

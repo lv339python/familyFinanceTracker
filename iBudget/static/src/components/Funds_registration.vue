@@ -35,6 +35,11 @@
         <div class="col-md-2">
             <button class="btn btn-outline-primary" v-on:click="setData" :variant="secondary">Save</button>
         </div>
+
+
+
+
+
         <div>
             <label>Select fund:</label>
             <select v-model="fund_id" class="form-control">
@@ -47,6 +52,11 @@
         <button type="button" class="btn btn-outline-danger" v-on:click="Delete" :variant="secondary">Delete fund
         </button>
         </div>
+
+
+
+
+
     </div>
 </template>
 
@@ -67,7 +77,6 @@
                 selectedIcon: '',
                 fund_id: null,
                 fund_list: [],
-                is_active: null
             }
         },
         props: ["tabName"],
@@ -109,18 +118,25 @@
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']
             },
+
+
+
+
+
              Delete: function (event) {
                 axios({
-                    method: 'put',
+                    method: 'delete',
                     url: '/api/v1/fund/delete_fund_category/'+ this.fund_id,
-                    data: {
-                        'is_active': this.is_active
-                    }
                 }).then(response => {
                     this.$router.go('/spendings/new/')
                 })
 
             }
+
+
+
+
+
         }
     }
 </script>

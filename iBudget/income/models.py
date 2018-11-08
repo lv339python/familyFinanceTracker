@@ -16,6 +16,8 @@ class IncomeCategories(models.Model):
             value (decimal): Value of user's income.
             icon (str, optional): Name of the file with income's avatar.
             owner (FK): ID owner of this category.
+            is_active(bool): "True" if this income category exist, "false" in other way.
+
 
     """
     name = models.CharField(max_length=30)
@@ -23,19 +25,40 @@ class IncomeCategories(models.Model):
     value = models.DecimalField(max_digits=17, decimal_places=2)
     icon = models.CharField(max_length=30)
     owner = models.ForeignKey(UserProfile, on_delete=True)
+    is_active = models.BooleanField(default=True)
+
+    def update(self, name=None, date=None, value=None, icon=None, is_active=None):
+        """
+        Method which changes an information.
+        """
+
+        if name:
+            self.name = name
+        if date:
+            self.date = date
+        if value is not None:
+            self.value = value
+        if icon:
+            self.icon=icon
+        if is_active is not None:
+            self.is_active = is_active
+        try:
+            self.save()
+        except (ValueError, AttributeError):
+            pass
 
 
     @staticmethod
-    def filter_by_user(user):
+    def filter_by_user(user, is_active=True):
         """
         Args:
             user (UserProfile): user of category,
-            is_shared(bool): which category we need(shared or not shared).
+            is_active(bool): which income is active.
         Returns:
             SpendingCategories object if database contain category for this user
             and is_shared value, None otherwise.
         """
-        return IncomeCategories.objects.filter(owner=user)
+        return IncomeCategories.objects.filter(owner=user, is_active=is_active)
 
     @staticmethod
     def get_by_id(income_category_id):
@@ -53,15 +76,16 @@ class IncomeCategories(models.Model):
             return None
 
     @staticmethod
-    def filter_by_owner_name(owner, name):
+    def filter_by_owner_name(owner, name, is_active=True):
         """
         Args:
             owner (UserProfile): owner of category,
             name(bool): name of category.
+            is_active(bool): which income is active.
         Returns:
             IncomeCategories object if database contain category for this user
             and name, None otherwise.
 
 
         """
-        return IncomeCategories.objects.filter(owner=owner, name=name)
+        return IncomeCategories.objects.filter(owner=owner, name=name, is_active=is_active)

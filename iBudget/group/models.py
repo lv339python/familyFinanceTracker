@@ -2,6 +2,7 @@
 This module provides model of group and its relations.
 """
 from django.db import models
+
 from authentication.models import UserProfile
 from fund.models import FundCategories
 from spending.models import SpendingCategories
@@ -17,7 +18,7 @@ class Group(models.Model):
             members: Relation realization between users and groups.
             shared_funds: Relation realization between funds and groups.
             shared_spendings: Relation realization between spending and groups.
-
+            is_active(bool): "True" if this group exist, "false" in other way.
 
     """
     name = models.CharField(max_length=30)
@@ -34,36 +35,31 @@ class Group(models.Model):
                                               related_name="groups")
     is_active = models.BooleanField(default=True)
 
-    def update(self, is_active=None):
+    def update(self, name=None, icon=None, is_active=None):
         """
         Method which changes an information.
         """
+        if name:
+            self.name = name
+        if icon:
+            self.icon = icon
         if is_active:
             self.is_active = is_active
-        self.save()
+        try:
+            self.save()
+        except (ValueError, AttributeError):
+            pass
 
     @staticmethod
-    def filter_by_id(group_id, is_active=True):
-        """
-        Args:
-            group_id (int): The first parameter.
-            is_active(bool): which category is active.
-        Returns:
-            Group object if database contain spending
-            category with id, None otherwise.
-
-        """
-        return Group.objects.filter(pk=group_id, is_active=is_active)
-
-    @staticmethod
-    def group_filter_by_owner_id(user):
+    def group_filter_by_owner_id(user, is_active=True):
         """
         Args:
             user (int): index of owner,
+            is_active(bool): 'True' if group exist
         Returns:
             Group object if database contain group with user_id
         """
-        return Group.objects.filter(owner=user)
+        return Group.objects.filter(owner=user, is_active=is_active)
 
     @staticmethod
     def get_group_by_id(group_id):
@@ -75,16 +71,17 @@ class Group(models.Model):
 
         """
         try:
-            group = Group.objects.get(pk=group_id)
-            return group
-        except Group.DoesNotExist:
+            return Group.objects.get(pk=group_id)
+        except (Group.DoesNotExist, ValueError):
             return None
+
 
     @staticmethod
     def filter_groups_by_user_id(user_id, is_active=True):
         """
         Args:
             user_id(int): Current session user`s id.
+            is_active(bool): 'True' if group exist
         Returns:
             List of Groups objects .
 
@@ -109,7 +106,7 @@ class Group(models.Model):
         return group_funds
 
     @staticmethod
-    def filter_spendings_categories_by_group(group_object):
+    def filter_spendings_categories_by_group(group_object, is_active=True):
         """
         Args:
             group_object: users group object.
@@ -118,7 +115,7 @@ class Group(models.Model):
 
         """
         group_spendings = []
-        shared_spendings = SharedSpendingCategories.objects.filter(group_id=group_object)
+        shared_spendings = SharedSpendingCategories.objects.filter(group_id=group_object, is_active=is_active)
         for spend in shared_spendings:
             for i in SpendingCategories.objects.filter(id=spend.spending_categories_id):
                 group_spendings.append({'id': i.id, 'name': i.name})
@@ -181,6 +178,7 @@ class UsersInGroups(models.Model):
             return user
         except UsersInGroups.DoesNotExist:
             return None
+
     @staticmethod
     def filter_by_user(user):
         """
@@ -192,6 +190,7 @@ class UsersInGroups(models.Model):
 
         """
         return UsersInGroups.objects.filter(user=user)
+
 
 class SharedFunds(models.Model):
     """Common fund categories for groups.
@@ -251,6 +250,7 @@ class SharedSpendingCategories(models.Model):
         for item in SharedSpendingCategories.objects.filter(group=group):
             list_spendings.append(item.spending_categories)
         return list_spendings
+
     @staticmethod
     def get_by_spending_id(spending_id):
         """

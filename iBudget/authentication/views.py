@@ -54,7 +54,7 @@ def login_user(request):
         return HttpResponse('received data is not valid', status=400)
     email = data['email'].strip().lower()
     user = authenticate(email=email, password=data['password'])
-    if user is not None:
+    if user and user.is_active:
         login(request, user)
         response = HttpResponse('operation was successful provided', status=200)
         return response
@@ -181,3 +181,18 @@ def update_password(request, token=None):
             send_successful_update_letter(user)
             return HttpResponse(status=200)
     return HttpResponse(status=400)
+
+
+@require_http_methods(["DELETE"])
+def delete_user(request):
+    """Handling request for delete user.
+        Args:
+            request (HttpRequest):request from the web page with a json containing changes to be applied.
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    if not user:
+        return HttpResponse(status=400)
+    user.update(is_active=False)
+    return HttpResponse(f"{user.first_name}{user.last_name} you've just deleted your account ", status=200)

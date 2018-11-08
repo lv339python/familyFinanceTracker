@@ -81,7 +81,8 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
             history_individual_entry.append({'value': float(item.value),
                                              'date': (item.date +
                                                       timedelta(hours=utc_difference)).date(),
-                                             'fund': item.fund.name})
+                                             'fund': item.fund.name,
+                                             'spending_history_id':item.id})
         if history_individual_entry:
             history_individual.append({'spending': entry.name,
                                        'history': history_individual_entry})
@@ -97,13 +98,13 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
                                                      'date': (item.date +
                                                               timedelta(hours
                                                                         =utc_difference)).date(),
-                                                     'fund': item.fund.name})
+                                                     'fund': item.fund.name,
+                                                     'spending_history_id': item.id})
                 if history_individual_entry:
                     history_individual.append({'spending': entry.name
                                                            + ' / '
                                                            + Group.get_group_by_id(group).name,
                                                'history': history_individual_entry})
-
     return history_individual
 
 
@@ -137,7 +138,8 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                'value': float(item.value),
                                                'date': (item.date +
                                                         timedelta(hours=utc_difference)).date(),
-                                               'fund': 'Individual fund'})
+                                               'fund': 'Individual fund',
+                                               'spending_history_id': item.id})
                 else:
                     for item in SpendingHistory.filter_by_user_date_spending(person,
                                                                              start_date,
@@ -150,7 +152,8 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                'value': float(item.value),
                                                'date': (item.date +
                                                         timedelta(hours=utc_difference)).date(),
-                                               'fund': fund_entry})
+                                               'fund': fund_entry,
+                                               'spending_history_id': item.id})
 
                 if history_person:
                     history_spending_category.extend(history_person)
@@ -160,6 +163,7 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                       + ' / '
                                                       + Group.get_group_by_id(group).name,
                                           'history': history_spending_category})
+    print(history_for_admin)
     return history_for_admin
 
 
@@ -282,20 +286,21 @@ def get_spending_chart(request):
     return JsonResponse({}, status=400)
 
 
-@require_http_methods(["PUT"])
+@require_http_methods(["DELETE"])
 def delete_spending_history(request, spending_history_id):
-    """Handling request for update group.
-
+    """Handling request for delete group.
         Args:
-            request (HttpRequest): Data for new category.
+            request (HttpRequest): Data for delete spending history category.
             spending_history_id: Spending history id
         Returns:
             HttpResponse object.
     """
     user = request.user
-    spending_history = SpendingHistory.filter_by_id(spending_history_id)
+    spending_history = SpendingHistory.get_by_id(spending_history_id)
     if not spending_history:
         return HttpResponse(status=406)
+    if not spending_history.owner == user:
+        return HttpResponse(status=400)
     spending_history.update(is_active=False)
-    return HttpResponse(status=201)
+    return HttpResponse("You've just deleted this spending from your history", status=200)
 

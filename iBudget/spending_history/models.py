@@ -21,7 +21,7 @@ class SpendingHistory(models.Model):
             value (decimal): Value of transfer.
             owner (FK): Owner of spending category.
             comment (str, optional): Describing of transfer.
-            is_active (bool): "True" if this spending history is active, "false" in other way.
+            is_active (bool): "True" if this spending history exist, "false" in other way.
 
     """
     fund = models.ForeignKey(FundCategories, on_delete=True, related_name="spending_history")
@@ -34,26 +34,40 @@ class SpendingHistory(models.Model):
     comment = models.TextField(null=True, default="")
     is_active = models.BooleanField(default=True)
 
-    def update(self, is_active=None):
+    def update(self, fund=None, spending_categories=None, date=None, value=None, comment=None, is_active=None):
         """
-        Method which changes an information except email as it is an id of an user.
+        Method which changes an information.
         """
-        if is_active:
+        if fund:
+            self.fund = fund
+        if spending_categories:
+            self.spending_categories = spending_categories
+        if date:
+            self.date = date
+        if value:
+            self.value = value
+        if comment:
+            self.comment = comment
+        if is_active is not None:
             self.is_active = is_active
-        self.save()
+        try:
+            self.save()
+        except(ValueError, AttributeError):
+            pass
 
     @staticmethod
-    def filter_by_id(spending_history_id, is_active=True):
+    def get_by_id(spending_history_id):
         """
         Args:
             spending_history_id (int): The first parameter.
-            is_active(bool): which category is active.
         Returns:
-            Group object if database contain spending
-            category with id, None otherwise.
-
+            SpendingHistory object if database contain spending
+            history category with id, None otherwise.
         """
-        return SpendingHistory.objects.filter(pk=spending_history_id, is_active=is_active)
+        try:
+            return SpendingHistory.objects.get(pk=spending_history_id)
+        except (SpendingHistory.DoesNotExist, ValueError):
+            return None
 
     @staticmethod
     def filter_by_user_date_spending(user,
@@ -67,6 +81,7 @@ class SpendingHistory(models.Model):
             start_date (date): The beginning of statistic period
             finish_date (date): The end of statistic period
             spending_categories (SpendingCategories): spending category
+            is_active(bool): 'True' if spending history exist
         Returns:
             SpendingHistory objects if database contains such, None otherwise.
 
@@ -96,6 +111,7 @@ class SpendingHistory(models.Model):
             user (UserProfile): owner of transaction,
             start_date (date): The beginning of statistic period
             finish_date (date): The end of statistic period
+            is_active(bool): 'True' if spending history exist
         Returns:
             SpendingHistory objects if database contains such, None otherwise.
 
@@ -107,14 +123,15 @@ class SpendingHistory(models.Model):
                                               is_active=is_active)
 
     @staticmethod
-    def filter_by_user(user):
+    def filter_by_user(user, is_active=True):
         """
         Args:
             user (UserProfile): user of category,
+            is_active(bool): 'True' if spending history exist
 
         Returns:
             SpendingCategories object if database contain category for this user
             and is_shared value, None otherwise.
 
         """
-        return SpendingHistory.objects.filter(owner=user)
+        return SpendingHistory.objects.filter(owner=user, is_active=is_active)

@@ -139,6 +139,7 @@ def users_shared_fund(request):
         return JsonResponse(users_fund, status=200, safe=False)
     return JsonResponse({}, status=400)
 
+
 @require_http_methods(["POST"])
 def create_new_fund(request):
     """Handling request for creating of new fund category.
@@ -195,31 +196,53 @@ def create_new_goal(request):
         if not is_user_admin_group(group.id, user):
             return HttpResponse(status=406)
     if save_new_goal(
-            value=Decimal(data["value"]),
-            start_date=data["start_date"],
-            finish_date=data["finish_date"],
-            name=data["name"],
-            icon=data["icon"],
-            is_shared=is_shared,
-            owner=user,
-            shared_group=shared_group):
+        value=Decimal(data["value"]),
+        start_date=data["start_date"],
+        finish_date=data["finish_date"],
+        name=data["name"],
+        icon=data["icon"],
+        is_shared=is_shared,
+        owner=user,
+        shared_group=shared_group):
         return HttpResponse(status=201)
     return HttpResponse(status=409)
 
 
-@require_http_methods(["PUT"])
+@require_http_methods(["DELETE"])
 def delete_fund_category(request, fund_id):
-    """Handling request for update spending category.
-
+    """Handling request for delete fund category.
         Args:
-            request (HttpRequest): Data for new category.
+            request (HttpRequest): Data for delete fund.
             fund_id: Fund category Id
         Returns:
             HttpResponse object.
     """
     user = request.user
-    fund = FundCategories.filter_by_id(fund_id)
+    fund = FundCategories.get_by_id(fund_id)
     if not fund:
         return HttpResponse(status=406)
+    if not fund.owner == user:
+        return HttpResponse(status=400)
     fund.update(is_active=False)
-    return HttpResponse("You've just deleted fund ", status=201)
+    return HttpResponse(f"You've just deleted fund {fund.name}", status=200)
+
+
+@require_http_methods(["DELETE"])
+def delete_financial_goal(request, fund_id):
+    """Handling request for delete goal category.
+        Args:
+            request (HttpRequest): Data for delete goal.
+            fund_id: Fund category Id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    fund = FundCategories.get_by_id(fund_id)
+    if not fund:
+        return HttpResponse(status=406)
+    if not fund.owner == user:
+        return HttpResponse(status=400)
+    if FinancialGoal.has_goals(fund_id=fund.id):
+        fund.update(is_active=False)
+        return HttpResponse(f"You've just deleted goal {fund.name}", status=200)
+    return HttpResponse(status=400)
