@@ -4,10 +4,7 @@ Middleware
 The module that provides custom application's middlewares and and provides custom JSON check.
 """
 
-import json
-from json.decoder import JSONDecodeError
-
-from django.http import HttpResponse, response
+from django.http import HttpResponse
 
 ANONYMOUS_USERS_PATHS = ['/api/v1/authentication/login/',
                          '/api/v1/authentication/forgot_password/',
@@ -16,7 +13,7 @@ ANONYMOUS_USERS_PATHS = ['/api/v1/authentication/login/',
 ENCODING = "utf-8"
 
 
-class LoginRequiredMiddleware():
+class LoginRequiredMiddleware():#pylint: disable=too-few-public-methods
     """
     The class that represents the middleware that permits only a few available paths
     for anonymous users and provides custom JSON check.
