@@ -303,16 +303,20 @@ def add_shared_fund_to_group(request):
 
 @require_http_methods(["POST"])
 def change_users_role_in_group(request):
+    """Handling request for updating user's role in group.
+    Args:
+        request (HttpRequest): request from server which contain
+        email, is_admin and group_id
+    Returns:
+        HttpResponse object.
+    """
     data = json.loads(request.body)
     user_email = data["email"]
     print(user_email)
     user_to_change = UserProfile.get_by_email(user_email)
     group_id = data["group_id"]
     is_admin = data["is_admin"]
-    if is_admin == 'Admin':
-        is_admin = True
-    else:
-        is_admin = False
+    is_admin = True if is_admin == 'Admin' else False
     user = request.user
     if user:
         if not is_user_admin_group(group_id, user):
