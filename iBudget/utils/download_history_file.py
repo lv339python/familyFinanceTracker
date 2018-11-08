@@ -10,6 +10,14 @@ from django.utils.dateparse import parse_datetime, parse_date
 
 
 def creating_empty_xlsx_file():
+    """
+    Function for creating empty xlsx file
+    Returns:
+        output: byte object
+        workbook: xlsx empty workbook
+        worksheet: created history worksheet
+        formats dicts: dicts with cell formats
+    """
     output = io.BytesIO()
 
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
@@ -28,7 +36,15 @@ def creating_empty_xlsx_file():
     return output, worksheet, workbook, formats_dict
 
 def file_streaming_response(content_type, filename, output):
-
+    """
+    Function for creating empty xlsx file
+    Args:
+        output: byte object
+        content_type: specific type for response file
+        filename
+    Returns:
+        response
+    """
     output.seek(0)
 
     response = StreamingHttpResponse(
@@ -39,7 +55,13 @@ def file_streaming_response(content_type, filename, output):
     return response
 
 def income_date_parser(request):
-
+    """
+    Function for parsing income date data from request
+    Args:
+        request
+    Returns:
+        date_dict: dictionary with date and user info
+    """
     date_dict = dict()
     date_dict['user_id'] = request.user
     date_dict['start_date'] = parse_datetime(request.GET['start_date'])
@@ -50,7 +72,13 @@ def income_date_parser(request):
 
 
 def spending_date_parser(request):
-
+    """
+    Function for parsing and validation spending date data from request
+    Args:
+        request
+    Returns:
+        date_dict: dictionary with date and user info
+    """
     date_dict = dict()
     date_dict['user_id'] = request.user
     date_dict['start_date'] = parse_date(request.GET['start_date'])
