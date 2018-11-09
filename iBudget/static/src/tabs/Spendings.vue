@@ -79,7 +79,7 @@
                     return result
                 }
             },
-            }
+
         },
         methods: {
            delItem(data) {

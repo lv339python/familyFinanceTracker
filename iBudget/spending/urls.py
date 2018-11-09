@@ -8,7 +8,7 @@ from spending.views import (set_spending_limitation_ind_fix,
                             change_group_limit,
                             create_spending_category,
                             set_limitation_period, set_spending_limitation_ind_arb,
-                            check_dates_choice,set_dates_choice)
+                            check_dates_choice, set_dates_choice,
                             delete_spending_category)
 
 urlpatterns = [
