@@ -21,12 +21,10 @@
                     </p>
 
                     <b-btn class="mt-3" variant="outline-success" @click="showInfo">Show more info</b-btn>
-                    <b-btn class="mt-3" variant="outline-success" @click="addInfo">Add info</b-btn>
+                    <b-btn class="mt-3" variant="outline-success" @click="addInfo">Update personal info</b-btn>
 
 
                     <div v-show="more_info">
-
-
                         <p class="card-text" v-for="item in custom">
                             <br/>
                             <b>Bio:</b>{{item.bio}}
@@ -34,10 +32,7 @@
                             <b>Hobby:</b>{{item.hobby}}
                             <br/>
                             <b>Birthday:</b>{{item.birthday}}
-
                         </p>
-
-
                     </div>
 
                     <div v-show="add_info">
@@ -58,10 +53,22 @@
                                 <input v-model="birthday" type="date" placeholder="birthday">
                             </div>
                         </div>
-                        <b-btn class="mt-3" variant="outline-success" @click="addInfo">Save</b-btn>
+                        <b-btn class="mt-3" variant="outline-success" @click="setData">Save</b-btn>
+                        <hr/>
+                        <div class="form-group">
+                            <input type="password" v-model="new_password" class="form-control"
+                                   placeholder="new password">
+                            <br/>
+                            <input type="password" v-model="confirm_password" class="form-control"
+                                   placeholder="confirm password">
+                        </div>
+                        <br/>
+                        <b-button class="btn btn-outline-success" :disabled="!isValidPassword" @click="setDatapassword">
+                            Save
+                        </b-button>
                         <hr/>
                         <b-link @click="showForgotPassword">Deactivate your account</b-link>
-                      </div>
+                    </div>
                 </b-card>
             </div>
             <b-btn class="mt-3" variant="outline-danger" block @click="logout">Log Out</b-btn>
@@ -86,18 +93,32 @@
                 last_name: null,
                 bio: null,
                 hobby: null,
-                birthday: null
+                icon: null,
+                birthday: null,
+                new_password: null,
+                confirm_password: null
 
+            }
+        },
+        computed: {
+            isValidPassword: {
+                get: function () {
+                    return this.new_password === this.confirm_password && this.new_password !== "";
+                }
             }
         },
         methods: {
             showInfo() {
                 this.more_info = !this.more_info;
-
+                if (this.add_info === true) {
+                    return this.add_info = false
+                }
             },
             addInfo() {
-                this.add_info =!this.add_info;
-
+                this.add_info = !this.add_info;
+                if (this.more_info === true) {
+                    return this.more_info = false
+                }
             },
 
             showModal() {
@@ -117,17 +138,14 @@
                 });
 
             },
-            setData: function (event) {
+            setDatapassword: function (event) {
                 axios({
                     method: 'post',
-                    url: '/api/v1/custom_profile/create_personal_details/',
+                    url: '/api/v1/authentication/change_password/',
                     data: {
-                        'first_name': this.first_name,
-                        'last_name': this.last_name,
-                        'bio': this.bio,
-                        'hobby': this.hobby,
-                        'photo': this.selectedIcon,
-                        'birthday': this.birthday
+                        'confirm_password': this.confirm_password,
+                        'new_password': this.new_password
+
 
                     },
                 }).then(response => {
@@ -137,6 +155,24 @@
                 })
             },
         },
+        setData: function (event) {
+            axios({
+                method: 'put',
+                url: '/api/v1/authentication/update_password/' + this.token,
+                data: {
+                    'new_password': this.new_password,
+                    'confirm_password': this.confirm_password
+
+                }
+
+            }).then(response => {
+                this.reply = response.data;
+                this.showModal()
+
+            })
+        },
+
+
         created() {
             axios.get('api/v1/authentication/profile/')
                 .then(response => {
@@ -160,7 +196,7 @@
     }
 
     .card-text {
-        text-align:left;
+        text-align: left;
         margin-left: 150px;
     }
 

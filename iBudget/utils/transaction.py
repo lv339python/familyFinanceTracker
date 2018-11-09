@@ -118,7 +118,7 @@ def save_personal_info(user,
                        last_name = None,
                        bio = None,
                        hobby = None,
-                       photo = None,
+                       icon = None,
                        birthday = None):
 
     """Function for save personal info
@@ -127,7 +127,7 @@ def save_personal_info(user,
         last_name(str): user's last name.
         bio(str): user's bio.
         hobby(str):user's hobby.
-        photo(str):user's photo.
+        icon(str):user's photo.
         birthday(date): user's birthday.
         user(UserProfile): transaction owner.
     Returns:
@@ -143,14 +143,14 @@ def save_personal_info(user,
             if custom:
                 custom.bio = bio
                 custom.hobby = hobby
-                custom.photo = photo
+                custom.icon = icon
                 custom.birthday = birthday
 
             else:
                 custom = CustomProfile(
                     bio=bio,
                     hobby=hobby,
-                    photo=photo,
+                    icon=icon,
                     birthday=birthday,
                     user=user)
             custom.update()

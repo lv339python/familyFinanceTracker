@@ -12,8 +12,6 @@ from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
 
-
-
 @require_http_methods(['GET'])
 def show_total(request):
     """this function accepts request object and returns the amount of incomes from the beginning of
@@ -70,6 +68,7 @@ def track(request):
         set_for_chart.add(incomes_funds_ids[counter[0]]['fund'])
     incomes_funds_ids.append(list(set_for_chart))
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
+
 
 @require_http_methods(["POST"])
 def register_income(request):

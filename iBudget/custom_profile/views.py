@@ -26,7 +26,7 @@ def create_personal_details(request):
         last_name=data["last_name"],
         bio=data['bio'],
         hobby=data["hobby"],
-        photo=data["photo"],
+        icon=data["icon"],
         birthday=data["birthday"]):
         return HttpResponse(status=201)
     return HttpResponse(status=409)
@@ -45,7 +45,7 @@ def show_custom_user_data(request):
         item = CustomProfile.get_by_user(user=user)
         users_custom_data.append({'bio': item.bio,
                                   'hobby': item.hobby,
-                                  'photo': item.photo,
+                                  'icon': item.icon,
                                   'birthday': item.birthday})
         return JsonResponse(users_custom_data, status=200, safe=False)
     return JsonResponse({}, status=400)
