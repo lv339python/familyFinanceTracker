@@ -60,16 +60,17 @@
                                 <li>
                                     {{ user.email }}
                                     <button
+                                        v-if="user.user_role!='Owner'"
                                         type="button"
                                         class="btn btn-primary"
                                         @click="changeRole(user.email)"
                                         >
                                             {{ user.user_role }}
                                     </button>
-                                    <button @click="updateUserRoleData(user.group_id, user.email, user.user_role)"> Save </button>
                                 </li>
                             </ul>
                             <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
+                            <button v-if="changes" @click="updateUserRoleData(user.group_id, user.email, user.user_role)"> Save </button>
                         </div>
                   </b-tab>
                   <b-tab title="Shared fund">
@@ -104,7 +105,11 @@
                 group_id: null,
                 users_in_group: [],
                 shared_fund_list: [],
-                shared_spending_list: []
+                shared_spending_list: [],
+                changes: false,
+                email: null,
+                user_role: null,
+                user_group_id: null
             }
         },
         components: {
@@ -126,6 +131,7 @@
                                     this.users_in_group[i].user_role = 'Admin'
                                 }
                             }
+                            this.changes = true;
                         }
                     }
                 }
@@ -195,6 +201,7 @@
                 }).then(response => {
                     this.reply = response.data;
                     alert(this.reply);
+                    this.changes = false
                 }).catch(error => {
                     alert(error.response.data)
                 })
