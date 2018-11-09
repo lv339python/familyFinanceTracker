@@ -267,7 +267,7 @@ def create_csv(request):
             headers.append(i)
     elif individual_spending_history:
         headers = ['spending']
-        for i in group_spending_history[0]['history'][0]:
+        for i in individual_spending_history[0]['history'][0]:
             headers.append(i)
     else:
         headers = []
