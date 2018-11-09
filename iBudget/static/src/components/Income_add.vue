@@ -1,7 +1,11 @@
 <template>
     <div id="income_add">
+         <b-button variant="primary" @click="showModal">
+            +
+        </b-button>
+        <b-modal ref="myModalRef" hide-footer title="Add new income">
 
-        <div class="col-md-3">
+        <div>
             <hr>
             <div class="form-group">
                 <label for="name">Name of income:</label>
@@ -9,11 +13,11 @@
             </div>
         </div>
 
-        <div class="col-md-2">
+        <div>
             <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
         </div>
 
-        <div class="form-group col-md-2">
+        <div>
             <div>
                 <label>Select date</label>
                 <input v-model="incomeDate" type="date">
@@ -22,7 +26,7 @@
         </div>
 
 
-        <div class="form-group col-md-2">
+        <div>
             <label for="value">Value:</label>
             <br>
             <input v-model.number="incomeValue" id="value"
@@ -31,14 +35,14 @@
         </div>
 
 
-        <div class="col-md-2" v-show="isValidData">
+        <div v-show="isValidData">
             <hr>
             <button class="btn btn-outline-primary" v-on:click="createIncome" :variant="secondary">Create income
             </button>
             <button v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}</button>
         </div>
 
-
+     </b-modal>
     </div>
 </template>
 
@@ -78,6 +82,13 @@
             }
         },
         methods: {
+            showModal() {
+                this.$refs.myModalRef.show();
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide();
+                this.clearAll();
+            },
             createIncome: function (event) {
                 console.log(this.newName,
                     this.selectedIcon,

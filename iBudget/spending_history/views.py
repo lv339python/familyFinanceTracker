@@ -57,7 +57,7 @@ def register_spending(request):
         spending_history.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    response = f"You've just register spending {spending.name}. \n" +\
+    response = f"You've just register spending {spending.name}. \n" + \
                compare_ind_spend_limit(user, data["date"], spending, value)
     return HttpResponse(response, status=201)
 
@@ -218,6 +218,7 @@ def get_month_spending(request):
                             status=200)
     return HttpResponse('Bad Request', status=400)
 
+
 def create_spending_chart(user, start_date, finish_date):
     """Creating array of data for spending history chart.
         Args:
@@ -262,6 +263,16 @@ def get_spending_chart(request):
         return JsonResponse({}, status=400)
 
     if user:
-        return JsonResponse(create_spending_chart(user, start_date, finish_date),
+        date_list = SpendingHistory.objects.filter(owner=user).values_list('date', flat=True)
+        begin_date = min(date_list).date()
+        response = [create_spending_chart(user, start_date, finish_date)]
+        dates=[str(finish_date.month)+'/'+str(finish_date.year)]
+        while start_date > begin_date:
+            finish_date = start_date - timedelta(days=1)
+            start_date = date(finish_date.year, finish_date.month, 1)
+            response.append(create_spending_chart(user, start_date, finish_date))
+            dates.append(str(finish_date.month)+'/'+str(finish_date.year))
+        print(response)
+        return JsonResponse({'values':response,"dates":dates},
                             status=200, safe=False)
     return JsonResponse({}, status=400)

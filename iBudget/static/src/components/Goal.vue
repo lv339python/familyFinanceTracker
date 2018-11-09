@@ -1,5 +1,5 @@
 <template>
-    <div class='goaltable wrapper'>
+    <div class='goaltable'>
 
             <b-carousel id="carousel1"
                         style="text-shadow: 1px 1px 2px #333;"
@@ -93,7 +93,7 @@
 </script>
 
 <style>
- .goaltable wrapper{
+ .goaltable{
       width: fit-content;
         margin:0 ;
         text-align: center;

@@ -1,7 +1,11 @@
 <template>
     <div id="spending_add">
+          <b-button variant="primary" @click="showModal">
+            +
+        </b-button>
+        <b-modal ref="myModalRef" hide-footer title="Add new spending category">
 
-        <div class="col-md-4">
+        <div >
             <hr>
             <div class="form-group">
                 <label for="name">Name of spending:</label>
@@ -9,18 +13,18 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div>
             <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
         </div>
 
-        <div v-show="isValidData" class="col-md-4">
+        <div v-show="isValidData" >
             <hr>
             <button class="btn btn-outline-dark" v-on:click="createSpending" :variant="secondary">Create spending
             </button>
             <button class="btn btn-outline-dark" v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}
             </button>
         </div>
-
+      </b-modal>
     </div>
 </template>
 
@@ -56,6 +60,13 @@
             }
         },
         methods: {
+            showModal() {
+                this.$refs.myModalRef.show();
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide();
+                this.clearAll();
+            },
             createSpending: function (event) {
                 axios({
                     method: 'post',
