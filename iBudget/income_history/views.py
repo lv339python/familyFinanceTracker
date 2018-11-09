@@ -20,11 +20,8 @@ from .models import IncomeCategories, FundCategories, IncomeHistory
 
 def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
     """
-    Getting income history information.
-    Args:
-        user_id , start date, final date and UTC information.
-    Returns:
-        dictionary with income history info
+    a function which accepts parameters defined in the function 'track'
+    :return: list of all user's incomes, funds, dates, comments and sums within a chosen period
     """
     incomes_funds = IncomeHistory.objects.filter(date__range=(date_start, date_end),
                                                  income_id__owner_id=user_id)
@@ -57,13 +54,12 @@ def show_total(request):
     total = 0
     incomes_to_date = IncomeHistory.objects.filter(date__range=(start_date, end_date),
                                                    income_id__owner_id=user_id)
-
     if not incomes_to_date:
-        return HttpResponse('There are no incomes during this period', status=204)
+        return HttpResponse(0, status=200)
 
     for income in incomes_to_date:
         total = total+income.value
-    return HttpResponse(total)
+    return HttpResponse(total, status=200)
 
 
 @require_http_methods(['POST'])
@@ -80,13 +76,14 @@ def track(request):
     if len(content) <= 1:
         return HttpResponse('You did not choose any dates or you chose only one date out of two',
                             status=400)
-    time_diff = datetime.timedelta(hours=2)
+    time_diff = datetime.timedelta(hours=content['time_diff'])
     parsed_start = parse_datetime(content['start']) - time_diff
     parsed_end = parse_datetime(content['end']) - time_diff
     incomes_funds_ids = get_incomes_funds_ids(user_id=user_id,
                                               date_start=parsed_start,
                                               date_end=parsed_end,
                                               time_diff=time_diff)
+
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 @require_http_methods(["POST"])

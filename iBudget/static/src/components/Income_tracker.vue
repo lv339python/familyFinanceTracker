@@ -46,26 +46,32 @@
             <div class="download_buttons">
                 <a v-bind:href='"/api/v1/income_history/download_xlsx_file/?start_date=" + start_date + start_date_time  + "&finish_date=" +  end_date +
                 end_date_time + "&UTC=" + UTC'>
-                    <button class="btn btn-outline-warning" :disabled="list_with_incomes&&(end_date<start_date)"
-                            :variant="secondary">Download xlsx
+                    <button class="btn btn-outline-warning" :disabled="shownResult===false||(end_date<start_date)">
+                        Download xlsx
                     </button>
                 </a>
                 <a v-bind:href='"/api/v1/income_history/download_csv_file/?start_date=" + start_date + start_date_time + "&finish_date=" +
                   end_date + end_date_time + "&UTC=" + UTC'>
-                    <button class="btn btn-outline-warning" :disabled="list_with_incomes&&(end_date<start_date)"
-                            :variant="secondary">Download csv
+                    <button class="btn btn-outline-warning" :disabled="shownResult===false||(end_date<start_date)">
+                        Download csv
                     </button>
                 </a>
             </div>
         </div>
-        <div class="chartcontainer" v-if="shownResult">
-            <!--v-if is necessary to render the chart correctly, because computed is called with default
-            data first and the chart is not rendered; here it's called twice and only the valid result is
-            rendered-->
-            <Income_chart v-if="make_list_dates.length !== 0"
-                          v-bind:date_to_props="make_list_dates"
-                          v-bind:amount_to_props="make_list_amounts">
-            </Income_chart>
+        <div class="chartcontainer" v-if="shownResultChart">
+                    <!--v-if is necessary to render the chart correctly, because computed is called with default
+                    data first and the chart is not rendered; here it's called twice and only the valid result is
+                    rendered-->
+                    <Income_chart v-if="make_list_dates.length !== 0"
+                        v-bind:date_to_props="make_list_dates"
+                        v-bind:amount_to_props="make_list_amounts">
+                    </Income_chart>
+        </div>
+        <div id="no_result" v-if="no_result">
+            <p>There are no incomes within the chosen time frame!</p>
+             <p>
+                 <button v-on:click="reRender" v-if="shownResult">refresh</button>
+             </p>
         </div>
     </div>
 </template>
@@ -86,6 +92,8 @@
                 shownResult: false,
                 cur_income: 0,
                 UTC: -new Date().getTimezoneOffset() / 60,
+                shownResultChart:false,
+                cur_income: null,
                 // this is the size of a paginated page
                 pagination_size: 3,
                 paginated_page_number: 0,
@@ -93,7 +101,8 @@
                 start_date_time: "T00:00:00",
                 end_date_time: "T23:59:59",
                 date_to_props: [],
-                amount_to_props: []
+                amount_to_props: [],
+                no_result:false,
             }
         },
         created() {
@@ -160,23 +169,36 @@
         methods: {
             sub_dates: function () {
                 if (this.start_date.length != 0 && this.end_date.length != 0) {
-                    this.shownResult = true;
                     axios({
                         method: "post",
                         url: "api/v1/income_history/track/",
                         data: {
                             'start': this.start_date + this.start_date_time,
-                            'end': this.end_date + this.end_date_time
+                            'end': this.end_date + this.end_date_time,
+                            'time_diff':this.UTC
                         }
                     }).then(response => {
                         this.list_with_incomes = response.data;
+                        console.log(this.list_with_incomes.length);
+                        //if we got empty JSON with empty list inside
+                        if(this.list_with_incomes.length === 1){
+                            this.no_result = true;
+                        }
+                        //if we got JSON with only one array inside, not enough to draw a chart
+                        else if(this.list_with_incomes.length === 2){
+                            this.shownResult = true;
+                        }
+                        else{
+                            this.shownResult = true;
+                            this.shownResultChart = true
+                        }
+
                     }).catch(error => {
                         console.log(error.response.data);
                     })
                 } else {
                     alert('You did not choose any dates or you chose only one date out of two required! Choose both dates!')
                 }
-                ;
             },
             reRender: function () {
                 {

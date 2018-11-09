@@ -105,7 +105,7 @@ def google_sign_in(request):
         user_profile = UserProfile.get_by_email(user_data['email'])
         if user_profile:
             login(request, user_profile)
-            return redirect("/")
+            return redirect("/#/home/")
         user = UserProfile()
         user.email = user_data['email']
         user.first_name = user_data['given_name']
@@ -114,7 +114,7 @@ def google_sign_in(request):
         user.password = ''.join(random.choice(chars_pass) for _ in range(8))
         user.save()
         login(request, user)
-        return redirect("/")
+        return redirect("/#/home/")
     return HttpResponse(status=400)
 
 

@@ -2,7 +2,7 @@
     <div class="container">
 
          <div class="Chart">
-          <h1 style="text-align:center;">Funds info:</h1>
+          <h1 style="text-align:center;">Funds' income info:</h1>
           <line-example
                         v-bind:x_axis="get_x"
                         v-bind:amounts="amounts"

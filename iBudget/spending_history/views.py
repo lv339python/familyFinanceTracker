@@ -13,7 +13,7 @@ from django.views.decorators.http import require_http_methods
 from group.models import SharedSpendingCategories, Group, UsersInGroups, SharedFunds
 
 from utils.get_role import groups_for_user, is_user_member_group, is_user_admin_group
-from utils.spendings_limit_checker import compare_ind_spend_limit
+from utils.spendings_limit_checker import compare_ind_spend_limit, comp_gr_spends_w_limit
 from utils.validators import input_spending_registration_validate, is_valid_data_spending_history, \
     date_parse
 from utils.download_history_file import creating_empty_xlsx_file, \
@@ -32,7 +32,6 @@ def register_spending(request):
     data = json.loads(request.body)
     if not input_spending_registration_validate(data):
         return HttpResponse(status=400)
-
     user = request.user
     spending = SpendingCategories.get_by_id(int(data["category"]))
     fund = FundCategories.get_by_id(int(data["type_of_pay"]))
@@ -61,7 +60,9 @@ def register_spending(request):
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
     response = f"You've just register spending {spending.name}. \n" +\
-               compare_ind_spend_limit(user, data["date"], spending, value)
+               compare_ind_spend_limit(user, data["date"], spending, value) + "\n" + \
+               comp_gr_spends_w_limit(data['group_id'], data['category'])
+
     return HttpResponse(response, status=201)
 
 

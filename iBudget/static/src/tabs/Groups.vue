@@ -41,8 +41,8 @@
                   </b-tab>
                   <b-tab title="User's in group" >
                         <div>
-                            <ul class="list-group-item"
-                            v-for="user in users_in_group" class="group_display"
+                            <ul class="list-group-item group_display"
+                            v-for="user in users_in_group"
                             v-if="user.group_id===group_index">
                                 <li> {{ user.email }} - {{ user.user_role }} </li>
                             </ul>
