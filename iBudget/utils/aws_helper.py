@@ -8,7 +8,6 @@ import boto3
 from ibudget.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, \
     AWS_STORAGE_BUCKET_NAME
 
-
 class AwsService:
     """the class which handles actions with files on AWS
     """

@@ -29,6 +29,7 @@
             </div>
         </div>
         <div v-show="isCategory&&(start_date<=finish_date)" class="col-md-6">
+
             <div class="btn-group" role="group" v-model="selected">
                 <button v-for="spend in spending_history_individual"
                         type="button"
@@ -71,13 +72,23 @@
                 </div>
             </div>
         </div>
+        <div class="download_buttons form-group col-md-6">
+            <hr>
+            <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
+                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                        :variant="secondary">Download xlsx
+                </button>
+            </a>
+            <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
+                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                        :variant="secondary">Download csv
+                </button>
+            </a>
+        </div>
     </div>
 </template>
 
 <script>
-    var x = new Date()
-    var UTC = -x.getTimezoneOffset() / 60
-
     import axios from 'axios';
 
     export default {
@@ -89,13 +100,13 @@
                 listValues: [],
                 pageNumber: 0,
                 size: 2,
-                start_date: new Date().toJSON().slice(0,10),
-                finish_date: new Date().toJSON().slice(0,10),
+                start_date: new Date().toJSON().slice(0, 10),
+                finish_date: new Date().toJSON().slice(0, 10),
                 selected: [],
                 spending_history_individual: {},
                 spending_history_admin: {},
                 errors: [],
-                UTC: null
+                UTC: -new Date().getTimezoneOffset() / 60
             }
         },
         created() {
@@ -123,14 +134,13 @@
                     data: {
                         'start_date': this.start_date,
                         'finish_date': this.finish_date,
-                        'UTC': UTC
+                        'UTC': this.UTC
                     }
                 })
                     .then(response => {
                         this.spending_history_admin = response.data.admin;
                         this.spending_history_individual = response.data.individual;
                         this.isCategory = true
-
                     })
                     .catch(e => {
                         this.errors.push(e)
@@ -155,7 +165,7 @@
                     data: {
                         'start_date': this.start_date,
                         'finish_date': this.finish_date,
-                        'UTC': UTC
+                        'UTC': this.UTC
                     }
                 })
                     .then(response => {
