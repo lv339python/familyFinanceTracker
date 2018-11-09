@@ -88,8 +88,10 @@ export function generateChart(chartId, chartType) {
 }
 
 export const Line = generateChart('line-chart', 'line')
+export const Pie = generateChart('pie-chart', 'pie')
 
 export default {
     Line,
+    Pie,
 
 }
