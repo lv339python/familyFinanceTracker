@@ -312,7 +312,6 @@ def change_users_role_in_group(request):
     """
     data = json.loads(request.body)
     user_email = data["email"]
-    print(user_email)
     user_to_change = UserProfile.get_by_email(user_email)
     group_id = data["group_id"]
     is_admin = data["is_admin"]
