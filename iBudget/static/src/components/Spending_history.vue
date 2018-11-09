@@ -1,7 +1,7 @@
 <template>
     <div id="spending_history">
         <div>
-            <div id='total' class="col-md-8 total">
+            <div class="col-md-8 total">
                 <h6>Total in this month:
                     <br>
                     {{total}}
@@ -69,15 +69,25 @@
                 </div>
             </div>
         </div>
+        <div class="download_buttons form-group col-md-6">
+            <hr>
+            <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
+                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                        :variant="secondary">Download xlsx
+                </button>
+            </a>
+            <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
+                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                        :variant="secondary">Download csv
+                </button>
+            </a>
+        </div>
     </div>
 </template>
 
 <script>
-    var x = new Date()
-    var UTC = -x.getTimezoneOffset() / 60
-
     import axios from 'axios';
-
+    var UTC = -new Date().getTimezoneOffset() / 60;
     export default {
         name: "Spending_history",
         data() {
@@ -94,7 +104,7 @@
                 spending_history_admin: {},
                 spending_all:[],
                 errors: [],
-                UTC: null
+                UTC: -new Date().getTimezoneOffset() / 60
             }
         },
         created() {
@@ -140,7 +150,7 @@
                     data: {
                         'start_date': this.start_date,
                         'finish_date': this.finish_date,
-                        'UTC': UTC
+                        'UTC': UTC,
                     }
                 })
                 .then(response => {
