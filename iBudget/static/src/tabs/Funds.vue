@@ -9,7 +9,7 @@
             <div v-if="isList&& totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
-                    v-bind:title='title'  v-if="list.length !== 0"/>
+                    v-bind:title='title'  v-if="list.length !== 0" @selected_item="delItem"/>
             </div>
             <router-view></router-view>
         </div>
@@ -30,7 +30,9 @@
                 list_shared:[],
                 list: [],
                 title: "Funds",
-                errors: []
+                errors: [],
+                fund_id: null,
+                id: 0
             }
         },
         created() {
@@ -65,6 +67,18 @@
                             'name': this.list_shared[i].name_fund + ' / ' + this.list_shared[i].group_name});
                     };
                     return result
+                }
+            }
+        },
+        methods: {
+            delItem(data) {
+                if (data.id != 0) {
+                    axios({
+                        method: 'delete',
+                        url: '/api/v1/fund/delete_fund_category/' + data.id,
+                    }).then(response => {
+                        this.$router.push('/funds/')
+                    })
                 }
             }
         }

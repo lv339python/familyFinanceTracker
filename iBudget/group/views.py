@@ -73,18 +73,19 @@ def show_users_group_data(request):
         user_role = None
         for item in groups_for_user(user):
             group = Group.get_group_by_id(item)
-            count = UsersInGroups.count_of_user_in_group(group.id)
-            if group.owner == user:
-                user_role = "Owner"
-            else:
-                if is_user_admin_group(item, user):
-                    user_role = "Admin"
+            if group.is_active:
+                count = UsersInGroups.count_of_user_in_group(group.id)
+                if group.owner == user:
+                    user_role = "Owner"
                 else:
-                    user_role = "Member"
-            groups.append({'id': item,
-                           'user_role': user_role,
-                           'group_name': group.name,
-                           'count': count})
+                    if is_user_admin_group(item, user):
+                        user_role = "Admin"
+                    else:
+                        user_role = "Member"
+                groups.append({'id': item,
+                               'user_role': user_role,
+                               'group_name': group.name,
+                               'count': count})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 

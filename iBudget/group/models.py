@@ -43,7 +43,7 @@ class Group(models.Model):
             self.name = name
         if icon:
             self.icon = icon
-        if is_active:
+        if is_active is not None:
             self.is_active = is_active
         try:
             self.save()
@@ -100,14 +100,14 @@ class Group(models.Model):
 
         """
         group_funds = []
-        shared_funds = SharedFunds.objects.filter(group=group_object, is_active=is_active)
+        shared_funds = SharedFunds.objects.filter(group=group_object)
         for fund in shared_funds:
-            for i in FundCategories.objects.filter(id=fund.fund_id):
+            for i in FundCategories.objects.filter(id=fund.fund_id, is_active=is_active):
                 group_funds.append({'id': i.id, 'name': i.name})
         return group_funds
 
     @staticmethod
-    def filter_spendings_categories_by_group(group_object, is_active=True):
+    def filter_spendings_categories_by_group(group_object):
         """
         Args:
             group_object: users group object.
@@ -117,7 +117,7 @@ class Group(models.Model):
 
         """
         group_spendings = []
-        shared_spendings = SharedSpendingCategories.objects.filter(group_id=group_object, is_active=is_active)
+        shared_spendings = SharedSpendingCategories.objects.filter(group_id=group_object)
         for spend in shared_spendings:
             for i in SpendingCategories.objects.filter(id=spend.spending_categories_id):
                 group_spendings.append({'id': i.id, 'name': i.name})

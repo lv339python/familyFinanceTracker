@@ -5,16 +5,57 @@
             <b-button :variant="secondary" to="/incomes/tracking">Tracking</b-button>
             <b-button :variant="secondary" to="/incomes/new">New</b-button>
         </div>
-         <div  id="right" class="column">
-              <router-view></router-view>
+          <div  id="right" class="column">
+            <div v-if="isList&& list.length!==0">
+                <list_paginated
+                    v-bind:list='list'
+                    v-bind:title='title'  v-if="list.length !== 0" @selected_item="delItem"/>
+            </div>
+            <router-view></router-view>
         </div>
     </div>
 
 </template>
 
 <script>
+    import axios from 'axios';
+    import List_paginated from '../components/List_paginated';
     export default {
-        name: "Incomes"
+        components: {'List_paginated': List_paginated},
+        data() {
+            return {
+                isList: true,
+                list: [],
+                title: "Incomes",
+                errors: [],
+                id: 0
+            }
+        },
+created() {
+            axios({
+                method: 'get',
+                url: '/api/v1/income/'
+            })
+            .then(response => {
+                this.list = response.data;
+            })
+            .catch(e => {
+                this.errors.push(e)
+            });
+        },
+
+        methods: {
+            delItem(data) {
+                if (data.id != 0) {
+                    axios({
+                        method: 'delete',
+                        url: '/api/v1/income/delete_income/' + data.id,
+                    }).then(response => {
+                        this.$router.push('/incomes/')
+                    })
+                }
+            }
+        }
     }
 </script>
 

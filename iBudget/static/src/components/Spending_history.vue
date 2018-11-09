@@ -59,13 +59,12 @@
                         <td>{{ p.value}}</td>
                         <td>{{ p.date }}</td>
                         <td>{{ p.fund }}</td>
-                        <td v-model="spending_history_id">
-                            <button type="button" class="btn btn-outline-danger" v-on:click="Delete"
+                        <td >
+                            <button
+                                    type="button" class="btn btn-outline-danger" v-on:click="deleteHistory(p.spending_history_id)"
                                     :variant="secondary">Delete
-
                             </button>
                         </td>
-
                     </tr>
                     </tbody>
                 </table>
@@ -75,9 +74,7 @@
                     <button class="btn btn-outline-secondary" :disabled="pageNumber >= pageCount -1 " @click="nextPage">
                         Next
                     </button>
-
             </div>
-
         </div>
     </div>
 </template>
@@ -104,11 +101,7 @@
                 spending_history_admin: {},
                 errors: [],
                 UTC: null,
-
-
                 spending_history_id: null
-
-
             }
         },
         created() {
@@ -181,22 +174,16 @@
                         this.errors.push(e)
                     })
             },
-
-
-
-            Delete: function (event) {
+            deleteHistory: function (spendHistory) {
                 axios({
-                    method: 'put',
-                    url: '/api/v1/spending_history/delete_spending_history/' + this.spending_history_id,
+                    method: 'delete',
+                    url: '/api/v1/spending_history/delete_spending_history/' + spendHistory,
 
                 }).then(response => {
                     this.$router.go('spending/')
                 })
 
             },
-
-
-
             nextPage() {
                 this.pageNumber++;
             },

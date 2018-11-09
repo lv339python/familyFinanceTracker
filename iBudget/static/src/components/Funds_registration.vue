@@ -35,28 +35,6 @@
         <div class="col-md-2">
             <button class="btn btn-outline-primary" v-on:click="setData" :variant="secondary">Save</button>
         </div>
-
-
-
-
-
-        <div>
-            <label>Select fund:</label>
-            <select v-model="fund_id" class="form-control">
-                <option v-for="fund in fund_list" v-bind:value="fund.id">
-                    {{ fund.name }}
-                </option>
-            </select>
-        </div>
-        <div class="col-md-4">
-        <button type="button" class="btn btn-outline-danger" v-on:click="Delete" :variant="secondary">Delete fund
-        </button>
-        </div>
-
-
-
-
-
     </div>
 </template>
 
@@ -75,8 +53,6 @@
                 user_groups_list: [],
                 tab: 'fund',
                 selectedIcon: '',
-                fund_id: null,
-                fund_list: [],
             }
         },
         props: ["tabName"],
@@ -87,15 +63,6 @@
             axios.get('/api/v1/group/show_users_group/')
                 .then(response => {
                     this.user_groups_list = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
-
-        axios.get('/api/v1/fund/')
-                .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.fund_list = response.data
                 })
                 .catch(e => {
                     this.errors.push(e)
@@ -117,26 +84,7 @@
             },
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']
-            },
-
-
-
-
-
-             Delete: function (event) {
-                axios({
-                    method: 'delete',
-                    url: '/api/v1/fund/delete_fund_category/'+ this.fund_id,
-                }).then(response => {
-                    this.$router.go('/spendings/new/')
-                })
-
             }
-
-
-
-
-
         }
     }
 </script>

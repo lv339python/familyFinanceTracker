@@ -12,6 +12,8 @@
                 <b> name </b>: <i> {{ item.group_name }} </i> <br>
                 <b>your role </b>: <i> {{ item.user_role }} </i> <br>
                 <b>count of users </b>: <i> {{ item.count }} </i>
+                <b-btn class="btn btn-outline-light" variant="outline-primary"
+                       block @click="deleteGroup(item.id)">Delete group</b-btn>
             </li>
             </ul>
             <div v-show="pageCount>1">
@@ -47,7 +49,6 @@
                                 <li> {{ user.email }} - {{ user.user_role }} </li>
                             </ul>
                             <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
-                            <delete_group v-bind:group_id="selected_group_id"></delete_group>
                         </div>
                   </b-tab>
                   <b-tab title="Shared fund and spending categories">
@@ -63,7 +64,6 @@
     import axios from 'axios';
     import Add_new_user_to_group from '../components/Add_new_user_to_group';
     import Groups_registration from '../components/Groups_registration';
-    import Delete_group from '../components/Delete_group';
     import Add_shared_fund_to_group from '../components/Add_shared_fund_to_group';
     import Add_shared_category_to_group from '../components/Add_shared_category_to_group';
     export default {
@@ -84,8 +84,8 @@
             'add_user': Add_new_user_to_group,
             'create_new_group': Groups_registration,
             'add_shared_fund': Add_shared_fund_to_group,
-            'add_shared_spending': Add_shared_category_to_group,
-            'delete_group':Delete_group
+            'add_shared_spending': Add_shared_category_to_group
+
         },
         methods: {
             selected_group: function(index, item){
@@ -124,6 +124,15 @@
                 .catch(e => {
                     this.errors.push(e)
                 })
+            },
+             deleteGroup: function (groupId) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/group/delete_group/' + groupId,
+                }).then(response => {
+                    this.$router.go('/groups/')
+                })
+
             }
         },
         computed:{

@@ -1,7 +1,7 @@
 """
 This module provides model of income history.
 """
-
+import datetime
 from django.db import models
 
 from fund.models import FundCategories
@@ -75,4 +75,39 @@ class IncomeHistory(models.Model):
 
         """
         return IncomeHistory.objects.filter(pk=fund_name, is_active=is_active)
+
+    @staticmethod
+    def filter_by_user_date_spending(user,
+                                     start_date,
+                                     finish_date,
+                                     income_categories=None,
+                                     is_active=True):
+        """
+        Args:
+            user (UserProfile): owner of transaction,
+            start_date (date): The beginning of statistic period
+            finish_date (date): The end of statistic period
+            spending_categories (SpendingCategories): spending category
+            is_active(bool): 'True' if spending history exist
+        Returns:
+            SpendingHistory objects if database contains such, None otherwise.
+
+
+        """
+
+        if income_categories:
+            return IncomeHistory.objects.filter(owner=user,
+                                                  income_categories=income_categories,
+                                                  date__range=[start_date -
+                                                               datetime.timedelta(days=1),
+                                                               finish_date],
+                                                  is_active=is_active)
+        total = 0
+        for item in IncomeHistory.objects.filter(owner=user,
+                                                   date__range=[start_date -
+                                                                datetime.timedelta(days=1),
+                                                                finish_date],
+                                                   is_active=is_active):
+            total += float(item.value)
+        return total
 

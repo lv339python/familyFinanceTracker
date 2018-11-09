@@ -66,7 +66,6 @@
                 },
                 msg: '',
                 tab: 'income'
-
             }
         },
         computed: {

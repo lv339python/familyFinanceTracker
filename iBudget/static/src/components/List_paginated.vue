@@ -8,7 +8,12 @@
                     v-for="(item, index) in paginatedData"
                     v-on:click="selected_item(index, item.id)"
                     :class="{'active': selected_item_index===index}">
-                {{ item.name }}
+                    {{ item.name }}
+                    <button type="button" class="btn btn-outline-danger" v-on:click="delItem(item.id) "
+                            :variant="secondary">
+                        Delete
+                    </button>
+
                 </li>
             </ul>
             <div v-show="pageCount>1" class='prevNext'>
@@ -33,7 +38,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     export default {
         name: "List_paginated",
         data() {
@@ -41,34 +45,41 @@
                 size: 5,
                 pageNumber: 0,
                 selected_item_index: 0,
+                selected_item_id:0
+
             }
         },
         props: ["title", "list"],
         methods: {
-            selected_item: function(index, item){
+            selected_item: function (index, item) {
                 this.selected_item_index = index;
                 this.item_index = item;
                 this.selected_item_id = item;
+                this.$emit('selected_item', {
+                    id:this.selected_item_id
+                });
+
             },
-            nextPage(){
+            nextPage() {
                 this.pageNumber++;
-                this.selected_item_index=0
+                this.selected_item_index = 0
             },
-            prevPage(){
+            prevPage() {
                 this.pageNumber--;
-                this.selected_item_index=0
-            }
+                this.selected_item_index = 0
+            },
+
         },
-        computed:{
-            pageCount(){
+        computed: {
+            pageCount() {
                 let l = this.list.length,
-                s = this.size,
-                pageMax=(l % s != 0) ? Math.floor(l/s)+1 : Math.floor(l/s);
+                    s = this.size,
+                    pageMax = (l % s != 0) ? Math.floor(l / s) + 1 : Math.floor(l / s);
                 return pageMax;
             },
-            paginatedData(){
+            paginatedData() {
                 const start = this.pageNumber * this.size,
-                end = (start + this.size <= this.list.length) ? start + this.size : this.list.length;
+                    end = (start + this.size <= this.list.length) ? start + this.size : this.list.length;
                 return this.list.slice(start, end);
             }
         }
@@ -82,19 +93,23 @@
         margin: 0px;
         display: flex;
     }
+
     .column {
         height: 100%;
         display: flex;
         flex-direction: column;
     }
-    .prevNext{
+
+    .prevNext {
         display: flex;
         justify-content: space-between;
     }
-    .title{
+
+    .title {
         display: flex;
         justify-content: center;
     }
+
     #left {
         flex-shrink: 0;
         background-color: whitesmoke;
@@ -102,6 +117,7 @@
         padding: 5px;
         width: 16%;
     }
+
     #right {
         background-color: #f3f3f3;
         padding: 5px;

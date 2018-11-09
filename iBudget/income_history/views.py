@@ -54,7 +54,8 @@ def track(request):
     parsed_start = parse_datetime(start_to_parse) - time_diff
     parsed_end = parse_datetime(end_to_parse) - time_diff
     incomes_funds = IncomeHistory.objects.filter(date__range=(parsed_start, parsed_end),
-                                                 income_id__owner_id=user_id)
+                                                 income_id__owner_id=user_id,
+                                                 is_active=True)
     incomes_funds_ids = [
         {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
          'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
@@ -107,6 +108,25 @@ def register_income(request):
     except(ValueError, AttributeError, ValidationError):
         return HttpResponse('Check all required fields', status=406)
     return HttpResponse('Your income was successfully registered', status=201)
+
+@require_http_methods(["GET"])
+def get_month_income(request):
+    """Handling request for representation total sum.
+        Args:
+            request (HttpRequest): data.
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    finish_date = date.today()
+    start_date = date(finish_date.year, finish_date.month, 1)
+
+    if user:
+        return HttpResponse(IncomeHistory.filter_by_user_date_spending(user,
+                                                                         start_date,
+                                                                         finish_date),
+                            status=200)
+    return HttpResponse('Bad Request', status=400)
 
 @require_http_methods(["DELETE"])
 def delete_income_history(request, income_history_id):
