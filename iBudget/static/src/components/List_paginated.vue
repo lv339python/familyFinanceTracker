@@ -20,8 +20,8 @@
                 <b style="word-space:2em">&nbsp;</b>
                 <button :disabled="pageNumber === 0" @click="prevPage"> Previous
                 </button>
-                <span v-if="pageNumber>0&&pageNumber < pageCount-1">
-                    1... <b>{{pageNumber +1 }}</b> ... {{pageCount}}
+                <span v-if="pageNumber > 0 && pageNumber < pageCount-1">
+                    1... <b>{{pageNumber+1 }}</b> ... {{pageCount}}
                 </span>
                 <span v-if="pageNumber===0">
                     <b> 1 </b> ... <b style="word-space:2em">&nbsp;</b> ... {{pageCount}}
@@ -29,7 +29,7 @@
                 <span v-if="pageNumber===pageCount-1">
                     1  ... <b style="word-space:2em">&nbsp;</b> ... <b>{{pageCount}}</b>
                 </span>
-                <button :disabled="pageNumber >= pageCount -1 " @click="nextPage"> Next
+                <button :disabled="pageNumber >= pageCount-1 " @click="nextPage"> Next
                 </button>
                 <b style="word-space:2em">&nbsp;</b>
             </div>

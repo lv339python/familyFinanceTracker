@@ -1,9 +1,9 @@
 <template>
     <div class="content">
         <div id="left" class="text column">
-            <b-button :variant="secondary" to="/funds/tracking_goal">Tracking Goal</b-button>
-            <b-button :variant="secondary" to="/funds/new_goal">New Goal</b-button>
-            <b-button :variant="secondary" to="/funds/new">New Fund</b-button>
+            <b-button :variant="secondary" to="/funds/tracking_goal" @click="isList=false">Tracking Goal</b-button>
+            <b-button :variant="secondary" to="/funds/new_goal" @click="isList=false">New Goal</b-button>
+            <b-button :variant="secondary" to="/funds/new" @click="isList=false">New Fund</b-button>
         </div>
          <div  id="right" class="column">
             <div v-if="isList&& totalList.length!==0">

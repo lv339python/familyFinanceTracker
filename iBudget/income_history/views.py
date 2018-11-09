@@ -1,18 +1,44 @@
 """this module provides information about a customer's amount of incomes from the beginning of this
 month till today and let a use track his incomes for the chose period of time
 """
+import io
 import json
 import datetime
+import csv
 from decimal import Decimal
+
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_datetime
 from django.core.exceptions import ValidationError
+
 from utils.validators import input_income_registration_validate
+from utils.download_history_file import creating_empty_xlsx_file, \
+    file_streaming_response, income_date_parser
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
 
+def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
+    """
+    a function which accepts parameters defined in the function 'track'
+    :return: list of all user's incomes, funds, dates, comments and sums within a chosen period
+    """
+    incomes_funds = IncomeHistory.objects.filter(date__range=(date_start, date_end),
+                                                 income_id__owner_id=user_id)
+    incomes_funds_ids = [
+        {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
+         'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
 
+    for counter in enumerate(incomes_funds_ids):
+        incomes_funds_ids[counter[0]].update({'income': IncomeCategories.objects.get(
+            id=incomes_funds_ids[counter[0]]['income']).name})
+        incomes_funds_ids[counter[0]].update(
+            {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
+    set_for_chart = set()
+    for counter in enumerate(incomes_funds_ids):
+        set_for_chart.add(incomes_funds_ids[counter[0]]['fund'])
+    incomes_funds_ids.append(list(set_for_chart))
+    return incomes_funds_ids
 
 @require_http_methods(['GET'])
 def show_total(request):
@@ -28,48 +54,36 @@ def show_total(request):
     total = 0
     incomes_to_date = IncomeHistory.objects.filter(date__range=(start_date, end_date),
                                                    income_id__owner_id=user_id)
-
     if not incomes_to_date:
-        return HttpResponse('There are no incomes during this period', status=204)
+        return HttpResponse(0, status=200)
 
     for income in incomes_to_date:
         total = total+income.value
-    return HttpResponse(total)
+    return HttpResponse(total, status=200)
 
 
 @require_http_methods(['POST'])
 def track(request):
-    """this function accepts dates and returns the list of incomes with the funds they went to,
-    amounts, dates and comments
     """
-    content = request.body
-    content = json.loads(content)
+    Handling request for returning income history data.
+    Args:
+        request (HttpRequest): contains start date, final date and UTC information.
+    Returns:
+        JsonResponse object.
+    """
+    content = json.loads(request.body)
     user_id = request.user
     if len(content) <= 1:
         return HttpResponse('You did not choose any dates or you chose only one date out of two',
                             status=400)
-    time_diff = datetime.timedelta(hours=2)
-    start_to_parse = content['start']
-    end_to_parse = content['end']
-    parsed_start = parse_datetime(start_to_parse) - time_diff
-    parsed_end = parse_datetime(end_to_parse) - time_diff
-    incomes_funds = IncomeHistory.objects.filter(date__range=(parsed_start, parsed_end),
-                                                 income_id__owner_id=user_id,
-                                                 is_active=True)
-    incomes_funds_ids = [
-        {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
-         'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
+    time_diff = datetime.timedelta(hours=content['time_diff'])
+    parsed_start = parse_datetime(content['start']) - time_diff
+    parsed_end = parse_datetime(content['end']) - time_diff
+    incomes_funds_ids = get_incomes_funds_ids(user_id=user_id,
+                                              date_start=parsed_start,
+                                              date_end=parsed_end,
+                                              time_diff=time_diff)
 
-    for counter in enumerate(incomes_funds_ids):
-        incomes_funds_ids[counter[0]].update(
-            {'income': IncomeCategories.objects.get(id=incomes_funds_ids[counter[0]]['income'])
-                       .name})
-        incomes_funds_ids[counter[0]].update(
-            {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
-    set_for_chart = set()
-    for counter in enumerate(incomes_funds_ids):
-        set_for_chart.add(incomes_funds_ids[counter[0]]['fund'])
-    incomes_funds_ids.append(list(set_for_chart))
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 @require_http_methods(["POST"])
@@ -108,6 +122,88 @@ def register_income(request):
     except(ValueError, AttributeError, ValidationError):
         return HttpResponse('Check all required fields', status=406)
     return HttpResponse('Your income was successfully registered', status=201)
+
+
+def create_xlsx(request):
+    """
+    Creating xlsx file with income history for specific period
+    Args:
+        request (HttpRequest): request from server which contains
+        user info and date params : start_date, finish_date, UTC
+    Returns:
+        StreamingHttpResponse xlsx file.
+    """
+
+    date_dict = income_date_parser(request)
+
+    income_history = get_incomes_funds_ids(user_id=date_dict['user_id'],
+                                           date_start=date_dict['start_date'],
+                                           date_end=date_dict['finish_date'],
+                                           time_diff=date_dict['utc_difference'])
+    del income_history[-1]
+
+    output, worksheet, workbook, formats_dict = creating_empty_xlsx_file()
+
+    if income_history:
+        head_row, head_col = 1, 1
+        row, col = 2, 1
+        for i in income_history[0]:
+            worksheet.write(head_row, head_col, i, formats_dict['head_format'])
+            head_col += 1
+
+        for history_dict in income_history:
+            for i in history_dict:
+                if i == 'amount':
+                    worksheet.write_number(row, col, history_dict[i], formats_dict['value_format'])
+                elif i == 'date':
+                    date = datetime.datetime.strptime(history_dict[i], "%Y-%m-%d")
+                    worksheet.write_datetime(row, col, date, formats_dict['date_format'])
+                else:
+                    worksheet.write(row, col, history_dict[i], formats_dict['cell_format'])
+                col += 1
+            col = 1
+            row += 1
+
+    workbook.close()
+
+    response = file_streaming_response \
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+         'income_history.xlsx', output)
+    return response
+
+
+def create_csv(request):
+    """
+    Creating csv file with income history for specific period
+    Args:
+        request (HttpRequest): request from server which contains
+        user info and date params : start_date, finish_date, UTC
+    Returns:
+        StreamingHttpResponse csv file.
+    """
+    date_dict = income_date_parser(request)
+
+    income_history = get_incomes_funds_ids(user_id=date_dict['user_id'],
+                                           date_start=date_dict['start_date'],
+                                           date_end=date_dict['finish_date'],
+                                           time_diff=date_dict['utc_difference'])
+    del income_history[-1]
+
+    output = io.StringIO()
+
+    headers = []
+    if income_history:
+        for i in income_history[0]:
+            headers.append(i)
+
+    writer = csv.DictWriter(output, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
+    writer.writeheader()
+
+    if income_history:
+        writer.writerows(income_history)
+
+    response = file_streaming_response('text/csv', 'income_history.csv', output)
+    return response
 
 @require_http_methods(["GET"])
 def get_month_income(request):

@@ -1,6 +1,7 @@
 <template>
     <div id="spend">
         <div class="col-md-3" v-if="fixed == null" @change="setPeriod()">
+            <p>You want to set limits by day or by month/year? Choose below:</p>
             <input type="radio" id="one" value="True" v-model="fixed">
             <label for="one">Monthly/yearly</label>
             <br>

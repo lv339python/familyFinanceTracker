@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
-from group.models import Group, SharedSpendingCategories
+from group.models import Group, SharedSpendingCategories, UserProfile
 from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_new_spending, \
     is_valid_data_individual_limit_arb, date_parse
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
@@ -216,10 +216,35 @@ def set_spending_limitation_ind_arb(request):
         return HttpResponse(status=406)
     return HttpResponse("The limit {} has been set...\n OK".format(value), status=201)
 
+@require_http_methods(["GET"])
+def check_dates_choice(request):
+    """
+    a function which checks if the user is a brand-new one who has not chosen the way of displaying
+    date periods for setting group limits
+    :param request
+    :return: True - if the user already chose the way of displaying dates, otherwise - False
+    """
+    already_chosen = UserProfile.objects.filter(id=request.user.id).exclude(
+        ind_period_fixed__isnull=False)
+    if already_chosen:
+        return HttpResponse(True, status=200)
+    return HttpResponse(False, status=200)
+
+@require_http_methods(["POST"])
+def set_dates_choice(request):
+    """
+    the function which sets the way of displaying date periods for setting group limits
+    :param request
+    :return: HTTP status code 201
+    """
+    choice = json.loads(request.body)
+    UserProfile.objects.filter(id=request.user.id).update(ind_period_fixed=choice['choice'])
+    return HttpResponse(status=201)
+
 
 def group_limit(request):
-    """the functions finds all the shared spendings associated with particular user and
-    returns them
+    """the functions finds all the shared spendings associated with particular user in the groups
+    in which this user is an admin and returns them
     :param request object
     """
     if request.method == 'GET':
@@ -245,9 +270,9 @@ def set_group_limit(request):
     if request.method == 'POST':
         content = request.body
         content = json.loads(content)
-        if content['spending_category'] == '':
+        if not content['spending_category']:
             return HttpResponse('You did not choose any spending. Please choose it', status=400)
-        if content['start_date'] == '' or content['end_date'] == '' or content['value'] == '':
+        if not content['start_date'] or not content['end_date'] or not content['value']:
             return HttpResponse('You did not fill all the required fields. Please fill them!',
                                 status=400)
         instance = SpendingCategories.objects.get(name=content['spending_category'])

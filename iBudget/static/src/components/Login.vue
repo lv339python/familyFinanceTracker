@@ -168,7 +168,6 @@
                     url: '/api/v1/authentication/forgot_password/',
                     data: {
                         'email': this.email,
-
                     }
                 }).then(response => {
                     this.reply = response.data;

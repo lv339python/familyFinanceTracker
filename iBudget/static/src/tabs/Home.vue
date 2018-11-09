@@ -26,7 +26,8 @@
                 finish_date: x.toJSON().slice(0,10),
                 start_date:  new Date(x.getFullYear(), x.getMonth(), 1, UTC+1).toJSON().slice(0,10),
                 value: [],
-                name: []
+                name: [],
+                balance: []
             }
         },
         created() {
@@ -45,6 +46,16 @@
             })
             .catch(e => {
                 this.errors.push(e)
+            }),
+            axios({
+                method: 'get',
+                url: '/api/v1/fund/get_balance/'
+            })
+            .then(response => {
+                this.balance = response.data;
+            })
+            .catch(e => {
+                this.errors.push(e)
             })
         }
     }
@@ -59,7 +70,6 @@
 
     .text {
         width: fit-content;
-        margin: auto;
         text-align: center;
     }
 

@@ -6,6 +6,7 @@ from .views import (show_fund,
                     show_goal_data,
                     show_fund_by_group,
                     create_new_goal,
+                    get_balance,
                     delete_fund_category,
                     delete_financial_goal)
 
@@ -16,6 +17,7 @@ urlpatterns = [
     path('create_new_fund/', create_new_fund),
     path('show_fund_by_group/', show_fund_by_group),
     path('create_new_goal/', create_new_goal),
+    path('get_balance/', get_balance),
     path('delete_fund_category/<str:fund_id>', delete_fund_category),
     path('delete_financial_goal/<str:fund_id>', delete_financial_goal)
 ]
