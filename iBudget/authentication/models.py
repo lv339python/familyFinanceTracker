@@ -59,7 +59,7 @@ class UserProfile(AbstractBaseUser):
             'is_sys_admin': self.is_sys_admin,
         }
 
-    def update(self, password=None, one_time_token=None, first_name=None,
+    def update(self, password=None, one_time_token=None, first_name=None,# pylint: disable=too-many-arguments
                last_name=None, icon=None, is_active=None):
         """
         Method which changes an information except email as it is an id of an user.

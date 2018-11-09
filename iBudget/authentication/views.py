@@ -187,7 +187,8 @@ def update_password(request, token=None):
 def delete_user(request):
     """Handling request for delete user.
         Args:
-            request (HttpRequest):request from the web page with a json containing changes to be applied.
+            request (HttpRequest):request from the web page
+            with a json containing changes to be applied.
         Returns:
             HttpResponse object.
     """
@@ -195,4 +196,5 @@ def delete_user(request):
     if not user:
         return HttpResponse(status=400)
     user.update(is_active=False)
-    return HttpResponse(f"{user.first_name}{user.last_name} you've just deleted your account ", status=200)
+    return HttpResponse(f"{user.first_name}{user.last_name}/"
+                        f" you've just deleted your account ", status=200)

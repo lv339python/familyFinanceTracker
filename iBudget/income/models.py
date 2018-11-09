@@ -39,14 +39,13 @@ class IncomeCategories(models.Model):
         if value is not None:
             self.value = value
         if icon:
-            self.icon=icon
+            self.icon = icon
         if is_active is not None:
             self.is_active = is_active
         try:
             self.save()
         except (ValueError, AttributeError):
             pass
-
 
     @staticmethod
     def filter_by_user(user, is_active=True):

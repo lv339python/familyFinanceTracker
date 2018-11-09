@@ -9,7 +9,6 @@ from fund.models import FundCategories
 from group.models import SpendingCategories, SharedSpendingCategories, SharedFunds
 from authentication.models import UserProfile
 from income_history.models import IncomeHistory
-from spending.models import SpendingCategories
 from spending_history.models import SpendingHistory
 from utils.aws_helper import AwsService
 from utils.get_role import groups_for_user, \

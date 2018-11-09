@@ -75,7 +75,6 @@ class Group(models.Model):
         except (Group.DoesNotExist, ValueError):
             return None
 
-
     @staticmethod
     def filter_groups_by_user_id(user_id, is_active=True):
         """

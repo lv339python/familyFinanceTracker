@@ -415,4 +415,3 @@ def delete_spending_history(request, spending_history_id):
         return HttpResponse(status=400)
     spending_history.update(is_active=False)
     return HttpResponse("You've just deleted this spending from your history", status=200)
-

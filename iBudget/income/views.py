@@ -6,7 +6,6 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from group.models import Group
-from income_history.models import IncomeHistory
 from utils.validators import is_valid_data_new_income
 from .models import IncomeCategories
 

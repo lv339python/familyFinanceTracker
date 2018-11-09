@@ -25,7 +25,7 @@ class SpendingCategories(models.Model):
     is_shared = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
-    def update(self, name=None, icon=None, is_shared=None,  is_active=None):
+    def update(self, name=None, icon=None, is_shared=None, is_active=None):
         """
         Method which changes an information.
         """
@@ -42,7 +42,6 @@ class SpendingCategories(models.Model):
             self.save()
         except (ValueError, AttributeError):
             pass
-
 
     @staticmethod
     def get_by_id(spending_category_id):
@@ -82,10 +81,10 @@ class SpendingCategories(models.Model):
         Returns:
             SpendingCategories object if database contain category for this user
             and is_shared value, None otherwise.
-
-
         """
-        return SpendingCategories.objects.filter(owner=user, is_shared=is_shared, is_active=is_active)
+        return SpendingCategories.objects.filter(owner=user,
+                                                 is_shared=is_shared,
+                                                 is_active=is_active)
 
     @staticmethod
     def filter_by_owner_name(owner, name, is_active=True):
@@ -97,8 +96,6 @@ class SpendingCategories(models.Model):
         Returns:
             SpendingCategories object if database contain category for this user
             and name, None otherwise.
-
-
         """
         return SpendingCategories.objects.filter(owner=owner, name=name, is_active=is_active)
 

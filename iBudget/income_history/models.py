@@ -2,6 +2,7 @@
 This module provides model of income history.
 """
 import datetime
+
 from django.db import models
 
 from fund.models import FundCategories
@@ -27,7 +28,7 @@ class IncomeHistory(models.Model):
     comment = models.TextField(null=True, default="")
     is_active = models.BooleanField(default=True)
 
-    def update(self, income=None, fund=None, date=None, value=None, comment=None, is_active=None):
+    def update(self, income=None, fund=None, date=None, value=None, comment=None, is_active=None):# pylint: disable=too-many-arguments
         """
         Method which changes an information.
         """
@@ -87,27 +88,25 @@ class IncomeHistory(models.Model):
             user (UserProfile): owner of transaction,
             start_date (date): The beginning of statistic period
             finish_date (date): The end of statistic period
-            spending_categories (SpendingCategories): spending category
+            income_categories (IncomeCategories): income category
             is_active(bool): 'True' if spending history exist
         Returns:
             SpendingHistory objects if database contains such, None otherwise.
-
 
         """
 
         if income_categories:
             return IncomeHistory.objects.filter(owner=user,
-                                                  income_categories=income_categories,
-                                                  date__range=[start_date -
-                                                               datetime.timedelta(days=1),
-                                                               finish_date],
-                                                  is_active=is_active)
+                                                income_categories=income_categories,
+                                                date__range=[start_date -
+                                                             datetime.timedelta(days=1),
+                                                             finish_date],
+                                                is_active=is_active)
         total = 0
         for item in IncomeHistory.objects.filter(owner=user,
-                                                   date__range=[start_date -
-                                                                datetime.timedelta(days=1),
-                                                                finish_date],
-                                                   is_active=is_active):
+                                                 date__range=[start_date -
+                                                              datetime.timedelta(days=1),
+                                                              finish_date],
+                                                 is_active=is_active):
             total += float(item.value)
         return total
-

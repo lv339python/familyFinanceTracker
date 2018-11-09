@@ -1,20 +1,20 @@
 """this module provides information about a customer's amount of incomes from the beginning of this
 month till today and let a use track his incomes for the chose period of time
 """
+import csv
+import datetime
 import io
 import json
-import datetime
-import csv
 from decimal import Decimal
 
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.http import require_http_methods
-from django.utils.dateparse import parse_datetime
 from django.core.exceptions import ValidationError
+from django.http import JsonResponse, HttpResponse
+from django.utils.dateparse import parse_datetime
+from django.views.decorators.http import require_http_methods
 
-from utils.validators import input_income_registration_validate
 from utils.download_history_file import creating_empty_xlsx_file, \
     file_streaming_response, income_date_parser
+from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
 
@@ -40,6 +40,7 @@ def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
     incomes_funds_ids.append(list(set_for_chart))
     return incomes_funds_ids
 
+
 @require_http_methods(['GET'])
 def show_total(request):
     """this function accepts request object and returns the amount of incomes from the beginning of
@@ -58,7 +59,7 @@ def show_total(request):
         return HttpResponse(0, status=200)
 
     for income in incomes_to_date:
-        total = total+income.value
+        total = total + income.value
     return HttpResponse(total, status=200)
 
 
@@ -85,6 +86,7 @@ def track(request):
                                               time_diff=time_diff)
 
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
+
 
 @require_http_methods(["POST"])
 def register_income(request):
@@ -204,25 +206,6 @@ def create_csv(request):
 
     response = file_streaming_response('text/csv', 'income_history.csv', output)
     return response
-
-@require_http_methods(["GET"])
-def get_month_income(request):
-    """Handling request for representation total sum.
-        Args:
-            request (HttpRequest): data.
-        Returns:
-            HttpResponse object.
-    """
-    user = request.user
-    finish_date = date.today()
-    start_date = date(finish_date.year, finish_date.month, 1)
-
-    if user:
-        return HttpResponse(IncomeHistory.filter_by_user_date_spending(user,
-                                                                         start_date,
-                                                                         finish_date),
-                            status=200)
-    return HttpResponse('Bad Request', status=400)
 
 @require_http_methods(["DELETE"])
 def delete_income_history(request, income_history_id):

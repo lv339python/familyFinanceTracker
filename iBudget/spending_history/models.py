@@ -34,7 +34,8 @@ class SpendingHistory(models.Model):
     comment = models.TextField(null=True, default="")
     is_active = models.BooleanField(default=True)
 
-    def update(self, fund=None, spending_categories=None, date=None, value=None, comment=None, is_active=None):
+    def update(self, fund=None, spending_categories=None, date=None,# pylint: disable=too-many-arguments
+               value=None, comment=None, is_active=None):
         """
         Method which changes an information.
         """
@@ -84,8 +85,6 @@ class SpendingHistory(models.Model):
             is_active(bool): 'True' if spending history exist
         Returns:
             SpendingHistory objects if database contains such, None otherwise.
-
-
         """
 
         if spending_categories:
