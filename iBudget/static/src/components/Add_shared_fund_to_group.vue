@@ -24,7 +24,8 @@
         data() {
             return {
                 shared_fund: null,
-                fund_list: []
+                fund_list: [],
+                shared_fund_list: []
             }
         },
         props: ["group_id", "getData"],

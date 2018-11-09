@@ -7,7 +7,8 @@ from .views import get_by_group, \
     add_new_users_to_group,\
     add_shared_spending_to_group, \
     add_shared_fund_to_group, \
-    show_users_in_group
+    show_users_in_group,\
+    change_users_role_in_group
 
 from django.urls import re_path
 
@@ -21,5 +22,6 @@ urlpatterns = [
     path('add_new_users_to_group/', add_new_users_to_group),
     path('add_shared_fund_to_group/', add_shared_fund_to_group),
     path('add_shared_spending_to_group/', add_shared_spending_to_group),
-    path('show_users_in_group/', show_users_in_group)
+    path('show_users_in_group/', show_users_in_group),
+    path('change_users_role_in_group/', change_users_role_in_group)
 ]
