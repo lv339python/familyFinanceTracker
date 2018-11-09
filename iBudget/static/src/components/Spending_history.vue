@@ -45,8 +45,8 @@
                     </thead>
                     <tbody v-for="p in paginatedData">
                         <tr>
-                            <td v-if="p.member">{{ p.member}}</td>
-                            <td>{{ p.value}}</td>
+                            <td v-if="p.member">{{p.member}}</td>
+                            <td>{{ p.value }}</td>
                             <td>{{ p.date }}</td>
                             <td>{{ p.fund }}</td>
                         </tr>
@@ -54,7 +54,7 @@
                 </table>
                 <div v-show="pageCount>1" class='prevNext'>
                     <b style="word-space:2em">&nbsp;</b>
-                    <button :disabled="pageNumber === 0" @click="prevPage"> Previous </button>
+                    <button :disabled="pageNumber===0" @click="prevPage"> Previous </button>
                     <span v-if="pageNumber > 0 && pageNumber < pageCount-1">
                         1... <b>{{pageNumber +1 }}</b> ... {{pageCount}}
                     </span>
