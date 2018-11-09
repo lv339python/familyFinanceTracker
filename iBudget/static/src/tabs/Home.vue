@@ -59,7 +59,6 @@
 
     .text {
         width: fit-content;
-        margin: ;
         text-align: center;
     }
 
