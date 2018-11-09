@@ -12,6 +12,28 @@ from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
 
+def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
+    """
+    a function which accepts parameters defined in the function 'track'
+    :return: list of all user's incomes, funds, dates, comments and sums within a chosen period
+    """
+    incomes_funds = IncomeHistory.objects.filter(date__range=(date_start, date_end),
+                                                 income_id__owner_id=user_id)
+    incomes_funds_ids = [
+        {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
+         'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
+
+    for counter in enumerate(incomes_funds_ids):
+        incomes_funds_ids[counter[0]].update({'income': IncomeCategories.objects.get(
+            id=incomes_funds_ids[counter[0]]['income']).name})
+        incomes_funds_ids[counter[0]].update(
+            {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
+    set_for_chart = set()
+    for counter in enumerate(incomes_funds_ids):
+        set_for_chart.add(incomes_funds_ids[counter[0]]['fund'])
+    incomes_funds_ids.append(list(set_for_chart))
+    return incomes_funds_ids
+
 @require_http_methods(['GET'])
 def show_total(request):
     """this function accepts request object and returns the amount of incomes from the beginning of
@@ -26,13 +48,12 @@ def show_total(request):
     total = 0
     incomes_to_date = IncomeHistory.objects.filter(date__range=(start_date, end_date),
                                                    income_id__owner_id=user_id)
-
     if not incomes_to_date:
-        return HttpResponse('There are no incomes during this period', status=204)
+        return HttpResponse(0, status=200)
 
     for income in incomes_to_date:
         total = total+income.value
-    return HttpResponse(total)
+    return HttpResponse(total, status=200)
 
 
 @require_http_methods(['POST'])
@@ -40,33 +61,20 @@ def track(request):
     """this function accepts dates and returns the list of incomes with the funds they went to,
     amounts, dates and comments
     """
-    content = request.body
-    content = json.loads(content)
+
+    content = json.loads(request.body)
     user_id = request.user
     if len(content) <= 1:
         return HttpResponse('You did not choose any dates or you chose only one date out of two',
                             status=400)
-    time_diff = datetime.timedelta(hours=2)
-    start_to_parse = content['start']
-    end_to_parse = content['end']
-    parsed_start = parse_datetime(start_to_parse) - time_diff
-    parsed_end = parse_datetime(end_to_parse) - time_diff
-    incomes_funds = IncomeHistory.objects.filter(date__range=(parsed_start, parsed_end),
-                                                 income_id__owner_id=user_id)
-    incomes_funds_ids = [
-        {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
-         'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
+    time_diff = datetime.timedelta(hours=content['time_diff'])
+    parsed_start = parse_datetime(content['start']) - time_diff
+    parsed_end = parse_datetime(content['end']) - time_diff
+    incomes_funds_ids = get_incomes_funds_ids(user_id=user_id,
+                                              date_start=parsed_start,
+                                              date_end=parsed_end,
+                                              time_diff=time_diff)
 
-    for counter in enumerate(incomes_funds_ids):
-        incomes_funds_ids[counter[0]].update(
-            {'income': IncomeCategories.objects.get(id=incomes_funds_ids[counter[0]]['income'])
-                       .name})
-        incomes_funds_ids[counter[0]].update(
-            {'fund': FundCategories.objects.get(id=incomes_funds_ids[counter[0]]['fund']).name})
-    set_for_chart = set()
-    for counter in enumerate(incomes_funds_ids):
-        set_for_chart.add(incomes_funds_ids[counter[0]]['fund'])
-    incomes_funds_ids.append(list(set_for_chart))
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 

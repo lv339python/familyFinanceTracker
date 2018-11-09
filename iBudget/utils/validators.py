@@ -44,13 +44,10 @@ def is_valid_password(password):
 
 def is_valid_registration_data(data):
     """validate data.
-
             Args:
                 data (dict): contain email, password
-
             Returns:
                 bool: The return value. True is data valid, else False.
-
             """
     if not isinstance(data, dict):
         return False
