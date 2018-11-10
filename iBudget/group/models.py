@@ -4,7 +4,7 @@ This module provides model of group and its relations.
 from django.db import models
 
 from authentication.models import UserProfile
-from fund.models import FundCategories
+from fund.models import FundCategories, FinancialGoal
 from spending.models import SpendingCategories
 
 
@@ -102,7 +102,8 @@ class Group(models.Model):
         shared_funds = SharedFunds.objects.filter(group=group_object)
         for fund in shared_funds:
             for i in FundCategories.objects.filter(id=fund.fund_id, is_active=is_active):
-                group_funds.append({'id': i.id, 'name': i.name})
+                if not FinancialGoal.has_goals(fund_id=i):
+                    group_funds.append({'id': i.id, 'name': i.name})
         return group_funds
 
     @staticmethod

@@ -35,7 +35,7 @@
                         <td >
                             <button
                                     type="button" class="btn btn-outline-danger"
-                                    v-on:click="deleteIncomeHistory(item['income'])"
+                                    v-on:click="deleteIncomeHistory(item['income_history_id'])"
                                     :variant="secondary">Delete
                             </button>
                         </td>
@@ -219,10 +219,10 @@
             prevPage() {
                 this.paginated_page_number--;
             },
-            deleteIncomeHistory: function (spendIncHistory) {
+            deleteIncomeHistory: function (IncHistory) {
                 axios({
                     method: 'delete',
-                    url: '/api/v1/income_history/delete_income_history/' + spendIncHistory,
+                    url: '/api/v1/income_history/delete_income_history/' + IncHistory,
 
                 }).then(response => {
                     this.$router.go('api/v1/income_history/track/')
