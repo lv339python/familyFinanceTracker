@@ -53,7 +53,8 @@ def show_users_group(request):
     if user:
         groups = []
         for item in UsersInGroups.filter_by_user(user):
-            groups.append({'name': item.group.name, 'id': item.group.id})
+            if item.group.is_active:
+                groups.append({'name': item.group.name, 'id': item.group.id})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 

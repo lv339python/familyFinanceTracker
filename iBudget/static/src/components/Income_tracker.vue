@@ -24,6 +24,7 @@
                         <th>Date</th>
                         <th>Amount</th>
                         <th>Comments</th>
+                        <th>Delete</th>
                     </tr>
                     <tr v-for="item in paginatedData">
                         <td>{{item['income']}}</td>
@@ -31,6 +32,13 @@
                         <td>{{item['date']}}</td>
                         <td>{{item['amount']}}</td>
                         <td>{{item['comment']}}</td>
+                        <td >
+                            <button
+                                    type="button" class="btn btn-outline-danger"
+                                    v-on:click="deleteIncomeHistory(item['income'])"
+                                    :variant="secondary">Delete
+                            </button>
+                        </td>
                     </tr>
                 </table>
                 <div v-show="pageCount>1">
@@ -210,7 +218,17 @@
             },
             prevPage() {
                 this.paginated_page_number--;
-            }
+            },
+            deleteIncomeHistory: function (spendIncHistory) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/income_history/delete_income_history/' + spendIncHistory,
+
+                }).then(response => {
+                    this.$router.go('api/v1/income_history/track/')
+                })
+
+            },
         }
     }
 </script>

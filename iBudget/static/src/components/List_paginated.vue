@@ -9,7 +9,9 @@
                     v-on:click="selected_item(index, item.id)"
                     :class="{'active': selected_item_index===index}">
                     {{ item.name }}
-                    <button type="button" class="btn btn-outline-danger" v-on:click="delItem(item.id) "
+                    <button type="button" class="btn btn-outline-danger"
+                            v-on:click="delItem(item.id); delItemSpen(item.id);
+                            delItemFund(item.id); delItemGoal(item.id)"
                             :variant="secondary">
                         Delete
                     </button>
@@ -56,6 +58,15 @@
                 this.item_index = item;
                 this.selected_item_id = item;
                 this.$emit('selected_item', {
+                    id:this.selected_item_id
+                });
+                 this.$emit('selected_item1', {
+                    id:this.selected_item_id
+                });
+                  this.$emit('selected_item2', {
+                    id:this.selected_item_id
+                });
+                  this.$emit('selected_item3', {
                     id:this.selected_item_id
                 });
 
