@@ -34,13 +34,22 @@
             </div>
 
             <div class="col-md-8 form-group" v-else>
-                <div>
-                    <label>Select category:</label>
-                    <select v-model="category" class="form-control">
-                        <option v-for="spend in spending_list" v-bind:value="spend.id ">
-                            {{ spend.name }}
-                        </option>
-                    </select>
+                                    <p>Select category:</p>
+
+                <div class="img_container">
+                        <input v-for="spend in spending_list" type="image" :src="spend.url"
+                               v-on:click="get_icon_name(spend.id)" id="icon">
+                </div>
+                        <!--<p v-for="spend in spending_list">{{spend.name}}</p>-->
+                        <!--<input v-for="spend in spending_list" type="image" v-bind:value="spend.id"-->
+                                <!--:src="spend.url">-->
+                        <!--{{ spend.name }}-->
+                    <!--<label>Select category:</label>-->
+                    <!--<select v-model="category" class="form-control">-->
+                        <!--<option v-for="spend in spending_list" v-bind:value="spend.id ">-->
+                            <!--{{ spend.name }}-->
+                        <!--</option>-->
+                    <!--</select>-->
                 </div>
                 <hr/>
                 <div>
@@ -190,6 +199,9 @@
                 this.category = null;
                 this.is_active_shared_cat = null;
                 this.is_shared = false;
+            },
+            get_icon_name(icon_name){
+                this.category = icon_name;
             }
         }
     }
@@ -263,5 +275,16 @@
         transform: scale(1);
         opacity: 0;
         transition: all 0.4s ease;
+    }
+    .img_container{
+        width: 380px;
+        height: 380px;
+        display: flex;
+        flex-direction: column;
+        flex-wrap:wrap;
+    }
+    #icon{
+        width:70px;
+        height:70px;
     }
 </style>

@@ -12,6 +12,7 @@ from django.views.decorators.http import require_http_methods
 from group.models import Group, SharedSpendingCategories, UserProfile
 from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_new_spending, \
     is_valid_data_individual_limit_arb, date_parse
+from utils.aws_helper import AwsService
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 
@@ -25,10 +26,15 @@ def show_spending_ind(request):
             HttpResponse object.
     """
     user = request.user
+    icon_if_none =\
+        'https://family-finance-tracker-static.s3.amazonaws.com/standard/miscellaneous.png'
     if user:
         user_categories = []
         for entry in SpendingCategories.filter_by_user(user):
-            user_categories.append({'id': entry.id, 'name': entry.name})
+            user_categories.append({'id': entry.id, 'name': entry.name, 'url':
+                AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none})
+        print(user_categories)
+
         return JsonResponse({'categories': user_categories, 'fixed': user.ind_period_fixed},
                             status=200, safe=False)
     return JsonResponse({}, status=400)

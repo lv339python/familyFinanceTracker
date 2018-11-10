@@ -18,7 +18,7 @@ def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
     :return: list of all user's incomes, funds, dates, comments and sums within a chosen period
     """
     incomes_funds = IncomeHistory.objects.filter(date__range=(date_start, date_end),
-                                                 income_id__owner_id=user_id)
+                                                 income_id__owner_id=user_id).order_by('date')
     incomes_funds_ids = [
         {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
          'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
@@ -61,7 +61,6 @@ def track(request):
     """this function accepts dates and returns the list of incomes with the funds they went to,
     amounts, dates and comments
     """
-
     content = json.loads(request.body)
     user_id = request.user
     if len(content) <= 1:
@@ -74,7 +73,7 @@ def track(request):
                                               date_start=parsed_start,
                                               date_end=parsed_end,
                                               time_diff=time_diff)
-
+    print(incomes_funds_ids)
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 @require_http_methods(["POST"])
