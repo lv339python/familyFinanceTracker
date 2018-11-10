@@ -1,9 +1,5 @@
 <template>
     <div id="spending_add">
-          <b-button variant="primary" @click="showModal">
-            +
-        </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Add new spending category">
 
         <div >
             <hr>
@@ -24,7 +20,6 @@
             <button class="btn btn-outline-dark" v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}
             </button>
         </div>
-      </b-modal>
     </div>
 </template>
 
