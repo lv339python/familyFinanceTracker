@@ -207,7 +207,8 @@
                 this.type_of_pay = icon_name
             },
             get_group_icon_id(icon_name){
-                this.group_id = icon_name
+                this.group_id = icon_name;
+                this.groupId = true;
             }
         }
     }
