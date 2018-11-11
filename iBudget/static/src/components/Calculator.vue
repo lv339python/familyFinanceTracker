@@ -13,7 +13,7 @@
 
                     <div>
                         <b-input-group>
-                            <b-form-input  v-model="current" v-model="value" type="number" min="1" ></b-form-input>
+                            <b-form-input  placeholder="0" v-model="current,value" type="number" min="1" ></b-form-input>
                             <b-select v-model="type_of_pay" class="form-control" variant="primary" slot="prepend"
                                       v-show="groupId" v-if="is_shared===true">
                             <option v-for="type_of_pay in shared_fund_list"

@@ -6,13 +6,14 @@
                         indicators
                         img-width="1024"
                         img-height="500"
-                        :interval="4000"
+                        :interval="false"
                         v-model="slide"
                         @sliding-start="onSlideStart"
                         @sliding-end="onSlideEnd"v-if="values.length !== 0" >
                 <b-carousel-slide img-blank  v-for="(item, index) in values" v-if="values.length !== 0">
         <div class="text">
-                <div  >
+                {{fund_balance}}
+                <div>
                     <div class="chartcontainer">
                 <chart_spending
                     v-bind:value='item.value'
@@ -24,7 +25,7 @@
         </div>
                    </b-carousel-slide>
             </b-carousel>
-
+          <div>  {{data.fund_balance}}-{{data.fund_initial}}-{{fund_name}}</div>
           <calculator/>
         <income_button/>
          </div>
@@ -52,6 +53,11 @@
                 values: [],
                 name: [],
                 title: '',
+                fund_initial: null,
+                fund_balance: null,
+                fund_name:'',
+                data: [],
+
             }
         },
         created() {
@@ -70,8 +76,20 @@
             })
             .catch(e => {
                 this.errors.push(e)
-            })
+            });
+            axios.get('/api/v1/fund/get_balance/')
+                .then(response => {
+                    this.fund_initial = response.data.fund_initial;
+                    console.log(fund_initial);
+                    this.fund_balance = response.data.fund_balance;
+                    console.log(fund_balance);
+                    this.fund_name = response.data.name;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                });
         }
+
     }
 </script>
 
@@ -84,6 +102,7 @@
 
     .text {
         width: fit-content;
+        margin: ;
         text-align: center;
     }
 
