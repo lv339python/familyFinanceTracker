@@ -1,5 +1,5 @@
 <template>
-    <div id="acc">
+    <div id="acc" class="mr-1">
         <b-button variant="primary" @click="showModal">
             <img id="profile-thumbnail" rounded="circle"
                  blank width="16" height="16" alt="img" class="m-1"
@@ -80,7 +80,9 @@
     }
 
     #acc {
-        margin-right: 20px;
+        margin: auto;
+        position: relative;
+
     }
 
     #profile-thumbnail {
