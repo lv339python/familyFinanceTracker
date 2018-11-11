@@ -1,49 +1,38 @@
 <template>
     <div id="spending_history">
         <div>
-            <div id='total' class="col-md-6">
+            <div class="col-md-8 total">
                 <h6>Total in this month:
                     <br>
                     {{total}}
                 </h6>
                 <hr>
             </div>
-            <div class="form-group col-md-6">
-                <div>
+            <div class="form-group col-md-8">
+                <div class="dates">
                     <label>Select start date</label>
                     <input v-model="start_date" type="date" @change="blockButtom()">
-                </div>
-                <hr>
-            </div>
-            <div class="form-group col-md-6">
-                <div>
                     <label>Select final date</label>
                     <input v-model="finish_date" type="date" @change="blockButtom()">
                     <hr>
                 </div>
             </div>
-            <div class="col-md-5" v-if="start_date<=finish_date">
-                <button class="btn btn-outline-warning" v-on:click="createHistory" :variant="secondary">Show all
-                    spending
+            <div class="col-md-8 total" v-if="start_date<=finish_date">
+                <button class="btn btn-outline-warning" v-on:click="createHistory" :variant="secondary">
+                    Show all spending
                 </button>
             </div>
         </div>
-        <div v-show="isCategory&&(start_date<=finish_date)" class="col-md-6">
-
-            <div class="btn-group" role="group" v-model="selected">
-                <button v-for="spend in spending_history_individual"
+        <div v-show="isCategory&&(start_date<=finish_date)" class="col-md-8 total">
+            <div class="btn-group-justified  but-fl" role="group" v-model="selected" v-if="spending_all.length!==0">
+                <button v-for="spend in spending_all"
                         type="button"
-                        class="btn btn-outline-success"
+                        class="btn btn-outline-success but-w"
                         v-bind:value="spend.history"
-                        v-on:click="dataPaginated(spend.history)">
-                    {{ spend.spending}}
-                </button>
-                <button v-for="spend in spending_history_admin"
-                        type="button"
-                        class="btn btn-outline-success"
-                        v-bind:value="spend.history"
-                        v-on:click="dataPaginated(spend.history)">
-                    {{ spend.spending}}
+                        v-on:click="dataPaginated(spend.history)"
+                        data-toggle="tooltip"
+                        v-bind:title="spend.spending">
+                    {{ buttonName(spend.spending)}}
                 </button>
             </div>
             <hr>
@@ -56,8 +45,8 @@
                     </thead>
                     <tbody v-for="p in paginatedData">
                     <tr>
-                        <td v-if="p.member">{{ p.member}}</td>
-                        <td>{{ p.value}}</td>
+                        <td v-if="p.member">{{p.member}}</td>
+                        <td>{{ p.value }}</td>
                         <td>{{ p.date }}</td>
                         <td>{{ p.fund }}</td>
                         <td >
@@ -69,12 +58,20 @@
                     </tr>
                     </tbody>
                 </table>
-                <div v-show="pageCount>1">
-                    <button class="btn btn-outline-secondary" :disabled="pageNumber === 0" @click="prevPage"> Previous
-                    </button>
-                    <button class="btn btn-outline-secondary" :disabled="pageNumber >= pageCount -1 " @click="nextPage">
-                        Next
-                    </button>
+                <div v-show="pageCount>1" class='prevNext'>
+                    <b style="word-space:2em">&nbsp;</b>
+                    <button :disabled="pageNumber===0" @click="prevPage"> Previous </button>
+                    <span v-if="pageNumber > 0 && pageNumber < pageCount-1">
+                        1... <b>{{pageNumber +1 }}</b> ... {{pageCount}}
+                    </span>
+                    <span v-if="pageNumber===0">
+                        <b> 1 </b> ... <b style="word-space:2em">&nbsp;</b> ... {{pageCount}}
+                    </span>
+                    <span v-if="pageNumber===pageCount-1">
+                        1  ... <b style="word-space:2em">&nbsp;</b> ... <b>{{pageCount}}</b>
+                    </span>
+                    <button :disabled="pageNumber >= pageCount-1 " @click="nextPage"> Next </button>
+                    <b style="word-space:2em">&nbsp;</b>
                 </div>
             </div>
         </div>
@@ -96,7 +93,7 @@
 
 <script>
     import axios from 'axios';
-
+    var UTC = -new Date().getTimezoneOffset() / 60;
     export default {
         name: "Spending_history",
         data() {
@@ -106,11 +103,12 @@
                 listValues: [],
                 pageNumber: 0,
                 size: 2,
-                start_date: new Date().toJSON().slice(0, 10),
-                finish_date: new Date().toJSON().slice(0, 10),
+                start_date: new Date().toJSON().slice(0,10),
+                finish_date: new Date().toJSON().slice(0,10),
                 selected: [],
                 spending_history_individual: {},
                 spending_history_admin: {},
+                spending_all:[],
                 errors: [],
                 UTC: -new Date().getTimezoneOffset() / 60
             }
@@ -128,29 +126,16 @@
                 })
         },
         methods: {
+            buttonName: function (name) {
+                if(name.length>9){
+                    name = name.slice(0,9)+"..."
+                }
+                return name
+            },
             dataPaginated: function (spending_data) {
                 this.selected = spending_data;
                 this.pageNumber = 0;
                 this.listValues = spending_data;
-            },
-            showTotal: function (event) {
-                axios({
-                    method: 'post',
-                    url: '/api/v1/spending_history/create/',
-                    data: {
-                        'start_date': this.start_date,
-                        'finish_date': this.finish_date,
-                        'UTC': this.UTC
-                    }
-                })
-                    .then(response => {
-                        this.spending_history_admin = response.data.admin;
-                        this.spending_history_individual = response.data.individual;
-                        this.isCategory = true
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
             },
             blockButtom: function () {
                 this.isCategory = false;
@@ -171,20 +156,20 @@
                     data: {
                         'start_date': this.start_date,
                         'finish_date': this.finish_date,
-                        'UTC': this.UTC
+                        'UTC': UTC,
                     }
                 })
-                    .then(response => {
-                        this.spending_history_admin = response.data.admin;
-                        this.spending_history_individual = response.data.individual;
-                        this.isCategory = true
-
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+                .then(response => {
+                    this.spending_history_admin = response.data.admin;
+                    this.spending_history_individual = response.data.individual;
+                    this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
+                    this.isCategory = true;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
             },
-            deleteHistory: function (spendHistory) {
+             deleteHistory: function (spendHistory) {
                 axios({
                     method: 'delete',
                     url: '/api/v1/spending_history/delete_spending_history/' + spendHistory,
@@ -219,10 +204,25 @@
 </script>
 
 <style scoped>
-    #total {
+    .total {
         text-align: center
+    }
+    .dates{
+        text-align: center;
+        justify-content: space-around;
     }
     #spending_history {
 
+    }
+    .but-fl{
+        display: flex;
+        flex-wrap: wrap;
+        margin: 10px;
+        justify-content: flex-start;
+    }
+    .but-w{
+        white-space:normal !important;
+        word-wrap: break-word;
+        width:16.5%
     }
 </style>

@@ -3,11 +3,9 @@ This module consists functions for providing history boot files
 """
 import io
 from datetime import timedelta, date
-import xlsxwriter
-
 from django.http import StreamingHttpResponse
 from django.utils.dateparse import parse_datetime, parse_date
-
+import xlsxwriter
 
 def creating_empty_xlsx_file():
     """
