@@ -2,14 +2,22 @@
     <div class="content">
         <div class="row">
             <div class="col-md-8 form-group " v-if="is_shared===true">
-                <div>
-                    <label>Choose group</label>
-                    <select v-model="groupId" class="form-control">
-                        <option v-for="group in group_list"
-                                v-bind:value="group.id">
-                            {{ group.name }}
-                        </option>
-                    </select>
+                <!--<div>-->
+                    <!--<label>Choose group</label>-->
+                    <!--<select v-model="groupId" class="form-control">-->
+                        <!--<option v-for="group in group_list"-->
+                                <!--v-bind:value="group.id">-->
+                            <!--{{ group.name }}-->
+                        <!--</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+                <p>Choose group:</p>
+                <div class="img_container">
+                    <br>
+                    <template v-for="group in group_list">
+                        <input type="image" :src="group.url" v-on:click="get_group_icon_id(group.id)"
+                               class="icon" alt="no icon"> {{group.name}}
+                    </template>
                 </div>
                 <hr>
                 <div v-show="groupId">
@@ -34,31 +42,22 @@
             </div>
 
             <div class="col-md-8 form-group" v-else>
-                                    <p>Select category:</p>
-
+                <p>Select category:</p>
                 <div class="img_container">
-                        <input v-for="spend in spending_list" type="image" :src="spend.url"
-                               v-on:click="get_icon_name(spend.id)" id="icon">
-                </div>
-                        <!--<p v-for="spend in spending_list">{{spend.name}}</p>-->
-                        <!--<input v-for="spend in spending_list" type="image" v-bind:value="spend.id"-->
-                                <!--:src="spend.url">-->
-                        <!--{{ spend.name }}-->
-                    <!--<label>Select category:</label>-->
-                    <!--<select v-model="category" class="form-control">-->
-                        <!--<option v-for="spend in spending_list" v-bind:value="spend.id ">-->
-                            <!--{{ spend.name }}-->
-                        <!--</option>-->
-                    <!--</select>-->
+                    <br>
+                    <template v-for="spend in spending_list">
+                        <input type="image" :src="spend.url" v-on:click="get_spend_icon_id(spend.id)"
+                               class="icon"> {{spend.name}}
+                    </template>
                 </div>
                 <hr/>
-                <div>
-                    <label>Choose type of pay:</label>
-                    <select v-model="type_of_pay" class="form-control">
-                        <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id">
-                            {{ type_of_pay.name }}
-                        </option>
-                    </select>
+                <p>Choose type of pay:</p>
+                <div class="img_container">
+                    <br>
+                    <template v-for="fund in fund_list">
+                        <input type="image" :src="fund.url" v-on:click="get_fund_icon_id(fund.id)
+                               class="icon"> {{fund.name}}
+                    </template>
                 </div>
             </div>
 
@@ -93,6 +92,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
     import axios from 'axios';
@@ -200,8 +200,14 @@
                 this.is_active_shared_cat = null;
                 this.is_shared = false;
             },
-            get_icon_name(icon_name){
+            get_spend_icon_id(icon_name){
                 this.category = icon_name;
+            },
+            get_fund_icon_id(icon_name){
+                this.type_of_pay = icon_name
+            },
+            get_group_icon_id(icon_name){
+                this.group_id = icon_name
             }
         }
     }
@@ -283,7 +289,7 @@
         flex-direction: column;
         flex-wrap:wrap;
     }
-    #icon{
+    .icon{
         width:70px;
         height:70px;
     }

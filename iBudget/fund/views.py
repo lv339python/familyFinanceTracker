@@ -16,6 +16,7 @@ from utils.validators import \
     input_fund_registration_validate, \
     date_range_validate, \
     is_valid_data_create_new_fund
+from utils.aws_helper import AwsService
 from .models import FundCategories, FinancialGoal
 
 
@@ -29,11 +30,14 @@ def show_fund(request):
             HttpResponse object.
     """
     user = request.user
+    icon_if_none = \
+        'https://s3.amazonaws.com/family-finance-tracker-static/standard_fund/funds.png'
     if user:
         user_funds = []
         for entry in FundCategories.filter_by_user(user):
             if not FinancialGoal.has_goals(fund_id=entry.id):
-                user_funds.append({'id': entry.id, 'name': entry.name})
+                user_funds.append({'id': entry.id, 'name': entry.name, 'url':
+                AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none})
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 

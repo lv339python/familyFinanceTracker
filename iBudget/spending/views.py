@@ -33,8 +33,6 @@ def show_spending_ind(request):
         for entry in SpendingCategories.filter_by_user(user):
             user_categories.append({'id': entry.id, 'name': entry.name, 'url':
                 AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none})
-        print(user_categories)
-
         return JsonResponse({'categories': user_categories, 'fixed': user.ind_period_fixed},
                             status=200, safe=False)
     return JsonResponse({}, status=400)

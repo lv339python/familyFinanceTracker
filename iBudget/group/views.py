@@ -33,10 +33,13 @@ def get_by_group(request):
     """
 
     user = request.user
+    icon_if_none = \
+        'https://s3.amazonaws.com/family-finance-tracker-static/standard_group/group.png'
     if user:
         user_groups = []
         for entry in Group.filter_groups_by_user_id(user):
-            user_groups.append({'id': entry.id, 'name': entry.name})
+            user_groups.append({'id': entry.id, 'name': entry.name, 'url':
+                AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none})
         return JsonResponse(user_groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 
