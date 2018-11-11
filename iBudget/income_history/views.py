@@ -27,8 +27,8 @@ def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
                                                  income_id__owner_id=user_id)
     incomes_funds_ids = [
         {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
-         'amount': float(i.value), 'comment': i.comment, 'income_history_id':i.id} for i in incomes_funds
-         if i.is_active]
+         'amount': float(i.value), 'comment': i.comment, 'income_history_id': i.id}
+        for i in incomes_funds if i.is_active]
 
     for counter in enumerate(incomes_funds_ids):
         incomes_funds_ids[counter[0]].update({'income': IncomeCategories.objects.get(
@@ -60,7 +60,8 @@ def show_total(request):
         return HttpResponse(0, status=200)
 
     for income in incomes_to_date:
-        total = total + income.value
+        if income.is_active:
+            total = total + income.value
     return HttpResponse(total, status=200)
 
 
@@ -207,6 +208,7 @@ def create_csv(request):
 
     response = file_streaming_response('text/csv', 'income_history.csv', output)
     return response
+
 
 @require_http_methods(["DELETE"])
 def delete_income_history(request, income_history_id):

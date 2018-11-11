@@ -9,7 +9,7 @@
             <div v-if="isList&& list.length!==0">
                 <list_paginated
                     v-bind:list='list'
-                    v-bind:title='title'  v-if="list.length !== 0" @selected_item="delItem"/>
+                    v-bind:title='title'  v-if="list.length !== 0" @selected_itemInc="delItemInc"/>
             </div>
             <router-view></router-view>
         </div>
@@ -45,11 +45,11 @@ created() {
         },
 
         methods: {
-            delItem(data) {
-                if (data.id != 0) {
+            delItemInc(incId) {
+                if (incId.id != 0) {
                     axios({
                         method: 'delete',
-                        url: '/api/v1/income/delete_income/' + data.id,
+                        url: '/api/v1/income/delete_income/' + incId.id,
                     }).then(response => {
                         this.$router.push('/incomes/')
                     })

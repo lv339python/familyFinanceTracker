@@ -14,7 +14,7 @@
             <div v-if="isList&&totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
-                    v-bind:title='title' v-if="list.length !== 0" @selected_item2="delItemSpen"/>
+                    v-bind:title='title' v-if="list.length !== 0" @selected_itemSpend="delItemSpend"/>
             </div>
             <router-view></router-view>
         </div>
@@ -87,11 +87,11 @@
 
         },
         methods: {
-            delItemSpen(data) {
-                if (data.id != 0) {
+            delItemSpend(spendId) {
+                if (spendId.id != 0) {
                     axios({
                         method: 'delete',
-                        url: '/api/v1/spending/delete_spending_category/' + data.id,
+                        url: '/api/v1/spending/delete_spending_category/' + spendId.id,
                     }).then(response => {
                         this.$router.push('/spendings/')
                     })

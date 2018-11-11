@@ -6,6 +6,7 @@
                     v-bind:value='value'
                     v-bind:name='name'  v-if="value.length !== 0" />
             </div>
+            <div v-for="item in balance">{{item}}</div>
         </div>
     </div>
 </template>
