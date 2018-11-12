@@ -1,4 +1,3 @@
-
 """
 CustomProfile view module
 =========================
@@ -6,8 +5,10 @@ The module that provides basic logic for creating personal details and
 show custom user data of profile's model objects.
 """
 import json
+
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
+
 from utils.transaction import save_personal_info
 from utils.validators import input_personal_details_validate
 from .models import CustomProfile
@@ -24,9 +25,8 @@ def create_personal_details(request):
     """
     data = json.loads(request.body)
     if not input_personal_details_validate(data):
-        return HttpResponse(status=400)
+        return HttpResponse(status=401)
     user = request.user
-
     if save_personal_info(
         user=user,
         first_name=data["first_name"],
@@ -42,16 +42,16 @@ def create_personal_details(request):
 @require_http_methods(["GET"])
 def show_custom_user_data(request):
     """
-
     :param request: request from server which ask list of users.
     :return:HttpResponse object
     """
     user = request.user
     if user:
         users_custom_data = []
-        item = CustomProfile.get_by_user(user=user)
-        users_custom_data.append({'bio': item.bio,
-                                  'hobby': item.hobby,
-                                  'birthday': item.birthday})
+        item = CustomProfile.get_by_user(user)
+        users_custom_data.append({
+                'bio': item.bio,
+                'hobby': item.hobby,
+                'birthday': item.birthday})
         return JsonResponse(users_custom_data, status=200, safe=False)
     return JsonResponse({}, status=400)

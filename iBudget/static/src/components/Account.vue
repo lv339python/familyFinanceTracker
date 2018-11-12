@@ -106,7 +106,7 @@
                 last_name: null,
                 bio: null,
                 hobby: null,
-                icon: '',
+                icon: null,
                 birthday: null,
                 old_password: null,
                 new_password: null,

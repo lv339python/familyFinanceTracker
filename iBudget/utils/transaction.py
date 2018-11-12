@@ -116,9 +116,9 @@ def save_new_group(name, icon, owner):
 def save_personal_info(user,
                        first_name=None,
                        last_name=None,
+                       icon=None,
                        bio=None,
                        hobby=None,
-                       icon=None,
                        birthday=None):
 
     """Function for save personal info
@@ -148,10 +148,11 @@ def save_personal_info(user,
 
             else:
                 custom = CustomProfile(
+                    user=user,
                     bio=bio,
                     hobby=hobby,
-                    birthday=birthday,
-                    user=user)
+                    birthday=birthday)
+
             custom.update()
     except IntegrityError:
         return False
