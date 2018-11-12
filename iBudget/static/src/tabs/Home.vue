@@ -27,7 +27,9 @@
                 start_date:  new Date(x.getFullYear(), x.getMonth(), 1, UTC+1).toJSON().slice(0,10),
                 value: [],
                 name: [],
-                balance: []
+                balance: [],
+                initial:[],
+                fund: []
             }
         },
         created() {
@@ -52,7 +54,9 @@
                 url: '/api/v1/fund/get_balance/'
             })
             .then(response => {
-                this.balance = response.data;
+                this.balance = response.data.balance;
+                this.initial = response.data.initial;
+                this.fund = response.data.fund;
             })
             .catch(e => {
                 this.errors.push(e)
