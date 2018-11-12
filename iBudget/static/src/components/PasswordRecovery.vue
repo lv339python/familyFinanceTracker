@@ -12,8 +12,9 @@
                 <br/>
                 <input required v-model="confirm_password" type="password" placeholder="Confirm your password"/>
                 <br/>
-                <b-button class="btn btn-outline-primary" v-if=isValidPassword @click="setData">Submit</b-button>
-
+                <div class="button">
+                    <b-button class="btn btn-outline-primary" v-if=isValidPassword @click="setData">Submit</b-button>
+                </div>
             </div>
         </div>
         <b-modal ref="myModalRef" hide-footer>
@@ -83,6 +84,9 @@
         margin: auto;
     }
 
+    .button{
+        margin: 10px;
+    }
     .content {
         height: 100vh;
         overflow: hidden;

@@ -19,11 +19,10 @@
                         <br/>
                         <b>Last Name: </b>{{user.last_name}}
                     </p>
-
-                    <b-btn class="mt-3" variant="outline-success" @click="showInfo">Show more info</b-btn>
-                    <b-btn class="mt-3" variant="outline-success" @click="addInfo">Update personal info</b-btn>
-
-
+                    <div class="button">
+                        <b-btn class="mt-3" variant="outline-success" @click="showInfo">Show more info</b-btn>
+                        <b-btn class="mt-3" variant="outline-success" @click="addInfo">Update personal info</b-btn>
+                    </div>
                     <div v-show="more_info">
                         <p class="card-text" v-for="item in custom">
                             <br/>
@@ -53,9 +52,23 @@
                                 <input v-model="birthday" type="date" placeholder="birthday">
                             </div>
                         </div>
-                        <b-btn class="mt-3" variant="outline-success" @click="setData">Save</b-btn>
+
+                        <div class="col-md-4">
+                            <button v-on:click="enable_upload" v-if="! upload">upload my own</button>
+                            <form enctype="multipart/form-data">
+                                <input type="file" name="icon" v-if="upload"
+                                       v-on:change="get_img_name_validate($event.target.files)"></input>
+                            </form>
+                        </div>
+
+                        <b-btn class="mt-3" variant="outline-success" @click="addPersonalInfo">Save</b-btn>
                         <hr/>
                         <div class="form-group">
+                            <p>Update password</p>
+                            <br/>
+                            <input type="password" v-model="old_password" class="form-control"
+                                   placeholder="current password">
+                            <br/>
                             <input type="password" v-model="new_password" class="form-control"
                                    placeholder="new password">
                             <br/>
@@ -66,8 +79,7 @@
                         <b-button class="btn btn-outline-success" :disabled="!isValidPassword" @click="setDatapassword">
                             Save
                         </b-button>
-                        <hr/>
-                        <b-link @click="showForgotPassword">Deactivate your account</b-link>
+
                     </div>
                 </b-card>
             </div>
@@ -79,6 +91,7 @@
 <script>
 
     import axios from 'axios';
+
 
     export default {
         name: "Account",
@@ -93,10 +106,14 @@
                 last_name: null,
                 bio: null,
                 hobby: null,
-                icon: null,
+                icon: '',
                 birthday: null,
+                old_password: null,
                 new_password: null,
-                confirm_password: null
+                confirm_password: null,
+                upload: false,
+                maxFileSize: 60,
+
 
             }
         },
@@ -108,6 +125,24 @@
             }
         },
         methods: {
+            enable_upload: function () {
+                this.upload = true
+            },
+            get_img_name_validate: function (file_list) {
+                let img = file_list[0];
+                let needed_type = /^\/*image/;
+                this.icon = img;
+                //here we validate the file type and size
+                if (img.size > this.maxFileSize * 1024) {
+                    alert('The file you want to upload is too large. Please choose file smaller than 60 KB');
+                    return;
+                }
+                else if (!needed_type.test(img.type)) {
+                    alert('You chose incorrect file type, please choose image');
+                    return
+                }
+
+            },
             showInfo() {
                 this.more_info = !this.more_info;
                 if (this.add_info === true) {
@@ -143,10 +178,9 @@
                     method: 'post',
                     url: '/api/v1/authentication/change_password/',
                     data: {
-                        'confirm_password': this.confirm_password,
-                        'new_password': this.new_password
-
-
+                        'old_password': this.old_password,
+                        'new_password': this.new_password,
+                        'confirm_password': this.confirm_password
                     },
                 }).then(response => {
                     this.hideModal();
@@ -154,25 +188,25 @@
                     this.clearAll();
                 })
             },
+            addPersonalInfo: function (event) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/custom_profile/create_personal_details/',
+                    data: {
+                        'first_name': this.first_name,
+                        'last_name': this.last_name,
+                        'bio': this.bio,
+                        'hobby': this.hobby,
+                        'icon': this.icon,
+                        'birthday': this.birthday
+                    }
+               }).then(response => {
+                    this.hideModal();
+                    this.getData();
+                    this.clearAll();
+                })
+            },
         },
-        setData: function (event) {
-            axios({
-                method: 'put',
-                url: '/api/v1/authentication/update_password/' + this.token,
-                data: {
-                    'new_password': this.new_password,
-                    'confirm_password': this.confirm_password
-
-                }
-
-            }).then(response => {
-                this.reply = response.data;
-                this.showModal()
-
-            })
-        },
-
-
         created() {
             axios.get('api/v1/authentication/profile/')
                 .then(response => {
@@ -202,6 +236,10 @@
 
     #acc {
         margin-right: 20px;
+    }
+
+    .button {
+        margin: 10px;
     }
 
     #profile-thumbnail {

@@ -459,11 +459,6 @@ def input_personal_details_validate(data):
         Returns:
             bool: The return value. True is data valid, else False.list([1,2,3])
     """
-    print(SET_KEYS_PERSONAL_REG_DATA)
-    print(set(data.keys()))
-    print(data)
-    print(set(data.keys()).difference(SET_KEYS_PERSONAL_REG_DATA))
-
     if not set(data.keys()).difference(SET_KEYS_PERSONAL_REG_DATA):
         return False
     try:

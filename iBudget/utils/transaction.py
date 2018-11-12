@@ -115,11 +115,11 @@ def save_new_group(name, icon, owner):
 
 def save_personal_info(user,
                        first_name=None,
-                       last_name = None,
-                       bio = None,
-                       hobby = None,
-                       icon = None,
-                       birthday = None):
+                       last_name=None,
+                       bio=None,
+                       hobby=None,
+                       icon=None,
+                       birthday=None):
 
     """Function for save personal info
     Args:
@@ -137,20 +137,19 @@ def save_personal_info(user,
     try:
         with transaction.atomic():
             user.update(first_name=first_name,
-                        last_name=last_name)
+                        last_name=last_name,
+                        icon=icon)
             custom = CustomProfile.get_by_user(user)
 
             if custom:
                 custom.bio = bio
                 custom.hobby = hobby
-                custom.icon = icon
                 custom.birthday = birthday
 
             else:
                 custom = CustomProfile(
                     bio=bio,
                     hobby=hobby,
-                    icon=icon,
                     birthday=birthday,
                     user=user)
             custom.update()

@@ -188,11 +188,10 @@ def change_password(request):
     """Change_password UserProfile"""
     user = request.user
     data = json.loads(request.body)
-    print(data)
-    if user:
+    if user.check_password(data['old_password']):
         if is_valid_password(data['new_password']):
-            if data['new_password']==data['confirm_password']:
+            if data['new_password'] == data['confirm_password']:
                 user.update(password=data['new_password'])
                 return HttpResponse(status=200)
         return HttpResponse(status=400)
-    return HttpResponse(status=401)
+    return HttpResponse(status=400)
