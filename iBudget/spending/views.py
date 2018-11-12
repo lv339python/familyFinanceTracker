@@ -89,9 +89,9 @@ def set_limitation_period(request):
         user.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    response = "{} type of limitation period has been set...\n OK".format("Monthly/yearly"
-                                                                          if period_type
-                                                                          else "Arbitrary")
+    response = "{} type of limitation period has been set...".format("Monthly/yearly"
+                                                                     if period_type
+                                                                     else "Arbitrary")
     return HttpResponse(response, status=201)
 
 
@@ -138,7 +138,7 @@ def set_spending_limitation_ind_fix(request):
                 return HttpResponse(
                     "The yearly limit is {}, \n "
                     "the total monthly limit is {}.\n "
-                    "Therefore, your limit {} can not be set.\n OK".format(
+                    "Therefore, your limit {} can not be set.".format(
                         year_limit,
                         total_limit,
                         value), status=202)
@@ -156,8 +156,8 @@ def set_spending_limitation_ind_fix(request):
         if total_limit > value:
             return HttpResponse(
                 "The total monthly limit is {}. "
-                "Therefore, your limit {} can not be set.\n OK".format(total_limit,
-                                                                       value),
+                "Therefore, your limit {} can not be set.".format(total_limit,
+                                                                  value),
                 status=202)
 
 
@@ -168,7 +168,7 @@ def set_spending_limitation_ind_fix(request):
         finish_date)
     if spending_limitation:
         spending_limitation.update(value=value)
-        response = "The limit {} has been updated...\n OK".format(value)
+        response = "The limit {} has been updated...".format(value)
     else:
         spending_limitation_ind = SpendingLimitationIndividual(user=user,
                                                                spending_category=spending,
@@ -179,7 +179,7 @@ def set_spending_limitation_ind_fix(request):
             spending_limitation_ind.save()
         except(ValueError, AttributeError):
             return HttpResponse(status=406)
-        response = "The limit {} has been set...\n OK".format(value)
+        response = "The limit {} has been set...".format(value)
     return HttpResponse(response, status=201)
 
 
@@ -226,7 +226,7 @@ def set_spending_limitation_ind_arb(request):
         spending_limitation_ind.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    return HttpResponse("The limit {} has been set...\n OK".format(value), status=201)
+    return HttpResponse("The limit {} has been set...".format(value), status=201)
 
 @require_http_methods(["GET"])
 def check_dates_choice(request):
@@ -352,10 +352,10 @@ def create_spending_category(request):
     spending = SpendingCategories.filter_by_owner_name(owner=owner, name=name)
 
     if spending:
-        return HttpResponse("Sorry, but such category exists...\n OK", status=202)
+        return HttpResponse("Sorry, but such category exists...", status=202)
 
     spending = SpendingCategories(name=name, icon=icon, owner=owner, is_shared=is_shared)
     if not spending:
         return HttpResponse(status=406)
     spending.save()
-    return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
+    return HttpResponse("You've just created category '{}'.".format(name), status=201)

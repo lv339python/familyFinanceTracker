@@ -9,7 +9,6 @@
             <label for="two">Arbitrary</label>
         </div>
         <div v-if="fixed !== null">
-        {{UTC}}
             <div class="col-md-4">
                 <hr>
                 <div class="form-group">
@@ -58,14 +57,6 @@
                             class="btn btn-outline-primary"
                             :disabled="isValidDataFix===false">Set limit
                         </button>
-                        <br>
-                        <button
-                            v-on:click="createDone"
-                            :variant="secondary"
-                            v-show="isDone"
-                            class="btn btn-outline-primary">
-                                {{msg}}
-                        </button>
                     </div>
                 </div>
             </div>
@@ -103,14 +94,6 @@
                             class="btn btn-outline-primary"
                             :disabled="isValidDataArb===false">Set limit
                         </button>
-                        <br>
-                        <button
-                            v-on:click="createDone"
-                            :variant="secondary"
-                            v-show="isDone"
-                            class="btn btn-outline-primary">
-                                {{msg}}
-                        </button>
                     </div>
                 </div>
             </div>
@@ -144,7 +127,6 @@
                     {nameM: 'November', valueM: 11},
                     {nameM: 'December', valueM: 12}
                 ],
-                isDone: false,
                 msg: '',
                 spending_list: [],
                 fixed: null,
@@ -156,12 +138,6 @@
                 finish_date: new Date().toJSON().slice(0,10),
                 selectedSpending: null,
                 errors: [],
-                newLimitation: {
-                    'spending_id': null,
-                    'year': null,
-                    'month': null,
-                    'value': 0
-                },
             }
         },
         computed: {
@@ -220,8 +196,10 @@
                     data: {
                         'fixed': this.fixed
                     }
-                }).then(response => (this.msg = response.data)
-                );
+                }).then(response => {
+                    this.msg = response.data;
+                    alert(this.msg);
+                });
                  this.$router.push('/spendings/limit_ind')
             },
             setLimitFix: function (event) {
@@ -234,8 +212,11 @@
                         'month': this.selectedMonth,
                         'value': this.selectedValueQ
                     }
-                }).then(response => (this.msg = response.data));
-                this.isDone = true;
+                }).then(response => {
+                    this.msg = response.data;
+                    alert(this.msg);
+                    this.createDone();
+                });
             },
             setLimitArb: function (event) {
                 axios({
@@ -248,8 +229,11 @@
                         'UTC': UTC,
                         'value': this.selectedValueQ
                     }
-                }).then(response => (this.msg = response.data));
-                this.isDone = true;
+                }).then(response => {
+                    this.msg = response.data;
+                    alert(this.msg);
+                    this.createDone();
+                });
             },
             createDone: function (event) {
                 this.isDone = false;
