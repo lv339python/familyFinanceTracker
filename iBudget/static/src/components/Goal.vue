@@ -1,43 +1,50 @@
 <template>
     <div class='goaltable'>
-        <div class="wrapper">
-            <div class="row">
-                <div class="ger" v-for="item in user_goal_list">
-                    <div class="table-holder">
-                        <h4>{{item.value}} for {{item.name}} should be achieved before {{item.finish_date}}</h4>
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>Contribution</th>
-                                <th>Date</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="(elem, index) in item.transaction">
-                                <td>{{elem}}</td>
-                                <td>{{item.date_transaction[index]}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+
+            <b-carousel id="carousel1"
+                        style="text-shadow: 1px 1px 2px #333;"
+                        controls
+                        indicators
+                        img-width="1024"
+                        img-height="500"
+                        :interval="4000"
+                        v-model="slide"
+                        @sliding-start="onSlideStart"
+                        @sliding-end="onSlideEnd" v-if="user_goal_list.length !== 0">
+                <b-carousel-slide img-blank v-for="item in user_goal_list">
+                    <div>
+                        <div>
+                            <chart1 v-bind:transaction="item.transaction"
+                                    v-bind:date_transaction="item.date_transaction"
+                                    v-bind:value="item.value"
+                                    v-bind:name="item.name">
+                            </chart1>
+                        </div>
+
+                        <div class="table-holder">
+                            <h4>{{item.value}} for {{item.name}} should be achieved before {{item.finish_date}}</h4>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Contribution</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(elem, index) in item.transaction">
+                                        <td>{{elem}}</td>
+                                        <td>{{item.date_transaction[index]}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
-                </div>
-            </div>
-
-
-            <div class="chartcontainer">
-
-                <div v-for="goal in user_goal_list">
-                    <chart1 v-bind:transaction="goal.transaction"
-                            v-bind:date_transaction="goal.date_transaction"
-                            v-bind:value="goal.value"
-                            v-bind:name="goal.name"></chart1>
-                </div>
-
-
-            </div>
-        </div>
-
+                </b-carousel-slide>
+            </b-carousel>
     </div>
+
+
 </template>
 
 <script>
@@ -56,6 +63,8 @@
                 transaction: [],
                 name: null,
                 date_transaction: [],
+                slide: 0,
+                sliding: null
             }
         },
         created() {
@@ -65,32 +74,29 @@
                     this.user_goal_list = response.data;
                     this.transaction = this.user_goal_list[0].transaction;
                     this.date_transaction = this.user_goal_list[0].date_transaction;
+                    console.log(this.user_goal_list);
                 })
                 .catch(e => {
                     this.errors.push(e)
                 })
+        },
+        methods: {
+            onSlideStart(slide) {
+                this.sliding = true
+            },
+            onSlideEnd(slide) {
+                this.sliding = false
+            }
         }
     }
 
 </script>
 
-<style scoped>
-    .wrapper {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: end;
-    }
-
-    .chartcontainer {
-        display: flex;
-        justify-content: flex-end;
-
-    }
-
-    .row {
-        flex-direction: column;
-
-    }
+<style>
+ .goaltable{
+      width: fit-content;
+        margin:0 ;
+        text-align: center;
+ }
 
 </style>

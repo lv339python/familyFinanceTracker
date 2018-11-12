@@ -4,12 +4,13 @@ This module provides functions for handling fund view.
 
 import json
 from decimal import Decimal
-
+from datetime import date, timedelta
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group, SharedFunds
 from income_history.models import IncomeHistory
+from spending_history.models import SpendingHistory
 from utils.get_role import is_user_admin_group
 from utils.transaction import save_new_fund, save_new_goal
 from utils.validators import \
@@ -215,3 +216,89 @@ def create_new_goal(request):
             shared_group=shared_group):
         return HttpResponse(status=201)
     return HttpResponse(status=409)
+
+def create_initial_balance(user, begin_date, start_date, fund_id):
+    """Creating fund balance.
+            Args:
+                user (UserProfile): user.
+                begin_date (date): the beginning of statistic period for this user
+                start_date (date): the beginning of statistic period
+                fund_id (int): fund ID
+            Returns:
+                Balance value
+    """
+    return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
+        date__range=[begin_date - timedelta(days=1),
+                     start_date]).values_list('value', flat=True)) -\
+           sum(SpendingHistory.filter_by_user_date(
+               user,
+               begin_date,
+               start_date).filter(fund=fund_id).values_list('value', flat=True))
+
+def create_balance(user, begin_date, start_date, finish_date, fund_id):
+    """Creating fund balance.
+            Args:
+                user (UserProfile): user.
+                begin_date (date): the beginning of statistic period for this user
+                start_date (date): the beginning of statistic period
+                finish_date (date): the end of statistic period
+                fund_id (int): fund ID
+            Returns:
+                Balance value
+    """
+
+    return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
+        date__range=[start_date - timedelta(days=1),
+                     finish_date]).values_list('value', flat=True)) - \
+           sum(SpendingHistory.filter_by_user_date(
+               user,
+               start_date,
+               finish_date).filter(fund=fund_id).values_list('value', flat=True)) + \
+           create_initial_balance(user, begin_date, start_date, fund_id)
+
+
+@require_http_methods(["GET"])
+def get_balance(request):
+    """Handling request for creating spending history data.
+
+        Args:
+            request (HttpRequest): contains start date, final date and UTC information.
+        Returns:
+            JsonResponse object.
+    """
+    user = request.user
+    current_date = date.today()
+    start_date = date(current_date.year, current_date.month, 1)
+
+    user_funds = []
+    for item in FundCategories.filter_by_user(user):
+        if not FinancialGoal.has_goals(fund_id=item.id):
+            user_funds.append(item.id)
+
+    for group in Group.filter_groups_by_user_id(user):
+        for shared_fund in SharedFunds.objects.filter(group=group.id):
+            if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id):
+                user_funds.append(shared_fund.fund.id)
+
+    begin_date = min(
+        min(SpendingHistory.objects.filter(owner=user).values_list(
+            'date', flat=True)).date(),
+        min(IncomeHistory.objects.filter(fund__in=user_funds).values_list(
+            'date', flat=True)).date())
+    response = []
+    for item in user_funds:
+        fund_initial = [create_initial_balance(user, begin_date, start_date, item)]
+        fund_balance = [create_balance(user, begin_date, start_date, current_date, item)]
+        dates = [str(current_date.month) + '/' + str(current_date.year)]
+        while start_date > begin_date:
+            finish_date = start_date - timedelta(days=1)
+            start_date = date(finish_date.year, finish_date.month, 1)
+            fund_initial.append(create_initial_balance(user, begin_date, start_date, item))
+            fund_balance.append(create_balance(user, begin_date, start_date, finish_date, item))
+            dates.append(str(finish_date.month) + '/' + str(finish_date.year))
+        data = {'name': FundCategories.get_by_id(item).name,
+                'initial': fund_initial,
+                'balance': fund_balance}
+        response.append(data)
+        return JsonResponse(data, status=200, safe=False)
+    return JsonResponse({}, status=400)

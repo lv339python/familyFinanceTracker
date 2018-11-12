@@ -1,14 +1,18 @@
 """this module provides information about a customer's amount of incomes from the beginning of this
 month till today and let a use track his incomes for the chose period of time
 """
+import io
 import json
 import datetime
+import csv
 from decimal import Decimal
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_datetime
 from django.core.exceptions import ValidationError
 from utils.validators import input_income_registration_validate
+from utils.download_history_file import creating_empty_xlsx_file, \
+    file_streaming_response, income_date_parser
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
 
@@ -18,7 +22,7 @@ def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
     :return: list of all user's incomes, funds, dates, comments and sums within a chosen period
     """
     incomes_funds = IncomeHistory.objects.filter(date__range=(date_start, date_end),
-                                                 income_id__owner_id=user_id).order_by('date')
+                                                 income_id__owner_id=user_id)
     incomes_funds_ids = [
         {'income': i.income_id, 'fund': i.fund_id, 'date': str(i.date + time_diff)[:10],
          'amount': float(i.value), 'comment': i.comment} for i in incomes_funds]
@@ -60,6 +64,10 @@ def show_total(request):
 def track(request):
     """this function accepts dates and returns the list of incomes with the funds they went to,
     amounts, dates and comments
+    Args:
+        request (HttpRequest): contains start date, final date and UTC information.
+    Returns:
+        JsonResponse object.
     """
     content = json.loads(request.body)
     user_id = request.user
@@ -73,7 +81,7 @@ def track(request):
                                               date_start=parsed_start,
                                               date_end=parsed_end,
                                               time_diff=time_diff)
-    print(incomes_funds_ids)
+
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
 
 @require_http_methods(["POST"])
@@ -112,3 +120,85 @@ def register_income(request):
     except(ValueError, AttributeError, ValidationError):
         return HttpResponse('Check all required fields', status=406)
     return HttpResponse('Your income was successfully registered', status=201)
+
+
+def create_xlsx(request):
+    """
+    Creating xlsx file with income history for specific period
+    Args:
+        request (HttpRequest): request from server which contains
+        user info and date params : start_date, finish_date, UTC
+    Returns:
+        StreamingHttpResponse xlsx file.
+    """
+
+    date_dict = income_date_parser(request)
+
+    income_history = get_incomes_funds_ids(user_id=date_dict['user_id'],
+                                           date_start=date_dict['start_date'],
+                                           date_end=date_dict['finish_date'],
+                                           time_diff=date_dict['utc_difference'])
+    del income_history[-1]
+
+    output, worksheet, workbook, formats_dict = creating_empty_xlsx_file()
+
+    if income_history:
+        head_row, head_col = 1, 1
+        row, col = 2, 1
+        for i in income_history[0]:
+            worksheet.write(head_row, head_col, i, formats_dict['head_format'])
+            head_col += 1
+
+        for history_dict in income_history:
+            for i in history_dict:
+                if i == 'amount':
+                    worksheet.write_number(row, col, history_dict[i], formats_dict['value_format'])
+                elif i == 'date':
+                    date = datetime.datetime.strptime(history_dict[i], "%Y-%m-%d")
+                    worksheet.write_datetime(row, col, date, formats_dict['date_format'])
+                else:
+                    worksheet.write(row, col, history_dict[i], formats_dict['cell_format'])
+                col += 1
+            col = 1
+            row += 1
+
+    workbook.close()
+
+    response = file_streaming_response \
+        ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+         'income_history.xlsx', output)
+    return response
+
+
+def create_csv(request):
+    """
+    Creating csv file with income history for specific period
+    Args:
+        request (HttpRequest): request from server which contains
+        user info and date params : start_date, finish_date, UTC
+    Returns:
+        StreamingHttpResponse csv file.
+    """
+    date_dict = income_date_parser(request)
+
+    income_history = get_incomes_funds_ids(user_id=date_dict['user_id'],
+                                           date_start=date_dict['start_date'],
+                                           date_end=date_dict['finish_date'],
+                                           time_diff=date_dict['utc_difference'])
+    del income_history[-1]
+
+    output = io.StringIO()
+
+    headers = []
+    if income_history:
+        for i in income_history[0]:
+            headers.append(i)
+
+    writer = csv.DictWriter(output, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
+    writer.writeheader()
+
+    if income_history:
+        writer.writerows(income_history)
+
+    response = file_streaming_response('text/csv', 'income_history.csv', output)
+    return response

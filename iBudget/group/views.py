@@ -75,7 +75,7 @@ def show_users_group_data(request):
         user_role = None
         for item in groups_for_user(user):
             group = Group.get_group_by_id(item)
-            count = UsersInGroups.count_of_user_in_group(group.id)
+            count = users_email_for_group(group.id)
             if group.owner == user:
                 user_role = "Owner"
             else:
@@ -86,7 +86,7 @@ def show_users_group_data(request):
             groups.append({'id': item,
                            'user_role': user_role,
                            'group_name': group.name,
-                           'count': count})
+                           'count': len(count)})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -302,3 +302,33 @@ def add_shared_fund_to_group(request):
     except(AttributeError, ValueError):
         return HttpResponse(status=400)
     return HttpResponse(status=201)
+
+
+@require_http_methods(["POST"])
+def change_users_role_in_group(request):
+    """Handling request for updating user's role in group.
+    Args:
+        request (HttpRequest): request from server which contain
+        email, is_admin and group_id
+    Returns:
+        HttpResponse object.
+    """
+    data = json.loads(request.body)
+    user_email = data["email"]
+    user_to_change = UserProfile.get_by_email(user_email)
+    group_id = data["group_id"]
+    is_admin = data["is_admin"]
+    is_admin = True if is_admin == 'Admin' else False
+    user = request.user
+    if user:
+        if not is_user_admin_group(group_id, user):
+            return HttpResponse(status=409)
+        if not is_user_in_group(group_id, user_to_change.id):
+            return HttpResponse(status=406)
+        group = UsersInGroups.get_by_id(user_to_change.id)
+        group.is_admin = is_admin
+        try:
+            group.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
+    return HttpResponse(status=200)

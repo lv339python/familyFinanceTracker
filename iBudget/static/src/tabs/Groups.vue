@@ -2,7 +2,7 @@
     <div class="content">
         <div  id="left" class="text column">
             <create_new_group v-bind:getData="getData"></create_new_group>
-            <p>There are your groups: </p>
+            <p>There are your groups: {{ users_group_list.length }}</p>
             <ul class="list-group">
             <li
                 class="list-group-item list-group-item-action pointer"
@@ -14,11 +14,22 @@
                 <b>count of users </b>: <i> {{ item.count }} </i>
             </li>
             </ul>
-            <div v-show="pageCount>1">
+            <div v-show="pageCount>1" class='prevNext'>
+                <b style="word-space:2em">&nbsp;</b>
                 <button :disabled="pageNumber === 0" @click="prevPage"> Previous
                 </button>
+                <span v-if="pageNumber>0&&pageNumber < pageCount-1">
+                    1... <b>{{pageNumber +1 }}</b> ... {{pageCount}}
+                </span>
+                <span v-if="pageNumber===0">
+                    <b> 1 </b> ... <b style="word-space:2em">&nbsp;</b> ... {{pageCount}}
+                </span>
+                <span v-if="pageNumber===pageCount-1">
+                    1  ... <b style="word-space:2em">&nbsp;</b> ... <b>{{pageCount}}</b>
+                </span>
                 <button :disabled="pageNumber >= pageCount -1 " @click="nextPage"> Next
                 </button>
+                <b style="word-space:2em">&nbsp;</b>
             </div>
         </div>
         <div id="right" class="column">
@@ -39,19 +50,35 @@
                             </li>
                         </ul>
                   </b-tab>
+
                   <b-tab title="User's in group" >
                         <div>
-                            <ul class="list-group-item group_display"
-                            v-for="user in users_in_group"
-                            v-if="user.group_id===group_index">
-                                <li> {{ user.email }} - {{ user.user_role }} </li>
+                            <ul class="list-group-item"
+                            v-for="user in users_in_group" class="group_display"
+                            v-if="user.group_id===group_index"
+                            >
+                                <li>
+                                    {{ user.email }}
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        @click="changeRole(user.email)"
+                                        >
+                                            {{ user.user_role }}
+                                    </button>
+                                    <button @click="updateUserRoleData(user.group_id, user.email, user.user_role)"> Save </button>
+                                </li>
                             </ul>
                             <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
                         </div>
                   </b-tab>
-                  <b-tab title="Shared fund and spending categories">
-                        <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
-                        <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
+                  <b-tab title="Shared fund">
+                      <div v-for="fund in shared_fund_list" v-if="group_index===fund.id_group"> {{ fund.name_fund }} </div>
+                      <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
+                  </b-tab>
+                  <b-tab title="Shared spending categories">
+                      <div v-for="spend in shared_spending_list" v-if="group_index===spend.id_group"> {{spend.name_cat }} </div>
+                      <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
                   </b-tab>
             </b-tabs>
         </div>
@@ -73,9 +100,11 @@
                 selected_group_index: 0,
                 group_index: 0,
                 pageNumber: 0,
-                size:5,
+                size:4,
                 group_id: null,
-                users_in_group: []
+                users_in_group: [],
+                shared_fund_list: [],
+                shared_spending_list: []
             }
         },
         components: {
@@ -85,6 +114,22 @@
             'add_shared_spending': Add_shared_category_to_group
         },
         methods: {
+            changeRole: function(email){
+                for(let i=0; i< this.users_in_group.length; i++){
+                    if(this.users_in_group[i].group_id === this.group_index){
+                        if(this.users_in_group[i].email === email){
+                            if(this.users_in_group[i].user_role === 'Admin'){
+                                this.users_in_group[i].user_role = 'Member'
+                            }
+                            else{
+                                if(this.users_in_group[i].user_role !== 'Owner'){
+                                    this.users_in_group[i].user_role = 'Admin'
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             selected_group: function(index, item){
                 this.selected_group_index = index;
                 this.group_index = item;
@@ -120,6 +165,38 @@
                 })
                 .catch(e => {
                     this.errors.push(e)
+                }),
+                axios.get('api/v1/fund/show_fund_by_group/')
+                .then(response => {
+                    // JSON responses are automatically parsed.
+                    this.shared_fund_list = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                }),
+                axios.get('api/v1/spending/show_spending_group/')
+                .then(response => {
+                    // JSON responses are automatically parsed.
+                    this.shared_spending_list = response.data
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+            },
+            updateUserRoleData: function (group_id, email, is_admin) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/group/change_users_role_in_group/',
+                    data: {
+                        'group_id': group_id,
+                        'email': email,
+                        'is_admin': is_admin
+                    }
+                }).then(response => {
+                    this.reply = response.data;
+                    alert(this.reply);
+                }).catch(error => {
+                    alert(error.response.data)
                 })
             }
         },
@@ -172,6 +249,7 @@
     .text {
         width: fit-content;
         margin: auto;
+        font-size: large;
     }
 
     .image {

@@ -9,6 +9,7 @@
             <label for="two">Arbitrary</label>
         </div>
         <div v-if="fixed !== null">
+        {{UTC}}
             <div class="col-md-4">
                 <hr>
                 <div class="form-group">
@@ -20,7 +21,7 @@
                 </div>
             </div>
 
-            <div v-if="fixed == true">
+            <div v-if="fixed == true | fixed =='True'">
                 <div class="col-md-4">
                     <hr>
                     <div class="form-group">
@@ -40,37 +41,42 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                <hr>
-                <div class="form-group">
-                    <label for="value">Value:</label>
-                    <br>
-                    <input v-model.number="selectedValueQ" id="value"
-                           type="number" min="0" max="999999999"
-                           placeholder="Your limit" pattern="^\d+(\.\d+)?$" required>
-                </div>
-                <hr>
-                <div>
-                    <button v-on:click="setLimitFix"
-                        :variant="secondary"
-                        class="btn btn-outline-primary"
-                        :disabled="isValidDataFix===false">Set limit
-                    </button>
-                    <br>
-                    <button v-on:click="createDone" :variant="secondary" v-show="isDone" class="btn btn-outline-primary">
-                        {{msg}}
-                    </button>
+                    <hr>
+                    <div class="form-group">
+                        <label for="value">Value:</label>
+                        <br>
+                        <input
+                            v-model.number="selectedValueQ"
+                            id="value"
+                            type="number" min="0" max="999999999"
+                            placeholder="Your limit" pattern="^\d+(\.\d+)?$" required>
+                    </div>
+                    <hr>
+                    <div>
+                        <button v-on:click="setLimitFix"
+                            :variant="secondary"
+                            class="btn btn-outline-primary"
+                            :disabled="isValidDataFix===false">Set limit
+                        </button>
+                        <br>
+                        <button
+                            v-on:click="createDone"
+                            :variant="secondary"
+                            v-show="isDone"
+                            class="btn btn-outline-primary">
+                                {{msg}}
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            </div>
-
-            <div v-if="fixed == false ">
+            <div v-if="fixed==false | fixed=='False'">
                 <div class="form-group col-md-4">
                     <div>
                         <label>Select start date</label>
                         <input v-model="start_date" type="date">
                     </div>
-                <hr>
+                    <hr>
                 </div>
                 <div class="form-group col-md-4">
                     <div>
@@ -80,42 +86,44 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                <hr>
-                <div class="form-group">
-                    <label for="value">Value:</label>
-                    <br>
-                    <input v-model.number="selectedValueQ" id="value"
-                           type="number" min="0" max="999999999"
-                           placeholder="Your limit" pattern="^\d+(\.\d+)?$" required>
-                </div>
-                <hr>
-                <div>
-                    <button v-on:click="setLimitArb"
-                        :variant="secondary"
-                        class="btn btn-outline-primary"
-                        :disabled="isValidDataArb===false">Set limit
-                    </button>
-                    <br>
-                    <button v-on:click="createDone" :variant="secondary" v-show="isDone" class="btn btn-outline-primary">
-                        {{msg}}
-                    </button>
+                    <hr>
+                    <div class="form-group">
+                        <label for="value">Value:</label>
+                        <br>
+                        <input
+                            v-model.number="selectedValueQ"
+                            id="value"
+                            type="number" min="0" max="999999999"
+                            placeholder="Your limit" pattern="^\d+(\.\d+)?$" required>
+                    </div>
+                    <hr>
+                    <div>
+                        <button v-on:click="setLimitArb"
+                            :variant="secondary"
+                            class="btn btn-outline-primary"
+                            :disabled="isValidDataArb===false">Set limit
+                        </button>
+                        <br>
+                        <button
+                            v-on:click="createDone"
+                            :variant="secondary"
+                            v-show="isDone"
+                            class="btn btn-outline-primary">
+                                {{msg}}
+                        </button>
+                    </div>
                 </div>
             </div>
-            </div>
-
-
-
         </div>
     </div>
 </template>
-
 
 <script>
     import axios from 'axios';
 
     var today = new Date();
-    var UTC = -today.getTimezoneOffset() / 60;
     var yyyy = today.getFullYear();
+    var UTC = -new Date().getTimezoneOffset() / 60
 
     export default {
         name: "Spend",
@@ -144,11 +152,10 @@
                 selectedYear: null,
                 selectedMonth: null,
                 selectedValue: null,
-                start_date: null,
-                finish_date: null,
+                start_date: new Date().toJSON().slice(0,10),
+                finish_date: new Date().toJSON().slice(0,10),
                 selectedSpending: null,
                 errors: [],
-                UTC: null,
                 newLimitation: {
                     'spending_id': null,
                     'year': null,
@@ -191,9 +198,7 @@
                     return result;
                 }
             },
-
         },
-
         created() {
             axios({
                 method: 'get',
@@ -207,7 +212,6 @@
                     this.errors.push(e)
                 })
         },
-
         methods: {
             setPeriod: function () {
                 axios({
@@ -218,7 +222,7 @@
                     }
                 }).then(response => (this.msg = response.data)
                 );
-                 this.$router.go('/spendings/limit_ind')
+                 this.$router.push('/spendings/limit_ind')
             },
             setLimitFix: function (event) {
                 axios({
@@ -239,8 +243,8 @@
                     url: '/api/v1/spending/set_limit_arb/',
                     data: {
                         'spending_id': this.selectedSpending,
-                        'start_date': this.start_date,
-                        'finish_date': this.finish_date,
+                        'start_date': String(this.start_date),
+                        'finish_date': String(this.finish_date),
                         'UTC': UTC,
                         'value': this.selectedValueQ
                     }
@@ -248,7 +252,14 @@
                 this.isDone = true;
             },
             createDone: function (event) {
-                this.$router.go('/spendings/limit_ind')
+                this.isDone = false;
+                this.msg = '';
+                this.selectedYear = null;
+                this.selectedMonth = null;
+                this.selectedValue = null;
+                this.start_date = new Date().toJSON().slice(0,10);
+                this.finish_date =new Date().toJSON().slice(0,10);
+                this.selectedSpending = null;
             },
         }
     }
