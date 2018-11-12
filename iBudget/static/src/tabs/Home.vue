@@ -1,13 +1,32 @@
 <template>
-    <div class="content">
+     <div class="content">
+        <b-carousel id="carousel1"
+                        style="text-shadow: 1px 1px 2px #333;"
+                        controls
+                        indicators
+                        img-width="1024"
+                        img-height="500"
+                        :interval="false"
+                        v-model="slide"
+                        @sliding-start="onSlideStart"
+                        @sliding-end="onSlideEnd"v-if="values.length !== 0" >
+                <b-carousel-slide img-blank  v-for="(item, index) in values" v-if="values.length !== 0">
         <div class="text">
-            <div class="chartcontainer">
+                <div>
+                    <div class="chartcontainer">
                 <chart_spending
-                    v-bind:value='value'
-                    v-bind:name='name'  v-if="value.length !== 0" />
+                    v-bind:value='item.value'
+                    v-bind:name='item.name'
+                    v-bind:title='dates[index]'
+                    v-if="item.value.length !== 0" />
+            </div>
             </div>
         </div>
-    </div>
+                   </b-carousel-slide>
+            </b-carousel>
+          <calculator/>
+        <income_button/>
+         </div>
 </template>
 
 <script>
@@ -17,16 +36,22 @@
 
     import axios from 'axios';
     import Chart_spending from 'src/components/examples/Chart_spending';
+    import Calculator from 'src/components/Calculator';
+    import Income_button from 'src/components/Income_button';
 
     export default {
         name: "Home",
-        components: {'Chart_spending': Chart_spending},
+        components: {'Chart_spending': Chart_spending,
+                    'Calculator': Calculator,
+                    'Income_button': Income_button},
         data() {
             return {
                 finish_date: x.toJSON().slice(0,10),
                 start_date:  new Date(x.getFullYear(), x.getMonth(), 1, UTC+1).toJSON().slice(0,10),
-                value: [],
+                balance: [],
+                values: [],
                 name: [],
+                title: '',
                 balance: [],
                 initial:[],
                 fund: []
@@ -43,8 +68,8 @@
                 }
             })
             .then(response => {
-                this.name = response.data.name;
-                this.value = response.data.value;
+                this.values = response.data.values;
+                this.dates = response.data.dates;
             })
             .catch(e => {
                 this.errors.push(e)
