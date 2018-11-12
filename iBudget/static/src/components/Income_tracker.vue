@@ -91,7 +91,6 @@
                 end_date: '',
                 list_with_incomes: '',
                 shownResult: false,
-                cur_income: 0,
                 UTC: -new Date().getTimezoneOffset() / 60,
                 shownResultChart:false,
                 cur_income: null,
@@ -180,7 +179,6 @@
                         }
                     }).then(response => {
                         this.list_with_incomes = response.data;
-                        console.log(this.list_with_incomes.length);
                         //if we got empty JSON with empty list inside
                         if(this.list_with_incomes.length === 1){
                             this.no_result = true;
