@@ -403,7 +403,6 @@ def get_spending_chart(request):
             start_date = date(finish_date.year, finish_date.month, 1)
             response.append(create_spending_chart(user, start_date, finish_date))
             dates.append(str(finish_date.month) + '/' + str(finish_date.year))
-        print(response)
         return JsonResponse({'values': response, "dates": dates},
                             status=200, safe=False)
     return JsonResponse({}, status=400)

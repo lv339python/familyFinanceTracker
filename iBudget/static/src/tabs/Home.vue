@@ -52,7 +52,9 @@
                 values: [],
                 name: [],
                 title: '',
-
+                balance: [],
+                initial:[],
+                fund: []
             }
         },
         created() {
@@ -77,7 +79,9 @@
                 url: '/api/v1/fund/get_balance/'
             })
             .then(response => {
-                this.balance = response.data;
+                this.balance = response.data.balance;
+                this.initial = response.data.initial;
+                this.fund = response.data.fund;
             })
             .catch(e => {
                 this.errors.push(e)
