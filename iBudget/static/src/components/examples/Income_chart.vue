@@ -7,6 +7,14 @@
                         v-bind:x_axis="get_x"
                         v-bind:amounts="amounts"
                         v-bind:color="getColor"/>
+             <bar-example
+                        v-bind:x_axis="get_x"
+                        v-bind:amounts="amounts"
+                        v-bind:color="getColor"/>
+             <horizontal-bar-example
+                        v-bind:x_axis="get_x"
+                        v-bind:amounts="amounts"
+                        v-bind:color="getColor"/>
         </div>
 
 
@@ -15,9 +23,15 @@
 
 <script>
     import LineExample from './LineExample';
+    import BarExample from './BarExample';
+  import HorizontalBarExample from './HorizontalBarExample';
+
+
     export default {
         components: {
             LineExample,
+            HorizontalBarExample,
+            BarExample,
         },
         props: ['date_to_props', 'amount_to_props'],
         data() {
