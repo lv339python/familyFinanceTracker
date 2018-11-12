@@ -31,8 +31,9 @@ def show_spending_ind(request):
     if user:
         user_categories = []
         for entry in SpendingCategories.filter_by_user(user):
-            user_categories.append({'id': entry.id, 'name': entry.name, 'url':
-                AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none})
+            user_categories.append({'id': entry.id, 'name': entry.name,
+                                    'url': AwsService.get_image_url(entry.icon) if entry.icon else
+                                           icon_if_none})
         return JsonResponse({'categories': user_categories, 'fixed': user.ind_period_fixed},
                             status=200, safe=False)
     return JsonResponse({}, status=400)
@@ -54,7 +55,8 @@ def show_spending_group(request):
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
-                icon = SpendingCategories.objects.get(id=shared_category.spending_categories.id).icon
+                icon =\
+                    SpendingCategories.objects.get(id=shared_category.spending_categories.id).icon
                 users_group.append({'id_cat': shared_category.spending_categories.id,
                                     'name_cat': shared_category.spending_categories.name,
                                     'id_group': group.id,

@@ -37,8 +37,9 @@ def show_fund(request):
         user_funds = []
         for entry in FundCategories.filter_by_user(user):
             if not FinancialGoal.has_goals(fund_id=entry.id):
-                user_funds.append({'id': entry.id, 'name': entry.name, 'url':
-                AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none})
+                user_funds.append({'id': entry.id, 'name': entry.name,
+                                   'url': AwsService.get_image_url(entry.icon) if entry.icon
+                                          else icon_if_none})
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -65,7 +66,7 @@ def show_fund_by_group(request):
                                         'name_fund': shared_fund.fund.name,
                                         'id_group': group.id,
                                         'url': AwsService.get_image_url(icon) if icon else
-                                        icon_if_none
+                                               icon_if_none
                                         })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
