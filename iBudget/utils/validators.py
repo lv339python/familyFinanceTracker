@@ -43,13 +43,10 @@ def is_valid_password(password):
 
 def is_valid_registration_data(data):
     """validate data.
-
             Args:
                 data (dict): contain email, password
-
             Returns:
                 bool: The return value. True is data valid, else False.
-
             """
     if not isinstance(data, dict):
         return False
@@ -214,8 +211,8 @@ def is_valid_data_individual_limit_arb(data):
         return False
     try:
         data['spending_id'] = int(data['spending_id'])
-        data['start_date'] = parse_date(data['start_date'])
-        data['finish_date'] = parse_date(data['finish_date'])
+        parse_date(data['start_date'])
+        parse_date(data['finish_date'])
         int(data['UTC'])
         data['value'] = round(float(data['value']), 2)
         return (data['spending_id'] > 0 and
@@ -407,6 +404,7 @@ def date_parse(data):
         Returns:
             (dict): parsed values
     """
+    print(data)
     start_date = parse_date(data['start_date'])
     finish_date = parse_date(data['finish_date'])
     utc_difference = int(data['UTC'])

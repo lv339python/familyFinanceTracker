@@ -3,7 +3,7 @@
         <div id="left" class="text column">
             <b-button :variant="secondary" to="/spendings/add" @click="isList=false">Add</b-button>
             <b-button :variant="secondary" to="/spendings/limit_ind" @click="isList=false">Set Individual Limitation</b-button>
-            <b-button :variant="secondary" to="/spendings/limit_group" @click="isList=false">Set Group Limitation</b-button>
+            <b-button :variant="secondary" to="/spendings/limit_group" @click="isList=false" v-if="group_spends">Set Group Limitation</b-button>
             <b-button :variant="secondary" to="/spendings/history" @click="isList=false">History</b-button>
             <b-button :variant="secondary" to="/spendings/new" @click="isList=false">New</b-button>
         </div>
@@ -32,7 +32,8 @@
                 list_shared:[],
                 list: [],
                 title: "Spendings",
-                errors: []
+                errors: [],
+                group_spends: false
             }
         },
         created() {
@@ -56,6 +57,15 @@
             .catch(e => {
                 this.errors.push(e)
             });
+            axios.get('api/v1/spending/admin/limit/')
+                .then(response => {
+                    if(response.data.length > 0){
+                        this.group_spends = true
+                    }
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                });
         },
         computed: {
             totalList: function () {

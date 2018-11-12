@@ -67,10 +67,6 @@
 </script>
 
 <style scoped>
-    #profile-photo {
-        float: left;
-    }
-
     .card-text {
         text-align: left;
         margin-left: 150px;

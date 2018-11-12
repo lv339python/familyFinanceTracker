@@ -82,7 +82,7 @@
                 fund_category: null,
                 value: null,
                 date: null,
-                comment: null,
+                comment: '',
                 is_active_group: null,
                 is_shared: false
             }

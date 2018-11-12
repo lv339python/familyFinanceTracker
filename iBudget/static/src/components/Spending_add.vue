@@ -74,7 +74,14 @@
                 this.isDone = true;
             },
             createDone: function (event) {
-                this.$router.go('/spending_add')
+                this.isDone = false;
+                this.newName = null;
+                this.selectedIcon = '';
+                this.newSpending = {
+                    'name': null,
+                    'icon': ''
+                };
+                this.msg =''
             },
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']

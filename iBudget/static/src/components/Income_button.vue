@@ -62,8 +62,13 @@
                         <option v-for="income in income_list" v-bind:value="income.id"> {{ income.name }}
                         </option>
                     </select>
+                      <div>
+                    <input type="checkbox" id="cbx1" style="display:none" v-model="is_shared"/>
+                    <label for="cbx1" class="toggle"><span></span>Shared</label>
+                </div>
                      <b-btn v-b-toggle.collapse2 variant="primary">Add</b-btn>
                 </div>
+
                 <div class="form-group" v-else>
                     <label>Chose group</label>
                     <select v-model="group" class="form-control">
@@ -74,16 +79,7 @@
                         </option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <b-form-checkbox id="shared_button" v-model="is_shared">
-                        Choose among shared funds :
-                    </b-form-checkbox>
 
-                </div>
-                <div class="col-md-4">
-                    <input type="checkbox" id="cbx1" style="display:none" v-model="is_shared"/>
-                    <label for="cbx1" class="toggle"><span></span>Shared</label>
-                </div>
                 <div>
                     <b-button :disabled="DataValidation===false" class="btn btn-outline-primary"
                               @click="setData" :variant="success">Save

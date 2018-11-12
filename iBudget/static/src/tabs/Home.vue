@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+     <div class="content">
         <b-carousel id="carousel1"
                         style="text-shadow: 1px 1px 2px #333;"
                         controls
@@ -12,7 +12,6 @@
                         @sliding-end="onSlideEnd"v-if="values.length !== 0" >
                 <b-carousel-slide img-blank  v-for="(item, index) in values" v-if="values.length !== 0">
         <div class="text">
-                {{fund_balance}}
                 <div>
                     <div class="chartcontainer">
                 <chart_spending
@@ -25,7 +24,6 @@
         </div>
                    </b-carousel-slide>
             </b-carousel>
-          <div>  {{data.fund_balance}}-{{data.fund_initial}}-{{fund_name}}</div>
           <calculator/>
         <income_button/>
          </div>
@@ -50,13 +48,10 @@
             return {
                 finish_date: x.toJSON().slice(0,10),
                 start_date:  new Date(x.getFullYear(), x.getMonth(), 1, UTC+1).toJSON().slice(0,10),
+                balance: [],
                 values: [],
                 name: [],
                 title: '',
-                fund_initial: null,
-                fund_balance: null,
-                fund_name:'',
-                data: [],
 
             }
         },
@@ -76,20 +71,18 @@
             })
             .catch(e => {
                 this.errors.push(e)
-            });
-            axios.get('/api/v1/fund/get_balance/')
-                .then(response => {
-                    this.fund_initial = response.data.fund_initial;
-                    console.log(fund_initial);
-                    this.fund_balance = response.data.fund_balance;
-                    console.log(fund_balance);
-                    this.fund_name = response.data.name;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
+            }),
+            axios({
+                method: 'get',
+                url: '/api/v1/fund/get_balance/'
+            })
+            .then(response => {
+                this.balance = response.data;
+            })
+            .catch(e => {
+                this.errors.push(e)
+            })
         }
-
     }
 </script>
 
@@ -102,7 +95,6 @@
 
     .text {
         width: fit-content;
-        margin: ;
         text-align: center;
     }
 

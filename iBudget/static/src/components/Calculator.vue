@@ -53,10 +53,10 @@
                 <div @click="append('0')" class="btn zero">0</div>
                 <div @click="dot" class="btn">.</div>
                 <div @click="equal" class="btn operator">=</div>
-                <b-btn v-b-toggle.collapse1 variant="primary">Choose Category</b-btn>
+                <b-btn v-b-toggle.collapse3 variant="primary">Choose Category</b-btn>
             </div>
 
-            <b-collapse id="collapse1" class="mt-2">
+            <b-collapse id="collapse3" class="mt-2">
 
                 <div class="content">
                     <div class="row">
@@ -80,7 +80,7 @@
                                         {{category.name_cat}}
                                     </option>
                                 </select>
-                                 <b-btn v-b-toggle.collapse2 variant="primary">+</b-btn>
+                                 <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
                             </div>
 
                         </div>
@@ -93,8 +93,9 @@
                                         {{ spend.name }}
                                     </option>
                                 </select>
-                                <b-btn v-b-toggle.collapse2 variant="primary">+</b-btn>
+
                             </div>
+                              <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
                             <hr/>
                         </div>
 
@@ -113,7 +114,7 @@
                     </div>
                 </div>
             </b-collapse>
-            <b-collapse id="collapse2" class="mt-2">
+            <b-collapse id="collapse4" class="mt-2">
 
                 <spending_add/>
             </b-collapse>
