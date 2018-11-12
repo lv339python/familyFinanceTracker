@@ -53,13 +53,18 @@ def show_fund_by_group(request):
 
     user = request.user
     users_group = []
+    icon_if_none = \
+        'https://s3.amazonaws.com/family-finance-tracker-static/standard_fund/funds.png'
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_fund in SharedFunds.objects.filter(group=group.id):
                 if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id):
+                    icon = FundCategories.objects.get(id=shared_fund.fund.id).icon
                     users_group.append({'id_fund': shared_fund.fund.id,
                                         'name_fund': shared_fund.fund.name,
-                                        'id_group': group.id
+                                        'id_group': group.id,
+                                        'url': AwsService.get_image_url(icon) if icon else
+                                        icon_if_none
                                         })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)

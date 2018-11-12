@@ -2,42 +2,38 @@
     <div class="content">
         <div class="row">
             <div class="col-md-8 form-group " v-if="is_shared===true">
-                <!--<div>-->
-                    <!--<label>Choose group</label>-->
-                    <!--<select v-model="groupId" class="form-control">-->
-                        <!--<option v-for="group in group_list"-->
-                                <!--v-bind:value="group.id">-->
-                            <!--{{ group.name }}-->
-                        <!--</option>-->
-                    <!--</select>-->
-                <!--</div>-->
                 <p>Choose group:</p>
                 <div class="img_container">
                     <br>
-                    <template v-for="group in group_list">
+                    <div v-for="group in group_list">
                         <input type="image" :src="group.url" v-on:click="get_group_icon_id(group.id)"
-                               class="icon" alt="no icon"> {{group.name}}
-                    </template>
+                               class="icon" alt="icon">
+                        <p>{{group.name}}</p>
+                    </div>
                 </div>
                 <hr>
                 <div v-show="groupId">
-                    <label>Select category</label>
-                    <select v-model="category" class="form-control">
-                        <option v-for="category in shared_list"
-                                v-if="category.id_group === groupId"
-                                v-bind:value="category.id_cat">
-                            {{category.name_cat}}
-                        </option>
-                    </select>
+                    <p>Select category:</p>
+                    <div class="img_container">
+                    <br>
+                        <div v-for="category in shared_list" v-if="category.id_group === group_id">
+                            <input type="image" :src="category.url"
+                            v-on:click="get_group_icon_id(category.id_cat)"
+                                   class="icon" alt="icon">
+                            <p>{{category.name_cat}}</p>
+                        </div>
+                    </div>
                     <hr/>
-                    <label>Choose type of pay:</label>
-                    <select v-model="type_of_pay" class="form-control">
-                        <option v-for="type_of_pay in shared_fund_list"
-                                v-if="type_of_pay.id_group===groupId"
-                                v-bind:value="type_of_pay.id_fund">
-                            {{ type_of_pay.name_fund }}
-                        </option>
-                    </select>
+                    <p>Choose type of pay:</p>
+                    <div class="img_container">
+                    <br>
+                        <div v-for="type_of_pay in shared_fund_list" v-if="type_of_pay.id_group === group_id">
+                            <input type="image" :src="type_of_pay.url"
+                            v-on:click="get_group_fund_id(type_of_pay.id_fund)"
+                                   class="icon" alt="icon">
+                            <p>{{type_of_pay.name_fund}}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -45,19 +41,21 @@
                 <p>Select category:</p>
                 <div class="img_container">
                     <br>
-                    <template v-for="spend in spending_list">
+                    <div v-for="spend in spending_list">
                         <input type="image" :src="spend.url" v-on:click="get_spend_icon_id(spend.id)"
-                               class="icon"> {{spend.name}}
-                    </template>
+                               class="icon" alt="icon">
+                        <p>{{spend.name}}</p>
+                    </div>
                 </div>
                 <hr/>
                 <p>Choose type of pay:</p>
                 <div class="img_container">
                     <br>
-                    <template v-for="fund in fund_list">
-                        <input type="image" :src="fund.url" v-on:click="get_fund_icon_id(fund.id)
-                               class="icon"> {{fund.name}}
-                    </template>
+                    <div v-for="fund in fund_list">
+                        <input type="image" :src="fund.url" v-on:click="get_fund_icon_id(fund.id)"
+                               class="icon" alt="icon">
+                        <p>{{fund.name}}</p>
+                    </div>
                 </div>
             </div>
 
@@ -113,6 +111,7 @@
                 date: new Date().toJSON().slice(0,10),
                 comment: null,
                 is_shared: false,
+                group_id: null
             }
         },
         computed: {
@@ -180,7 +179,7 @@
                         'date': this.date,
                         'value': this.value,
                         'comment': this.comment,
-                        'group_id':this.groupId
+                        'group_id':this.group_id
                     }
                 }).then(response => {
                     this.reply = response.data;
@@ -200,15 +199,18 @@
                 this.is_active_shared_cat = null;
                 this.is_shared = false;
             },
-            get_spend_icon_id(icon_name){
-                this.category = icon_name;
+            get_spend_icon_id(id){
+                this.category = id;
             },
-            get_fund_icon_id(icon_name){
-                this.type_of_pay = icon_name
+            get_fund_icon_id(id){
+                this.type_of_pay = id
             },
-            get_group_icon_id(icon_name){
-                this.group_id = icon_name;
+            get_group_icon_id(id){
+                this.group_id = id;
                 this.groupId = true;
+            },
+            get_group_fund_id(id){
+                this.type_of_pay = id
             }
         }
     }
@@ -284,10 +286,9 @@
         transition: all 0.4s ease;
     }
     .img_container{
-        width: 380px;
-        height: 380px;
+        width: 350px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         flex-wrap:wrap;
     }
     .icon{

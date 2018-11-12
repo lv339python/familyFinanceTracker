@@ -49,13 +49,17 @@ def show_spending_group(request):
 
     user = request.user
     users_group = []
+    icon_if_none = \
+        'https://family-finance-tracker-static.s3.amazonaws.com/standard/miscellaneous.png'
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
+                icon = SpendingCategories.objects.get(id=shared_category.spending_categories.id).icon
                 users_group.append({'id_cat': shared_category.spending_categories.id,
                                     'name_cat': shared_category.spending_categories.name,
                                     'id_group': group.id,
-                                    'name_group': group.name
+                                    'name_group': group.name,
+                                    'url': AwsService.get_image_url(icon) if icon else icon_if_none
                                     })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
