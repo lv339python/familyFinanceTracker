@@ -8,14 +8,14 @@
                     v-for="(item, index) in paginatedData"
                     v-on:click="selected_item(index, item.id)"
                     :class="{'active': selected_item_index===index}">
-                    {{ item.name }}
-                    <button type="button" class="btn btn-outline-danger"
-                            v-on:click="delItemInc(item.id); delItemSpen(item.id);
-                            delItemFund(item.id); delItemGoal(item.id)"
+                    <div>{{ item.name }}</div>
+                    <div>
+                        <button type="button" class="btn btn-outline-light"
+                            @click="deleteItem(item.id)"
                             :variant="secondary">
-                        Delete
-                    </button>
-
+                            Delete
+                        </button>
+                    </div>
                 </li>
             </ul>
             <div v-show="pageCount>1" class='prevNext'>
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+    import axios from 'axios';
     export default {
         name: "List_paginated",
         data() {
@@ -51,25 +52,12 @@
 
             }
         },
-        props: ["title", "list"],
+        props: ["title", "list", "deleteItem"],
         methods: {
             selected_item: function (index, item) {
                 this.selected_item_index = index;
                 this.item_index = item;
                 this.selected_item_id = item;
-                this.$emit('selected_itemInc', {
-                    id:this.selected_item_id
-                });
-                this.$emit('selected_itemSpend',{
-                    id:this.selected_item_id
-                });
-                this.$emit('selected_itemFund',{
-                    id:this.selected_item_id
-                });
-                this.$emit('selected_itemGoal',{
-                    id:this.selected_item_id
-                });
-
             },
             nextPage() {
                 this.pageNumber++;
@@ -79,7 +67,6 @@
                 this.pageNumber--;
                 this.selected_item_index = 0
             },
-
         },
         computed: {
             pageCount() {

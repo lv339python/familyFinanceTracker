@@ -9,12 +9,16 @@
             <div v-if="isList&&totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
-                    v-bind:title='title' v-if="list.length !== 0" @selected_itemFund="delItemFund"/>
+                    v-bind:title='title'
+                    v-bind:deleteItem="delItFundGoal"
+                    v-if="list.length !== 0"/>
             </div>
             <div v-if="isList&&totalListGoal.length!==0">
                 <list_paginated
                     v-bind:list='listGoal'
-                    v-bind:title='titleGoal' v-if="listGoal.length !== 0" @selected_itemGoal="delItemGoal"/>
+                    v-bind:title='titleGoal'
+                    v-bind:deleteItem="delItFundGoal"
+                    v-if="list.length !== 0"/>
             </div>
             <router-view></router-view>
         </div>
@@ -113,21 +117,11 @@
             }
         },
         methods: {
-            delItemFund(fundId) {
-                if (fundId.id != 0) {
+            delItFundGoal(fundId) {
+                if (fundId != 0) {
                     axios({
                         method: 'delete',
-                        url: '/api/v1/fund/delete_fund_category/' + fundId.id,
-                    }).then(response => {
-                        this.$router.push('/funds/')
-                    })
-                }
-            },
-            delItemGoal(goalId) {
-                if (goalId.id != 0) {
-                    axios({
-                        method: 'delete',
-                        url: '/api/v1/fund/delete_financial_goal/' + goalId.id,
+                        url: '/api/v1/fund/delete_fund_goal_category/' + fundId,
                     }).then(response => {
                         this.$router.push('/funds/')
                     })
@@ -135,6 +129,7 @@
             }
         }
     }
+
 
 </script>
 

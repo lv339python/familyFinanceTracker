@@ -5,9 +5,12 @@
                 <chart_spending
                     v-bind:value='value'
                     v-bind:name='name'  v-if="value.length !== 0" />
-            </div>
-            <div v-for="item in balance">{{item}}</div>
-        </div>
+            <div>
+                    <label>Select category:</label>
+                    <div v-model="balance" class="form-control">
+                       <div>{{balance}}</div>
+                    </div>
+                </div>
     </div>
 </template>
 

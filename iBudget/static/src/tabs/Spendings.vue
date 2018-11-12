@@ -14,7 +14,9 @@
             <div v-if="isList&&totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
-                    v-bind:title='title' v-if="list.length !== 0" @selected_itemSpend="delItemSpend"/>
+                    v-bind:title='title'
+                    v-bind:deleteItem="delItSpending"
+                    v-if="list.length !== 0"/>
             </div>
             <router-view></router-view>
         </div>
@@ -72,31 +74,31 @@
         },
         computed: {
             totalList: function () {
-                 {
+                {
                     let result = this.list;
-                for (var i = 0; i < this.list_shared.length; i++) {
-                    result.push({
-                        'id': this.list_shared[i].id_cat,
-                        'name': this.list_shared[i].name_cat + ' / ' + this.list_shared[i].name_group
-                    });
+                    for (var i = 0; i < this.list_shared.length; i++) {
+                        result.push({
+                            'id': this.list_shared[i].id_cat,
+                            'name': this.list_shared[i].name_cat + ' / ' + this.list_shared[i].name_group
+                        });
+                    }
+                    ;
+                    return result
                 }
-                ;
-                return result
             }
-            },
-
         },
         methods: {
-            delItemSpend(spendId) {
-                if (spendId.id != 0) {
+            delItSpending(spendId) {
+                if (spendId) {
                     axios({
                         method: 'delete',
-                        url: '/api/v1/spending/delete_spending_category/' + spendId.id,
+                        url: '/api/v1/spending/delete_spending_category/' + spendId,
                     }).then(response => {
                         this.$router.push('/spendings/')
                     })
                 }
             }
+
         }
     }
 </script>

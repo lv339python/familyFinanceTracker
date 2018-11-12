@@ -313,7 +313,8 @@ def get_balance(request):
 
     for group in Group.filter_groups_by_user_id(user):
         for shared_fund in SharedFunds.objects.filter(group=group.id):
-            if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id):
+            if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id)\
+                and shared_fund.fund.is_active:
                 user_funds.append(shared_fund.fund.id)
 
     begin_date = min(
@@ -341,7 +342,7 @@ def get_balance(request):
 
 
 @require_http_methods(["DELETE"])
-def delete_fund_category(request, fund_id):
+def delete_fund_goal_category(request, fund_id):
     """Handling request for delete fund category.
         Args:
             request (HttpRequest): Data for delete fund.
@@ -357,24 +358,3 @@ def delete_fund_category(request, fund_id):
         return HttpResponse(status=400)
     fund.update(is_active=False)
     return HttpResponse(f"You've just deleted fund {fund.name}", status=200)
-
-
-@require_http_methods(["DELETE"])
-def delete_financial_goal(request, fund_id):
-    """Handling request for delete goal category.
-        Args:
-            request (HttpRequest): Data for delete goal.
-            fund_id: Fund category Id
-        Returns:
-            HttpResponse object.
-    """
-    user = request.user
-    fund = FundCategories.get_by_id(fund_id)
-    if not fund:
-        return HttpResponse(status=406)
-    if not fund.owner == user:
-        return HttpResponse(status=400)
-    if FinancialGoal.has_goals(fund_id=fund.id):
-        fund.update(is_active=False)
-        return HttpResponse(f"You've just deleted goal {fund.name}", status=200)
-    return HttpResponse(status=400)

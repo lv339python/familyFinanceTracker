@@ -183,18 +183,3 @@ def update_password(request, token=None):
     return HttpResponse(status=400)
 
 
-@require_http_methods(["DELETE"])
-def delete_user(request):
-    """Handling request for delete user.
-        Args:
-            request (HttpRequest):request from the web page
-            with a json containing changes to be applied.
-        Returns:
-            HttpResponse object.
-    """
-    user = request.user
-    if not user:
-        return HttpResponse(status=400)
-    user.update(is_active=False)
-    return HttpResponse(f"{user.first_name}{user.last_name}/"
-                        f" you've just deleted your account ", status=200)

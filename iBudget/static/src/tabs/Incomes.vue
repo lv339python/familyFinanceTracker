@@ -9,7 +9,9 @@
             <div v-if="isList&& list.length!==0">
                 <list_paginated
                     v-bind:list='list'
-                    v-bind:title='title'  v-if="list.length !== 0" @selected_itemInc="delItemInc"/>
+                    v-bind:title='title'
+                    v-bind:deleteItem="deleteIncome"
+                    v-if="list.length !== 0"/>
             </div>
             <router-view></router-view>
         </div>
@@ -31,31 +33,31 @@
                 id: 0
             }
         },
-created() {
+        created() {
             axios({
                 method: 'get',
                 url: '/api/v1/income/'
             })
-            .then(response => {
-                this.list = response.data;
-            })
-            .catch(e => {
-                this.errors.push(e)
-            });
+                .then(response => {
+                    this.list = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                });
         },
-
         methods: {
-            delItemInc(incId) {
-                if (incId.id != 0) {
+            deleteIncome(incId) {
+                if (incId) {
                     axios({
                         method: 'delete',
-                        url: '/api/v1/income/delete_income/' + incId.id,
+                        url: '/api/v1/income/delete_income/' + incId,
                     }).then(response => {
                         this.$router.push('/incomes/')
                     })
                 }
             }
         }
+
     }
 </script>
 

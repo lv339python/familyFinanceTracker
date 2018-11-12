@@ -7,8 +7,7 @@ from .views import (login_user,
                     google_auth_grant,
                     get_profile,
                     forgot_password,
-                    update_password,
-                    delete_user)
+                    update_password)
 
 urlpatterns = [
     path('registration/', registration),
@@ -18,6 +17,5 @@ urlpatterns = [
     path('sign_in/', google_sign_in, name="google_sign_in"),
     path('profile/', get_profile, name="get_profile"),
     path('forgot_password/', forgot_password),
-    path('delete_user/', delete_user),
     url(r'^update_password/(?P<token>.+)$', update_password, name="update_password")
     ]
