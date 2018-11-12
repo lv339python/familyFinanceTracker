@@ -247,6 +247,24 @@ def create_balance(user, begin_date, start_date, finish_date, fund_id):
                finish_date).filter(fund=fund_id).values_list('value', flat=True)) + \
            create_initial_balance(user, begin_date, start_date, fund_id)
 
+def history_begin_date(user, user_funds):
+    """Search the earliest date in user's history.
+            Args:
+                user (UserProfile): user.
+                user_funds (list): list of user's fund ID
+            Returns:
+                The earliest history date if user has spending or fund history,
+                current date otherwise.
+    """
+    current_date = date.today()
+    list_date_spending = SpendingHistory.objects.filter(owner=user).values_list(
+        'date', flat=True)
+    list_date_fund = IncomeHistory.objects.filter(fund__in=user_funds).values_list(
+        'date', flat=True)
+    begin_date = min(list_date_spending).date() if list_date_spending else current_date
+    begin_date = min(begin_date, min(list_date_fund).date()) if list_date_fund else begin_date
+    return begin_date
+
 
 @require_http_methods(["GET"])
 def get_balance(request):
@@ -270,17 +288,7 @@ def get_balance(request):
             for item in SharedFunds.objects.filter(group=group.id):
                 if not FinancialGoal.has_goals(fund_id=item.fund.id):
                     user_funds.append(item.fund.id)
-
-        begin_date = min(
-            SpendingHistory.objects.filter(owner=user).values_list('date', flat=True)).date() \
-            if SpendingHistory.objects.filter(owner=user).values_list('date', flat=True) \
-            else current_date
-
-        begin_date = min(begin_date,
-                         min(IncomeHistory.objects.filter(fund__in=user_funds).values_list(
-                             'date', flat=True)).date()) \
-            if IncomeHistory.objects.filter(fund__in=user_funds).values_list('date', flat=True) \
-            else begin_date
+        begin_date = history_begin_date(user, user_funds)
         name = []
         initial = []
         balance = []
@@ -298,7 +306,6 @@ def get_balance(request):
             name.append(FundCategories.get_by_id(item).name)
             initial.append(fund_initial)
             balance.append(fund_balance)
-
         return JsonResponse({'fund': name,
                              'initial': initial,
                              'balance': balance}, status=200, safe=False)
