@@ -43,7 +43,7 @@
                     <br>
                     <div v-for="spend in spending_list">
                         <input type="image" :src="spend.url" v-on:click="get_spend_icon_id(spend.id)"
-                               class="icon" alt="icon">
+                                alt="icon" class="icon">
                         <p>{{spend.name}}</p>
                     </div>
                 </div>
@@ -287,6 +287,8 @@
     }
     .img_container{
         width: 350px;
+        max-height:350px;
+        overflow:scroll;
         display: flex;
         flex-direction: row;
         flex-wrap:wrap;
@@ -294,5 +296,10 @@
     .icon{
         width:70px;
         height:70px;
+    }
+
+    div.img_container div{
+        width:70px;
+        height:95px;
     }
 </style>
