@@ -33,9 +33,7 @@
                     </div>
                 </div>
 
-
-
-                <div @click="clear" class="btn">C</div>
+                <div @click="clear1" class="btn">C</div>
                 <div @click="sign" class="btn">+/-</div>
                 <div @click="percent" class="btn">%</div>
                 <div @click="divide" class="btn operator">÷</div>
@@ -131,6 +129,7 @@
                 fund_category: null,
                 date: new Date().toJSON().slice(0, 10),
                 comment: null,
+                value:null,
                 is_active_group: null,
                 is_shared: false
             }
@@ -216,30 +215,30 @@
                 this.$refs.myModalRef.hide();
                 this.clearAll();
             },
-            clear() {
+            clear1() {
                 this.current = '';
             },
             sign() {
-                this.current = this.value.charAt(0) === '-' ?
-                    this.value.slice(1) : `-${this.value}`;
+                this.current = this.current.charAt(0) === '-' ?
+                    this.current.slice(1) : `-${this.current}`;
             },
             percent() {
-                this.current = `${parseFloat(this.value) / 100}`;
+                this.current = `${parseFloat(this.current) / 100}`;
             },
             append(number) {
                 if (this.operatorClicked) {
                     this.current = '';
                     this.operatorClicked = false;
                 }
-                this.current = `${this.value}${number}`;
+                this.current = `${this.current}${number}`;
             },
             dot() {
-                if (this.value.indexOf('.') === -1) {
+                if (this.current.indexOf('.') === -1) {
                     this.append('.');
                 }
             },
             setPrevious() {
-                this.previous = this.value;
+                this.previous = this.current;
                 this.operatorClicked = true;
             },
             divide() {
@@ -260,7 +259,7 @@
             },
             equal() {
                 this.current = `${this.operator(
-                    parseFloat(this.value),
+                    parseFloat(this.current),
                     parseFloat(this.previous)
                 )}`;
                 this.previous = null;
