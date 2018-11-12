@@ -15,6 +15,10 @@ from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_n
 from utils.aws_helper import AwsService
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
+# CONSTANTS FOR ICONS
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+STANDARD_SPENDINGS_FOLDER = 'standard/'
+ICON_FILE_NAME = 'miscellaneous.png'
 
 @require_http_methods(["GET"])
 def show_spending_ind(request):
@@ -26,14 +30,13 @@ def show_spending_ind(request):
             HttpResponse object.
     """
     user = request.user
-    icon_if_none =\
-        'https://family-finance-tracker-static.s3.amazonaws.com/standard/miscellaneous.png'
+    icon_if_none = AWS_S3_URL + STANDARD_SPENDINGS_FOLDER + ICON_FILE_NAME
     if user:
         user_categories = []
         for entry in SpendingCategories.filter_by_user(user):
+            url = AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none
             user_categories.append({'id': entry.id, 'name': entry.name,
-                                    'url': AwsService.get_image_url(entry.icon) if entry.icon else
-                                           icon_if_none})
+                                    'url': url})
         return JsonResponse({'categories': user_categories, 'fixed': user.ind_period_fixed},
                             status=200, safe=False)
     return JsonResponse({}, status=400)
@@ -50,18 +53,18 @@ def show_spending_group(request):
 
     user = request.user
     users_group = []
-    icon_if_none = \
-        'https://family-finance-tracker-static.s3.amazonaws.com/standard/miscellaneous.png'
+    icon_if_none = AWS_S3_URL + STANDARD_SPENDINGS_FOLDER + ICON_FILE_NAME
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
                 icon =\
                     SpendingCategories.objects.get(id=shared_category.spending_categories.id).icon
+                url = AwsService.get_image_url(icon) if icon else icon_if_none
                 users_group.append({'id_cat': shared_category.spending_categories.id,
                                     'name_cat': shared_category.spending_categories.name,
                                     'id_group': group.id,
                                     'name_group': group.name,
-                                    'url': AwsService.get_image_url(icon) if icon else icon_if_none
+                                    'url': url
                                     })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)

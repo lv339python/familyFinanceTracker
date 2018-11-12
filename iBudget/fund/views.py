@@ -20,6 +20,11 @@ from utils.validators import \
 from utils.aws_helper import AwsService
 from .models import FundCategories, FinancialGoal
 
+# CONSTANTS FOR ICONS
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+STANDARD_FUNDS_FOLDER = 'standard_fund/'
+ICON_FILE_NAME = 'funds.png'
+
 
 @require_http_methods(["GET"])
 def show_fund(request):
@@ -31,15 +36,14 @@ def show_fund(request):
             HttpResponse object.
     """
     user = request.user
-    icon_if_none = \
-        'https://s3.amazonaws.com/family-finance-tracker-static/standard_fund/funds.png'
+    icon_if_none = AWS_S3_URL + STANDARD_FUNDS_FOLDER + ICON_FILE_NAME
     if user:
         user_funds = []
         for entry in FundCategories.filter_by_user(user):
+            url = AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none
             if not FinancialGoal.has_goals(fund_id=entry.id):
                 user_funds.append({'id': entry.id, 'name': entry.name,
-                                   'url': AwsService.get_image_url(entry.icon) if entry.icon
-                                          else icon_if_none})
+                                   'url': url})
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -55,18 +59,17 @@ def show_fund_by_group(request):
 
     user = request.user
     users_group = []
-    icon_if_none = \
-        'https://s3.amazonaws.com/family-finance-tracker-static/standard_fund/funds.png'
+    icon_if_none = AWS_S3_URL + STANDARD_FUNDS_FOLDER + ICON_FILE_NAME
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_fund in SharedFunds.objects.filter(group=group.id):
                 if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id):
                     icon = FundCategories.objects.get(id=shared_fund.fund.id).icon
+                    url = AwsService.get_image_url(icon) if icon else icon_if_none
                     users_group.append({'id_fund': shared_fund.fund.id,
                                         'name_fund': shared_fund.fund.name,
                                         'id_group': group.id,
-                                        'url': AwsService.get_image_url(icon) if icon else
-                                               icon_if_none
+                                        'url': url
                                         })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
