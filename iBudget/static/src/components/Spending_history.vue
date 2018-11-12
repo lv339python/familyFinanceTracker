@@ -44,17 +44,17 @@
                     </tr>
                     </thead>
                     <tbody v-for="p in paginatedData">
-                        <tr>
-                            <td v-if="p.member">{{p.member}}</td>
-                            <td>{{ p.value }}</td>
-                            <td>{{ p.date }}</td>
-                            <td>{{ p.fund }}</td>
-                        </tr>
+                    <tr>
+                        <td v-if="p.member">{{p.member}}</td>
+                        <td>{{ p.value }}</td>
+                        <td>{{ p.date }}</td>
+                        <td>{{ p.fund }}</td>
+                    </tr>
                     </tbody>
                 </table>
                 <div v-show="pageCount>1" class='prevNext'>
                     <b style="word-space:2em">&nbsp;</b>
-                    <button :disabled="pageNumber===0" @click="prevPage"> Previous </button>
+                    <button :disabled="pageNumber===0" @click="prevPage"> Previous</button>
                     <span v-if="pageNumber > 0 && pageNumber < pageCount-1">
                         1... <b>{{pageNumber +1 }}</b> ... {{pageCount}}
                     </span>
@@ -64,7 +64,7 @@
                     <span v-if="pageNumber===pageCount-1">
                         1  ... <b style="word-space:2em">&nbsp;</b> ... <b>{{pageCount}}</b>
                     </span>
-                    <button :disabled="pageNumber >= pageCount-1 " @click="nextPage"> Next </button>
+                    <button :disabled="pageNumber >= pageCount-1 " @click="nextPage"> Next</button>
                     <b style="word-space:2em">&nbsp;</b>
                 </div>
             </div>
@@ -87,6 +87,7 @@
 
 <script>
     import axios from 'axios';
+
     var UTC = -new Date().getTimezoneOffset() / 60;
     export default {
         name: "Spending_history",
@@ -97,12 +98,12 @@
                 listValues: [],
                 pageNumber: 0,
                 size: 2,
-                start_date: new Date().toJSON().slice(0,10),
-                finish_date: new Date().toJSON().slice(0,10),
+                start_date: new Date().toJSON().slice(0, 10),
+                finish_date: new Date().toJSON().slice(0, 10),
                 selected: [],
                 spending_history_individual: {},
                 spending_history_admin: {},
-                spending_all:[],
+                spending_all: [],
                 errors: [],
                 UTC: -new Date().getTimezoneOffset() / 60
             }
@@ -121,8 +122,8 @@
         },
         methods: {
             buttonName: function (name) {
-                if(name.length>9){
-                    name = name.slice(0,9)+"..."
+                if (name.length > 9) {
+                    name = name.slice(0, 9) + "..."
                 }
                 return name
             },
@@ -153,15 +154,15 @@
                         'UTC': UTC,
                     }
                 })
-                .then(response => {
-                    this.spending_history_admin = response.data.admin;
-                    this.spending_history_individual = response.data.individual;
-                    this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
-                    this.isCategory = true;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
+                    .then(response => {
+                        this.spending_history_admin = response.data.admin;
+                        this.spending_history_individual = response.data.individual;
+                        this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
+                        this.isCategory = true;
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    })
             },
             nextPage() {
                 this.pageNumber++;
@@ -191,22 +192,26 @@
     .total {
         text-align: center
     }
-    .dates{
+
+    .dates {
         text-align: center;
         justify-content: space-around;
     }
+
     #spending_history {
 
     }
-    .but-fl{
+
+    .but-fl {
         display: flex;
         flex-wrap: wrap;
         margin: 10px;
         justify-content: flex-start;
     }
-    .but-w{
-        white-space:normal !important;
+
+    .but-w {
+        white-space: normal !important;
         word-wrap: break-word;
-        width:16.5%
+        width: 16.5%
     }
 </style>
