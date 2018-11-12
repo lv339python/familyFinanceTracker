@@ -1,10 +1,5 @@
 <template>
     <div id="income_add">
-         <b-button variant="primary" @click="showModal">
-            +
-        </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Add new income">
-
         <div>
             <hr>
             <div class="form-group">
@@ -41,8 +36,6 @@
             </button>
             <button v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}</button>
         </div>
-
-     </b-modal>
     </div>
 </template>
 

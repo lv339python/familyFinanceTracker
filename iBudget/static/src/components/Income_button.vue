@@ -12,7 +12,7 @@
                 <div class="display">
                      <div>
                         <b-input-group>
-                            <b-form-input placeholder="0" v-model.number="current" v-model="value" type="number" min="1" ></b-form-input>
+                            <b-form-input placeholder="0" v-model.number="current" type="number" min="1" ></b-form-input>
                             <b-select v-model="fund_category" class="form-control" variant="primary" slot="prepend"
                                        v-if="is_shared===false">
                            <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
@@ -55,7 +55,7 @@
                 <div @click="dot" class="btn">.</div>
                 <div @click="equal" class="btn operator">=</div>
                 <b-btn v-b-toggle.collapse1 variant="primary">Choose Category</b-btn>
-                <b-btn v-b-toggle.collapse2 variant="primary">Add</b-btn>
+
             </div>
             <b-collapse id="collapse1" class="mt-2">
                 <div class="form-group">
@@ -64,6 +64,7 @@
                         <option v-for="income in income_list" v-bind:value="income.id"> {{ income.name }}
                         </option>
                     </select>
+                     <b-btn v-b-toggle.collapse2 variant="primary">Add</b-btn>
                 </div>
                 <div class="form-group" v-else>
                     <label>Chose group</label>
@@ -79,10 +80,11 @@
                     <b-form-checkbox id="shared_button" v-model="is_shared">
                         Choose among shared funds :
                     </b-form-checkbox>
-                     <div class="col-md-4">
-                            <input type="checkbox" id="cbx" style="display:none" v-model="is_shared"/>
-                            <label for="cbx" class="toggle"><span></span>Shared</label>
-                        </div>
+
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" id="cbx1" style="display:none" v-model="is_shared"/>
+                    <label for="cbx1" class="toggle"><span></span>Shared</label>
                 </div>
                 <div>
                     <b-button :disabled="DataValidation===false" class="btn btn-outline-primary"
@@ -118,7 +120,7 @@
         data() {
             return {
                 previous: null,
-                value: '',
+                current: 0,
                 operator: null,
                 operatorClicked: false,
                 income_list: [],
@@ -127,7 +129,6 @@
                 shared_list: [],
                 inc_category: null,
                 fund_category: null,
-                value: null,
                 date: new Date().toJSON().slice(0, 10),
                 comment: null,
                 is_active_group: null,
@@ -140,7 +141,7 @@
                     let result =
                         this.inc_category != null &&
                         this.fund_category != null &&
-                        this.value != null &&
+                        this.current !== 0 &&
                         this.date != null;
                     return result;
                 }
@@ -189,7 +190,7 @@
                         'inc_category': this.inc_category,
                         'fund_category': this.fund_category,
                         'date': this.date,
-                        'value': this.value,
+                        'value': this.current,
                         'comment': this.comment,
                     }
                 }).then(response => {
@@ -359,18 +360,18 @@
         pointer-events: none;
     }
 
-    #cbx:checked + .toggle:before {
+    #cbx1:checked + .toggle:before {
         background: #947ADA;
     }
 
-    #cbx:checked + .toggle span {
+    #cbx1:checked + .toggle span {
         background: #4F2EDC;
         transform: translateX(20px);
         transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
         box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
     }
 
-    #cbx:checked + .toggle span:before {
+    #cbx1:checked + .toggle span:before {
         transform: scale(1);
         opacity: 0;
         transition: all 0.4s ease;

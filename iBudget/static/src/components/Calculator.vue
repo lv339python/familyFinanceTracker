@@ -13,7 +13,7 @@
 
                     <div>
                         <b-input-group>
-                            <b-form-input  placeholder="0" v-model="current,value" type="number" min="1" ></b-form-input>
+                            <b-form-input  placeholder="0" v-model.number="current" type="number" min="1" ></b-form-input>
                             <b-select v-model="type_of_pay" class="form-control" variant="primary" slot="prepend"
                                       v-show="groupId" v-if="is_shared===true">
                             <option v-for="type_of_pay in shared_fund_list"
@@ -106,7 +106,7 @@
 
                     <div>
                         <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
-                        <button :disabled="isValidData===false" type="button" class="btn btn-outline-primary"
+                        <button :disabled="!isValidData" type="button" class="btn btn-outline-primary"
                                 @click="setData"
                                 :variant="secondary">Save
                         </button>
@@ -137,7 +137,7 @@
         data() {
             return {
                 previous: null,
-                current: '',
+                current: 0,
                 operator: null,
                 operatorClicked: false,
                 spending_list: [],
@@ -160,7 +160,7 @@
                     var result =
                         this.category != null &&
                         this.type_of_pay != null &&
-                        this.value != null &&
+                        this.current !== 0 &&
                         this.date != null;
                     return result;
                 }
@@ -217,7 +217,7 @@
                         'category': this.category,
                         'type_of_pay': this.type_of_pay,
                         'date': this.date,
-                        'value': this.value,
+                        'value': this.current,
                         'comment': this.comment,
                     }
                 }).then(response => {
@@ -231,7 +231,7 @@
             reset() {
                 this.group = null;
                 this.type_of_pay = null;
-                this.value = null;
+                this.current = null;
                 this.date = null;
                 this.comment = null;
                 this.category = null;
@@ -306,10 +306,7 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         grid-auto-rows: minmax(50px, auto);
-        max-height: 500px;
-        min-width: 300px;
-        max-width: 500px;
-        min-height: 300px;
+
     }
 
     .display {
