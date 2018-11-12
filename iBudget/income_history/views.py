@@ -6,12 +6,10 @@ import json
 import datetime
 import csv
 from decimal import Decimal
-
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_datetime
 from django.core.exceptions import ValidationError
-
 from utils.validators import input_income_registration_validate
 from utils.download_history_file import creating_empty_xlsx_file, \
     file_streaming_response, income_date_parser
@@ -64,8 +62,8 @@ def show_total(request):
 
 @require_http_methods(['POST'])
 def track(request):
-    """
-    Handling request for returning income history data.
+    """this function accepts dates and returns the list of incomes with the funds they went to,
+    amounts, dates and comments
     Args:
         request (HttpRequest): contains start date, final date and UTC information.
     Returns:
