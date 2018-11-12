@@ -404,7 +404,6 @@ def date_parse(data):
         Returns:
             (dict): parsed values
     """
-    print(data)
     start_date = parse_date(data['start_date'])
     finish_date = parse_date(data['finish_date'])
     utc_difference = int(data['UTC'])
