@@ -14,26 +14,22 @@
                     v-bind:title='title' v-if="list.length !== 0"
                     v-bind:showModal='showModal'/>
             </div>
-            <b-modal ref="myModalRef" hide-footer title="Account">
+            <b-modal ref="myModalRef" hide-footer title='Spending'>
                 <div class="d-block text-center">
                     <b-card>
                         <p class="card-text">
-                            <b>Name: </b> {{reply['name']}}
+                            <b>Name: {{modalData['name']}}</b>
                             <br>
-                            <b v-if="reply['icon']">Icon: {{reply['icon']}} </b>
+                            <b v-if="modalData['icon']">Icon:
+                                 <img class='image' :src="modalData['icon']"> <br></b>
+                            <b>Total spend for this category: {{modalData['total']}}</b>
                             <br>
-                            <!--<img id="profile-photo" rounded="circle" blank width="75" height="75"-->
-                            <!--blank-color="orange" alt="img" class="m-1"-->
-                            <!--src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>-->
-                            <b>Total spend for this category: </b> {{reply['total_spend']}}
-                            <br>
-                            <b v-if="reply['last_spend_value']"> Last spend for this category:
-                                {{reply['last_spend_value']}} on {{reply['last_spend_date']}}</b>
-                            <br>
-                            <b v-if="reply['spend_group']">Spending is shared from
-                                {{reply['spend_group']}} group </b>
+                            <b v-if="modalData['last_value']"> Last spend for this category:
+                                {{modalData['last_value']}} on {{modalData['last_date']}}<br></b>
+                            <b v-if="modalData['spend_group']">Spending is shared from
+                                {{modalData['spend_group']}} group </b>
                         </p>
-                        <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Log Out</b-btn>
+                        <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
                     </b-card>
                 </div>
 
@@ -59,29 +55,26 @@
                 title: "Spendings",
                 errors: [],
                 group_spends: false,
-                kilka: null,
-                reply: {}
+                modalData: {}
             }
         },
         methods: {
             showModal(data) {
                 this.$refs.myModalRef.show();
-                this.kilka = data;
                 this.getData(data)
             },
             hideModal() {
                 this.$refs.myModalRef.hide()
             },
-            getData: function (event) {
+            getData: function (data) {
                 axios({
                     method: 'post',
                     url: '/api/v1/spending/summary/',
                     data: {
-                        'spend_id': event,
+                        'spend_id': data,
                     }
                 }).then(response => {
-                    this.reply = response.data;
-                    return this.reply
+                    this.modalData = response.data;
                 }).catch(error => {
                     alert(error.response.data)
                 })
@@ -135,6 +128,11 @@
 </script>
 
 <style scoped>
+
+    .card-text {
+        text-align: left;
+        margin-left: 150px;
+    }
     .content {
         height: 100%;
         overflow: hidden;

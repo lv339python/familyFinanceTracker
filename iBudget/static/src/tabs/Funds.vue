@@ -9,10 +9,30 @@
             <div v-if="isList&& totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
-                    v-bind:title='title'  v-if="list.length !== 0"/>
+                    v-bind:title='title'  v-if="list.length !== 0"
+                    v-bind:showModal='showModal'/>
             </div>
-            <router-view></router-view>
-        </div>
+             <b-modal ref="myModalRef" hide-footer title="Fund">
+                 <div class="d-block text-center">
+                     <b-card>
+                             <b>Name: {{modalData['name']}}</b>
+                             <br>
+                             <b v-if="modalData['icon']">Icon:
+                                 <img class='image' :src="modalData['icon']"> <br></b>
+                             <b v-if="modalData['spend_group']">Shared is shared from
+                                 {{modalData['spend_group']}} group <br></b>
+                             <b>Current balance for fund: {{modalData['total']}}</b>
+                             <br>
+                             <b v-if="modalData['last_inc_value']"> Last income for fund:
+                                 {{modalData['last_inc_value']}} on {{modalData['last_inc_date']}} <br></b>
+                             <b v-if="modalData['last_spend_value']"> Last spend for fund:
+                                 {{modalData['last_spend_value']}} on {{modalData['last_spend_date']}}</b>
+                         <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
+                     </b-card>
+                 </div>
+             </b-modal>
+             <router-view></router-view>
+         </div>
     </div>
 </template>
 
@@ -30,8 +50,31 @@
                 list_shared:[],
                 list: [],
                 title: "Funds",
-                errors: []
+                errors: [],
+                modalData: {}
             }
+        },
+        methods: {
+            showModal(data) {
+                this.$refs.myModalRef.show();
+                this.getData(data)
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide()
+            },
+            getData: function (data) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/fund/summary/',
+                    data: {
+                        'fund_id': data,
+                    }
+                }).then(response => {
+                    this.modalData = response.data;
+                }).catch(error => {
+                    alert(error.response.data)
+                })
+            },
         },
         created() {
             axios({

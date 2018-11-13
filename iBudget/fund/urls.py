@@ -5,7 +5,8 @@ from .views import (show_fund,
                     create_new_fund,
                     show_goal_data,
                     show_fund_by_group,
-                    create_new_goal, get_balance)
+                    create_new_goal, get_balance,
+                    fund_summary)
 
 urlpatterns = [
     re_path(r'^$', show_fund),
@@ -14,5 +15,6 @@ urlpatterns = [
     path('create_new_fund/', create_new_fund),
     path('show_fund_by_group/', show_fund_by_group),
     path('create_new_goal/', create_new_goal),
-    path('get_balance/', get_balance)
+    path('get_balance/', get_balance),
+    path('summary/', fund_summary)
 ]

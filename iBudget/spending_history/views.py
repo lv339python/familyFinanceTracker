@@ -179,7 +179,6 @@ def create_xlsx(request):
         StreamingHttpResponse xlsx file.
     """
 
-    print(request)
     date_dict = spending_date_parser(request)
 
     individual_spending_history = create_spending_history_individual \
