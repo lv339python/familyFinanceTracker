@@ -69,7 +69,7 @@
                      <b-btn v-b-toggle.collapse2 variant="primary">Add</b-btn>
                 </div>
 
-                <div class="form-group" v-else>
+                <div class="form-group">
                     <label>Chose group</label>
                     <select v-model="group" class="form-control">
                         <option v-for="group in group_list"
