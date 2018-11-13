@@ -14,7 +14,7 @@ from spending_history.models import SpendingHistory
 from spending_history.views import create_spending_chart
 from utils.aws_helper import AwsService
 from utils.get_role import is_user_admin_group
-from utils.transaction import save_new_fund, save_new_goal
+from utils.transaction import save_new_goal
 from utils.validators import \
     input_fund_registration_validate, \
     date_range_validate, \
@@ -323,7 +323,7 @@ def history_begin_date(user, user_funds):
 
 
 @require_http_methods(["GET"])
-def get_balance(request):
+def get_balance(request):#pylint: disable= R0914
     """Handling request for creating spending history data.
 
         Args:
