@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <div id="left" class="text column">
+        <div  id="left" class="text column">
             <create_new_group v-bind:getData="getData"></create_new_group>
             <p>There are your groups: {{ users_group_list.length }}</p>
             <ul class="list-group">
@@ -37,55 +37,52 @@
         </div>
         <div id="right" class="column">
             <b-tabs>
-                <b-tab title="Info" active>
-                    <ul class="groups">
-                        <li
-                            v-for="(content,group) in cur_balance" class="group_display"
-                            v-if="group_index===content.Group_id">
-                            <ul>
-                                <li v-for="(value,item) in content" v-if="item==='Group icon'">
-                                    <b>{{item}}</b> : <img class='image' :src="value">
-                                </li>
-                                <li v-else>
-                                    <b>{{item}}</b> : <i>{{value}}</i>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </b-tab>
-
-                <b-tab title="User's in group">
-                    <div>
-                        <ul class="list-group-item"
-                            v-for="user in users_in_group" class="group_display"
-                            v-if="user.group_id===group_index"
-                        >
-                            <li>
-                                {{ user.email }}
-                                <button
-                                    type="button"
-                                    class="btn btn-primary"
-                                    @click="changeRole(user.email)"
-                                >
-                                    {{ user.user_role }}
-                                </button>
-                                <button @click="updateUserRoleData(user.group_id, user.email, user.user_role)"> Save
-                                </button>
+                  <b-tab title="Info" active>
+                        <ul class="groups">
+                            <li
+                                v-for="(content,group) in cur_balance" class="group_display"
+                                v-if="group_index===content.Group_id">
+                                <ul>
+                                    <li v-for="(value,item) in content" v-if="item==='Group icon'">
+                                        <b>{{item}}</b> : <img class='image' :src="value">
+                                    </li>
+                                    <li v-else>
+                                        <b>{{item}}</b> : <i>{{value}}</i>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
-                        <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
-                    </div>
-                </b-tab>
-                <b-tab title="Shared fund">
-                    <div v-for="fund in shared_fund_list" v-if="group_index===fund.id_group"> {{ fund.name_fund }}</div>
-                    <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
-                </b-tab>
-                <b-tab title="Shared spending categories">
-                    <div v-for="spend in shared_spending_list" v-if="group_index===spend.id_group"> {{spend.name_cat
-                        }}
-                    </div>
-                    <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
-                </b-tab>
+                  </b-tab>
+
+                  <b-tab title="User's in group" >
+                        <div>
+                            <ul class="list-group-item group_display"
+                            v-for="user in users_in_group"
+                            v-if="user.group_id===group_index"
+                            >
+                                <li>
+                                    {{ user.email }}
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        @click="changeRole(user.email)"
+                                        >
+                                            {{ user.user_role }}
+                                    </button>
+                                    <button @click="updateUserRoleData(user.group_id, user.email, user.user_role)"> Save </button>
+                                </li>
+                            </ul>
+                            <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
+                        </div>
+                  </b-tab>
+                  <b-tab title="Shared fund">
+                      <div v-for="fund in shared_fund_list" v-if="group_index===fund.id_group"> {{ fund.name_fund }} </div>
+                      <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
+                  </b-tab>
+                  <b-tab title="Shared spending categories">
+                      <div v-for="spend in shared_spending_list" v-if="group_index===spend.id_group"> {{spend.name_cat }} </div>
+                      <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
+                  </b-tab>
             </b-tabs>
         </div>
     </div>
@@ -97,7 +94,6 @@
     import Groups_registration from '../components/Groups_registration';
     import Add_shared_fund_to_group from '../components/Add_shared_fund_to_group';
     import Add_shared_category_to_group from '../components/Add_shared_category_to_group';
-
     export default {
         name: "Groups",
         data() {
@@ -107,7 +103,7 @@
                 selected_group_index: 0,
                 group_index: 0,
                 pageNumber: 0,
-                size: 4,
+                size:4,
                 group_id: null,
                 users_in_group: [],
                 shared_fund_list: [],
@@ -119,7 +115,6 @@
             'create_new_group': Groups_registration,
             'add_shared_fund': Add_shared_fund_to_group,
             'add_shared_spending': Add_shared_category_to_group
-
         },
         methods: {
             changeRole: function (email) {
@@ -248,13 +243,11 @@
         margin: 0px;
         display: flex;
     }
-
     .column {
         height: 100%;
         display: flex;
         flex-direction: column;
     }
-
     #left {
         flex-shrink: 0;
         background-color: whitesmoke;
@@ -262,7 +255,6 @@
         padding: 5px;
         width: 16%;
     }
-
     #right {
         background-color: #f3f3f3;
         padding: 5px;

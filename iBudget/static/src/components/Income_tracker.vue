@@ -4,13 +4,14 @@
             <div id="total">
                 <p>The total amount of income from the 1-st of this month till today is {{this.cur_income}}</p>
             </div>
-            <div id="form">
+            <div id="form" v-if="!shownResult">
                 <p>Please choose dates below:</p>
                 <p>Start date:</p>
                 <input v-model="start_date" type="date" required>
                 <p>End date:</p>
                 <input v-model="end_date" type="date" required>
                 <p>
+                    <br>
                     <button v-on:click="sub_dates">submit</button>
                 </p>
             </div>

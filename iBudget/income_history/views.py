@@ -1,20 +1,18 @@
 """this module provides information about a customer's amount of incomes from the beginning of this
 month till today and let a use track his incomes for the chose period of time
 """
-import csv
-import datetime
 import io
 import json
+import datetime
+import csv
 from decimal import Decimal
-
-from django.core.exceptions import ValidationError
 from django.http import JsonResponse, HttpResponse
-from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_http_methods
-
+from django.utils.dateparse import parse_datetime
+from django.core.exceptions import ValidationError
+from utils.validators import input_income_registration_validate
 from utils.download_history_file import creating_empty_xlsx_file, \
     file_streaming_response, income_date_parser
-from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
 
@@ -41,7 +39,6 @@ def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
     incomes_funds_ids.append(list(set_for_chart))
     return incomes_funds_ids
 
-
 @require_http_methods(['GET'])
 def show_total(request):
     """this function accepts request object and returns the amount of incomes from the beginning of
@@ -67,8 +64,8 @@ def show_total(request):
 
 @require_http_methods(['POST'])
 def track(request):
-    """
-    Handling request for returning income history data.
+    """this function accepts dates and returns the list of incomes with the funds they went to,
+    amounts, dates and comments
     Args:
         request (HttpRequest): contains start date, final date and UTC information.
     Returns:
@@ -88,7 +85,6 @@ def track(request):
                                               time_diff=time_diff)
 
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
-
 
 @require_http_methods(["POST"])
 def register_income(request):

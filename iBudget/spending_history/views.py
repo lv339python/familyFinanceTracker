@@ -2,23 +2,24 @@
 This module provides functions for handling spending_history view.
 """
 
+import csv
 import io
 import json
-import csv
 from datetime import date, timedelta
 from decimal import Decimal
 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
-from group.models import SharedSpendingCategories, Group, UsersInGroups, SharedFunds
 
+from group.models import SharedSpendingCategories, Group, UsersInGroups, SharedFunds
+from utils.download_history_file import creating_empty_xlsx_file, \
+    file_streaming_response, spending_date_parser
 from utils.get_role import groups_for_user, is_user_member_group, is_user_admin_group
 from utils.spendings_limit_checker import compare_ind_spend_limit, comp_gr_spends_w_limit
 from utils.validators import input_spending_registration_validate, is_valid_data_spending_history, \
     date_parse
-from utils.download_history_file import creating_empty_xlsx_file, \
-    file_streaming_response, spending_date_parser
 from .models import SpendingCategories, SpendingHistory, FundCategories
+
 
 @require_http_methods(["POST"])
 def register_spending(request):
@@ -59,7 +60,7 @@ def register_spending(request):
         spending_history.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    response = f"You've just register spending {spending.name}. \n" +\
+    response = f"You've just register spending {spending.name}. \n" + \
                compare_ind_spend_limit(user, data["date"], spending, value) + "\n" + \
                comp_gr_spends_w_limit(data['group_id'], data['category'])
 
@@ -185,12 +186,12 @@ def create_xlsx(request):
 
     date_dict = spending_date_parser(request)
 
-    individual_spending_history = create_spending_history_individual\
+    individual_spending_history = create_spending_history_individual \
         (user=date_dict['user_id'],
          start_date=date_dict['start_date'],
          finish_date=date_dict['finish_date'],
          utc_difference=date_dict['utc_difference'])
-    group_spending_history = create_spending_history_for_admin\
+    group_spending_history = create_spending_history_for_admin \
         (user=date_dict['user_id'],
          start_date=date_dict['start_date'],
          finish_date=date_dict['finish_date'],
@@ -210,7 +211,7 @@ def create_xlsx(request):
         for spending_dicts in individual_spending_history:
             for history_dict in spending_dicts['history']:
                 worksheet.write(row, col, spending_dicts['spending'], formats_dict['cell_format'])
-                worksheet.write_number\
+                worksheet.write_number \
                     (row, col + 1, history_dict['value'], formats_dict['value_format'])
                 worksheet.write(row, col + 2, history_dict['date'], formats_dict['date_format'])
                 worksheet.write(row, col + 3, history_dict['fund'], formats_dict['cell_format'])
@@ -227,9 +228,9 @@ def create_xlsx(request):
         row, col = row + 1, 1
         for spending_dicts in group_spending_history:
             for history_dict in spending_dicts['history']:
-                worksheet.write(row, col-1, history_dict['member'], formats_dict['cell_format'])
+                worksheet.write(row, col - 1, history_dict['member'], formats_dict['cell_format'])
                 worksheet.write(row, col, spending_dicts['spending'], formats_dict['cell_format'])
-                worksheet.write_number\
+                worksheet.write_number \
                     (row, col + 1, history_dict['value'], formats_dict['value_format'])
                 worksheet.write(row, col + 2, history_dict['date'], formats_dict['date_format'])
                 worksheet.write(row, col + 3, history_dict['fund'], formats_dict['cell_format'])
@@ -241,6 +242,7 @@ def create_xlsx(request):
         ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
          'spending_history.xlsx', output)
     return response
+
 
 def create_csv(request):
     """
@@ -296,6 +298,7 @@ def create_csv(request):
     response = file_streaming_response('text/csv', 'spending_history.csv', output)
     return response
 
+
 @require_http_methods(["POST"])
 def create_spending_history(request):
     """Handling request for creating spending history data.
@@ -349,6 +352,7 @@ def get_month_spending(request):
                             status=200)
     return HttpResponse('Bad Request', status=400)
 
+
 def create_spending_chart(user, start_date, finish_date):
     """Creating array of data for spending history chart.
         Args:
@@ -374,6 +378,7 @@ def create_spending_chart(user, start_date, finish_date):
         list_spending_value.append(total)
     return {'value': list_spending_value, 'name': list_spending_name}
 
+
 @require_http_methods(["POST"])
 def get_spending_chart(request):
     """Handling request for creating spending history data.
@@ -393,7 +398,16 @@ def get_spending_chart(request):
         return JsonResponse({}, status=400)
 
     if user:
-        return JsonResponse(create_spending_chart(user, start_date, finish_date),
+        date_list = SpendingHistory.objects.filter(owner=user).values_list('date', flat=True)
+        begin_date = min(date_list).date()
+        response = [create_spending_chart(user, start_date, finish_date)]
+        dates = [str(finish_date.month) + '/' + str(finish_date.year)]
+        while start_date > begin_date:
+            finish_date = start_date - timedelta(days=1)
+            start_date = date(finish_date.year, finish_date.month, 1)
+            response.append(create_spending_chart(user, start_date, finish_date))
+            dates.append(str(finish_date.month) + '/' + str(finish_date.year))
+        return JsonResponse({'values': response, "dates": dates},
                             status=200, safe=False)
     return JsonResponse({}, status=400)
 

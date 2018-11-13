@@ -1,17 +1,17 @@
 <template>
     <div id="icon_getter">
         <p>Please choose the icon for your new {{tabName}} from the icons below or upload your own picture:</p>
-        <input type=image
+        <input type='image'
                v-for="icon in icons" :src="icon.path"
                v-on:click="get_name(icon.name)"
-               class="icon" alt="icon" v-if="! upload"></input>
+               class="icon" alt="icon" v-if="! upload">
         <br>
         <br>
         <button v-on:click="enable_upload" v-if="! upload">upload my own</button>
 
         <form enctype="multipart/form-data">
             <input type="file" name="icon" v-if="upload"
-                   v-on:change="get_img_name_validate($event.target.files)"></input>
+                   v-on:change="get_img_name_validate($event.target.files)">
         </form>
         <br>
     </div>
