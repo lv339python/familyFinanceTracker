@@ -54,7 +54,7 @@ def login_user(request):
         return HttpResponse('received data is not valid', status=400)
     email = data['email'].strip().lower()
     user = authenticate(email=email, password=data['password'])
-    if user is not None:
+    if user and user.is_active:
         login(request, user)
         response = HttpResponse('operation was successful provided', status=200)
         return response

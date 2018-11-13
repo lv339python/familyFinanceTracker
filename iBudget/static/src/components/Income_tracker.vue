@@ -25,6 +25,7 @@
                         <th>Date</th>
                         <th>Amount</th>
                         <th>Comments</th>
+                        <th>Delete</th>
                     </tr>
                     <tr v-for="item in paginatedData">
                         <td>{{item['income']}}</td>
@@ -32,6 +33,13 @@
                         <td>{{item['date']}}</td>
                         <td>{{item['amount']}}</td>
                         <td>{{item['comment']}}</td>
+                        <td>
+                            <button
+                                type="button" class="btn btn-outline-danger"
+                                v-on:click="deleteIncomeHistory(item['income_history_id'])"
+                                :variant="secondary">Delete
+                            </button>
+                        </td>
                     </tr>
                 </table>
                 <div v-show="pageCount>1">
@@ -185,14 +193,14 @@
                         this.list_with_incomes = response.data;
                         this.last_element = this.list_with_incomes[this.list_with_incomes.length-1];
                         //if we got empty JSON with empty list inside
-                        if(this.list_with_incomes.length === 1){
+                        if (this.list_with_incomes.length === 1) {
                             this.no_result = true;
                         }
                         //if we got JSON with only one array inside, not enough to draw a chart
-                        else if(this.list_with_incomes.length === 2){
+                        else if (this.list_with_incomes.length === 2) {
                             this.shownResult = true;
                         }
-                        else{
+                        else {
                             this.shownResult = true;
                             this.shownResultChart = true
                         }
@@ -218,8 +226,22 @@
             recover_list(){
                 this.list_with_incomes = this.list_with_incomes.concat([this.last_element]);
             }
+            },
+            deleteIncomeHistory: function (IncHistory) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/income_history/delete_income_history/' + IncHistory,
+                }).then(response => {
+                    this.reply = response.data;
+                    alert(this.reply);
+                    this.$router.go('api/v1/income_history/track/')
+                }).catch(error => {
+                    alert(error.response.data)
+                })
+
+            },
         }
-    }
+
 </script>
 
 <style>

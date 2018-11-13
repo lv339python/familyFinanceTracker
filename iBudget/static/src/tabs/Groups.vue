@@ -4,15 +4,18 @@
             <create_new_group v-bind:getData="getData"></create_new_group>
             <p>There are your groups: {{ users_group_list.length }}</p>
             <ul class="list-group">
-            <li
-                class="list-group-item list-group-item-action pointer"
-                v-for="(item, index) in paginatedData"
-                v-on:click="selected_group(index, item.id)"
-                :class="{'active': selected_group_index===index}">
-                <b> name </b>: <i> {{ item.group_name }} </i> <br>
-                <b>your role </b>: <i> {{ item.user_role }} </i> <br>
-                <b>count of users </b>: <i> {{ item.count }} </i>
-            </li>
+                <li
+                    class="list-group-item list-group-item-action pointer"
+                    v-for="(item, index) in paginatedData"
+                    v-on:click="selected_group(index, item.id)"
+                    :class="{'active': selected_group_index===index}">
+                    <b> name </b>: <i> {{ item.group_name }} </i> <br>
+                    <b>your role </b>: <i> {{ item.user_role }} </i> <br>
+                    <b>count of users </b>: <i> {{ item.count }} </i>
+                    <b-btn class="btn btn-outline-light" variant="outline-primary"
+                           block @click="deleteGroup(item.id)">Delete group
+                    </b-btn>
+                </li>
             </ul>
             <div v-show="pageCount>1" class='prevNext'>
                 <b style="word-space:2em">&nbsp;</b>
@@ -118,72 +121,83 @@
             'new_user_role': Change_users_role_in_group
         },
         methods: {
-            selected_group: function(index, item){
+            selected_group: function (index, item) {
                 this.selected_group_index = index;
                 this.group_index = item;
                 this.selected_group_id = item;
             },
-            nextPage(){
+            nextPage() {
                 this.pageNumber++;
             },
-            prevPage(){
+            prevPage() {
                 this.pageNumber--;
             },
             showModal() {
                 this.$refs.myModalRef.show()
             },
-            getData(){
-                 axios.get('api/v1/group/')
-                .then(response => {
-                    this.cur_balance = response.data
+            getData() {
+                axios.get('api/v1/group/')
+                    .then(response => {
+                        this.cur_balance = response.data
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    }),
+                    axios.get('api/v1/group/show_users_group_data')
+                        .then(response => {
+                            this.users_group_list = response.data
+                        })
+                        .catch(e => {
+                            this.errors.push(e)
+                        }),
+                    axios.get('api/v1/group/show_users_in_group/')
+                        .then(response => {
+                            this.users_in_group = response.data
+                        })
+                        .catch(e => {
+                            this.errors.push(e)
+                        }),
+                    axios.get('api/v1/fund/show_fund_by_group/')
+                        .then(response => {
+                            // JSON responses are automatically parsed.
+                            this.shared_fund_list = response.data
+                        })
+                        .catch(e => {
+                            this.errors.push(e)
+                        }),
+                    axios.get('api/v1/spending/show_spending_group/')
+                        .then(response => {
+                            // JSON responses are automatically parsed.
+                            this.shared_spending_list = response.data
+                        })
+                        .catch(e => {
+                            this.errors.push(e)
+                        })
+            }, deleteGroup: function (groupId) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/group/delete_group/' + groupId,
+                }).then(response => {
+                    this.reply = response.data;
+                    alert(this.reply);
+                    this.getData();
+                }).catch(error => {
+                    alert(error.response.data)
                 })
-                .catch(e => {
-                    this.errors.push(e)
-                }),
-                axios.get('api/v1/group/show_users_group_data')
-                .then(response => {
-                    this.users_group_list = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                }),
-                axios.get('api/v1/group/show_users_in_group/')
-                .then(response => {
-                    this.users_in_group = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                }),
-                axios.get('api/v1/fund/show_fund_by_group/')
-                .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.shared_fund_list = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                }),
-                axios.get('api/v1/spending/show_spending_group/')
-                .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.shared_spending_list = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-            },
+            }
         },
-        computed:{
-            pageCount(){
+        computed: {
+            pageCount() {
                 let l = this.users_group_list.length,
                     s = this.size,
-                    pageMax=(l % s != 0) ? Math.floor(l/s)+1 : Math.floor(l/s);
+                    pageMax = (l % s != 0) ? Math.floor(l / s) + 1 : Math.floor(l / s);
                 return pageMax;
             },
-            paginatedData(){
+            paginatedData() {
                 const start = this.pageNumber * this.size,
                     end = (start + this.size <= this.users_group_list.length) ? start + this.size : this.users_group_list.length;
                 return this.users_group_list
-                .slice(start, end);
+                    .slice(start, end);
             },
         },
         created() {

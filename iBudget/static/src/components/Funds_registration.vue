@@ -35,7 +35,7 @@
                 group: null,
                 user_groups_list: [],
                 tab: 'fund',
-                selectedIcon: ''
+                selectedIcon: '',
             }
         },
         props: ["tabName"],
@@ -49,7 +49,7 @@
                 })
                 .catch(e => {
                     this.errors.push(e)
-                })
+                });
         },
         methods: {
             setData: function (event) {

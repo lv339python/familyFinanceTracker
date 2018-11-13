@@ -49,6 +49,12 @@
                         <td>{{ p.value }}</td>
                         <td>{{ p.date }}</td>
                         <td>{{ p.fund }}</td>
+                        <td >
+                            <button
+                                    type="button" class="btn btn-outline-danger" v-on:click="deleteHistory(p.Delete)"
+                                    :variant="secondary">Delete
+                            </button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -87,7 +93,6 @@
 
 <script>
     import axios from 'axios';
-
     var UTC = -new Date().getTimezoneOffset() / 60;
     export default {
         name: "Spending_history",
@@ -154,15 +159,29 @@
                         'UTC': UTC,
                     }
                 })
-                    .then(response => {
-                        this.spending_history_admin = response.data.admin;
-                        this.spending_history_individual = response.data.individual;
-                        this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
-                        this.isCategory = true;
+                .then(response => {
+                    this.spending_history_admin = response.data.admin;
+                    this.spending_history_individual = response.data.individual;
+                    this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
+                    this.isCategory = true;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+            },
+             deleteHistory: function (spendHistory) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/spending_history/delete_spending_history/' + spendHistory,
+
+                }).then(response => {
+                        this.reply = response.data;
+                        alert(this.reply);
+                        this.$router.go('/spendings/history')
+                    }).catch(error => {
+                        alert(error.response.data)
                     })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+
             },
             nextPage() {
                 this.pageNumber++;
@@ -197,7 +216,6 @@
         text-align: center;
         justify-content: space-around;
     }
-
     #spending_history {
 
     }
