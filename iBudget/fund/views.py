@@ -321,5 +321,6 @@ def get_balance(request):
             balance.append(fund_balance)
         return JsonResponse({'fund': name,
                              'initial': initial,
-                             'balance': balance}, status=200, safe=False)
+                             'balance': balance,
+                             'dates': dates}, status=200, safe=False)
     return JsonResponse({}, status=400)

@@ -130,7 +130,7 @@
     import Spending_registration from 'src/components/Spending_registration';
 
     export default {
-        name: 'Calculator',
+        name: 'Spending_button',
         components: {
             'Spending_add': Spending_add,
             'Spending_registration': Spending_registration

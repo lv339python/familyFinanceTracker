@@ -13,6 +13,8 @@
                 <b-carousel-slide img-blank  v-for="(item, index) in values" v-if="values.length !== 0">
         <div class="text">
                 <div>
+
+
                     <div class="chartcontainer">
                 <chart_spending
                     v-bind:value='item.value'
@@ -20,12 +22,16 @@
                     v-bind:title='dates[index]'
                     v-if="item.value.length !== 0" />
             </div>
+                    <!--<div v-for="entry in balance" v-if="balance.length !== 0"> {{entry.balance}}</div>-->
+                    {{balance}}-{{fund}}-{{initial}} - {{dates}}
             </div>
         </div>
                    </b-carousel-slide>
             </b-carousel>
-          <calculator/>
+          <spending_button/>
         <income_button/>
+
+
          </div>
 </template>
 
@@ -36,13 +42,13 @@
 
     import axios from 'axios';
     import Chart_spending from 'src/components/examples/Chart_spending';
-    import Calculator from 'src/components/Calculator';
+    import Spending_button from 'src/components/Spending_button';
     import Income_button from 'src/components/Income_button';
 
     export default {
         name: "Home",
         components: {'Chart_spending': Chart_spending,
-                    'Calculator': Calculator,
+                    'Spending_button': Spending_button,
                     'Income_button': Income_button},
         data() {
             return {
@@ -52,9 +58,8 @@
                 values: [],
                 name: [],
                 title: '',
-                balance: [],
                 initial:[],
-                fund: []
+                fund: [], dates: []
             }
         },
         created() {
@@ -82,6 +87,7 @@
                 this.balance = response.data.balance;
                 this.initial = response.data.initial;
                 this.fund = response.data.fund;
+                this.dates = response.data.dates;
             })
             .catch(e => {
                 this.errors.push(e)

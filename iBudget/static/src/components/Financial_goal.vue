@@ -1,4 +1,8 @@
 <template>
+    <b-button class="btn btn-success btn-circle btn-xl" @click="showModal">
+            ✰ ✰ ✰
+        </b-button>
+        <b-modal ref="myModalRef" hide-footer title="Add Goal">
     <div class="content">
         <div class="col-md-4 form-group">
             <div>

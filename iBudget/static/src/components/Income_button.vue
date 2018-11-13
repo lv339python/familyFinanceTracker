@@ -13,12 +13,12 @@
                      <div>
                         <b-input-group>
                             <b-form-input placeholder="0" v-model.number="current" type="number" min="1" ></b-form-input>
-                            <b-select v-model="fund_category" class="form-control" variant="primary" slot="prepend"
+                            <b-select v-model="fund_category" v-b-popover.hover="'Choose fund'" title="Fund" variant="primary" slot="prepend"
                                        v-if="is_shared===false">
                            <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
                         </option>
                         </b-select>
-                             <b-select  v-model="fund_category"  class="form-control" variant="primary" slot="prepend"
+                             <b-select  v-model="fund_category" v-b-popover.hover="'Choose Shared fund'" title=" Shared Fund" variant="primary" slot="prepend"
                                        v-if="is_active_group !== null && is_shared===true">
                             <option v-for="fund in shared_list"
                                 v-if="fund.id_group === is_active_group"
@@ -29,7 +29,7 @@
                         </b-input-group>
                     </div>
                     <div class="col-md-12 form-group">
-                        <input placeholder="✎ ✍" v-model="comment" type="text" class="form-control">
+                        <input placeholder="✎ ✍ " v-model="comment" type="text" class="form-control">
                     </div>
                 </div>
 
@@ -56,9 +56,9 @@
 
             </div>
             <b-collapse id="collapse1" class="mt-2">
-                <div class="form-group">
+                <div>
                     <label>Select income category:</label>
-                    <select v-model="inc_category" class="form-control">
+                    <select v-model="inc_category">
                         <option v-for="income in income_list" v-bind:value="income.id"> {{ income.name }}
                         </option>
                     </select>
@@ -66,12 +66,12 @@
                     <input type="checkbox" id="cbx1" style="display:none" v-model="is_shared"/>
                     <label for="cbx1" class="toggle"><span></span>Shared</label>
                 </div>
-                     <b-btn v-b-toggle.collapse2 variant="primary">Add</b-btn>
+                     <b-btn v-b-toggle.collapse2 variant="primary">+</b-btn>
                 </div>
 
-                <div class="form-group" v-else>
+                <div v-else>
                     <label>Chose group</label>
-                    <select v-model="group" class="form-control">
+                    <select v-model="group">
                         <option v-for="group in group_list"
                                 v-bind:value="group.id"
                                 v-on:click="is_active_group=group.id">
