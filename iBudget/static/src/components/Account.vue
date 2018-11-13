@@ -3,10 +3,10 @@
         <b-button variant="primary" @click="showModal">
             <img id="profile-thumbnail" rounded="circle"
                  blank width="16" height="16" alt="img" class="m-1"
-                 src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>
+                 :src="getProfilePhoto()"/>
             {{user.email}}
         </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Account">
+        <b-modal ref="myModalRef" size="lg" hide-footer title="Account">
             <div class="d-block text-center">
                 <b-card>
                     <img id="profile-photo" rounded="circle" blank width="75" height="75"
@@ -30,7 +30,6 @@
                             <b>Hobby:</b>{{custom.hobby}}
                             <br/>
                             <b>Birthday:</b>{{custom.birthday}}
-                        </p>
                     </div>
 
                     <div v-if="showAddInfo">
@@ -51,20 +50,6 @@
                                 <input v-model="custom.birthday" type="date" placeholder="birthday">
                             </div>
                         </div>
-
-
-                        <div class="col-md-2">
-                            <Upload_photo @get_name='onGet_name'></Upload_photo>
-                         </div>
-
-                        <!--<div class="col-md-4" v-model="icon">-->
-                            <!--<button v-on:click="enable_upload" v-if="! upload">upload my own</button>-->
-                            <!--<form enctype="multipart/form-data">-->
-                                <!--<input type="file" name="icon" v-if="upload"-->
-                                       <!--v-on:change="get_img_name_validate($event.target.files)"></input>-->
-                            <!--</form>-->
-                        <!--</div>-->
-
                         <b-btn class="mt-3" variant="outline-success" @click="addPersonalInfo">Save</b-btn>
                         <hr/>
                         <div class="form-group">
@@ -78,6 +63,8 @@
                             <br/>
                             <input type="password" v-model="confirm_password" class="form-control"
                                    placeholder="confirm password">
+                            <br/>
+                            <b-btn class="mt-3" variant="outline-success" @click="setDatapassword">Save</b-btn>
                         </div>
                     </div>
                 </b-card>
@@ -92,7 +79,9 @@
     import axios from 'axios';
     import Upload_photo from './Upload_photo';
 
-    var path = "https://s3.amazonaws.com/family-finance-tracker-static/"
+    const path = "https://s3.amazonaws.com/family-finance-tracker-static/";
+    const default_path ="http://cdn.onlinewebfonts.com/svg/img_191958.png";
+
     export default {
         name: "Account",
         props: ["tabName"],
@@ -125,6 +114,7 @@
                 return path+this.user.icon;
             },
 
+
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']
             },
@@ -136,6 +126,7 @@
                     return this.showAddInfo = false
                 }
             },
+
             addInfo() {
                 this.showAddInfo = !this.showAddInfo;
                 if (this.showMoreInfo === true) {
@@ -230,6 +221,7 @@
 <style scoped>
     #profile-photo {
         float: left;
+        border-radius: 50%;
     }
 
     .card-text {
@@ -247,5 +239,6 @@
 
     #profile-thumbnail {
         margin-right: 5px;
+        border-radius: 50%;
     }
 </style>
