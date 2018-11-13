@@ -1,6 +1,5 @@
 """
 Password reseting
-=========
 The module that provides functions for sending reset password letter to user and reseting password.
 """
 from ibudget.settings import FRONT_HOST

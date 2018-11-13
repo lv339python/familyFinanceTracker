@@ -4,13 +4,14 @@
             <div id="total">
                 <p>The total amount of income from the 1-st of this month till today is {{this.cur_income}}</p>
             </div>
-            <div id="form">
+            <div id="form" v-if="!shownResult">
                 <p>Please choose dates below:</p>
                 <p>Start date:</p>
                 <input v-model="start_date" type="date" required>
                 <p>End date:</p>
                 <input v-model="end_date" type="date" required>
                 <p>
+                    <br>
                     <button v-on:click="sub_dates">submit</button>
                 </p>
             </div>
@@ -43,7 +44,20 @@
                     <button v-on:click="reRender" v-if="shownResult">refresh</button>
                 </p>
             </div>
-
+            <div class="download_buttons">
+                <a v-bind:href='"/api/v1/income_history/download_xlsx_file/?start_date=" + start_date + start_date_time  + "&finish_date=" +  end_date +
+                end_date_time + "&UTC=" + UTC'>
+                    <button class="btn btn-outline-warning" :disabled="shownResult===false||(end_date<start_date)">
+                        Download xlsx
+                    </button>
+                </a>
+                <a v-bind:href='"/api/v1/income_history/download_csv_file/?start_date=" + start_date + start_date_time + "&finish_date=" +
+                  end_date + end_date_time + "&UTC=" + UTC'>
+                    <button class="btn btn-outline-warning" :disabled="shownResult===false||(end_date<start_date)">
+                        Download csv
+                    </button>
+                </a>
+            </div>
         </div>
         <div class="chartcontainer" v-if="shownResultChart">
                     <!--v-if is necessary to render the chart correctly, because computed is called with default
@@ -67,8 +81,6 @@
     import axios from 'axios';
     import Income_chart from 'src/components/examples/Income_chart';
 
-    var date_obj = new Date();
-    var time_diff_with_utc= -date_obj.getTimezoneOffset() / 60;
 
     export default {
         name: "Income_tracker",
@@ -79,6 +91,8 @@
                 end_date: '',
                 list_with_incomes: '',
                 shownResult: false,
+                cur_income: 0,
+                UTC: -new Date().getTimezoneOffset() / 60,
                 shownResultChart:false,
                 cur_income: null,
                 // this is the size of a paginated page
@@ -90,7 +104,6 @@
                 date_to_props: [],
                 amount_to_props: [],
                 no_result:false,
-                time_diff: time_diff_with_utc
             }
         },
         created() {
@@ -116,14 +129,14 @@
                 return this.list_with_incomes
                     .slice(start, end);
             },
-            make_list_dates(){
-                let funds = this.list_with_incomes[this.list_with_incomes.length-1];
+            make_list_dates() {
+                let funds = this.list_with_incomes[this.list_with_incomes.length - 1];
                 let dates_for_funds = [];
-                for (var item in funds){
+                for (var item in funds) {
                     let temp = {};
                     let list_in_list = [];
-                    for (var val in this.list_with_incomes){
-                        if (funds[item]==this.list_with_incomes[val]['fund']){
+                    for (var val in this.list_with_incomes) {
+                        if (funds[item] == this.list_with_incomes[val]['fund']) {
                             list_in_list.push(this.list_with_incomes[val]['date']);
                         }
                     }
@@ -134,14 +147,14 @@
                 return this.date_to_props
 
             },
-            make_list_amounts(){
-                let funds = this.list_with_incomes[this.list_with_incomes.length-1];
+            make_list_amounts() {
+                let funds = this.list_with_incomes[this.list_with_incomes.length - 1];
                 let amounts_for_funds = [];
-                for (var item in funds){
+                for (var item in funds) {
                     let temp = {};
                     let list_in_list = [];
-                    for (var val in this.list_with_incomes){
-                        if (funds[item]==this.list_with_incomes[val]['fund']){
+                    for (var val in this.list_with_incomes) {
+                        if (funds[item] == this.list_with_incomes[val]['fund']) {
                             list_in_list.push(this.list_with_incomes[val]['amount']);
                         }
                     }
@@ -163,7 +176,7 @@
                         data: {
                             'start': this.start_date + this.start_date_time,
                             'end': this.end_date + this.end_date_time,
-                            'time_diff':this.time_diff
+                            'time_diff':this.UTC
                         }
                     }).then(response => {
                         this.list_with_incomes = response.data;
@@ -207,7 +220,7 @@
     .wrapper {
         display: flex;
         flex-direction: column;
-        margin: 0px auto;
+        margin: 0 auto;
 
     }
 
@@ -219,7 +232,7 @@
         display: flex;
     }
 
-    div #chartcontainer{
+    div #chartcontainer {
         margin-right: 600px;
         width: 800px;
     }

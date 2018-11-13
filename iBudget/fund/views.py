@@ -4,19 +4,26 @@ This module provides functions for handling fund view.
 
 import json
 from decimal import Decimal
-
+from datetime import date, timedelta
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group, SharedFunds
 from income_history.models import IncomeHistory
+from spending_history.models import SpendingHistory
 from utils.get_role import is_user_admin_group
 from utils.transaction import save_new_fund, save_new_goal
 from utils.validators import \
     input_fund_registration_validate, \
     date_range_validate, \
     is_valid_data_create_new_fund
+from utils.aws_helper import AwsService
 from .models import FundCategories, FinancialGoal
+
+# CONSTANTS FOR ICONS
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+STANDARD_FUNDS_FOLDER = 'standard_fund/'
+ICON_FILE_NAME = 'funds.png'
 
 
 @require_http_methods(["GET"])
@@ -29,11 +36,14 @@ def show_fund(request):
             HttpResponse object.
     """
     user = request.user
+    icon_if_none = AWS_S3_URL + STANDARD_FUNDS_FOLDER + ICON_FILE_NAME
     if user:
         user_funds = []
         for entry in FundCategories.filter_by_user(user):
+            url = AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none
             if not FinancialGoal.has_goals(fund_id=entry.id):
-                user_funds.append({'id': entry.id, 'name': entry.name})
+                user_funds.append({'id': entry.id, 'name': entry.name,
+                                   'url': url})
         return JsonResponse(user_funds, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -49,13 +59,17 @@ def show_fund_by_group(request):
 
     user = request.user
     users_group = []
+    icon_if_none = AWS_S3_URL + STANDARD_FUNDS_FOLDER + ICON_FILE_NAME
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_fund in SharedFunds.objects.filter(group=group.id):
                 if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id):
+                    icon = FundCategories.objects.get(id=shared_fund.fund.id).icon
+                    url = AwsService.get_image_url(icon) if icon else icon_if_none
                     users_group.append({'id_fund': shared_fund.fund.id,
                                         'name_fund': shared_fund.fund.name,
-                                        'id_group': group.id
+                                        'id_group': group.id,
+                                        'url': url
                                         })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
@@ -206,3 +220,113 @@ def create_new_goal(request):
             shared_group=shared_group):
         return HttpResponse(status=201)
     return HttpResponse(status=409)
+
+def create_initial_balance(user, begin_date, start_date, fund_id):
+    """Creating fund balance.
+            Args:
+                user (UserProfile): user.
+                begin_date (date): the beginning of statistic period for this user
+                start_date (date): the beginning of statistic period
+                fund_id (int): fund ID
+            Returns:
+                Balance value
+    """
+    return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
+        date__range=[begin_date - timedelta(days=1),
+                     start_date]).values_list('value', flat=True)) -\
+           sum(SpendingHistory.filter_by_user_date(
+               user,
+               begin_date,
+               start_date).filter(fund=fund_id).values_list('value', flat=True))
+
+def create_balance(user, begin_date, start_date, finish_date, fund_id):
+    """Creating fund balance.
+            Args:
+                user (UserProfile): user.
+                begin_date (date): the beginning of statistic period for this user
+                start_date (date): the beginning of statistic period
+                finish_date (date): the end of statistic period
+                fund_id (int): fund ID
+            Returns:
+                Balance value
+    """
+
+    return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
+        date__range=[start_date - timedelta(days=1),
+                     finish_date]).values_list('value', flat=True)) - \
+           sum(SpendingHistory.filter_by_user_date(
+               user,
+               start_date,
+               finish_date).filter(fund=fund_id).values_list('value', flat=True)) + \
+           create_initial_balance(user, begin_date, start_date, fund_id)
+
+def history_begin_date(user, user_funds):
+    """Search the earliest date in user's history.
+            Args:
+                user (UserProfile): user.
+                user_funds (list): list of user's fund ID
+            Returns:
+                The earliest history date if user has spending or fund history,
+                current date otherwise.
+    """
+    current_date = date.today()
+    list_date_spending = SpendingHistory.objects.filter(owner=user).values_list(
+        'date', flat=True)
+    list_date_fund = IncomeHistory.objects.filter(fund__in=user_funds).values_list(
+        'date', flat=True)
+    begin_date = min(list_date_spending).date() if list_date_spending else current_date
+    begin_date = min(begin_date, min(list_date_fund).date()) if list_date_fund else begin_date
+    return begin_date
+
+
+@require_http_methods(["GET"])
+def get_balance(request):
+    """Handling request for creating spending history data.
+
+        Args:
+            request (HttpRequest): contains start date, final date and UTC information.
+        Returns:
+            JsonResponse object.
+    """
+    user = request.user
+    current_date = date.today()
+    start_date = date(current_date.year, current_date.month, 1)
+    if user:
+        user_funds = []
+        for item in FundCategories.filter_by_user(user):
+            if not FinancialGoal.has_goals(fund_id=item.id):
+                user_funds.append(item.id)
+
+        for group in Group.filter_groups_by_user_id(user):
+            for item in SharedFunds.objects.filter(group=group.id):
+                if not FinancialGoal.has_goals(fund_id=item.fund.id):
+                    user_funds.append(item.fund.id)
+        begin_date = history_begin_date(user, user_funds)
+        name = []
+        initial = []
+        balance = []
+        dates = [str(current_date.month) + '/' + str(current_date.year)]
+        while start_date > begin_date:
+            finish_date = start_date - timedelta(days=1)
+            start_date = date(finish_date.year, finish_date.month, 1)
+            dates.append(str(finish_date.month) + '/' + str(finish_date.year))
+
+
+        for item in user_funds:
+            fund_initial = [create_initial_balance(user, begin_date, start_date, item)]
+            fund_balance = [create_balance(user, begin_date, start_date, current_date, item)]
+            current_date = date.today()
+            start_date = date(current_date.year, current_date.month, 1)
+            while start_date > begin_date:
+                finish_date = start_date - timedelta(days=1)
+                start_date = date(finish_date.year, finish_date.month, 1)
+                fund_initial.append(create_initial_balance(user, begin_date, start_date, item))
+                fund_balance.append(create_balance(user, begin_date, start_date, finish_date, item))
+            name.append(FundCategories.get_by_id(item).name)
+            initial.append(fund_initial)
+            balance.append(fund_balance)
+        return JsonResponse({'fund': name,
+                             'initial': initial,
+                             'balance': balance,
+                             'dates': dates}, status=200, safe=False)
+    return JsonResponse({}, status=400)

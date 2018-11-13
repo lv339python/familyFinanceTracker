@@ -1,20 +1,20 @@
 <template>
     <div class="cont">
-        <div class="form-group col-md-4">
+        <div class="form-group">
             <label>Select income category:</label>
             <select v-model="inc_category" class="form-control">
                 <option v-for="income in income_list" v-bind:value="income.id"> {{ income.name }}
                 </option>
             </select>
         </div>
-        <div class="form-group col-md-4" v-if="is_shared===false">
+        <div class="form-group" v-if="is_shared===false">
             <label>Choose your fund:</label>
             <select v-model="fund_category" class="form-control">
                 <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
                 </option>
             </select>
         </div>
-        <div class="form-group col-md-4" v-else>
+        <div class="form-group" v-else>
             <label>Chose group</label>
             <select v-model="group" class="form-control">
                 <option v-for="group in group_list"
@@ -24,7 +24,7 @@
                 </option>
             </select>
         </div>
-        <div class="form-group col-md-4" v-if="is_active_group !== null && is_shared===true">
+        <div class="form-group" v-if="is_active_group !== null && is_shared===true">
             <label>Chose category</label>
             <select v-model="fund_category" class="form-control">
                 <option v-for="fund in shared_list"
@@ -34,23 +34,23 @@
                 </option>
             </select>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group">
             <b-form-checkbox id="shared_button" v-model=
                 "is_shared">Choose among shared funds :
             </b-form-checkbox>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group">
             <label>Input sum of your income </label>
             <input v-model="value" type="number" min="1" class="form-control">
         </div>
-        <div class="col-md-4">
+        <div >
             <div class="form-group">
                 <label>Input comment</label>
                 <input v-model="comment" type="text" class="form-control">
             </div>
         </div>
 
-        <div class="col-md-4 form-group">
+        <div class="form-group">
             <label>Choose date</label>
             <input v-model="date" type="date">
         </div>
@@ -82,7 +82,7 @@
                 fund_category: null,
                 value: null,
                 date: null,
-                comment: null,
+                comment: '',
                 is_active_group: null,
                 is_shared: false
             }

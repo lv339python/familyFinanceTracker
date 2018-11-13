@@ -221,6 +221,7 @@
     .text {
         width: fit-content;
         margin: auto;
+        font-size: large;
     }
 
     .image {
