@@ -32,7 +32,7 @@ def users_email_for_group(group_id):
     return list_users_email
 
 
-def groups_for_user(user):
+def groups_for_user(user, is_active=True):
 
     """
     Checks groups for user
@@ -40,7 +40,7 @@ def groups_for_user(user):
     :return:list groups_for_user
     """
 
-    group = Group.objects.filter(members=user)
+    group = Group.objects.filter(members=user, is_active=is_active)
     list_group = []
     for item in group:
         list_group.append(item.id)

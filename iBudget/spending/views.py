@@ -10,9 +10,15 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group, SharedSpendingCategories, UserProfile
+from utils.aws_helper import AwsService
 from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_new_spending, \
     is_valid_data_individual_limit_arb, date_parse
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
+
+# CONSTANTS FOR ICONS
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+STANDARD_SPENDINGS_FOLDER = 'standard/'
+ICON_FILE_NAME = 'miscellaneous.png'
 
 
 @require_http_methods(["GET"])
@@ -25,10 +31,13 @@ def show_spending_ind(request):
             HttpResponse object.
     """
     user = request.user
+    icon_if_none = AWS_S3_URL + STANDARD_SPENDINGS_FOLDER + ICON_FILE_NAME
     if user:
         user_categories = []
         for entry in SpendingCategories.filter_by_user(user):
-            user_categories.append({'id': entry.id, 'name': entry.name})
+            url = AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none
+            user_categories.append({'id': entry.id, 'name': entry.name,
+                                    'url': url})
         return JsonResponse({'categories': user_categories, 'fixed': user.ind_period_fixed},
                             status=200, safe=False)
     return JsonResponse({}, status=400)
@@ -45,14 +54,21 @@ def show_spending_group(request):
 
     user = request.user
     users_group = []
+    icon_if_none = AWS_S3_URL + STANDARD_SPENDINGS_FOLDER + ICON_FILE_NAME
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
-                users_group.append({'id_cat': shared_category.spending_categories.id,
-                                    'name_cat': shared_category.spending_categories.name,
-                                    'id_group': group.id,
-                                    'name_group': group.name
-                                    })
+                if shared_category.spending_categories.is_active:
+                    icon = \
+                        SpendingCategories.objects.get(
+                            id=shared_category.spending_categories.id).icon  # pylint: disable=line-too-long
+                    url = AwsService.get_image_url(icon) if icon else icon_if_none
+                    users_group.append({'id_cat': shared_category.spending_categories.id,
+                                        'name_cat': shared_category.spending_categories.name,
+                                        'id_group': group.id,
+                                        'name_group': group.name,
+                                        'url': url
+                                        })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -76,9 +92,9 @@ def set_limitation_period(request):
         user.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    response = "{} type of limitation period has been set...\n OK".format("Monthly/yearly"
-                                                                          if period_type
-                                                                          else "Arbitrary")
+    response = "{} type of limitation period has been set...".format("Monthly/yearly"
+                                                                     if period_type
+                                                                     else "Arbitrary")
     return HttpResponse(response, status=201)
 
 
@@ -125,7 +141,7 @@ def set_spending_limitation_ind_fix(request):
                 return HttpResponse(
                     "The yearly limit is {}, \n "
                     "the total monthly limit is {}.\n "
-                    "Therefore, your limit {} can not be set.\n OK".format(
+                    "Therefore, your limit {} can not be set.".format(
                         year_limit,
                         total_limit,
                         value), status=202)
@@ -143,10 +159,9 @@ def set_spending_limitation_ind_fix(request):
         if total_limit > value:
             return HttpResponse(
                 "The total monthly limit is {}. "
-                "Therefore, your limit {} can not be set.\n OK".format(total_limit,
-                                                                       value),
+                "Therefore, your limit {} can not be set.".format(total_limit,
+                                                                  value),
                 status=202)
-
 
     spending_limitation = SpendingLimitationIndividual.filter_by_data(
         user,
@@ -155,7 +170,7 @@ def set_spending_limitation_ind_fix(request):
         finish_date)
     if spending_limitation:
         spending_limitation.update(value=value)
-        response = "The limit {} has been updated...\n OK".format(value)
+        response = "The limit {} has been updated...".format(value)
     else:
         spending_limitation_ind = SpendingLimitationIndividual(user=user,
                                                                spending_category=spending,
@@ -166,7 +181,7 @@ def set_spending_limitation_ind_fix(request):
             spending_limitation_ind.save()
         except(ValueError, AttributeError):
             return HttpResponse(status=406)
-        response = "The limit {} has been set...\n OK".format(value)
+        response = "The limit {} has been set...".format(value)
     return HttpResponse(response, status=201)
 
 
@@ -213,7 +228,8 @@ def set_spending_limitation_ind_arb(request):
         spending_limitation_ind.save()
     except(ValueError, AttributeError):
         return HttpResponse(status=406)
-    return HttpResponse("The limit {} has been set...\n OK".format(value), status=201)
+    return HttpResponse("The limit {} has been set...".format(value), status=201)
+
 
 @require_http_methods(["GET"])
 def check_dates_choice(request):
@@ -228,6 +244,7 @@ def check_dates_choice(request):
     if already_chosen:
         return HttpResponse(True, status=200)
     return HttpResponse(False, status=200)
+
 
 @require_http_methods(["POST"])
 def set_dates_choice(request):
@@ -339,10 +356,34 @@ def create_spending_category(request):
     spending = SpendingCategories.filter_by_owner_name(owner=owner, name=name)
 
     if spending:
-        return HttpResponse("Sorry, but such category exists...\n OK", status=202)
+        return HttpResponse("Sorry, but such category exists...", status=202)
 
     spending = SpendingCategories(name=name, icon=icon, owner=owner, is_shared=is_shared)
     if not spending:
         return HttpResponse(status=406)
     spending.save()
-    return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
+    return HttpResponse("You've just created category '{}'.".format(name), status=201)
+
+
+@require_http_methods(["DELETE"])
+def delete_spending_category(request, spending_id):
+    """Handling request for delete spending category.
+        Args:
+            request (HttpRequest): Data for delete category.
+            spending_id: Spending category Id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    if user:
+        spending = SpendingCategories.get_by_id(spending_id)
+        if not spending:
+            return HttpResponse(status=406)
+        if not spending.owner == user:
+            return HttpResponse(status=400)
+        spending.is_active = False
+        try:
+            spending.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
+    return HttpResponse(f"You've just deleted category: {spending.name}", status=200)

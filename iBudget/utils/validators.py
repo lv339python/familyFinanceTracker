@@ -211,8 +211,8 @@ def is_valid_data_individual_limit_arb(data):
         return False
     try:
         data['spending_id'] = int(data['spending_id'])
-        data['start_date'] = parse_date(data['start_date'])
-        data['finish_date'] = parse_date(data['finish_date'])
+        parse_date(data['start_date'])
+        parse_date(data['finish_date'])
         int(data['UTC'])
         data['value'] = round(float(data['value']), 2)
         return (data['spending_id'] > 0 and
@@ -343,7 +343,7 @@ def is_valid_data_create_new_fund(data):
         Returns:
             bool: The return value. True is data valid, else False.
     """
-    if not set(data.keys()).difference(SET_KEYS_FUND_CREATE_DATA):
+    if not set(data.keys()) == SET_KEYS_FUND_CREATE_DATA:
         return False
     try:
         data['name'] = str(data['name'])

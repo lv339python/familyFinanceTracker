@@ -1,8 +1,8 @@
 <template>
     <div class="container">
         <div class="Chart">
-            <h1 style="text-align:center;">This month spending</h1>
-            <pie-example v-bind:pieData="value" v-bind:pieLabel="name"/>
+            <h1 style="text-align:center;">{{title}}</h1>
+            <pie-example class="innerChart" v-bind:pieData="value" v-bind:pieLabel="name"/>
         </div>
     </div>
 </template>
@@ -14,7 +14,7 @@
         components: {
             PieExample,
         },
-        props: ['value', 'name'],
+        props: ['value', 'name','title'],
         data() {
             return {
                 height: 80,
@@ -53,4 +53,7 @@
         border-radius: 20px;
         margin: 50px 0;
     }
+    .innerChart {
+        min-height: 300px;
+        min-width: 200px;}
 </style>
