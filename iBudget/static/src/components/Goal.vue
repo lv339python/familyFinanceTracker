@@ -74,7 +74,6 @@
                     this.user_goal_list = response.data;
                     this.transaction = this.user_goal_list[0].transaction;
                     this.date_transaction = this.user_goal_list[0].date_transaction;
-                    console.log(this.user_goal_list);
                 })
                 .catch(e => {
                     this.errors.push(e)
