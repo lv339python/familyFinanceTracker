@@ -321,10 +321,11 @@ def change_users_role_in_group(request):
         HttpResponse object.
     """
     data = json.loads(request.body)
-    user_email = data["email"]
-    user_to_change = UserProfile.get_by_email(user_email)
+    print(data)
+    user_email = data["user_email"]
     group_id = data["group_id"]
     is_admin = data["is_admin"]
+    user_to_change = UserProfile.get_by_email(user_email)
     is_admin = True if is_admin == 'Admin' else False
     user = request.user
     if user:

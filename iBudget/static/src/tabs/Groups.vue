@@ -56,32 +56,32 @@
 
                   <b-tab title="User's in group" >
                         <div>
-                            <ul class="list-group-item group_display"
+                            <ul class="group-display"
                             v-for="user in users_in_group"
                             v-if="user.group_id===group_index"
                             >
                                 <li>
                                     {{ user.email }}
-                                    <button
-                                        type="button"
-                                        class="btn btn-primary"
-                                        @click="changeRole(user.email)"
-                                        >
-                                            {{ user.user_role }}
-                                    </button>
-                                    <button @click="updateUserRoleData(user.group_id, user.email, user.user_role)"> Save </button>
+                                    <new_user_role
+                                        v-if="user.user_role!='Owner'"
+                                        v-bind:current_user_role="user.user_role"
+                                        v-bind:user_email="user.email"
+                                        v-bind:group_id="user.group_id"
+                                        v-bind:getData="getData">
+                                    </new_user_role>
                                 </li>
                             </ul>
                             <add_user v-bind:group_id="selected_group_id" v-bind:getData="getData"></add_user>
+
                         </div>
                   </b-tab>
                   <b-tab title="Shared fund">
                       <div v-for="fund in shared_fund_list" v-if="group_index===fund.id_group"> {{ fund.name_fund }} </div>
-                      <add_shared_fund v-bind:group_id="selected_group_id"></add_shared_fund>
+                      <add_shared_fund v-bind:getData="getData" v-bind:group_id="selected_group_id"></add_shared_fund>
                   </b-tab>
                   <b-tab title="Shared spending categories">
                       <div v-for="spend in shared_spending_list" v-if="group_index===spend.id_group"> {{spend.name_cat }} </div>
-                      <add_shared_spending v-bind:group_id="selected_group_id"></add_shared_spending>
+                      <add_shared_spending v-bind:getData="getData" v-bind:group_id="selected_group_id"></add_shared_spending>
                   </b-tab>
             </b-tabs>
         </div>
@@ -94,6 +94,7 @@
     import Groups_registration from '../components/Groups_registration';
     import Add_shared_fund_to_group from '../components/Add_shared_fund_to_group';
     import Add_shared_category_to_group from '../components/Add_shared_category_to_group';
+    import Change_users_role_in_group from '../components/Change_users_role_in_group';
     export default {
         name: "Groups",
         data() {
@@ -107,33 +108,20 @@
                 group_id: null,
                 users_in_group: [],
                 shared_fund_list: [],
-                shared_spending_list: []
+                shared_spending_list: [],
+                user_email: null,
+                user_role: null
             }
         },
         components: {
             'add_user': Add_new_user_to_group,
             'create_new_group': Groups_registration,
             'add_shared_fund': Add_shared_fund_to_group,
-            'add_shared_spending': Add_shared_category_to_group
+            'add_shared_spending': Add_shared_category_to_group,
+            'new_user_role': Change_users_role_in_group
         },
         methods: {
-            changeRole: function (email) {
-                for (let i = 0; i < this.users_in_group.length; i++) {
-                    if (this.users_in_group[i].group_id === this.group_index) {
-                        if (this.users_in_group[i].email === email) {
-                            if (this.users_in_group[i].user_role === 'Admin') {
-                                this.users_in_group[i].user_role = 'Member'
-                            }
-                            else {
-                                if (this.users_in_group[i].user_role !== 'Owner') {
-                                    this.users_in_group[i].user_role = 'Admin'
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            selected_group: function (index, item) {
+            selected_group: function(index, item){
                 this.selected_group_index = index;
                 this.group_index = item;
                 this.selected_group_id = item;
@@ -186,35 +174,6 @@
                             this.errors.push(e)
                         })
             },
-            updateUserRoleData: function (group_id, email, is_admin) {
-                axios({
-                    method: 'post',
-                    url: '/api/v1/group/change_users_role_in_group/',
-                    data: {
-                        'group_id': group_id,
-                        'email': email,
-                        'is_admin': is_admin
-                    }
-                }).then(response => {
-                    this.reply = response.data;
-                    alert(this.reply);
-                }).catch(error => {
-                    alert(error.response.data)
-                })
-            },
-            deleteGroup: function (groupId) {
-                axios({
-                    method: 'delete',
-                    url: '/api/v1/group/delete_group/' + groupId,
-                }).then(response => {
-                    this.reply = response.data;
-                    alert(this.reply);
-                    this.getData();
-                }).catch(error => {
-                    alert(error.response.data)
-                })
-
-            }
         },
         computed: {
             pageCount() {

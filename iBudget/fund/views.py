@@ -14,7 +14,7 @@ from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
 from utils.aws_helper import AwsService
 from utils.get_role import is_user_admin_group
-from utils.transaction import save_new_fund, save_new_goal
+from utils.transaction import save_new_goal
 from utils.validators import \
     input_fund_registration_validate, \
     date_range_validate, \
@@ -204,8 +204,7 @@ def users_shared_fund(request):
 def create_new_fund(request):
     """Handling request for creating of new fund category.
     Args:
-        request (HttpRequest): request from server which contain
-            shred_group, name, icon
+        request (HttpRequest): request from server which contain name and icon
     Returns:
         HttpResponse object.
     """
@@ -213,22 +212,17 @@ def create_new_fund(request):
     if not is_valid_data_create_new_fund(data):
         return HttpResponse(status=400)
     user = request.user
-    shared_group = data["shared_group"]
-    is_shared = False
-    if shared_group:
-        is_shared = True
-        group = Group.get_group_by_id(shared_group)
-        if not group:
-            return HttpResponse(status=400)
-        if not is_user_admin_group(group.id, user):
-            return HttpResponse(status=406)
-    if save_new_fund(name=data["name"],
-                     icon=data["icon"],
-                     is_shared=is_shared,
-                     owner=user,
-                     shared_group=shared_group):
-        return HttpResponse(status=201)
-    return HttpResponse(status=406)
+    new_fund = FundCategories(
+        name=data["name"],
+        icon=data["icon"],
+        is_shared=False,
+        owner=user
+    )
+    try:
+        new_fund.save()
+    except(ValueError, AttributeError):
+        return HttpResponse(status=406)
+    return HttpResponse(status=201)
 
 
 @require_http_methods(["POST"])

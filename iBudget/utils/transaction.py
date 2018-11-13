@@ -5,7 +5,6 @@ from fund.models import FundCategories, FinancialGoal
 from group.models import SharedFunds, Group, UsersInGroups
 
 
-
 def save_new_fund(name, icon, is_shared, owner, shared_group):
     """Function for safe save FundCategories and SharedFunds
     Args:
