@@ -89,7 +89,13 @@ export function generateChart(chartId, chartType) {
 
 export const Line = generateChart('line-chart', 'line')
 export const Pie = generateChart('pie-chart', 'pie')
+export const Doughnut = generateChart('doughnut-chart', 'doughnut')
+export const Bar = generateChart('bar-chart', 'bar')
 
 export default {
-    Line, Pie
+    Line,
+    Pie,
+    Doughnut,
+    Bar,
+
 }

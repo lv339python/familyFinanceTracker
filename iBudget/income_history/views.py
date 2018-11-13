@@ -225,7 +225,7 @@ def delete_income_history(request, income_history_id):
         income_history = IncomeHistory.get_by_id(income_history_id)
         if not income_history:
             return HttpResponse(status=406)
-        if not income_history.owner == user:
+        if not income_history.income.owner == user:
             return HttpResponse(status=400)
         income_history.is_active = False
         try:

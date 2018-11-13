@@ -80,4 +80,7 @@
 </script>
 
 <style scoped>
+    #spending_add{
+        width: fit-content;
+    }
 </style>

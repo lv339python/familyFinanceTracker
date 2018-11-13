@@ -1,11 +1,19 @@
 <template>
-    <div class="content">
-        <div id="left" class="text column">
-            <b-button :variant="secondary" to="/funds/tracking_goal" @click="isList=false">Tracking Goal</b-button>
+    <div v-if="isList&&totalList.length!==0">
+        <div v-if="isList&&totalList.length!==0">
+            <list_paginated
+                v-bind:list='list'
+                v-bind:title='title'
+                v-bind:deleteItem="delItFundGoal"
+                v-if="list.length !== 0"/>
         </div>
-            <router-view></router-view>
+        <div v-if="isList&&totalListGoal.length!==0">
+            <list_paginated
+                v-bind:list='listGoal'
+                v-bind:title='titleGoal'
+                v-bind:deleteItem="delItFundGoal"
+                v-if="list.length !== 0"/>
         </div>
-    </div>
 </template>
 
 <script>
@@ -13,7 +21,7 @@
     import List_paginated from '../components/List_paginated';
 
     export default {
-        name: "Funds",
+        name: 'Delete_fund',
         components: {'List_paginated': List_paginated},
         data() {
             return {
@@ -121,36 +129,6 @@
 </script>
 
 <style scoped>
-    .content {
-        height: 100%;
-        overflow: hidden;
-        margin: 0px;
-        display: flex;
-    }
 
-    .column {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #left {
-        flex-shrink: 0;
-        background-color: whitesmoke;
-        margin: 5px;
-        padding: 5px;
-        width: 16%;
-    }
-
-    #right {
-        background-color: #f3f3f3;
-        padding: 5px;
-        margin: 0;
-        width: 100%;
-    }
-
-    .text {
-        width: fit-content;
-        margin: auto;
-    }
 </style>
+

@@ -1,7 +1,7 @@
-import { Line } from '../BaseCharts'
+import { Bar } from '../BaseCharts'
 
 export default {
-  extends: Line,
+  extends: Bar,
    props: ['x_axis', "amounts", "color", "dates"],
     data(){
       return{
@@ -21,7 +21,8 @@ export default {
               var key = Object.keys(this.dates[dict]);
               var value = Object.values(this.dates[dict]);
               datas.datasets.push({label:key});
-              datas.datasets[dict].fill = false;
+              datas.datasets[dict].fill = true;
+              datas.datasets[dict].backgroundColor = this.color[dict];
               datas.datasets[dict].borderColor = this.color[dict];
               datas.datasets[dict].data = [];
               for (var val in value[0]){
@@ -35,7 +36,8 @@ export default {
               }
           }
           this.datasets = datas
-        }
+          console.log('%%', this.datasets)
+        },
     },
   mounted (){
     this.renderChart(this.datasets, {responsive: true, maintainAspectRatio: false})
