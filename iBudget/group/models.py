@@ -35,20 +35,6 @@ class Group(models.Model):
                                               related_name="groups")
     is_active = models.BooleanField(default=True)
 
-    def update(self, name=None, icon=None, is_active=None):
-        """
-        Method which changes an information.
-        """
-        if name:
-            self.name = name
-        if icon:
-            self.icon = icon
-        if is_active is not None:
-            self.is_active = is_active
-        try:
-            self.save()
-        except (ValueError, AttributeError):
-            pass
 
     @staticmethod
     def group_filter_by_owner_id(user, is_active=True):

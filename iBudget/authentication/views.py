@@ -181,5 +181,3 @@ def update_password(request, token=None):
             send_successful_update_letter(user)
             return HttpResponse(status=200)
     return HttpResponse(status=400)
-
-

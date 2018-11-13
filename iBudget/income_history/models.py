@@ -28,28 +28,6 @@ class IncomeHistory(models.Model):
     comment = models.TextField(null=True, default="")
     is_active = models.BooleanField(default=True)
 
-    def update(self, income=None, fund=None, date=None, value=None, comment=None, is_active=None):# pylint: disable=too-many-arguments
-        """
-        Method which changes an information.
-        """
-
-        if income:
-            self.income = income
-        if fund:
-            self.fund = fund
-        if date:
-            self.date = date
-        if value:
-            self.value = value
-        if comment:
-            self.comment = comment
-        if is_active is not None:
-            self.is_active = is_active
-        try:
-            self.save()
-        except (ValueError, AttributeError):
-            pass
-
     @staticmethod
     def get_by_id(income_history_id):
         """
@@ -97,13 +75,13 @@ class IncomeHistory(models.Model):
 
         if income_categories:
             return IncomeHistory.objects.filter(owner=user,
-                                                income_categories=income_categories,
+                                                income_categories=income_categories,#pylint: disable=duplicate-code
                                                 date__range=[start_date -
                                                              datetime.timedelta(days=1),
                                                              finish_date],
                                                 is_active=is_active)
         total = 0
-        for item in IncomeHistory.objects.filter(owner=user,
+        for item in IncomeHistory.objects.filter(owner=user,#pylint: disable=duplicate-code
                                                  date__range=[start_date -
                                                               datetime.timedelta(days=1),
                                                               finish_date],

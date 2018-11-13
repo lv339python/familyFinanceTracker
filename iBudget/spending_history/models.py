@@ -1,6 +1,7 @@
 """
 This module provides model of spending history.
 """
+# pylint: disable=duplicate-code
 
 import datetime
 
@@ -34,28 +35,6 @@ class SpendingHistory(models.Model):
     comment = models.TextField(null=True, default="")
     is_active = models.BooleanField(default=True)
 
-    def update(self, fund=None, spending_categories=None, date=None,# pylint: disable=too-many-arguments
-               value=None, comment=None, is_active=None):
-        """
-        Method which changes an information.
-        """
-        if fund:
-            self.fund = fund
-        if spending_categories:
-            self.spending_categories = spending_categories
-        if date:
-            self.date = date
-        if value:
-            self.value = value
-        if comment:
-            self.comment = comment
-        if is_active is not None:
-            self.is_active = is_active
-        try:
-            self.save()
-        except(ValueError, AttributeError):
-            pass
-
     @staticmethod
     def get_by_id(spending_history_id):
         """
@@ -86,19 +65,15 @@ class SpendingHistory(models.Model):
         Returns:
             SpendingHistory objects if database contains such, None otherwise.
         """
-
+        date_range = [start_date - datetime.timedelta(days=1), finish_date]
         if spending_categories:
             return SpendingHistory.objects.filter(owner=user,
                                                   spending_categories=spending_categories,
-                                                  date__range=[start_date -
-                                                               datetime.timedelta(days=1),
-                                                               finish_date],
+                                                  date__range=date_range,
                                                   is_active=is_active)
         total = 0
         for item in SpendingHistory.objects.filter(owner=user,
-                                                   date__range=[start_date -
-                                                                datetime.timedelta(days=1),
-                                                                finish_date],
+                                                   date__range=date_range,
                                                    is_active=is_active):
             total += float(item.value)
         return total

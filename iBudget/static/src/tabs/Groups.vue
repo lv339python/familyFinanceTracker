@@ -209,7 +209,7 @@
                 }).then(response => {
                     this.reply = response.data;
                     alert(this.reply);
-                    this.$router.go('/groups/')
+                    this.getData();
                 }).catch(error => {
                     alert(error.response.data)
                 })

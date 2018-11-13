@@ -5,6 +5,7 @@ import json
 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
+
 from group.models import Group
 from utils.validators import is_valid_data_new_income
 from .models import IncomeCategories
@@ -41,6 +42,7 @@ def create_category(request):
     income.save()
     return HttpResponse("You've just created category '{}'. \n OK".format(name), status=201)
 
+
 @require_http_methods(["GET"])
 def show_income_ind(request):
     """
@@ -57,6 +59,7 @@ def show_income_ind(request):
             user_categories.append({'id': entry.id, 'name': entry.name})
         return JsonResponse(user_categories, status=200, safe=False)
     return JsonResponse({}, status=400)
+
 
 @require_http_methods(["GET"])
 def show_income_group(request):
@@ -92,10 +95,15 @@ def delete_income(request, income_category_id):
             HttpResponse object.
     """
     user = request.user
-    income = IncomeCategories.get_by_id(income_category_id)
-    if not income:
-        return HttpResponse(status=406)
-    if not income.owner == user:
-        return HttpResponse(status=400)
-    income.update(is_active=False)
+    if user:
+        income = IncomeCategories.get_by_id(income_category_id)
+        if not income:
+            return HttpResponse(status=406)
+        if not income.owner == user:
+            return HttpResponse(status=400)
+        income.is_active = False
+        try:
+            income.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
     return HttpResponse(f"You've just deleted income: {income.name}", status=200)

@@ -24,23 +24,6 @@ class FundCategories(models.Model):
     owner = models.ForeignKey(UserProfile, on_delete=True)
     is_active = models.BooleanField(default=True)
 
-    def update(self, name=None, icon=None, is_shared=None, is_active=None):
-        """
-        Method which changes an information.
-        """
-        if name:
-            self.name = name
-        if icon:
-            self.icon = icon
-        if is_shared is not None:
-            self.is_shared = is_shared
-        if is_active is not None:
-            self.is_active = is_active
-        try:
-            self.save()
-        except (ValueError, AttributeError):
-            pass
-
     @staticmethod
     def filter_by_user(user, is_shared=False, is_active=True):
         """

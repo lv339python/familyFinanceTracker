@@ -5,9 +5,10 @@ import json
 
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
+
+from authentication.models import UserProfile
 from fund.models import FundCategories
 from group.models import SpendingCategories, SharedSpendingCategories, SharedFunds
-from authentication.models import UserProfile
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
 from utils.aws_helper import AwsService
@@ -339,6 +340,7 @@ def change_users_role_in_group(request):
             return HttpResponse(status=400)
     return HttpResponse(status=200)
 
+
 @require_http_methods(["DELETE"])
 def delete_group(request, group_id):
     """Handling request for delete group.
@@ -348,11 +350,17 @@ def delete_group(request, group_id):
         Returns:
             HttpResponse object.
     """
+
     user = request.user
-    group = Group.get_group_by_id(group_id)
-    if not group:
-        return HttpResponse(status=406)
-    if not group.owner == user:
-        return HttpResponse(status=400)
-    group.update(is_active=False)
+    if user:
+        group = Group.get_group_by_id(group_id)
+        if not group:
+            return HttpResponse(status=406)
+        if not group.owner == user:
+            return HttpResponse(status=400)
+        group.is_active = False
+        try:
+            group.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
     return HttpResponse(f"You've just deleted group: {group.name}", status=200)

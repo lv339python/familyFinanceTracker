@@ -5,8 +5,9 @@ This module provides functions for handling spending_history view.
 import csv
 import io
 import json
-from datetime import date, timedelta
 from decimal import Decimal
+from datetime import date, timedelta
+
 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -182,7 +183,6 @@ def create_xlsx(request):
     Returns:
         StreamingHttpResponse xlsx file.
     """
-
 
     date_dict = spending_date_parser(request)
 
@@ -422,10 +422,15 @@ def delete_spending_history(request, spending_history_id):
             HttpResponse object.
     """
     user = request.user
-    spending_history = SpendingHistory.get_by_id(spending_history_id)
-    if not spending_history:
-        return HttpResponse(status=406)
-    if not spending_history.owner == user:
-        return HttpResponse(status=400)
-    spending_history.update(is_active=False)
+    if user:
+        spending_history = SpendingHistory.get_by_id(spending_history_id)
+        if not spending_history:
+            return HttpResponse(status=406)
+        if not spending_history.owner == user:
+            return HttpResponse(status=400)
+        spending_history.is_active = False
+        try:
+            spending_history.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
     return HttpResponse("You've just deleted this spending from your history", status=200)

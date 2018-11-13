@@ -27,25 +27,6 @@ class IncomeCategories(models.Model):
     owner = models.ForeignKey(UserProfile, on_delete=True)
     is_active = models.BooleanField(default=True)
 
-    def update(self, name=None, date=None, value=None, icon=None, is_active=None):
-        """
-        Method which changes an information.
-        """
-
-        if name:
-            self.name = name
-        if date:
-            self.date = date
-        if value is not None:
-            self.value = value
-        if icon:
-            self.icon = icon
-        if is_active is not None:
-            self.is_active = is_active
-        try:
-            self.save()
-        except (ValueError, AttributeError):
-            pass
 
     @staticmethod
     def filter_by_user(user, is_active=True):

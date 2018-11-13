@@ -1,18 +1,20 @@
 """this module provides information about a customer's amount of incomes from the beginning of this
 month till today and let a use track his incomes for the chose period of time
 """
+import csv
+import datetime
 import io
 import json
-import datetime
-import csv
 from decimal import Decimal
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.http import require_http_methods
-from django.utils.dateparse import parse_datetime
+
 from django.core.exceptions import ValidationError
-from utils.validators import input_income_registration_validate
+from django.http import JsonResponse, HttpResponse
+from django.utils.dateparse import parse_datetime
+from django.views.decorators.http import require_http_methods
+
 from utils.download_history_file import creating_empty_xlsx_file, \
     file_streaming_response, income_date_parser
+from utils.validators import input_income_registration_validate
 from .models import IncomeCategories, FundCategories, IncomeHistory
 
 
@@ -38,6 +40,7 @@ def get_incomes_funds_ids(user_id, date_start, date_end, time_diff):
         set_for_chart.add(incomes_funds_ids[counter[0]]['fund'])
     incomes_funds_ids.append(list(set_for_chart))
     return incomes_funds_ids
+
 
 @require_http_methods(['GET'])
 def show_total(request):
@@ -85,6 +88,7 @@ def track(request):
                                               time_diff=time_diff)
 
     return JsonResponse(incomes_funds_ids, safe=False, status=200)
+
 
 @require_http_methods(["POST"])
 def register_income(request):
@@ -215,11 +219,17 @@ def delete_income_history(request, income_history_id):
         Returns:
             HttpResponse object.
     """
+
     user = request.user
-    income_history = IncomeHistory.get_by_id(income_history_id)
-    if not income_history:
-        return HttpResponse(status=406)
-    if not income_history.income.owner == user:
-        return HttpResponse(status=400)
-    income_history.update(is_active=False)
+    if user:
+        income_history = IncomeHistory.get_by_id(income_history_id)
+        if not income_history:
+            return HttpResponse(status=406)
+        if not income_history.owner == user:
+            return HttpResponse(status=400)
+        income_history.is_active = False
+        try:
+            income_history.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
     return HttpResponse("You've just deleted this income from your history", status=200)
