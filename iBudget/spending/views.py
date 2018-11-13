@@ -14,11 +14,31 @@ from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_n
     is_valid_data_individual_limit_arb, date_parse
 from utils.aws_helper import AwsService
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
+from spending_history.models import SpendingHistory
+from datetime import datetime
 
 # CONSTANTS FOR ICONS
 AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
 STANDARD_SPENDINGS_FOLDER = 'standard/'
 ICON_FILE_NAME = 'miscellaneous.png'
+
+def spending_summary(request):
+    spend_id = json.loads(request.body)['spend_id']
+    spend = SpendingCategories.get_by_id(spend_id)
+    spend_info = {'icon': spend.icon, 'name': spend.name, 'total_spend': 0,
+                  'last_spend_date': datetime(1, 1, 1), 'last_spend_value': 0}
+    for i in SpendingHistory.objects.filter(spending_categories_id=spend_id):
+        spend_info['total_spend'] += i.value
+        if i.date > spend_info['last_spend_date']:
+            spend_info['last_spend_date'] = i.date
+            spend_info['last_spend_value'] = i.value
+    if spend.is_shared:
+        spend_info['spend_group'] = SharedSpendingCategories.get_by_spending_id\
+            (spend_id).group.name
+    spend_info['last_spend_date'] = datetime.date(spend_info['last_spend_date'])
+
+    return JsonResponse(spend_info)
+
 
 @require_http_methods(["GET"])
 def show_spending_ind(request):

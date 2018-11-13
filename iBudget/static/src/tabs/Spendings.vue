@@ -7,12 +7,37 @@
             <b-button :variant="secondary" to="/spendings/history" @click="isList=false">History</b-button>
             <b-button :variant="secondary" to="/spendings/new" @click="isList=false">New</b-button>
         </div>
-        <div  id="right" class="column">
+        <div id="right" class="column">
             <div v-if="isList&& list.length!==0&&list_shared.length!==0&&totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
-                    v-bind:title='title'  v-if="list.length !== 0"/>
+                    v-bind:title='title' v-if="list.length !== 0"
+                    v-bind:showModal='showModal'/>
             </div>
+            <b-modal ref="myModalRef" hide-footer title="Account">
+                <div class="d-block text-center">
+                    <b-card>
+                        <p class="card-text">
+                            <b>Name: </b> {{reply['name']}}
+                            <br>
+                            <b v-if="reply['icon']">Icon: {{reply['icon']}} </b>
+                            <br>
+                            <!--<img id="profile-photo" rounded="circle" blank width="75" height="75"-->
+                            <!--blank-color="orange" alt="img" class="m-1"-->
+                            <!--src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>-->
+                            <b>Total spend for this category: </b> {{reply['total_spend']}}
+                            <br>
+                            <b v-if="reply['last_spend_value']"> Last spend for this category:
+                                {{reply['last_spend_value']}} on {{reply['last_spend_date']}}</b>
+                            <br>
+                            <b v-if="reply['spend_group']">Spending is shared from
+                                {{reply['spend_group']}} group </b>
+                        </p>
+                        <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Log Out</b-btn>
+                    </b-card>
+                </div>
+
+            </b-modal>
             <router-view></router-view>
         </div>
     </div>
@@ -28,15 +53,41 @@
         data() {
             return {
                 isList: true,
-                list_ind:[],
-                list_shared:[],
+                list_ind: [],
+                list_shared: [],
                 list: [],
                 title: "Spendings",
                 errors: [],
-                group_spends: false
+                group_spends: false,
+                kilka: null,
+                reply: {}
             }
         },
-        created() {
+        methods: {
+            showModal(data) {
+                this.$refs.myModalRef.show();
+                this.kilka = data;
+                this.getData(data)
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide()
+            },
+            getData: function (event) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/spending/summary/',
+                    data: {
+                        'spend_id': event,
+                    }
+                }).then(response => {
+                    this.reply = response.data;
+                    return this.reply
+                }).catch(error => {
+                    alert(error.response.data)
+                })
+            },
+        },
+            created() {
             axios({
                 method: 'get',
                 url: '/api/v1/spending/'

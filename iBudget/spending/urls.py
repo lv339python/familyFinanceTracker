@@ -8,7 +8,7 @@ from spending.views import (set_spending_limitation_ind_fix,
                             change_group_limit,
                             create_spending_category,
                             set_limitation_period, set_spending_limitation_ind_arb,
-                            check_dates_choice,set_dates_choice)
+                            check_dates_choice,set_dates_choice,spending_summary)
 
 urlpatterns = [
     re_path(r'^$', show_spending_ind),
@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/change_limit/<str:category_name>', change_group_limit),
     path('admin/check_choice/', check_dates_choice),
     path('admin/set_choice/', set_dates_choice),
+    path('summary/', spending_summary),
     re_path(r'^add/', create_spending_category)
 ]
