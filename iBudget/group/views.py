@@ -338,13 +338,3 @@ def change_users_role_in_group(request):
         except(ValueError, AttributeError):
             return HttpResponse(status=400)
     return HttpResponse(status=200)
-
-
-# <button
-#                                         v-if="user.user_role!='Owner'"
-#                                         type="button"
-#                                         class="btn btn-primary"
-#                                         @click="changeRole(user.email)"
-#                                         >
-#                                             {{ user.user_role }}
-#                                     </button>
