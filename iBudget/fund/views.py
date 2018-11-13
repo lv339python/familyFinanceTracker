@@ -292,11 +292,28 @@ def create_balance(user, begin_date, start_date, finish_date, fund_id):
                finish_date).filter(fund=fund_id).values_list('value', flat=True)) + \
            create_initial_balance(user, begin_date, start_date, fund_id)
 
+def history_begin_date(user, user_funds):
+    """Search the earliest date in user's history.
+            Args:
+                user (UserProfile): user.
+                user_funds (list): list of user's fund ID
+            Returns:
+                The earliest history date if user has spending or fund history,
+                current date otherwise.
+    """
+    current_date = date.today()
+    list_date_spending = SpendingHistory.objects.filter(owner=user).values_list(
+        'date', flat=True)
+    list_date_fund = IncomeHistory.objects.filter(fund__in=user_funds).values_list(
+        'date', flat=True)
+    begin_date = min(list_date_spending).date() if list_date_spending else current_date
+    begin_date = min(begin_date, min(list_date_fund).date()) if list_date_fund else begin_date
+    return begin_date
+
 
 @require_http_methods(["GET"])
 def get_balance(request):
     """Handling request for creating spending history data.
-
         Args:
             request (HttpRequest): contains start date, final date and UTC information.
         Returns:
@@ -305,39 +322,38 @@ def get_balance(request):
     user = request.user
     current_date = date.today()
     start_date = date(current_date.year, current_date.month, 1)
+    if user:
+        user_funds = []
+        for item in FundCategories.filter_by_user(user):
+            if not FinancialGoal.has_goals(fund_id=item.id):
+                user_funds.append(item.id)
 
-    user_funds = []
-    for item in FundCategories.filter_by_user(user):
-        if not FinancialGoal.has_goals(fund_id=item.id):
-            user_funds.append(item.id)
+        for group in Group.filter_groups_by_user_id(user):
+            for item in SharedFunds.objects.filter(group=group.id):
+                if not FinancialGoal.has_goals(fund_id=item.fund.id)\
+                    and item.fund.is_active:
+                    user_funds.append(item.fund.id)
+        begin_date = history_begin_date(user, user_funds)
+        name = []
+        initial = []
+        balance = []
 
-    for group in Group.filter_groups_by_user_id(user):
-        for shared_fund in SharedFunds.objects.filter(group=group.id):
-            if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id)\
-                and shared_fund.fund.is_active:
-                user_funds.append(shared_fund.fund.id)
-
-    begin_date = min(
-        min(SpendingHistory.objects.filter(owner=user).values_list(
-            'date', flat=True)).date(),
-        min(IncomeHistory.objects.filter(fund__in=user_funds).values_list(
-            'date', flat=True)).date())
-    response = []
-    for item in user_funds:
-        fund_initial = [create_initial_balance(user, begin_date, start_date, item)]
-        fund_balance = [create_balance(user, begin_date, start_date, current_date, item)]
-        dates = [str(current_date.month) + '/' + str(current_date.year)]
-        while start_date > begin_date:
-            finish_date = start_date - timedelta(days=1)
-            start_date = date(finish_date.year, finish_date.month, 1)
-            fund_initial.append(create_initial_balance(user, begin_date, start_date, item))
-            fund_balance.append(create_balance(user, begin_date, start_date, finish_date, item))
-            dates.append(str(finish_date.month) + '/' + str(finish_date.year))
-        data = {'name': FundCategories.get_by_id(item).name,
-                'initial': fund_initial,
-                'balance': fund_balance}
-        response.append(data)
-        return JsonResponse(data, status=200, safe=False)
+        for item in user_funds:
+            fund_initial = [create_initial_balance(user, begin_date, start_date, item)]
+            fund_balance = [create_balance(user, begin_date, start_date, current_date, item)]
+            dates = [str(current_date.month) + '/' + str(current_date.year)]
+            while start_date > begin_date:
+                finish_date = start_date - timedelta(days=1)
+                start_date = date(finish_date.year, finish_date.month, 1)
+                fund_initial.append(create_initial_balance(user, begin_date, start_date, item))
+                fund_balance.append(create_balance(user, begin_date, start_date, finish_date, item))
+                dates.append(str(finish_date.month) + '/' + str(finish_date.year))
+            name.append(FundCategories.get_by_id(item).name)
+            initial.append(fund_initial)
+            balance.append(fund_balance)
+        return JsonResponse({'fund': name,
+                             'initial': initial,
+                             'balance': balance}, status=200, safe=False)
     return JsonResponse({}, status=400)
 
 
@@ -357,4 +373,4 @@ def delete_fund_goal_category(request, fund_id):
     if not fund.owner == user:
         return HttpResponse(status=400)
     fund.update(is_active=False)
-    return HttpResponse(f"You've just deleted fund {fund.name}", status=200)
+    return HttpResponse(f"You've just deleted: {fund.name}", status=200)

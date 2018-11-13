@@ -10,9 +10,9 @@
                     :class="{'active': selected_item_index===index}">
                     <div>{{ item.name }}</div>
                     <div>
-                        <button type="button" class="btn btn-outline-light"
-                            @click="deleteItem(item.id)"
-                            :variant="secondary">
+                        <button type="button" class="btn btn-outline-light but"
+                                @click="deleteItem(item.id)"
+                                :variant="secondary">
                             Delete
                         </button>
                     </div>
@@ -40,7 +40,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     export default {
         name: "List_paginated",
         data() {
@@ -48,7 +47,8 @@
                 size: 5,
                 pageNumber: 0,
                 selected_item_index: 0,
-                selected_item_id:0
+                selected_item_id: 0,
+                modalShow: false
 
             }
         },
@@ -79,8 +79,10 @@
                 const start = this.pageNumber * this.size,
                     end = (start + this.size <= this.list.length) ? start + this.size : this.list.length;
                 return this.list.slice(start, end);
-            }
-        }
+            },
+
+        },
+
     }
 </script>
 
@@ -106,6 +108,9 @@
     .title {
         display: flex;
         justify-content: center;
+    }
+    .but{
+        float: right;
     }
 
     #left {

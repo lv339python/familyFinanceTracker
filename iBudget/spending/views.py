@@ -367,4 +367,4 @@ def delete_spending_category(request, spending_id):
         return HttpResponse(status=400)
     spending.update(is_active=False)
 
-    return HttpResponse(f"You've just deleted category{spending.name}", status=200)
+    return HttpResponse(f"You've just deleted category: {spending.name}", status=200)

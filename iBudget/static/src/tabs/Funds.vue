@@ -46,48 +46,6 @@
                 id: 0
             }
         },
-        created() {
-            axios({
-                method: 'get',
-                url: '/api/v1/fund/'
-            })
-                .then(response => {
-                    this.list = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
-            axios({
-                method: 'get',
-                url: '/api/v1/income/show_income_group/'
-            })
-                .then(response => {
-                    this.list_shared = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
-            axios({
-                method: 'get',
-                url: '/api/v1/fund/show_goal/'
-            })
-                .then(response => {
-                    this.listGoal = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
-            axios({
-                method: 'get',
-                url: '/api/v1/fund/show_goal_by_group/'
-            })
-                .then(response => {
-                    this.list_sharedGoal = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
-        },
         computed: {
             totalList: function () {
                 {
@@ -98,7 +56,6 @@
                             'name': this.list_shared[i].name_fund + ' / ' + this.list_shared[i].group_name
                         });
                     }
-                    ;
                     return result
                 }
             },
@@ -117,16 +74,63 @@
             }
         },
         methods: {
-            delItFundGoal(fundId) {
-                if (fundId != 0) {
-                    axios({
-                        method: 'delete',
-                        url: '/api/v1/fund/delete_fund_goal_category/' + fundId,
-                    }).then(response => {
-                        this.$router.push('/funds/')
+            getData() {
+                axios({
+                    method: 'get',
+                    url: '/api/v1/fund/'
+                })
+                    .then(response => {
+                        this.list = response.data;
                     })
-                }
+                    .catch(e => {
+                        this.errors.push(e)
+                    });
+                axios({
+                    method: 'get',
+                    url: '/api/v1/income/show_income_group/'
+                })
+                    .then(response => {
+                        this.list_shared = response.data;
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    });
+                axios({
+                    method: 'get',
+                    url: '/api/v1/fund/show_goal/'
+                })
+                    .then(response => {
+                        this.listGoal = response.data;
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    });
+                axios({
+                    method: 'get',
+                    url: '/api/v1/fund/show_goal_by_group/'
+                })
+                    .then(response => {
+                        this.list_sharedGoal = response.data;
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    });
+            },
+            delItFundGoal(fundId) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/fund/delete_fund_goal_category/' + fundId,
+                }).then(response => {
+                    this.reply = response.data;
+                    alert(this.reply);
+                    this.getData();
+                }).catch(error => {
+                    alert(error.response.data)
+                })
             }
+        },
+        created() {
+            this.getData();
         }
     }
 

@@ -5,7 +5,7 @@
             <b-button :variant="secondary" to="/incomes/tracking">Tracking</b-button>
             <b-button :variant="secondary" to="/incomes/new">New</b-button>
         </div>
-          <div  id="right" class="column">
+        <div id="right" class="column">
             <div v-if="isList&& list.length!==0">
                 <list_paginated
                     v-bind:list='list'
@@ -22,6 +22,7 @@
 <script>
     import axios from 'axios';
     import List_paginated from '../components/List_paginated';
+
     export default {
         components: {'List_paginated': List_paginated},
         data() {
@@ -33,7 +34,8 @@
                 id: 0
             }
         },
-        created() {
+        methods: {
+            getData() {
             axios({
                 method: 'get',
                 url: '/api/v1/income/'
@@ -44,20 +46,26 @@
                 .catch(e => {
                     this.errors.push(e)
                 });
-        },
-        methods: {
+            },
             deleteIncome(incId) {
                 if (incId) {
                     axios({
                         method: 'delete',
                         url: '/api/v1/income/delete_income/' + incId,
                     }).then(response => {
-                        this.$router.push('/incomes/')
+                        this.reply = response.data;
+                        alert(this.reply);
+                        this.getData();
+                    }).catch(error => {
+                        alert(error.response.data)
                     })
+
                 }
             }
+        },
+        created() {
+            this.getData();
         }
-
     }
 </script>
 
@@ -68,11 +76,13 @@
         margin: 0px;
         display: flex;
     }
+
     .column {
         height: 100%;
         display: flex;
         flex-direction: column;
     }
+
     #left {
         flex-shrink: 0;
         background-color: whitesmoke;
@@ -80,6 +90,7 @@
         padding: 5px;
         width: 16%;
     }
+
     #right {
         background-color: #f3f3f3;
         padding: 5px;

@@ -51,7 +51,7 @@
                         <td>{{ p.fund }}</td>
                         <td >
                             <button
-                                    type="button" class="btn btn-outline-danger" v-on:click="deleteHistory(p.spending_history_id)"
+                                    type="button" class="btn btn-outline-danger" v-on:click="deleteHistory(p.Delete)"
                                     :variant="secondary">Delete
                             </button>
                         </td>
@@ -175,8 +175,12 @@
                     url: '/api/v1/spending_history/delete_spending_history/' + spendHistory,
 
                 }).then(response => {
-                    this.$router.go('spending/')
-                })
+                        this.reply = response.data;
+                        alert(this.reply);
+                        this.$router.go('/spendings/history')
+                    }).catch(error => {
+                        alert(error.response.data)
+                    })
 
             },
             nextPage() {

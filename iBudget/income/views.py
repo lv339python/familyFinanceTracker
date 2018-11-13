@@ -98,4 +98,4 @@ def delete_income(request, income_category_id):
     if not income.owner == user:
         return HttpResponse(status=400)
     income.update(is_active=False)
-    return HttpResponse(f"You've just deleted income {income.name}", status=200)
+    return HttpResponse(f"You've just deleted income: {income.name}", status=200)

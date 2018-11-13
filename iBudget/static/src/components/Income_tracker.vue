@@ -32,11 +32,11 @@
                         <td>{{item['date']}}</td>
                         <td>{{item['amount']}}</td>
                         <td>{{item['comment']}}</td>
-                        <td >
+                        <td>
                             <button
-                                    type="button" class="btn btn-outline-danger"
-                                    v-on:click="deleteIncomeHistory(item['income_history_id'])"
-                                    :variant="secondary">Delete
+                                type="button" class="btn btn-outline-danger"
+                                v-on:click="deleteIncomeHistory(item['income_history_id'])"
+                                :variant="secondary">Delete
                             </button>
                         </td>
                     </tr>
@@ -67,19 +67,19 @@
             </div>
         </div>
         <div class="chartcontainer" v-if="shownResultChart">
-                    <!--v-if is necessary to render the chart correctly, because computed is called with default
-                    data first and the chart is not rendered; here it's called twice and only the valid result is
-                    rendered-->
-                    <Income_chart v-if="make_list_dates.length !== 0"
-                        v-bind:date_to_props="make_list_dates"
-                        v-bind:amount_to_props="make_list_amounts">
-                    </Income_chart>
+            <!--v-if is necessary to render the chart correctly, because computed is called with default
+            data first and the chart is not rendered; here it's called twice and only the valid result is
+            rendered-->
+            <Income_chart v-if="make_list_dates.length !== 0"
+                          v-bind:date_to_props="make_list_dates"
+                          v-bind:amount_to_props="make_list_amounts">
+            </Income_chart>
         </div>
         <div id="no_result" v-if="no_result">
             <p>There are no incomes within the chosen time frame!</p>
-             <p>
-                 <button v-on:click="reRender" v-if="shownResult">refresh</button>
-             </p>
+            <p>
+                <button v-on:click="reRender" v-if="shownResult">refresh</button>
+            </p>
         </div>
     </div>
 </template>
@@ -100,7 +100,7 @@
                 shownResult: false,
                 cur_income: 0,
                 UTC: -new Date().getTimezoneOffset() / 60,
-                shownResultChart:false,
+                shownResultChart: false,
                 cur_income: null,
                 // this is the size of a paginated page
                 pagination_size: 3,
@@ -110,7 +110,7 @@
                 end_date_time: "T23:59:59",
                 date_to_props: [],
                 amount_to_props: [],
-                no_result:false,
+                no_result: false,
             }
         },
         created() {
@@ -183,20 +183,20 @@
                         data: {
                             'start': this.start_date + this.start_date_time,
                             'end': this.end_date + this.end_date_time,
-                            'time_diff':this.UTC
+                            'time_diff': this.UTC
                         }
                     }).then(response => {
                         this.list_with_incomes = response.data;
                         console.log(this.list_with_incomes.length);
                         //if we got empty JSON with empty list inside
-                        if(this.list_with_incomes.length === 1){
+                        if (this.list_with_incomes.length === 1) {
                             this.no_result = true;
                         }
                         //if we got JSON with only one array inside, not enough to draw a chart
-                        else if(this.list_with_incomes.length === 2){
+                        else if (this.list_with_incomes.length === 2) {
                             this.shownResult = true;
                         }
-                        else{
+                        else {
                             this.shownResult = true;
                             this.shownResultChart = true
                         }
@@ -223,9 +223,12 @@
                 axios({
                     method: 'delete',
                     url: '/api/v1/income_history/delete_income_history/' + IncHistory,
-
                 }).then(response => {
+                    this.reply = response.data;
+                    alert(this.reply);
                     this.$router.go('api/v1/income_history/track/')
+                }).catch(error => {
+                    alert(error.response.data)
                 })
 
             },

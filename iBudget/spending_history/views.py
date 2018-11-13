@@ -78,7 +78,7 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
     """
 
     history_individual = []
-    for entry in SpendingCategories.filter_by_user(user):
+    for entry in SpendingCategories.filter_by_user(user, is_active=False):
         history_individual_entry = []
         for item in SpendingHistory.filter_by_user_date_spending(user,
                                                                  start_date,
@@ -88,11 +88,11 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
                                              'date': (item.date +
                                                       timedelta(hours=utc_difference)).date(),
                                              'fund': item.fund.name,
-                                             'spending_history_id':item.id})
+                                             'Delete': item.id})
         if history_individual_entry:
             history_individual.append({'spending': entry.name,
                                        'history': history_individual_entry})
-    for group in groups_for_user(user):
+    for group in groups_for_user(user, is_active=False):
         if is_user_member_group(group, user):
             for entry in SharedSpendingCategories.filter_by_group(group=group):
                 history_individual_entry = []
@@ -105,7 +105,7 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
                                                               timedelta(hours
                                                                         =utc_difference)).date(),
                                                      'fund': item.fund.name,
-                                                     'spending_history_id': item.id})
+                                                     'Delete': item.id})
                 if history_individual_entry:
                     history_individual.append({'spending': entry.name
                                                            + ' / '
@@ -124,7 +124,7 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
             Array of spending history data for admin.
     """
     history_for_admin = []
-    groups_for_admin = [group for group in groups_for_user(user)
+    groups_for_admin = [group for group in groups_for_user(user, is_active=False)
                         if is_user_admin_group(group, user)]
 
     for group in groups_for_admin:
@@ -145,7 +145,7 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                'date': (item.date +
                                                         timedelta(hours=utc_difference)).date(),
                                                'fund': 'Individual fund',
-                                               'spending_history_id': item.id})
+                                               'Delete': item.id})
                 else:
                     for item in SpendingHistory.filter_by_user_date_spending(person,
                                                                              start_date,
@@ -159,7 +159,7 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                'date': (item.date +
                                                         timedelta(hours=utc_difference)).date(),
                                                'fund': fund_entry,
-                                               'spending_history_id': item.id})
+                                               'Delete': item.id})
 
                 if history_person:
                     history_spending_category.extend(history_person)
@@ -182,7 +182,7 @@ def create_xlsx(request):
         StreamingHttpResponse xlsx file.
     """
 
-    print(request)
+
     date_dict = spending_date_parser(request)
 
     individual_spending_history = create_spending_history_individual\

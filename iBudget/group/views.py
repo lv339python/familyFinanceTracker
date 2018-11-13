@@ -347,4 +347,4 @@ def delete_group(request, group_id):
     if not group.owner == user:
         return HttpResponse(status=400)
     group.update(is_active=False)
-    return HttpResponse(f"You've just deleted group {group.name}", status=200)
+    return HttpResponse(f"You've just deleted group: {group.name}", status=200)
