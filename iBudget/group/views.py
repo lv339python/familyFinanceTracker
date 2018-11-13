@@ -311,7 +311,8 @@ def change_users_role_in_group(request):
         HttpResponse object.
     """
     data = json.loads(request.body)
-    user_email = data["email"]
+    print(data)
+    user_email = data["user_email"]
     group_id = data["group_id"]
     is_admin = data["is_admin"]
     user_to_change = UserProfile.get_by_email(user_email)
@@ -329,3 +330,13 @@ def change_users_role_in_group(request):
         except(ValueError, AttributeError):
             return HttpResponse(status=400)
     return HttpResponse(status=200)
+
+
+# <button
+#                                         v-if="user.user_role!='Owner'"
+#                                         type="button"
+#                                         class="btn btn-primary"
+#                                         @click="changeRole(user.email)"
+#                                         >
+#                                             {{ user.user_role }}
+#                                     </button>

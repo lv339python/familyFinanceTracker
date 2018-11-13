@@ -3,7 +3,7 @@
         <b-button variant="primary" @click="showModal">
             Add user
         </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Add new user to group">
+        <b-modal ref="myModalRef2" hide-footer title="Add new user to group">
             <div class="d-block text-center">
                 <b-card>
                     <p class="card-text">
@@ -37,10 +37,10 @@
         props: ["group_id", "getData"],
         methods: {
             showModal() {
-                this.$refs.myModalRef.show();
+                this.$refs.myModalRef2.show();
             },
             hideModal() {
-                this.$refs.myModalRef.hide();
+                this.$refs.myModalRef2.hide();
                 this.clearAll();
             },
             clearAll(){
