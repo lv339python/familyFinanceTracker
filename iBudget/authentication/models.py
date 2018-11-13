@@ -55,6 +55,7 @@ class UserProfile(AbstractBaseUser):
             'last_name': self.last_name,
             'email': self.email,
             'is_sys_admin': self.is_sys_admin,
+            'icon': self.icon
         }
 
     def update(self, password=None, one_time_token=None, first_name=None,

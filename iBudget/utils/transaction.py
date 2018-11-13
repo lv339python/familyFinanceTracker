@@ -1,7 +1,5 @@
 """Save to DB with transaction"""
 from django.db import transaction, IntegrityError
-
-from authentication.models import UserProfile
 from custom_profile.models import CustomProfile
 from fund.models import FundCategories, FinancialGoal
 from group.models import SharedFunds, Group, UsersInGroups
@@ -113,7 +111,7 @@ def save_new_group(name, icon, owner):
     return True
 
 
-def save_personal_info(user,
+def save_personal_info(user,    # pylint: disable=too-many-arguments
                        first_name=None,
                        last_name=None,
                        icon=None,

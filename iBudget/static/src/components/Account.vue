@@ -10,8 +10,7 @@
             <div class="d-block text-center">
                 <b-card>
                     <img id="profile-photo" rounded="circle" blank width="75" height="75"
-                         blank-color="orange" alt="img" class="m-1"
-                         src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>
+                         blank-color="orange" class="m-1" :src="getProfilePhoto()"/>
                     <p class="card-text">
                         <b>Email: </b>{{user.email}}
                         <br/>
@@ -23,33 +22,33 @@
                         <b-btn class="mt-3" variant="outline-success" @click="showInfo">Show more info</b-btn>
                         <b-btn class="mt-3" variant="outline-success" @click="addInfo">Update personal info</b-btn>
                     </div>
-                    <div v-show="more_info">
-                        <p class="card-text" v-for="item in custom">
+                    <div v-if="showMoreInfo">
+                        <p class="card-text">
                             <br/>
-                            <b>Bio:</b>{{item.bio}}
+                            <b>Bio:</b>{{custom.bio}}
                             <br/>
-                            <b>Hobby:</b>{{item.hobby}}
+                            <b>Hobby:</b>{{custom.hobby}}
                             <br/>
-                            <b>Birthday:</b>{{item.birthday}}
+                            <b>Birthday:</b>{{custom.birthday}}
                         </p>
                     </div>
 
-                    <div v-show="add_info">
+                    <div v-if="showAddInfo">
                         <div class="form-group">
-                            <input type="text" v-model="first_name"  class="form-control" placeholder="first name">
+                            <input type="text" v-model="user.first_name"  class="form-control" placeholder="first name" >
                         </div>
                         <div class="form-group">
-                            <input type="text" v-model="last_name" class="form-control" placeholder="last name">
+                            <input type="text" v-model="user.last_name" class="form-control" placeholder="last name">
                         </div>
                         <div class="form-group">
-                            <textarea rows="10" cols="10" v-model="bio" class="form-control" placeholder="bio"></textarea>
+                            <textarea rows="10" cols="10" v-model="custom.bio" class="form-control" placeholder="bio"></textarea>
                         </div>
                         <div class="form-group">
-                            <input type="text" v-model="hobby" class="form-control" placeholder="hobby">
+                            <input type="text" v-model="custom.hobby" class="form-control" placeholder="hobby">
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <input v-model="birthday" type="date" placeholder="birthday">
+                                <input v-model="custom.birthday" type="date" placeholder="birthday">
                             </div>
                         </div>
 
@@ -93,7 +92,7 @@
     import axios from 'axios';
     import Upload_photo from './Upload_photo';
 
-
+    var path = "https://s3.amazonaws.com/family-finance-tracker-static/"
     export default {
         name: "Account",
         props: ["tabName"],
@@ -102,25 +101,17 @@
         data() {
             return {
                 user: null,
-                more_info: false,
-                custom: [],
-                add_info: false,
-                first_name: null,
-                last_name: null,
-                bio: null,
-                hobby: null,
-                icon: null,
-                birthday: null,
+                showMoreInfo: false,
+                custom: null,
+                showAddInfo: false,
                 old_password: null,
                 new_password: null,
                 confirm_password: null,
                 upload: false,
-                maxFileSize: 60,
-                password: null,
-                selectedIcon: '',
-
+                maxFileSize: 60
             }
         },
+
         computed: {
             isValidPassword: {
                 get: function () {
@@ -130,57 +121,25 @@
         },
         methods: {
 
-            // enable_upload: function () {
-            //     this.upload = true
-            // },
-            //
-            // get_img_name_validate: function (file_list) {
-            //     let img = file_list[0];
-            //     let needed_type = /^\/*image/;
-            //     this.icon = img;
-            //     //here we validate the file type and size
-            //     if (img.size > this.maxFileSize * 1024) {
-            //         alert('The file you want to upload is too large. Please choose file smaller than 60 KB');
-            //         return;
-            //     }
-            //     else if (!needed_type.test(img.type)) {
-            //         alert('You chose incorrect file type, please choose image');
-            //         return
-            //     }
-            //
-            // },
-            //
-            // upload_emit_img: function (icon_name) {
-            //     let formData = new FormData();
-            //     formData.append('icon', this.image);
-            //     axios({
-            //         method: 'post',
-            //         url: 'api/v1/files/',
-            //         data: formData
-            //     })
-            //         .then(response => {
-            //             this.reply = response.data;
-            //             this.icon_name = this.reply.slice(55);
-            //             this.$emit('get_name', {icon_name: this.icon_name});
-            //         })
-            //         .catch(function (error) {
-            //             alert(error.response.data);
-            //         })
-            // },
+            getProfilePhoto(){
+                return path+this.user.icon;
+            },
+
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']
             },
 
             showInfo() {
-                this.more_info = !this.more_info;
-                if (this.add_info === true) {
-                    return this.add_info = false
+                console.log(this.custom);
+                this.showMoreInfo = !this.showMoreInfo;
+                if (this.showAddInfo === true) {
+                    return this.showAddInfo = false
                 }
             },
             addInfo() {
-                this.add_info = !this.add_info;
-                if (this.more_info === true) {
-                    return this.more_info = false
+                this.showAddInfo = !this.showAddInfo;
+                if (this.showMoreInfo === true) {
+                    return this.showMoreInfo = false
                 }
             },
 
@@ -223,16 +182,18 @@
             addPersonalInfo: function (event) {
                 console.log(
                     this.selectedIcon);
+                console.log(this.user)
+                console.log(this.custom)
                 axios({
                     method: 'post',
                     url: '/api/v1/custom_profile/create_personal_details/',
                     data: {
-                        'first_name': this.first_name,
-                        'last_name': this.last_name,
-                        'bio': this.bio,
-                        'hobby': this.hobby,
-                        'icon': this.selectedIcon,
-                        'birthday': this.birthday
+                        'first_name': this.user.first_name,
+                        'last_name': this.user.last_name,
+                        'bio': this.custom.bio,
+                        'hobby': this.custom.hobby,
+                        'icon': this.user.icon,
+                        'birthday': this.custom.birthday
                     }
                }).then(response => {
                     this.hideModal();
@@ -240,21 +201,28 @@
                     this.clearAll();
                 })
             },
-        },
 
-        created() {
-            axios.get('api/v1/authentication/profile/')
+            getData: function () {
+                axios.get('api/v1/authentication/profile/')
                 .then(response => {
                     // JSON responses are automatically parsed.
                     this.user = response.data
                 })
                 .catch(e => {
                     this.errors.push(e)
-                })
-            axios.get('api/v1/custom_profile/show_custom_user_data')
+                });
+
+                axios.get('api/v1/custom_profile/show_custom_user_data')
                 .then(response => {
-                    this.custom = response.data
-                })
+                    this.custom = response.data;
+                    console.log(this.custom);
+
+                });
+            }
+        },
+
+        created() {
+            this.getData();
         }
     }
 </script>

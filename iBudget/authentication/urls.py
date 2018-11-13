@@ -19,5 +19,5 @@ urlpatterns = [
     path('profile/', get_profile, name="get_profile"),
     path('forgot_password/', forgot_password),
     url(r'^update_password/(?P<token>.+)$', update_password, name="update_password"),
-    path('change_password/', change_password)
+    path('change_password/', change_password),
     ]

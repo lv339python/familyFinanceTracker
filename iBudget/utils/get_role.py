@@ -59,7 +59,7 @@ def is_user_in_group(group_id, user):
     try:
         UsersInGroups.objects.get(group=group_id, user=user)
         return True
-    except UsersInGroups.DoesNotExist:
+    except (UsersInGroups.DoesNotExist, ValueError):
         return False
 
 
@@ -76,7 +76,7 @@ def is_user_admin_group(group_id, user):
     try:
         user_in_group = UsersInGroups.objects.get(group=group_id, user=user)
         return user_in_group.is_admin
-    except UsersInGroups.DoesNotExist:
+    except (UsersInGroups.DoesNotExist, ValueError):
         return False
 
 
@@ -93,7 +93,7 @@ def is_user_member_group(group_id, user):
     try:
         user_in_group = UsersInGroups.objects.get(group=group_id, user=user)
         return not user_in_group.is_admin
-    except UsersInGroups.DoesNotExist:
+    except (UsersInGroups.DoesNotExist, ValueError):
         return False
 
 

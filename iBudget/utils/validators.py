@@ -449,4 +449,3 @@ def is_valid_data_shared_spending_to_group(data):
     except(ValueError, AttributeError):
         return False
     return True
-
