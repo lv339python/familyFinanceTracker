@@ -16,8 +16,8 @@ class CustomProfile(models.Model):
 
     """
     user = models.ForeignKey(UserProfile, on_delete=True, related_name="profile")
-    bio = models.CharField(max_length=1000, blank=True)
-    hobby = models.CharField(max_length=50, blank=True)
+    bio = models.CharField(max_length=1000, blank=True, null=True)
+    hobby = models.CharField(max_length=50, blank=True, null=True)
     birthday = models.DateField(null=True)
 
     def update(self, bio=None, hobby=None, birthday=None):

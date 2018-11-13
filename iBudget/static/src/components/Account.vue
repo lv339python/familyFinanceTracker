@@ -36,13 +36,13 @@
 
                     <div v-show="add_info">
                         <div class="form-group">
-                            <input type="text" v-model="first_name" class="form-control" placeholder="first name">
+                            <input type="text" v-model="first_name"  class="form-control" placeholder="first name">
                         </div>
                         <div class="form-group">
                             <input type="text" v-model="last_name" class="form-control" placeholder="last name">
                         </div>
                         <div class="form-group">
-                            <input type="text" v-model="bio" class="form-control" placeholder="bio">
+                            <textarea rows="10" cols="10" v-model="bio" class="form-control" placeholder="bio"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="text" v-model="hobby" class="form-control" placeholder="hobby">
@@ -53,13 +53,18 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <button v-on:click="enable_upload" v-if="! upload">upload my own</button>
-                            <form enctype="multipart/form-data">
-                                <input type="file" name="icon" v-if="upload"
-                                       v-on:change="get_img_name_validate($event.target.files)"></input>
-                            </form>
-                        </div>
+
+                        <div class="col-md-2">
+                            <Upload_photo @get_name='onGet_name'></Upload_photo>
+                         </div>
+
+                        <!--<div class="col-md-4" v-model="icon">-->
+                            <!--<button v-on:click="enable_upload" v-if="! upload">upload my own</button>-->
+                            <!--<form enctype="multipart/form-data">-->
+                                <!--<input type="file" name="icon" v-if="upload"-->
+                                       <!--v-on:change="get_img_name_validate($event.target.files)"></input>-->
+                            <!--</form>-->
+                        <!--</div>-->
 
                         <b-btn class="mt-3" variant="outline-success" @click="addPersonalInfo">Save</b-btn>
                         <hr/>
@@ -75,11 +80,6 @@
                             <input type="password" v-model="confirm_password" class="form-control"
                                    placeholder="confirm password">
                         </div>
-                        <br/>
-                        <b-button class="btn btn-outline-success" :disabled="!isValidPassword" @click="setDatapassword">
-                            Save
-                        </b-button>
-
                     </div>
                 </b-card>
             </div>
@@ -91,10 +91,13 @@
 <script>
 
     import axios from 'axios';
+    import Upload_photo from './Upload_photo';
 
 
     export default {
         name: "Account",
+        props: ["tabName"],
+        components: {'Upload_photo': Upload_photo},
 
         data() {
             return {
@@ -113,7 +116,8 @@
                 confirm_password: null,
                 upload: false,
                 maxFileSize: 60,
-
+                password: null,
+                selectedIcon: '',
 
             }
         },
@@ -125,24 +129,48 @@
             }
         },
         methods: {
-            enable_upload: function () {
-                this.upload = true
-            },
-            get_img_name_validate: function (file_list) {
-                let img = file_list[0];
-                let needed_type = /^\/*image/;
-                this.icon = img;
-                //here we validate the file type and size
-                if (img.size > this.maxFileSize * 1024) {
-                    alert('The file you want to upload is too large. Please choose file smaller than 60 KB');
-                    return;
-                }
-                else if (!needed_type.test(img.type)) {
-                    alert('You chose incorrect file type, please choose image');
-                    return
-                }
 
+            // enable_upload: function () {
+            //     this.upload = true
+            // },
+            //
+            // get_img_name_validate: function (file_list) {
+            //     let img = file_list[0];
+            //     let needed_type = /^\/*image/;
+            //     this.icon = img;
+            //     //here we validate the file type and size
+            //     if (img.size > this.maxFileSize * 1024) {
+            //         alert('The file you want to upload is too large. Please choose file smaller than 60 KB');
+            //         return;
+            //     }
+            //     else if (!needed_type.test(img.type)) {
+            //         alert('You chose incorrect file type, please choose image');
+            //         return
+            //     }
+            //
+            // },
+            //
+            // upload_emit_img: function (icon_name) {
+            //     let formData = new FormData();
+            //     formData.append('icon', this.image);
+            //     axios({
+            //         method: 'post',
+            //         url: 'api/v1/files/',
+            //         data: formData
+            //     })
+            //         .then(response => {
+            //             this.reply = response.data;
+            //             this.icon_name = this.reply.slice(55);
+            //             this.$emit('get_name', {icon_name: this.icon_name});
+            //         })
+            //         .catch(function (error) {
+            //             alert(error.response.data);
+            //         })
+            // },
+            onGet_name(data) {
+                this.selectedIcon = data['icon_name']
             },
+
             showInfo() {
                 this.more_info = !this.more_info;
                 if (this.add_info === true) {
@@ -159,9 +187,11 @@
             showModal() {
                 this.$refs.myModalRef.show()
             },
+
             hideModal() {
                 this.$refs.myModalRef.hide()
             },
+
             logout: function (event) {
                 axios({
                     method: 'get',
@@ -173,6 +203,7 @@
                 });
 
             },
+
             setDatapassword: function (event) {
                 axios({
                     method: 'post',
@@ -188,7 +219,10 @@
                     this.clearAll();
                 })
             },
+
             addPersonalInfo: function (event) {
+                console.log(
+                    this.selectedIcon);
                 axios({
                     method: 'post',
                     url: '/api/v1/custom_profile/create_personal_details/',
@@ -197,7 +231,7 @@
                         'last_name': this.last_name,
                         'bio': this.bio,
                         'hobby': this.hobby,
-                        'icon': this.icon,
+                        'icon': this.selectedIcon,
                         'birthday': this.birthday
                     }
                }).then(response => {
@@ -207,6 +241,7 @@
                 })
             },
         },
+
         created() {
             axios.get('api/v1/authentication/profile/')
                 .then(response => {

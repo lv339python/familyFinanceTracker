@@ -11,8 +11,7 @@ ANONYMOUS_USERS_PATHS = ['/api/v1/authentication/login/',
                          '/api/v1/authentication/update_password/',
                          '/api/v1/authentication/auth/',
                          '/api/v1/authentication/sign_in/',
-                         '/api/v1/authentication/registration/',
-                         '/api/v1/custom_profile/create_personal_details/'
+                         '/api/v1/authentication/registration/'
                          ]
 ENCODING = "utf-8"
 
