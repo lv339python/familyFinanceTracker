@@ -1,61 +1,62 @@
 <template>
-    <b-button class="btn btn-success btn-circle btn-xl" @click="showModal">
-            ✰ ✰ ✰
-        </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Add Goal">
+
     <div class="content">
-        <div class="col-md-4 form-group">
-            <div>
-                <label>Input name</label>
-                <input type="text" v-model="name" class="form-control">
-            </div>
-        </div>
 
-         <div class="col-md-4 form-group">
-            <div>
-                <label>Input value</label>
-                <input v-model="value" type="number" min="1" class="form-control">
-            </div>
-        </div>
-
-        <div class="col-md-4 form-group">
-            <div>
-                <label>Choose icon</label>
-                <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
-            </div>
-        </div>
-
-        <div class="col-md-4 form-group">
-            <div>
-                <label>Shared to</label>
-                <select v-model="shared_group" class="form-control">
-                    <option
-                        v-for="group in user_groups_list"
-                        v-bind:value="group.id">
-                        {{ group.name }}
-                    </option>
-                </select>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <label>Start date</label>
             <div class="form-group">
-                <input v-model="start_date" type="date">
-            </div>
-        </div>
+            <div>
 
-        <div class="col-md-4">
-            <label>Finish date</label>
-            <div class="form-group">
-                <input v-model="finish_date" type="date">
+                <input type="text" placeholder="Input name" v-model="name" class="form-control">
             </div>
-        </div>
+    </div>
+    <div class="form-group">
+    <div>
+        <input v-model="value" placeholder="Input value" type="number" min="1" class="form-control">
+    </div>
+    </div>
 
+    <div class="form-group">
         <div>
-            <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
-            <button :disabled="isValidData===false" type="button" class="btn btn-outline-primary" @click="setData" :variant="secondary">Save</button>
+            <label>Choose icon</label>
+            <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
         </div>
+    </div>
+
+    <div class="form-group">
+        <div>
+            <label>Shared to</label>
+            <select v-model="shared_group" class="form-control">
+                <option
+                    v-for="group in user_groups_list"
+                    v-bind:value="group.id">
+                    {{ group.name }}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div>
+
+        <div class="form-group">
+            <label>Start Date</label>
+            <input placeholder="Start Date" v-model="start_date" type="date">
+             <label>Finish Date</label>
+            <input v-model="finish_date" placeholder="Finish Date" type="date">
+        </div>
+    </div>
+
+    <div>
+        <div class="form-group">
+
+        </div>
+    </div>
+
+    <div>
+        <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
+        <button :disabled="isValidData===false" type="button" class="btn btn-outline-primary" @click="setData"
+                :variant="secondary">Save
+        </button>
+    </div>
+
     </div>
 </template>
 
@@ -64,7 +65,7 @@
     import Icon_getter from './Icon_getter.vue'
 
     export default {
-        name: "fund_registration",
+        name: "Financial_goal",
         data() {
             return {
                 start_date: null,
@@ -134,7 +135,14 @@
                 this.name = null;
                 this.icon = null;
 
-            }
+            },
+            showModal() {
+                this.$refs.myModalRef.show();
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide();
+                this.clearAll();
+            },
 
         }
 
@@ -143,7 +151,6 @@
 
 <style scoped>
     .content {
-        height: 100vh;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
@@ -152,5 +159,14 @@
     .text {
         width: fit-content;
         margin: auto;
+    }
+
+    .btn-circle.btn-xl {
+        width: 70px;
+        height: 70px;
+        padding: 10px 16px;
+        border-radius: 35px;
+        font-size: 24px;
+        line-height: 1.33;
     }
 </style>

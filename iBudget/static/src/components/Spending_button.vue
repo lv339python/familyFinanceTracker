@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal">
+        <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Add spending">
             -
         </b-button>
         <b-modal ref="myModalRef" hide-footer title="Add spending">
@@ -34,7 +34,7 @@
                         </b-input-group>
                     </div>
                     <div class="col-md-12 form-group">
-                        <input placeholder="✎ ✍" v-model="comment" type="text" class="form-control">
+                        <input placeholder="✎ ✍ 💵" v-model="comment" type="text" class="form-control">
                     </div>
                 </div>
                 <div @click="clear" class="btn">C</div>
@@ -223,6 +223,7 @@
                         'date': this.date,
                         'value': this.current,
                         'comment': this.comment,
+                        'group_id': this.groupId
                     }
                 }).then(response => {
                     this.reply = response.data;

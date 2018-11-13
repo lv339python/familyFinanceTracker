@@ -87,8 +87,8 @@
         components: {"Income_chart": Income_chart},
         data() {
             return {
-                start_date: '',
-                end_date: '',
+                start_date: new Date().toJSON().slice(0, 10),
+                end_date: new Date().toJSON().slice(0, 10),
                 list_with_incomes: '',
                 shownResult: false,
                 cur_income: 0,

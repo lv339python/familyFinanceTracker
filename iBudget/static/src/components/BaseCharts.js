@@ -91,12 +91,11 @@ export const Line = generateChart('line-chart', 'line')
 export const Pie = generateChart('pie-chart', 'pie')
 export const Doughnut = generateChart('doughnut-chart', 'doughnut')
 export const Bar = generateChart('bar-chart', 'bar')
-export const HorizontalBar = generateChart('horizontalbar-chart', 'horizontalBar')
+
 export default {
     Line,
     Pie,
     Doughnut,
     Bar,
-    HorizontalBar,
 
 }

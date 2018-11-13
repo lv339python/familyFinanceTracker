@@ -1,38 +1,21 @@
 <template>
     <div id="fund_registration">
-        <div class="col-md-3">
+        <div >
             <hr>
             <div class="form-group">
-                <label>Input name</label>
-                <input type="text" v-model="name" class="form-control">
+                <input type="text" placeholder="Input name" v-model="name" class="form-control">
             </div>
-            <div>{{ name }}</div>
         </div>
 
-        <div class="col-md-4">
+        <div >
             <hr>
             <div class="form-group">
                 <label>Choose icon</label>
                 <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
             </div>
         </div>
-
-        <div class="col-md-3">
-            <hr>
-            <div class="form-group">
-                <label>Shared to</label>
-                <select v-model="shared_group" class="form-control">
-                    <option></option>
-                    <option
-                        v-for="group in user_groups_list"
-                        v-bind:value="group.id">
-                        {{ group.name }}
-                    </option>
-                </select>
-            </div>
-        </div>
         <hr>
-        <div class="col-md-2">
+        <div>
             <button class="btn btn-outline-primary" v-on:click="setData" :variant="secondary">Save</button>
         </div>
     </div>

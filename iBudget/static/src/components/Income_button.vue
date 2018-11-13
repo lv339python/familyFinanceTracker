@@ -1,9 +1,9 @@
 <template>
     <div>
-        <b-button class="btn btn-success btn-circle btn-xl" @click="showModal">
+        <b-button class="btn btn-success btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Add income">
             +
         </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Add new income">
+        <b-modal ref="myModalRef" hide-footer title="Add income">
             <div class="form-group">
                <input v-model="date" type="date">
             </div>
