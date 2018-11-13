@@ -2,11 +2,12 @@
     <div class="container">
 
          <div class="Chart">
-          <h1 style="text-align:center;">{{date_to_props}}</h1>
+          <h1 style="text-align:center;">Your funds and their incomes:</h1>
           <line-example
                         v-bind:x_axis="get_x"
                         v-bind:amounts="amounts"
-                        v-bind:color="getColor"/>
+                        v-bind:color="getColor"
+                        v-bind:dates="dates_from_props"/>
         </div>
 
 
@@ -24,7 +25,7 @@
             return {
                 height: 100,
                 amounts:this.amount_to_props,
-                x:'fake',
+                x:null,
                 dates_from_props: this.date_to_props
             }
         },
