@@ -305,17 +305,23 @@ def get_balance(request):
         name = []
         initial = []
         balance = []
+        dates = [str(current_date.month) + '/' + str(current_date.year)]
+        while start_date > begin_date:
+            finish_date = start_date - timedelta(days=1)
+            start_date = date(finish_date.year, finish_date.month, 1)
+            dates.append(str(finish_date.month) + '/' + str(finish_date.year))
+
 
         for item in user_funds:
             fund_initial = [create_initial_balance(user, begin_date, start_date, item)]
             fund_balance = [create_balance(user, begin_date, start_date, current_date, item)]
-            dates = [str(current_date.month) + '/' + str(current_date.year)]
+            current_date = date.today()
+            start_date = date(current_date.year, current_date.month, 1)
             while start_date > begin_date:
                 finish_date = start_date - timedelta(days=1)
                 start_date = date(finish_date.year, finish_date.month, 1)
                 fund_initial.append(create_initial_balance(user, begin_date, start_date, item))
                 fund_balance.append(create_balance(user, begin_date, start_date, finish_date, item))
-                dates.append(str(finish_date.month) + '/' + str(finish_date.year))
             name.append(FundCategories.get_by_id(item).name)
             initial.append(fund_initial)
             balance.append(fund_balance)
