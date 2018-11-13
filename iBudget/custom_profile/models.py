@@ -33,7 +33,7 @@ class CustomProfile(models.Model):
         self.save()
 
     @staticmethod
-    def get_by_user(user):
+    def filter_by_user(user):
         """
         Args:
             user: The first parameter.
@@ -43,7 +43,7 @@ class CustomProfile(models.Model):
         """
 
         try:
-            return CustomProfile.objects.get(user=user)
+            return CustomProfile.objects.filter(user=user)
 
         except CustomProfile.DoesNotExist:
             return None

@@ -44,10 +44,8 @@ def show_custom_user_data(request):
     """
     user = request.user
     if user:
-        item = CustomProfile.get_by_user(user)
-        users_custom_data = {
-            'bio': item.bio,
-            'hobby': item.hobby,
-            'birthday': item.birthday}
-        return JsonResponse(users_custom_data, status=200, safe=False)
+        user_info = []
+        for item in CustomProfile.filter_by_user(user):
+            user_info.append({'bio': item.bio, 'hobby': item.hobby, 'birthday': item.birthday})
+        return JsonResponse(user_info, status=200, safe=False)
     return JsonResponse({}, status=400)

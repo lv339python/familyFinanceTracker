@@ -137,8 +137,7 @@ def save_personal_info(user,    # pylint: disable=too-many-arguments
             user.update(first_name=first_name,
                         last_name=last_name,
                         icon=icon)
-            custom = CustomProfile.get_by_user(user)
-
+            custom = CustomProfile.filter_by_user(user)
             if custom:
                 custom.bio = bio
                 custom.hobby = hobby

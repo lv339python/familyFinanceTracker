@@ -49,6 +49,10 @@
                             <div class="form-group">
                                 <input v-model="custom.birthday" type="date" placeholder="birthday">
                             </div>
+
+                            <div class="col-md-2">
+                                <Upload_photo @get_name='onGet_name'></Upload_photo>
+                            </div>
                         </div>
                         <b-btn class="mt-3" variant="outline-success" @click="addPersonalInfo">Save</b-btn>
                         <hr/>
@@ -111,7 +115,11 @@
         methods: {
 
             getProfilePhoto(){
-                return path+this.user.icon;
+                if(this.user.icon = ! ''){
+                    return path+this.user.icon;
+                }else{
+                    return default_path;
+                }
             },
 
 
