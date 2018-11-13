@@ -6,7 +6,6 @@
                 <label>Input name</label>
                 <input type="text" v-model="name" class="form-control">
             </div>
-            <div>{{ name }}</div>
         </div>
 
         <div class="col-md-4">
@@ -14,21 +13,6 @@
             <div class="form-group">
                 <label>Choose icon</label>
                 <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <hr>
-            <div class="form-group">
-                <label>Shared to</label>
-                <select v-model="shared_group" class="form-control">
-                    <option></option>
-                    <option
-                        v-for="group in user_groups_list"
-                        v-bind:value="group.id">
-                        {{ group.name }}
-                    </option>
-                </select>
             </div>
         </div>
         <hr>
@@ -47,12 +31,11 @@
         data() {
             return {
                 name: null,
-                shared_group: null,
                 icon: null,
                 group: null,
                 user_groups_list: [],
                 tab: 'fund',
-                selectedIcon: ''
+                selectedIcon: '',
             }
         },
         props: ["tabName"],
@@ -66,7 +49,7 @@
                 })
                 .catch(e => {
                     this.errors.push(e)
-                })
+                });
         },
         methods: {
             setData: function (event) {
@@ -75,8 +58,7 @@
                     url: '/api/v1/fund/create_new_fund/',
                     data: {
                         'name': this.name,
-                        'icon': this.selectedIcon,
-                        'shared_group': this.shared_group
+                        'icon': this.selectedIcon
                     }
                 }).then(response => {
                     this.$router.go('/create_new_fund/')

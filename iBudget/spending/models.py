@@ -15,6 +15,7 @@ class SpendingCategories(models.Model):
           icon (str, optional): Name of the file with  spending's avatar.
           owner (FK): Owner of this category.
           is_shared (bool):  "True" if this spending category is shared, "false" in other way.
+          is_active(bool): "True" if this spending category exist, "false" in other way.
 
 
     """
@@ -22,6 +23,7 @@ class SpendingCategories(models.Model):
     icon = models.CharField(max_length=30)
     owner = models.ForeignKey(UserProfile, on_delete=True)
     is_shared = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     @staticmethod
     def get_by_id(spending_category_id):
@@ -39,32 +41,45 @@ class SpendingCategories(models.Model):
             return None
 
     @staticmethod
-    def filter_by_user(user, is_shared=False):
+    def filter_by_id(spending_category_id, is_active=True):
+        """
+        Args:
+            spending_category_id (int): The first parameter.
+            is_active(bool): which category is active.
+        Returns:
+            SpendingCategories object if database contain spending
+            category with id, None otherwise.
+
+        """
+        return SpendingCategories.objects.filter(pk=spending_category_id, is_active=is_active)
+
+    @staticmethod
+    def filter_by_user(user, is_shared=False, is_active=True):
         """
         Args:
             user (UserProfile): user of category,
             is_shared(bool): which category we need(shared or not shared).
+            is_active(bool): which category is active.
         Returns:
             SpendingCategories object if database contain category for this user
             and is_shared value, None otherwise.
-
-
         """
-        return SpendingCategories.objects.filter(owner=user, is_shared=is_shared)
+        return SpendingCategories.objects.filter(owner=user,
+                                                 is_shared=is_shared,
+                                                 is_active=is_active)
 
     @staticmethod
-    def filter_by_owner_name(owner, name):
+    def filter_by_owner_name(owner, name, is_active=True):
         """
         Args:
             owner (UserProfile): owner of category,
             name(bool): name of category.
+            is_active(bool): which category is active.
         Returns:
             SpendingCategories object if database contain category for this user
             and name, None otherwise.
-
-
         """
-        return SpendingCategories.objects.filter(owner=owner, name=name)
+        return SpendingCategories.objects.filter(owner=owner, name=name, is_active=is_active)
 
 
 class SpendingLimitationIndividual(models.Model):

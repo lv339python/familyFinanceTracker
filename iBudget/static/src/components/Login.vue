@@ -177,9 +177,7 @@
                     this.error = true;
                 })
             }
-        },
-
-
+        }
     }
 </script>
 <style scoped>

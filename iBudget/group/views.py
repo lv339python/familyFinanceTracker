@@ -5,9 +5,10 @@ import json
 
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
+
+from authentication.models import UserProfile
 from fund.models import FundCategories
 from group.models import SpendingCategories, SharedSpendingCategories, SharedFunds
-from authentication.models import UserProfile
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
 from utils.aws_helper import AwsService
@@ -61,7 +62,8 @@ def show_users_group(request):
     if user:
         groups = []
         for item in UsersInGroups.filter_by_user(user):
-            groups.append({'name': item.group.name, 'id': item.group.id})
+            if item.group.is_active:
+                groups.append({'name': item.group.name, 'id': item.group.id})
         return JsonResponse(groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -319,10 +321,11 @@ def change_users_role_in_group(request):
         HttpResponse object.
     """
     data = json.loads(request.body)
-    user_email = data["email"]
-    user_to_change = UserProfile.get_by_email(user_email)
+    print(data)
+    user_email = data["user_email"]
     group_id = data["group_id"]
     is_admin = data["is_admin"]
+    user_to_change = UserProfile.get_by_email(user_email)
     is_admin = True if is_admin == 'Admin' else False
     user = request.user
     if user:
@@ -337,3 +340,28 @@ def change_users_role_in_group(request):
         except(ValueError, AttributeError):
             return HttpResponse(status=400)
     return HttpResponse(status=200)
+
+
+@require_http_methods(["DELETE"])
+def delete_group(request, group_id):
+    """Handling request for delete group.
+        Args:
+            request (HttpRequest): Data for delete group.
+            group_id: Group Id
+        Returns:
+            HttpResponse object.
+    """
+
+    user = request.user
+    if user:
+        group = Group.get_group_by_id(group_id)
+        if not group:
+            return HttpResponse(status=406)
+        if not group.owner == user:
+            return HttpResponse(status=400)
+        group.is_active = False
+        try:
+            group.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
+    return HttpResponse(f"You've just deleted group: {group.name}", status=200)

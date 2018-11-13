@@ -5,8 +5,9 @@ This module provides functions for handling spending_history view.
 import csv
 import io
 import json
-from datetime import date, timedelta
 from decimal import Decimal
+from datetime import date, timedelta
+
 
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -79,7 +80,7 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
     """
 
     history_individual = []
-    for entry in SpendingCategories.filter_by_user(user):
+    for entry in SpendingCategories.filter_by_user(user, is_active=False):
         history_individual_entry = []
         for item in SpendingHistory.filter_by_user_date_spending(user,
                                                                  start_date,
@@ -88,11 +89,12 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
             history_individual_entry.append({'value': float(item.value),
                                              'date': (item.date +
                                                       timedelta(hours=utc_difference)).date(),
-                                             'fund': item.fund.name})
+                                             'fund': item.fund.name,
+                                             'Delete': item.id})
         if history_individual_entry:
             history_individual.append({'spending': entry.name,
                                        'history': history_individual_entry})
-    for group in groups_for_user(user):
+    for group in groups_for_user(user, is_active=False):
         if is_user_member_group(group, user):
             for entry in SharedSpendingCategories.filter_by_group(group=group):
                 history_individual_entry = []
@@ -104,7 +106,8 @@ def create_spending_history_individual(user, start_date, finish_date, utc_differ
                                                      'date': (item.date +
                                                               timedelta(hours
                                                                         =utc_difference)).date(),
-                                                     'fund': item.fund.name})
+                                                     'fund': item.fund.name,
+                                                     'Delete': item.id})
                 if history_individual_entry:
                     history_individual.append({'spending': entry.name
                                                            + ' / '
@@ -123,7 +126,7 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
             Array of spending history data for admin.
     """
     history_for_admin = []
-    groups_for_admin = [group for group in groups_for_user(user)
+    groups_for_admin = [group for group in groups_for_user(user, is_active=False)
                         if is_user_admin_group(group, user)]
 
     for group in groups_for_admin:
@@ -143,7 +146,8 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                'value': float(item.value),
                                                'date': (item.date +
                                                         timedelta(hours=utc_difference)).date(),
-                                               'fund': 'Individual fund'})
+                                               'fund': 'Individual fund',
+                                               'Delete': item.id})
                 else:
                     for item in SpendingHistory.filter_by_user_date_spending(person,
                                                                              start_date,
@@ -156,7 +160,8 @@ def create_spending_history_for_admin(user, start_date, finish_date, utc_differe
                                                'value': float(item.value),
                                                'date': (item.date +
                                                         timedelta(hours=utc_difference)).date(),
-                                               'fund': fund_entry})
+                                               'fund': fund_entry,
+                                               'Delete': item.id})
 
                 if history_person:
                     history_spending_category.extend(history_person)
@@ -405,3 +410,27 @@ def get_spending_chart(request):
         return JsonResponse({'values': response, "dates": dates},
                             status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+@require_http_methods(["DELETE"])
+def delete_spending_history(request, spending_history_id):
+    """Handling request for delete group.
+        Args:
+            request (HttpRequest): Data for delete spending history category.
+            spending_history_id: Spending history id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    if user:
+        spending_history = SpendingHistory.get_by_id(spending_history_id)
+        if not spending_history:
+            return HttpResponse(status=406)
+        if not spending_history.owner == user:
+            return HttpResponse(status=400)
+        spending_history.is_active = False
+        try:
+            spending_history.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
+    return HttpResponse("You've just deleted this spending from your history", status=200)

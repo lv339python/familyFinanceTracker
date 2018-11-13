@@ -2,8 +2,9 @@
 This module provides model of group and its relations.
 """
 from django.db import models
+
 from authentication.models import UserProfile
-from fund.models import FundCategories
+from fund.models import FundCategories, FinancialGoal
 from spending.models import SpendingCategories
 
 
@@ -17,7 +18,7 @@ class Group(models.Model):
             members: Relation realization between users and groups.
             shared_funds: Relation realization between funds and groups.
             shared_spendings: Relation realization between spending and groups.
-
+            is_active(bool): "True" if this group exist, "false" in other way.
 
     """
     name = models.CharField(max_length=30)
@@ -32,16 +33,19 @@ class Group(models.Model):
     shared_spendings = models.ManyToManyField(SpendingCategories,
                                               through='SharedSpendingCategories',
                                               related_name="groups")
+    is_active = models.BooleanField(default=True)
+
 
     @staticmethod
-    def group_filter_by_owner_id(user):
+    def group_filter_by_owner_id(user, is_active=True):
         """
         Args:
             user (int): index of owner,
+            is_active(bool): 'True' if group exist
         Returns:
             Group object if database contain group with user_id
         """
-        return Group.objects.filter(owner=user)
+        return Group.objects.filter(owner=user, is_active=is_active)
 
     @staticmethod
     def get_group_by_id(group_id):
@@ -53,28 +57,29 @@ class Group(models.Model):
 
         """
         try:
-            group = Group.objects.get(pk=group_id)
-            return group
-        except Group.DoesNotExist:
+            return Group.objects.get(pk=group_id)
+        except (Group.DoesNotExist, ValueError):
             return None
 
     @staticmethod
-    def filter_groups_by_user_id(user_id):
+    def filter_groups_by_user_id(user_id, is_active=True):
         """
         Args:
             user_id(int): Current session user`s id.
+            is_active(bool): 'True' if group exist
         Returns:
             List of Groups objects .
 
         """
-        users_groups = Group.objects.filter(members=user_id)
+        users_groups = Group.objects.filter(members=user_id, is_active=is_active)
         return users_groups
 
     @staticmethod
-    def filter_funds_by_group(group_object):
+    def filter_funds_by_group(group_object, is_active=True):
         """
         Args:
             group_object: users group object.
+            is_active(bool): 'True' if group exist
         Returns:
             List of fund objects for current group.
 
@@ -82,8 +87,9 @@ class Group(models.Model):
         group_funds = []
         shared_funds = SharedFunds.objects.filter(group=group_object)
         for fund in shared_funds:
-            for i in FundCategories.objects.filter(id=fund.fund_id):
-                group_funds.append({'id': i.id, 'name': i.name})
+            for i in FundCategories.objects.filter(id=fund.fund_id, is_active=is_active):
+                if not FinancialGoal.has_goals(fund_id=i):
+                    group_funds.append({'id': i.id, 'name': i.name})
         return group_funds
 
     @staticmethod
@@ -91,6 +97,7 @@ class Group(models.Model):
         """
         Args:
             group_object: users group object.
+            is_active(bool): 'True' if group exist
         Returns:
             List of spend objects for current group.
 
@@ -159,6 +166,7 @@ class UsersInGroups(models.Model):
             return user
         except UsersInGroups.DoesNotExist:
             return None
+
     @staticmethod
     def filter_by_user(user):
         """
@@ -244,6 +252,7 @@ class SharedSpendingCategories(models.Model):
         for item in SharedSpendingCategories.objects.filter(group=group):
             list_spendings.append(item.spending_categories)
         return list_spendings
+
     @staticmethod
     def get_by_spending_id(spending_id):
         """

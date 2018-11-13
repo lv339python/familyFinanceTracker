@@ -2,11 +2,12 @@
     <div class="container">
 
          <div class="Chart">
-          <h1 style="text-align:center;">Funds' income info:</h1>
+          <h1 style="text-align:center;">Your funds and their incomes:</h1>
           <line-example
                         v-bind:x_axis="get_x"
                         v-bind:amounts="amounts"
-                        v-bind:color="getColor"/>
+                        v-bind:color="getColor"
+                        v-bind:dates="dates_from_props"/>
         </div>
 
 
@@ -24,7 +25,7 @@
             return {
                 height: 100,
                 amounts:this.amount_to_props,
-                x:'fake',
+                x:null,
                 dates_from_props: this.date_to_props
             }
         },
@@ -47,6 +48,18 @@
                 for(var i=0; i<=this.date_to_props.length-1; i++){
                     x=x.concat(this.date_to_props[i][Object.keys(this.date_to_props[i])]);
                 }
+                x.forEach(function(item){
+                    var count = 0;
+                    for (i in x) {
+                        if (item === x[i]) {
+                            count = count + 1;
+                            if (count===2){
+                                x.splice(i,1)
+                            }
+                        }
+                    }
+                });
+                x = x.sort();
                 return x
             }
             },
