@@ -1,23 +1,28 @@
 <template>
-    <div id="fund_registration">
-        <div >
-            <hr>
-            <div class="form-group">
-                <input type="text" placeholder="Input name" v-model="name" class="form-control">
+    <div class="content">
+        <b-button class="btn btn-primary btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="New Fund">
+            $
+        </b-button>
+        <b-modal ref="myModalRef" hide-footer title="New Fund">
+            <div>
+                <hr>
+                <div class="form-group">
+                    <input type="text" placeholder="Input name" v-model="name" class="form-control">
+                </div>
             </div>
-        </div>
 
-        <div >
-            <hr>
-            <div class="form-group">
-                <label>Choose icon</label>
-                <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
+            <div>
+                <hr>
+                <div class="form-group">
+                    <label>Choose icon</label>
+                    <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
+                </div>
             </div>
-        </div>
-        <hr>
-        <div>
-            <button class="btn btn-outline-primary" v-on:click="setData" :variant="secondary">Save</button>
-        </div>
+            <hr>
+            <div>
+                <button class="btn btn-outline-primary" v-on:click="setData" :variant="secondary">Save</button>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -65,14 +70,21 @@
             },
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']
-            }
+            },
+            showModal() {
+                this.$refs.myModalRef.show();
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide();
+                this.clearAll();
+            },
         }
     }
 </script>
 
 <style scoped>
     .content {
-        height: 100vh;
+        height: fit-content;
         overflow: hidden;
         display: flex;
     }
@@ -80,5 +92,13 @@
     .text {
         width: fit-content;
         margin: auto;
+    }
+    .btn-circle.btn-xl {
+        width: 70px;
+        height: 70px;
+        padding: 10px 16px;
+        border-radius: 35px;
+        font-size: 24px;
+        line-height: 1.33;
     }
 </style>

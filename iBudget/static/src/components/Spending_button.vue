@@ -60,7 +60,7 @@
                 <b-btn v-b-toggle.collapse3 variant="primary">Choose Category</b-btn>
             </div>
 
-            <b-collapse id="collapse3" class="mt-2">
+            <b-collapse id="collapse3" class="mt-2"v-show="!visible">
 
                 <div class="content">
                     <div class="row">

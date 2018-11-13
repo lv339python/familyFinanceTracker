@@ -46,22 +46,31 @@
                 </div>
 
 
-                </b-carousel-slide>
-    </b-carousel>
-    <spending_button/>
-    <income_button/>
-    <b-button class="btn btn-warning btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Add Goal">
-        ✰
-    </b-button>
-    <b-modal ref="myModalRef" hide-footer title="Add Goal">
+            </b-carousel-slide>
+        </b-carousel>
+        <spending_button/>
+        <income_button/>
         <financial_goal/>
-    </b-modal>
-        <b-button class="btn btn-primary btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="New Fund">
-            $
-        </b-button>
-    <b-modal ref="myModalRef" hide-footer title="New Fund">
         <fund_registration/>
-    </b-modal>
+
+        <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Delete">
+            ✘
+        </b-button>
+        <b-modal ref="myModalRef" hide-footer title="Delete">
+            <b-btn v-b-toggle.deleteincome variant="primary">Delete Income</b-btn>
+            <b-collapse id="deleteincome" class="mt-2">
+                <delete_income/>
+            </b-collapse>
+            <b-btn v-b-toggle.deletefund variant="primary">Delete fund</b-btn>
+            <b-collapse id="deletefund" class="mt-2">
+                <delete_fund/>
+            </b-collapse>
+            <b-btn v-b-toggle.deletespending variant="primary">Delete Spending</b-btn>
+            <b-collapse id="deletespending" class="mt-2">
+                <delete_spending/>
+            </b-collapse>
+        </b-modal>
+
     </div>
 </template>
 
@@ -76,6 +85,9 @@
     import Income_button from 'src/components/Income_button';
     import Financial_goal from 'src/components/Financial_goal';
     import Fund_registration from 'src/components/Funds_registration';
+    import Delete_income from 'src/components/Delete_income';
+    import Delete_fund from 'src/components/Delete_fund';
+    import Delete_spending from 'src/components/Delete_spending';
 
     export default {
         name: "Home",
@@ -84,7 +96,10 @@
             'Spending_button': Spending_button,
             'Income_button': Income_button,
             'Financial_goal': Financial_goal,
-            'Fund_registration':Fund_registration,
+            'Fund_registration': Fund_registration,
+            'Delete_income': Delete_income,
+            'Delete_fund': Delete_fund,
+            'Delete_spending': Delete_spending,
         },
         data() {
             return {

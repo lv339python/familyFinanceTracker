@@ -1,62 +1,66 @@
 <template>
 
     <div class="content">
+        <b-button class="btn btn-warning btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Add Goal">
+            ✰
+        </b-button>
+        <b-modal ref="myModalRef" hide-footer title="Add Goal">
 
             <div class="form-group">
+                <div>
+
+                    <input type="text" placeholder="Input name" v-model="name" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <input v-model="value" placeholder="Input value" type="number" min="1" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <label>Choose icon</label>
+                    <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <label>Shared to</label>
+                    <select v-model="shared_group" class="form-control">
+                        <option
+                            v-for="group in user_groups_list"
+                            v-bind:value="group.id">
+                            {{ group.name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
             <div>
 
-                <input type="text" placeholder="Input name" v-model="name" class="form-control">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input placeholder="Start Date" v-model="start_date" type="date">
+                    <label>Finish Date</label>
+                    <input v-model="finish_date" placeholder="Finish Date" type="date">
+                </div>
             </div>
-    </div>
-    <div class="form-group">
-    <div>
-        <input v-model="value" placeholder="Input value" type="number" min="1" class="form-control">
-    </div>
-    </div>
 
-    <div class="form-group">
-        <div>
-            <label>Choose icon</label>
-            <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
-        </div>
-    </div>
+            <div>
+                <div class="form-group">
 
-    <div class="form-group">
-        <div>
-            <label>Shared to</label>
-            <select v-model="shared_group" class="form-control">
-                <option
-                    v-for="group in user_groups_list"
-                    v-bind:value="group.id">
-                    {{ group.name }}
-                </option>
-            </select>
-        </div>
-    </div>
+                </div>
+            </div>
 
-    <div>
-
-        <div class="form-group">
-            <label>Start Date</label>
-            <input placeholder="Start Date" v-model="start_date" type="date">
-             <label>Finish Date</label>
-            <input v-model="finish_date" placeholder="Finish Date" type="date">
-        </div>
-    </div>
-
-    <div>
-        <div class="form-group">
-
-        </div>
-    </div>
-
-    <div>
-        <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
-        <button :disabled="isValidData===false" type="button" class="btn btn-outline-primary" @click="setData"
-                :variant="secondary">Save
-        </button>
-    </div>
-
+            <div>
+                <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
+                <button :disabled="isValidData===false" type="button" class="btn btn-outline-primary" @click="setData"
+                        :variant="secondary">Save
+                </button>
+            </div>
+        </b-modal>
     </div>
 </template>
 
