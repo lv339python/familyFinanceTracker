@@ -10,23 +10,21 @@
                         v-model="slide"
                         @sliding-start="onSlideStart"
                         @sliding-end="onSlideEnd"v-if="values.length !== 0" >
-                <b-carousel-slide img-blank  v-for="(item, index) in values" v-if="values.length !== 0">
-        <div class="text">
-                <div>
-
-
-                    <div class="chartcontainer">
-                <chart_spending
-                    v-bind:value='item.value'
-                    v-bind:name='item.name'
-                    v-bind:title='dates[index]'
-                    v-if="item.value.length !== 0" />
-            </div>
-                    <!--<div v-for="entry in balance" v-if="balance.length !== 0"> {{entry.balance}}</div>-->
-                    {{balance}}-{{fund}}-{{initial}} - {{dates}}
-            </div>
-        </div>
-                   </b-carousel-slide>
+                <b-carousel-slide img-blank  v-for="(item, index) in values"  v-if="values.length !== 0">
+                    <div class="text">
+                        <div>
+                            <div class="chartcontainer">
+                                <chart_spending
+                                    v-bind:value='item.value'
+                                    v-bind:name='item.name'
+                                    v-bind:title='dates[index]'
+                                    v-if="item.value.length !== 0" />
+                            </div>
+                                <!--<div v-for="entry in balance" v-if="balance.length !== 0"> {{entry.balance}}</div>-->
+                            {{balanceData.balance[index]}}-{{balanceData.fund[index]}}-{{balanceData.initial[index]}} - {{balanceData.dates[index]}}
+                        </div>
+                    </div>
+               </b-carousel-slide>
             </b-carousel>
           <spending_button/>
         <income_button/>
@@ -47,19 +45,26 @@
 
     export default {
         name: "Home",
-        components: {'Chart_spending': Chart_spending,
-                    'Spending_button': Spending_button,
-                    'Income_button': Income_button},
+        components: {
+            'Chart_spending': Chart_spending,
+            'Spending_button': Spending_button,
+            'Income_button': Income_button
+        },
         data() {
             return {
                 finish_date: x.toJSON().slice(0,10),
                 start_date:  new Date(x.getFullYear(), x.getMonth(), 1, UTC+1).toJSON().slice(0,10),
-                balance: [],
+                balanceData:{
+                    balance: [],
+                    initial:[],
+                    fund: [],
+                    dates: []
+                },
                 values: [],
                 name: [],
                 title: '',
-                initial:[],
-                fund: [], dates: []
+
+
             }
         },
         created() {
@@ -84,10 +89,7 @@
                 url: '/api/v1/fund/get_balance/'
             })
             .then(response => {
-                this.balance = response.data.balance;
-                this.initial = response.data.initial;
-                this.fund = response.data.fund;
-                this.dates = response.data.dates;
+                this.balanceData = response.data;
             })
             .catch(e => {
                 this.errors.push(e)

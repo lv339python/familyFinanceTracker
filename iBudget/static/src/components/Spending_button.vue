@@ -15,7 +15,9 @@
                         <b-input-group>
                             <b-form-input  placeholder="0" v-model.number="current" type="number" min="1" ></b-form-input>
                             <b-select v-model="type_of_pay" class="form-control" variant="primary" slot="prepend"
-                                      v-show="groupId" v-if="is_shared===true">
+                                      v-show="groupId"
+                                      v-b-popover.hover="'Choose Shared fund'" title=" Shared Fund"
+                                      v-if="is_shared===true">
                             <option v-for="type_of_pay in shared_fund_list"
                                     v-if="type_of_pay.id_group===groupId"
                                     v-bind:value="type_of_pay.id_fund">
@@ -23,6 +25,7 @@
                             </option>
                         </b-select>
                              <b-select v-model="type_of_pay"  class="form-control" variant="primary" slot="prepend"
+                                       v-b-popover.hover="'Choose fund'" title="Fund"
                                        v-else>
                             <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id">
                                 {{ type_of_pay.name }}
