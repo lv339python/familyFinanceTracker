@@ -99,8 +99,6 @@ def delete_income(request, income_category_id):
         income = IncomeCategories.get_by_id(income_category_id)
         if not income:
             return HttpResponse(status=406)
-        if not income.owner == user:
-            return HttpResponse(status=400)
         income.is_active = False
         try:
             income.save()

@@ -121,7 +121,7 @@
             'new_user_role': Change_users_role_in_group
         },
         methods: {
-            selected_group: function(index, item){
+            selected_group: function (index, item) {
                 this.selected_group_index = index;
                 this.group_index = item;
                 this.selected_group_id = item;
@@ -173,7 +173,18 @@
                         .catch(e => {
                             this.errors.push(e)
                         })
-            },
+            }, deleteGroup: function (groupId) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/group/delete_group/' + groupId,
+                }).then(response => {
+                    this.reply = response.data;
+                    alert(this.reply);
+                    this.getData();
+                }).catch(error => {
+                    alert(error.response.data)
+                })
+            }
         },
         computed: {
             pageCount() {
