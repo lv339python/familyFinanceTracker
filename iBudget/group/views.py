@@ -22,6 +22,11 @@ from utils.validators import is_valid_data_create_new_group, \
     is_valid_data_shared_fund_to_group
 from .models import Group, UsersInGroups
 
+# CONSTANTS FOR ICONS
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+STANDARD_GROUPS_FOLDER = 'standard_group/'
+ICON_FILE_NAME = 'group.png'
+
 
 @require_http_methods(["GET"])
 def get_by_group(request):
@@ -33,14 +38,13 @@ def get_by_group(request):
     """
 
     user = request.user
-    icon_if_none = \
-        'https://s3.amazonaws.com/family-finance-tracker-static/standard_group/group.png'
+    icon_if_none = AWS_S3_URL + STANDARD_GROUPS_FOLDER + ICON_FILE_NAME
     if user:
         user_groups = []
         for entry in Group.filter_groups_by_user_id(user):
+            url = AwsService.get_image_url(entry.icon) if entry.icon else icon_if_none
             user_groups.append({'id': entry.id, 'name': entry.name,
-                                'url': AwsService.get_image_url(entry.icon) if entry.icon else
-                                       icon_if_none})
+                                'url': url})
         return JsonResponse(user_groups, status=200, safe=False)
     return JsonResponse({}, status=400)
 

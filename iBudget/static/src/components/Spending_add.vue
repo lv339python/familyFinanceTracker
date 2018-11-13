@@ -1,7 +1,7 @@
 <template>
     <div id="spending_add">
 
-        <div class="col-md-4">
+        <div >
             <hr>
             <div class="form-group">
                 <label for="name">Name of spending:</label>
@@ -9,18 +9,19 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div>
             <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
         </div>
 
-        <div v-show="isValidData" class="col-md-4">
+        <div>
             <hr>
-            <button class="btn btn-outline-dark" v-on:click="createSpending" :variant="secondary">Create spending
-            </button>
-            <button class="btn btn-outline-dark" v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}
+            <button
+                class="btn btn-outline-dark"
+                :disabled="isValidData === false"
+                v-on:click="createSpending"
+                :variant="secondary">Create spending
             </button>
         </div>
-
     </div>
 </template>
 
@@ -35,13 +36,8 @@
         components: {'icon_getter': Icon_getter},
         data() {
             return {
-                isDone: false,
                 newName: null,
                 selectedIcon: '',
-                newSpending: {
-                    'name': null,
-                    'icon': ''
-                },
                 msg: '',
                 tab: 'spending'
 
@@ -50,7 +46,7 @@
         computed: {
             isValidData: {
                 get: function () {
-                    var result = (this.newName != null);
+                    var result = (this.newName != null && this.newName.trim().length != 0);
                     return result;
                 }
             }
@@ -61,20 +57,18 @@
                     method: 'post',
                     url: '/api/v1/spending/add/',
                     data: {
-                        'name': this.newName,
+                        'name': this.newName.trim(),
                         'icon': this.selectedIcon
                     }
-                }).then(response => (this.msg = response.data));
-                this.isDone = true;
+                }).then(response => {
+                    this.msg = response.data;
+                    alert(this.msg);
+                    this.createDone();
+                });
             },
             createDone: function (event) {
-                this.isDone = false;
                 this.newName = null;
                 this.selectedIcon = '';
-                this.newSpending = {
-                    'name': null,
-                    'icon': ''
-                };
                 this.msg =''
             },
             onGet_name(data) {
