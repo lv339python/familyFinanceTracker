@@ -12,13 +12,13 @@ from group.models import Group, SharedFunds
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
 from spending_history.views import create_spending_chart
+from utils.aws_helper import AwsService
 from utils.get_role import is_user_admin_group
 from utils.transaction import save_new_fund, save_new_goal
 from utils.validators import \
     input_fund_registration_validate, \
     date_range_validate, \
     is_valid_data_create_new_fund
-from utils.aws_helper import AwsService
 from .models import FundCategories, FinancialGoal
 
 # CONSTANTS FOR ICONS
@@ -64,13 +64,58 @@ def show_fund_by_group(request):
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_fund in SharedFunds.objects.filter(group=group.id):
-                if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id):
+                if not FinancialGoal.has_goals(fund_id=shared_fund.fund.id) \
+                    and shared_fund.fund.is_active:
                     icon = FundCategories.objects.get(id=shared_fund.fund.id).icon
                     url = AwsService.get_image_url(icon) if icon else icon_if_none
                     users_group.append({'id_fund': shared_fund.fund.id,
                                         'name_fund': shared_fund.fund.name,
                                         'id_group': group.id,
                                         'url': url
+                                        })
+        return JsonResponse(users_group, status=200, safe=False)
+    return JsonResponse({}, status=400)
+
+
+@require_http_methods(["GET"])
+def show_goal(request):
+    """Handling request for creating of delete goals.
+
+        Args:
+            request (HttpRequest): request from server which ask some data.
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    if user:
+        user_funds = []
+        for entry in FundCategories.filter_by_user(user):
+            if FinancialGoal.has_goals(fund_id=entry.id):
+                user_funds.append({'id': entry.id, 'name': entry.name})
+        return JsonResponse(user_funds, status=200, safe=False)
+    return JsonResponse({}, status=400)
+
+
+@require_http_methods(["GET"])
+def show_goal_by_group(request):
+    """Handling request delete shared goal.
+        Args:
+            request (HttpRequest): Limitation data.
+        Returns:
+            HttpResponse object.
+    """
+
+    user = request.user
+    users_group = []
+    if user:
+        for group in Group.filter_groups_by_user_id(user):
+            for shared_fund in SharedFunds.objects.filter(group=group.id):
+                if FinancialGoal.has_goals(fund_id=shared_fund.fund.id) \
+                    and shared_fund.fund.is_active:
+                    users_group.append({'id_fund': shared_fund.fund.id,
+                                        'name_fund': shared_fund.fund.name,
+                                        'id_group': group.id,
+                                        'group_name': group.name
                                         })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
@@ -159,8 +204,7 @@ def users_shared_fund(request):
 def create_new_fund(request):
     """Handling request for creating of new fund category.
     Args:
-        request (HttpRequest): request from server which contain
-            shred_group, name, icon
+        request (HttpRequest): request from server which contain name and icon
     Returns:
         HttpResponse object.
     """
@@ -168,22 +212,17 @@ def create_new_fund(request):
     if not is_valid_data_create_new_fund(data):
         return HttpResponse(status=400)
     user = request.user
-    shared_group = data["shared_group"]
-    is_shared = False
-    if shared_group:
-        is_shared = True
-        group = Group.get_group_by_id(shared_group)
-        if not group:
-            return HttpResponse(status=400)
-        if not is_user_admin_group(group.id, user):
-            return HttpResponse(status=406)
-    if save_new_fund(name=data["name"],
-                     icon=data["icon"],
-                     is_shared=is_shared,
-                     owner=user,
-                     shared_group=shared_group):
-        return HttpResponse(status=201)
-    return HttpResponse(status=406)
+    new_fund = FundCategories(
+        name=data["name"],
+        icon=data["icon"],
+        is_shared=False,
+        owner=user
+    )
+    try:
+        new_fund.save()
+    except(ValueError, AttributeError):
+        return HttpResponse(status=406)
+    return HttpResponse(status=201)
 
 
 @require_http_methods(["POST"])
@@ -222,6 +261,7 @@ def create_new_goal(request):
         return HttpResponse(status=201)
     return HttpResponse(status=409)
 
+
 def create_initial_balance(user, begin_date, start_date, fund_id):
     """Creating fund balance.
             Args:
@@ -234,11 +274,12 @@ def create_initial_balance(user, begin_date, start_date, fund_id):
     """
     return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
         date__range=[begin_date - timedelta(days=1),
-                     start_date]).values_list('value', flat=True)) -\
+                     start_date]).values_list('value', flat=True)) - \
            sum(SpendingHistory.filter_by_user_date(
                user,
                begin_date,
                start_date).filter(fund=fund_id).values_list('value', flat=True))
+
 
 def create_balance(user, begin_date, start_date, finish_date, fund_id):
     """Creating fund balance.
@@ -260,6 +301,7 @@ def create_balance(user, begin_date, start_date, finish_date, fund_id):
                start_date,
                finish_date).filter(fund=fund_id).values_list('value', flat=True)) + \
            create_initial_balance(user, begin_date, start_date, fund_id)
+
 
 def history_begin_date(user, user_funds):
     """Search the earliest date in user's history.
@@ -300,7 +342,8 @@ def get_balance(request):
 
         for group in Group.filter_groups_by_user_id(user):
             for item in SharedFunds.objects.filter(group=group.id):
-                if not FinancialGoal.has_goals(fund_id=item.fund.id):
+                if not FinancialGoal.has_goals(fund_id=item.fund.id) \
+                    and item.fund.is_active:
                     user_funds.append(item.fund.id)
         begin_date = history_begin_date(user, user_funds)
         chart = [create_spending_chart(user, start_date, current_date)]
@@ -333,3 +376,28 @@ def get_balance(request):
                              'dates': dates,
                              'values': chart}, status=200, safe=False)
     return JsonResponse({}, status=400)
+
+
+@require_http_methods(["DELETE"])
+def delete_fund_goal_category(request, fund_id):
+    """Handling request for delete fund category.
+        Args:
+            request (HttpRequest): Data for delete fund.
+            fund_id: Fund category Id
+        Returns:
+            HttpResponse object.
+    """
+
+    user = request.user
+    if user:
+        fund = FundCategories.get_by_id(fund_id)
+        if not fund:
+            return HttpResponse(status=406)
+        if not fund.owner == user:
+            return HttpResponse(status=400)
+        fund.is_active = False
+        try:
+            fund.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
+    return HttpResponse(f"You've just deleted: {fund.name}", status=200)

@@ -3,7 +3,7 @@
         <b-button variant="primary" @click="showModal">
             Add shared SpendCategory
         </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Add shared SpendCategory">
+        <b-modal ref="myModalRef1" hide-footer title="Add shared SpendCategory">
         <b-card>
             <label>Select spending:</label>
             <select v-model="shared_spending" class="form-control">
@@ -30,10 +30,10 @@
         props: ["group_id", "getData"],
         methods: {
             showModal() {
-                this.$refs.myModalRef.show();
+                this.$refs.myModalRef1.show();
             },
             hideModal() {
-                this.$refs.myModalRef.hide();
+                this.$refs.myModalRef1.hide();
             },
             saveData: function (event) {
                  axios({

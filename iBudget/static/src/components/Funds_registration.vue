@@ -30,12 +30,11 @@
         data() {
             return {
                 name: null,
-                shared_group: null,
                 icon: null,
                 group: null,
                 user_groups_list: [],
                 tab: 'fund',
-                selectedIcon: ''
+                selectedIcon: '',
             }
         },
         props: ["tabName"],
@@ -49,7 +48,7 @@
                 })
                 .catch(e => {
                     this.errors.push(e)
-                })
+                });
         },
         methods: {
             setData: function (event) {
@@ -58,8 +57,7 @@
                     url: '/api/v1/fund/create_new_fund/',
                     data: {
                         'name': this.name,
-                        'icon': this.selectedIcon,
-                        'shared_group': this.shared_group
+                        'icon': this.selectedIcon
                     }
                 }).then(response => {
                     this.$router.go('/create_new_fund/')

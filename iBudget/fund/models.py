@@ -15,26 +15,28 @@ class FundCategories(models.Model):
             icon (str, optional): Name of the file with category's avatar.
             is_shared (bool):  "True" if this fund category is shared, "false" in other way.
             owner (FK): Owner of this fund category.
+            is_active(bool): "True" if this fund category exist, "false" in other way.
 
     """
     name = models.CharField(max_length=30)
     icon = models.CharField(max_length=30)
     is_shared = models.BooleanField(default=False)
     owner = models.ForeignKey(UserProfile, on_delete=True)
-
+    is_active = models.BooleanField(default=True)
 
     @staticmethod
-    def filter_by_user(user, is_shared=False):
+    def filter_by_user(user, is_shared=False, is_active=True):
         """
         Args:
             user (FK): user of fund,
             is_shared(bool): which category we need(shared or not shared).
+            is_active(bool): 'True' if fund category exist
         Returns:
             FundCategories object if database contain fund for user
             and is_shared value, None otherwise.
 
         """
-        return FundCategories.objects.filter(owner=user, is_shared=is_shared)
+        return FundCategories.objects.filter(owner=user, is_shared=is_shared, is_active=is_active)
 
     @staticmethod
     def get_by_id(fund_id):
@@ -70,6 +72,20 @@ class FinancialGoal(models.Model):
         related_name="goal"
     )
 
+    def update(self, value=None, start_date=None, finish_date=None, fund=None):
+        """
+        Method which changes an information.
+        """
+        if value:
+            self.value = value
+        if start_date:
+            self.start_date = start_date
+        if finish_date:
+            self.finish_date = finish_date
+        if fund:
+            self.fund = fund
+        self.save()
+
     @staticmethod
     def filter_by_data(value, start_date, finish_date, fund):
         """
@@ -100,3 +116,17 @@ class FinancialGoal(models.Model):
 
         """
         return FinancialGoal.objects.filter(fund=fund_id).exists()
+
+    @staticmethod
+    def get_by_id(goal_id):
+        """
+            Args:
+                goal_id(int): index of goal category.
+            Returns:
+                FinancialGoal object if database contain goal with id, None otherwise.
+
+        """
+        try:
+            return FinancialGoal.objects.get(pk=goal_id)
+        except (FundCategories.DoesNotExist, ValueError):
+            return None

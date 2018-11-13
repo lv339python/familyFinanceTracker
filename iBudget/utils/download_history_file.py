@@ -61,7 +61,6 @@ def income_date_parser(request):
         date_dict: dictionary with date and user info
     """
     date_dict = dict()
-    print(request)
     date_dict['user_id'] = request.user
     date_dict['start_date'] = parse_datetime(request.GET['start_date'])
     date_dict['finish_date'] = parse_datetime(request.GET['finish_date'])

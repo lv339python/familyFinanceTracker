@@ -39,8 +39,8 @@
                 newName: null,
                 selectedIcon: '',
                 msg: '',
-                tab: 'spending'
-
+                tab: 'spending',
+                is_active: null,
             }
         },
         computed: {
@@ -51,6 +51,7 @@
                 }
             }
         },
+
         methods: {
             createSpending: function (event) {
                 axios({

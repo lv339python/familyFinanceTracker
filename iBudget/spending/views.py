@@ -10,15 +10,16 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group, SharedSpendingCategories, UserProfile
+from utils.aws_helper import AwsService
 from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_new_spending, \
     is_valid_data_individual_limit_arb, date_parse
-from utils.aws_helper import AwsService
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 # CONSTANTS FOR ICONS
 AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
 STANDARD_SPENDINGS_FOLDER = 'standard/'
 ICON_FILE_NAME = 'miscellaneous.png'
+
 
 @require_http_methods(["GET"])
 def show_spending_ind(request):
@@ -57,15 +58,17 @@ def show_spending_group(request):
     if user:
         for group in Group.filter_groups_by_user_id(user):
             for shared_category in SharedSpendingCategories.objects.filter(group=group.id):
-                icon =\
-                    SpendingCategories.objects.get(id=shared_category.spending_categories.id).icon
-                url = AwsService.get_image_url(icon) if icon else icon_if_none
-                users_group.append({'id_cat': shared_category.spending_categories.id,
-                                    'name_cat': shared_category.spending_categories.name,
-                                    'id_group': group.id,
-                                    'name_group': group.name,
-                                    'url': url
-                                    })
+                if shared_category.spending_categories.is_active:
+                    icon = \
+                        SpendingCategories.objects.get(
+                            id=shared_category.spending_categories.id).icon  # pylint: disable=line-too-long
+                    url = AwsService.get_image_url(icon) if icon else icon_if_none
+                    users_group.append({'id_cat': shared_category.spending_categories.id,
+                                        'name_cat': shared_category.spending_categories.name,
+                                        'id_group': group.id,
+                                        'name_group': group.name,
+                                        'url': url
+                                        })
         return JsonResponse(users_group, status=200, safe=False)
     return JsonResponse({}, status=400)
 
@@ -160,7 +163,6 @@ def set_spending_limitation_ind_fix(request):
                                                                   value),
                 status=202)
 
-
     spending_limitation = SpendingLimitationIndividual.filter_by_data(
         user,
         spending,
@@ -228,6 +230,7 @@ def set_spending_limitation_ind_arb(request):
         return HttpResponse(status=406)
     return HttpResponse("The limit {} has been set...".format(value), status=201)
 
+
 @require_http_methods(["GET"])
 def check_dates_choice(request):
     """
@@ -241,6 +244,7 @@ def check_dates_choice(request):
     if already_chosen:
         return HttpResponse(True, status=200)
     return HttpResponse(False, status=200)
+
 
 @require_http_methods(["POST"])
 def set_dates_choice(request):
@@ -359,3 +363,27 @@ def create_spending_category(request):
         return HttpResponse(status=406)
     spending.save()
     return HttpResponse("You've just created category '{}'.".format(name), status=201)
+
+
+@require_http_methods(["DELETE"])
+def delete_spending_category(request, spending_id):
+    """Handling request for delete spending category.
+        Args:
+            request (HttpRequest): Data for delete category.
+            spending_id: Spending category Id
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    if user:
+        spending = SpendingCategories.get_by_id(spending_id)
+        if not spending:
+            return HttpResponse(status=406)
+        if not spending.owner == user:
+            return HttpResponse(status=400)
+        spending.is_active = False
+        try:
+            spending.save()
+        except(ValueError, AttributeError):
+            return HttpResponse(status=400)
+    return HttpResponse(f"You've just deleted category: {spending.name}", status=200)
