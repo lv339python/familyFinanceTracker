@@ -68,19 +68,19 @@
             </div>
             <div id="no_result" v-if="no_result">
                 <p>There are no incomes within the chosen time frame!</p>
-                 <p>
-                     <button v-on:click="reRender">refresh</button>
-                 </p>
+                <p>
+                    <button v-on:click="reRender">refresh</button>
+                </p>
             </div>
         </div>
         <div class="chartcontainer" v-if="shownResultChart">
-                    <!--v-if is necessary to render the chart correctly, because computed is called with default
-                    data first and the chart is not rendered; here it's called twice and only the valid result is
-                    rendered-->
-                    <Income_chart v-if="make_list_dates.length !== 0"
-                        v-bind:date_to_props="make_list_dates"
-                        v-bind:amount_to_props="make_list_amounts">
-                    </Income_chart>
+            <!--v-if is necessary to render the chart correctly, because computed is called with default
+            data first and the chart is not rendered; here it's called twice and only the valid result is
+            rendered-->
+            <Income_chart v-if="make_list_dates.length !== 0"
+                          v-bind:date_to_props="make_list_dates"
+                          v-bind:amount_to_props="make_list_amounts">
+            </Income_chart>
         </div>
     </div>
 </template>
@@ -100,7 +100,7 @@
                 list_with_incomes: '',
                 shownResult: false,
                 UTC: -new Date().getTimezoneOffset() / 60,
-                shownResultChart:false,
+                shownResultChart: false,
                 cur_income: null,
                 // this is the size of a paginated page
                 pagination_size: 3,
@@ -110,7 +110,7 @@
                 end_date_time: "T23:59:59",
                 date_to_props: [],
                 amount_to_props: [],
-                no_result:false,
+                no_result: false,
                 last_element: null
             }
         },
@@ -133,7 +133,7 @@
             },
             paginatedData() {
                 const start = this.paginated_page_number * this.pagination_size,
-                    end = (start + this.pagination_size <= this.list_with_incomes.length) ? start + this.pagination_size : this.list_with_incomes.length-2;
+                    end = (start + this.pagination_size <= this.list_with_incomes.length) ? start + this.pagination_size : this.list_with_incomes.length - 2;
                 // this.list_with_incomes.splice(this.list_with_incomes.length-1, 1);
                 //                 console.log("##", this.list_with_incomes);
 
@@ -187,11 +187,11 @@
                         data: {
                             'start': this.start_date + this.start_date_time,
                             'end': this.end_date + this.end_date_time,
-                            'time_diff':this.UTC
+                            'time_diff': this.UTC
                         }
                     }).then(response => {
                         this.list_with_incomes = response.data;
-                        this.last_element = this.list_with_incomes[this.list_with_incomes.length-1];
+                        this.last_element = this.list_with_incomes[this.list_with_incomes.length - 1];
                         //if we got empty JSON with empty list inside
                         if (this.list_with_incomes.length === 1) {
                             this.no_result = true;
@@ -223,9 +223,8 @@
             prevPage() {
                 this.paginated_page_number--;
             },
-            recover_list(){
+            recover_list() {
                 this.list_with_incomes = this.list_with_incomes.concat([this.last_element]);
-            }
             },
             deleteIncomeHistory: function (IncHistory) {
                 axios({
@@ -239,8 +238,9 @@
                     alert(error.response.data)
                 })
 
-            },
+            }
         }
+    }
 
 </script>
 
@@ -265,8 +265,8 @@
         width: 800px;
     }
 
-    #no_result{
-        margin-top:50px;
+    #no_result {
+        margin-top: 50px;
 
     }
 </style>

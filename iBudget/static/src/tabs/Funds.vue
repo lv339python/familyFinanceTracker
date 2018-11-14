@@ -3,6 +3,21 @@
         <div id="left" class="text column">
             <b-button :variant="secondary" to="/funds/tracking_goal" @click="isList=false">Tracking Goal</b-button>
         </div>
+        <div id="right" class="column">
+            <div v-if="isList&&totalList.length!==0">
+                <list_paginated
+                    v-bind:list='list'
+                    v-bind:title='title'
+                    v-bind:deleteItem="delItFundGoal"
+                    v-if="list.length !== 0"/>
+            </div>
+            <div v-if="isList&&totalListGoal.length!==0">
+                <list_paginated
+                    v-bind:list='listGoal'
+                    v-bind:title='titleGoal'
+                    v-bind:deleteItem="delItFundGoal"
+                    v-if="list.length !== 0"/>
+            </div>
             <router-view></router-view>
         </div>
     </div>
