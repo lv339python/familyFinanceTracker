@@ -56,6 +56,18 @@
                 for (var i = 0; i <= this.date_to_props.length - 1; i++) {
                     x = x.concat(this.date_to_props[i][Object.keys(this.date_to_props[i])]);
                 }
+                x.forEach(function(item){
+                    var count = 0;
+                    for (i in x) {
+                        if (item === x[i]) {
+                            count = count + 1;
+                            if (count===2){
+                                x.splice(i,1)
+                            }
+                        }
+                    }
+                });
+                x = x.sort();
                 return x
             }
         },
