@@ -1,25 +1,11 @@
 <template>
-    <div class="content">
-        <div id="left" class="text column">
-            <b-button :variant="secondary" to="/spendings/add" @click="isList=false">Add</b-button>
-            <b-button :variant="secondary" to="/spendings/limit_ind" @click="isList=false">Set Individual Limitation
-            </b-button>
-            <b-button :variant="secondary" to="/spendings/limit_group" @click="isList=false" v-if="group_spends">Set
-                Group Limitation
-            </b-button>
-            <b-button :variant="secondary" to="/spendings/history" @click="isList=false">History</b-button>
-        </div>
-        <div id="right" class="column">
-            <div v-if="isList&&totalList.length!==0">
+    <div v-if="isList&&totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
                     v-bind:title='title'
                     v-bind:deleteItem="delItSpending"
                     v-if="list.length !== 0"/>
             </div>
-            <router-view></router-view>
-        </div>
-    </div>
 </template>
 
 <script>
@@ -27,7 +13,7 @@
     import List_paginated from '../components/List_paginated';
 
     export default {
-        name: "Spendings",
+        name: 'Delete_spending',
         components: {'List_paginated': List_paginated},
         data() {
             return {
@@ -109,36 +95,5 @@
 </script>
 
 <style scoped>
-    .content {
-        height: 100%;
-        overflow: hidden;
-        margin: 0px;
-        display: flex;
-    }
 
-    .column {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #left {
-        flex-shrink: 0;
-        background-color: whitesmoke;
-        margin: 5px;
-        padding: 5px;
-        width: 16%;
-    }
-
-    #right {
-        background-color: #f3f3f3;
-        padding: 5px;
-        margin: 0;
-        width: 100%;
-    }
-
-    .text {
-        width: fit-content;
-        margin: auto;
-    }
 </style>

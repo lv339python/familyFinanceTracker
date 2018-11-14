@@ -95,8 +95,8 @@
         components: {"Income_chart": Income_chart},
         data() {
             return {
-                start_date: '',
-                end_date: '',
+                start_date: new Date().toJSON().slice(0, 10),
+                end_date: new Date().toJSON().slice(0, 10),
                 list_with_incomes: '',
                 shownResult: false,
                 UTC: -new Date().getTimezoneOffset() / 60,
@@ -133,9 +133,9 @@
             },
             paginatedData() {
                 const start = this.paginated_page_number * this.pagination_size,
-                    end = (start + this.pagination_size <= this.list_with_incomes.length) ? start + this.pagination_size : this.list_with_incomes.length;
-                this.list_with_incomes.splice(this.list_with_incomes.length-1, 1);
-                                console.log("##", this.list_with_incomes);
+                    end = (start + this.pagination_size <= this.list_with_incomes.length) ? start + this.pagination_size : this.list_with_incomes.length-2;
+                // this.list_with_incomes.splice(this.list_with_incomes.length-1, 1);
+                //                 console.log("##", this.list_with_incomes);
 
                 return this.list_with_incomes.slice(start, end);
             },
