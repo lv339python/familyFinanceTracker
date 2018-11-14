@@ -9,8 +9,27 @@
                     v-bind:list='list'
                     v-bind:title='title'
                     v-bind:deleteItem="deleteIncome"
+                   v-bind:showModal='showModal'
                     v-if="list.length !== 0"/>
             </div>
+            <b-modal ref="myModalRef" hide-footer title='Spending'>
+                <div class="d-block text-center">
+                    <b-card>
+                        <p class="card-text">
+                            <b>Name: {{modalData['name']}}</b>
+                            <br>
+                            <b v-if="modalData['icon']">Icon:
+                                 <img class='image' :src="modalData['icon']"> <br></b>
+                            <b>Total value for this category: {{modalData['total']}}</b>
+                            <br>
+                            <b v-if="modalData['last_value']"> Last income registered:
+                                {{modalData['last_value']}} on {{modalData['last_date']}}</b>
+                            <br>
+                        </p>
+                        <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
+                    </b-card>
+                </div>
+            </b-modal>
             <router-view></router-view>
         </div>
     </div>
@@ -29,10 +48,31 @@
                 list: [],
                 title: "Incomes",
                 errors: [],
-                id: 0
+                id: 0,
+                modalData: {}
             }
         },
         methods: {
+            showModal(data) {
+                this.$refs.myModalRef.show();
+                this.getModalData(data)
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide()
+            },
+            getModalData: function (data) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/income/summary/',
+                    data: {
+                        'income_id': data,
+                    }
+                }).then(response => {
+                    this.modalData = response.data;
+                }).catch(error => {
+                    alert(error.response.data)
+                })
+            },
             getData() {
             axios({
                 method: 'get',

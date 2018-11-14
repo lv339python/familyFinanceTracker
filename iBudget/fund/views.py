@@ -15,10 +15,12 @@ from spending_history.views import create_spending_chart
 from utils.aws_helper import AwsService
 from utils.get_role import is_user_admin_group
 from utils.transaction import save_new_goal
+from utils.universal_category_methods import total_value_for_category
 from utils.validators import \
     input_fund_registration_validate, \
     date_range_validate, \
-    is_valid_data_create_new_fund
+    is_valid_data_create_new_fund, \
+    total_category_validation
 from .models import FundCategories, FinancialGoal
 
 # CONSTANTS FOR ICONS
@@ -401,3 +403,29 @@ def delete_fund_goal_category(request, fund_id):
         except(ValueError, AttributeError):
             return HttpResponse(status=400)
     return HttpResponse(f"You've just deleted: {fund.name}", status=200)
+
+@require_http_methods(["POST"])
+def fund_summary(request):
+    """
+    Handling request for getting summary info about fund.
+        Args:
+            request (HttpRequest) which consists fund_id
+        Returns:
+            JsonResponse object with summary info
+    """
+    fund_id = json.loads(request.body)['fund_id']
+    fund = FundCategories.get_by_id(fund_id)
+    fund_info = {'icon': fund.icon, 'name': fund.name}
+
+    if fund.is_shared:
+        fund_info['spend_group'] = SharedFunds.get_by_fund\
+            (fund_id).group.name
+
+    inc_history = total_value_for_category\
+        (SpendingHistory.objects.filter(fund=fund_id), True)
+    spend_history = total_value_for_category\
+        (IncomeHistory.objects.filter(fund=fund_id), True)
+    fund_info['total'] = inc_history['total'] - spend_history['total']
+    last_value_info = total_category_validation(inc_history, spend_history)
+    fund_info = {**last_value_info, **fund_info}
+    return JsonResponse(fund_info)

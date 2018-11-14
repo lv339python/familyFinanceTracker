@@ -6,7 +6,7 @@
                 <li
                     class="list-group-item list-group-item-action pointer"
                     v-for="(item, index) in paginatedData"
-                    v-on:click="selected_item(index, item.id)"
+                    v-on:click="selected_item(index, item.id); showModal(item.id)"
                     :class="{'active': selected_item_index===index}">
                     <div>{{ item.name }}</div>
                     <div>
@@ -52,7 +52,7 @@
 
             }
         },
-        props: ["title", "list", "deleteItem"],
+        props: ["title", "list", "deleteItem", "showModal"],
         methods: {
             selected_item: function (index, item) {
                 this.selected_item_index = index;

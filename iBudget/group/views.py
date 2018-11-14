@@ -143,10 +143,10 @@ def groups_balance(request):
                                           'Total spending': 0,
                                           'Group icon': AwsService.get_image_url(user_group.icon),
                                           'Group_id': user_group.id}
-        income_values = filter_income_history_by_fund(user_group)
+        income_values = filter_income_history_by_user_group(user_group)
         for i in income_values:
             group_balance[user_group.name]['Total income'] += i['value']
-        spend_values = filter_spending_history_by_spend_category(user_group)
+        spend_values = filter_spending_history_by_user_group(user_group)
         for i in spend_values:
             group_balance[user_group.name]['Total spending'] += i['value']
         group_balance[user_group.name]["Current balance"] = \
@@ -155,7 +155,7 @@ def groups_balance(request):
     return JsonResponse(group_balance)
 
 
-def filter_income_history_by_fund(user_group):
+def filter_income_history_by_user_group(user_group):
     """
     Retrieving income history information by users group for shared funds
     Args:
@@ -171,7 +171,7 @@ def filter_income_history_by_fund(user_group):
     return income_values
 
 
-def filter_spending_history_by_spend_category(user_group):
+def filter_spending_history_by_user_group(user_group):
     """
     Retrieving spending history information by users group for shared spendings
     Args:

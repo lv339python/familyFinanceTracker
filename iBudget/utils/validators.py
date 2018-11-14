@@ -449,3 +449,21 @@ def is_valid_data_shared_spending_to_group(data):
     except(ValueError, AttributeError):
         return False
     return True
+
+def total_category_validation(inc_history, spend_history):
+    """
+        Validation total history dictionaries
+        Args:
+            inc_history (dict): dictionary with total, last_value,
+            last_date keys
+        Returns:
+            last_value_info(dict): dict with rewritten keys
+    """
+    last_value_info = dict()
+    if 'last_value' in inc_history:
+        last_value_info['last_inc_value'] = inc_history['last_value']
+        last_value_info['last_inc_date'] = inc_history['last_date']
+    if 'last_value' in spend_history:
+        last_value_info['last_spend_value'] = spend_history['last_value']
+        last_value_info['last_spend_date'] = spend_history['last_date']
+    return last_value_info

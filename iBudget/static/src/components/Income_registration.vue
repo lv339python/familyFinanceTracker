@@ -25,7 +25,7 @@
             </select>
         </div>
         <div class="form-group" v-if="is_active_group !== null && is_shared===true">
-            <label>Chose category</label>
+            <label>Chose fund</label>
             <select v-model="fund_category" class="form-control">
                 <option v-for="fund in shared_list"
                         v-if="fund.id_group === is_active_group"

@@ -10,9 +10,11 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group, SharedSpendingCategories, UserProfile
-from utils.aws_helper import AwsService
 from utils.validators import is_valid_data_individual_limit_fix, is_valid_data_new_spending, \
     is_valid_data_individual_limit_arb, date_parse
+from utils.aws_helper import AwsService
+from utils.universal_category_methods import total_value_for_category
+from spending_history.models import SpendingHistory
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 # CONSTANTS FOR ICONS
@@ -387,3 +389,24 @@ def delete_spending_category(request, spending_id):
         except(ValueError, AttributeError):
             return HttpResponse(status=400)
     return HttpResponse(f"You've just deleted category: {spending.name}", status=200)
+
+
+@require_http_methods(["POST"])
+def spending_summary(request):
+    """
+    Handling request for getting summary info about spending category.
+        Args:
+            request (HttpRequest) which consists spending_id
+        Returns:
+            JsonResponse object with summary info
+    """
+    spend_id = json.loads(request.body)['spend_id']
+    spend = SpendingCategories.get_by_id(spend_id)
+    spend_info = {'icon': AwsService.get_image_url(spend.icon), 'name': spend.name}
+
+    if spend.is_shared:
+        spend_info['spend_group'] = SharedSpendingCategories.get_by_spending_id\
+            (spend_id).group.name
+    history = SpendingHistory.objects.filter(spending_categories_id=spend_id)
+    spend_info = {**total_value_for_category(history, True), **spend_info}
+    return JsonResponse(spend_info)

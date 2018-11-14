@@ -57,6 +57,7 @@ class UserProfile(AbstractBaseUser):
             'last_name': self.last_name,
             'email': self.email,
             'is_sys_admin': self.is_sys_admin,
+            'icon': self.icon,
         }
 
     def update(self, password=None, one_time_token=None, first_name=None,# pylint: disable=too-many-arguments
@@ -128,5 +129,21 @@ class UserProfile(AbstractBaseUser):
         try:
             user = UserProfile.objects.get(pk=user_id)
             return user
+        except UserProfile.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_by_user(user):
+        """
+        Args:
+            user: The first parameter.
+        Returns:
+            UserProfile object if database contain user with id, None otherwise.
+
+        """
+
+        try:
+            return UserProfile.objects.get(user=user)
+
         except UserProfile.DoesNotExist:
             return None
