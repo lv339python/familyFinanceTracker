@@ -24,7 +24,7 @@
                         <b-btn class="mt-3" variant="outline-danger" @click="showDeleteModal">Deactivate profile</b-btn>
                     </div>
                     <div v-if="showMoreInfo">
-                        <p class="card-text">
+                        <p class="card-text"></p>
                             <br/>
                             <b>Bio:</b>{{custom.bio}}
                             <br/>

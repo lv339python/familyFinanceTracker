@@ -33,7 +33,7 @@
             return {
                 height: 100,
                 amounts: this.amount_to_props,
-                x: 'fake',
+                x: null,
                 dates_from_props: this.date_to_props
             }
         },
@@ -74,16 +74,13 @@
         color: #464646;
         text-transform: uppercase;
         border-bottom: 1px solid #f1f1f1;
-        padding-bottom: 15px;
         font-size: 28px;
         margin-top: 0;
     }
 
     .Chart {
-        padding: 20px;
         box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, .4);
         border-radius: 20px;
-        margin: 50px 0;
     }
 
 </style>
