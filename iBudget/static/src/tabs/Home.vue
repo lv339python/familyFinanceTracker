@@ -57,15 +57,19 @@
             ✘
         </b-button>
         <b-modal ref="myModalRef" hide-footer title="Delete">
-            <b-btn v-b-toggle.deleteincome variant="primary">Delete Income</b-btn>
+            <b-btn v-b-toggle.deleteincome variant="primary">Income</b-btn>
             <b-collapse id="deleteincome" class="mt-2">
                 <delete_income/>
             </b-collapse>
-            <b-btn v-b-toggle.deletefund variant="primary">Delete fund</b-btn>
+            <b-btn v-b-toggle.deletefund variant="primary">Fund</b-btn>
             <b-collapse id="deletefund" class="mt-2">
                 <delete_fund/>
             </b-collapse>
-            <b-btn v-b-toggle.deletespending variant="primary">Delete Spending</b-btn>
+            <b-btn v-b-toggle.deletegoal variant="primary">Goal</b-btn>
+            <b-collapse id="deletegoal" class="mt-2">
+                <delete_goal/>
+            </b-collapse>
+            <b-btn v-b-toggle.deletespending variant="primary">Spending</b-btn>
             <b-collapse id="deletespending" class="mt-2">
                 <delete_spending/>
             </b-collapse>
@@ -87,6 +91,7 @@
     import Fund_registration from 'src/components/Funds_registration';
     import Delete_income from 'src/components/Delete_income';
     import Delete_fund from 'src/components/Delete_fund';
+    import Delete_goal from 'src/components/Delete_goal';
     import Delete_spending from 'src/components/Delete_spending';
 
     export default {
@@ -99,6 +104,7 @@
             'Fund_registration': Fund_registration,
             'Delete_income': Delete_income,
             'Delete_fund': Delete_fund,
+            'Delete_goal': Delete_goal,
             'Delete_spending': Delete_spending,
         },
         data() {
@@ -142,34 +148,6 @@
                     this.errors.push(e)
                 })
         }
-        // created() {
-        //     axios({
-        //         method: 'post',
-        //         url: '/api/v1/spending_history/chart_spending/',
-        //         data: {
-        //             'start_date': this.start_date,
-        //             'finish_date': this.finish_date,
-        //             'UTC': UTC
-        //         }
-        //     })
-        //     .then(response => {
-        //         this.values = response.data.values;
-        //         this.dates = response.data.dates;
-        //     })
-        //     .catch(e => {
-        //         this.errors.push(e)
-        //     }),
-        //     axios({
-        //         method: 'get',
-        //         url: '/api/v1/fund/get_balance/'
-        //     })
-        //     .then(response => {
-        //         this.balanceData = response.data;
-        //     })
-        //     .catch(e => {
-        //         this.errors.push(e)
-        //     })
-        // }
     }
 </script>
 

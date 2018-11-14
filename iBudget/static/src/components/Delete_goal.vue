@@ -1,11 +1,11 @@
 <template>
-    <div v-if="isList&&totalList.length!==0">
+        <div v-if="isList&&totalListGoal.length!==0">
             <list_paginated
-                v-bind:list='list'
-                v-bind:title='title'
+                v-bind:list='listGoal'
+                v-bind:title='titleGoal'
                 v-bind:deleteItem="delItFundGoal"
-                v-if="list.length !== 0"/>
-    </div>
+                v-if="listGoal.length !== 0"/>
+        </div>
 </template>
 
 <script>
@@ -13,52 +13,52 @@
     import List_paginated from '../components/List_paginated';
 
     export default {
-        name: 'Delete_fund',
+        name: 'Delete_goal',
         components: {'List_paginated': List_paginated},
         data() {
             return {
                 isList: true,
-                list_shared: [],
-                list: [],
-                title: "Funds",
+                list_sharedGoal: [],
+                listGoal: [],
+                titleGoal: "Financial Goal",
                 errors: [],
                 fund_id: null,
                 id: 0
             }
         },
         computed: {
-            totalList: function () {
+            totalListGoal: function () {
                 {
-                    let result = this.list;
-                    for (var i = 0; i < this.list_shared.length; i++) {
+                    let result = this.listGoal;
+                    for (var i = 0; i < this.list_sharedGoal.length; i++) {
                         result.push({
-                            'id': this.list_shared[i].id_fund,
-                            'name': this.list_shared[i].name_fund + ' / ' + this.list_shared[i].group_name
+                            'id': this.list_sharedGoal[i].id_fund,
+                            'name': this.list_sharedGoal[i].name_fund + ' / ' + this.list_sharedGoal[i].group_name
                         });
                     }
+                    ;
                     return result
                 }
             }
         },
-
         methods: {
             getData() {
                 axios({
                     method: 'get',
-                    url: '/api/v1/fund/'
+                    url: '/api/v1/fund/show_goal/'
                 })
                     .then(response => {
-                        this.list = response.data;
+                        this.listGoal = response.data;
                     })
                     .catch(e => {
                         this.errors.push(e)
                     });
                 axios({
                     method: 'get',
-                    url: '/api/v1/income/show_income_group/'
+                    url: '/api/v1/fund/show_goal_by_group/'
                 })
                     .then(response => {
-                        this.list_shared = response.data;
+                        this.list_sharedGoal = response.data;
                     })
                     .catch(e => {
                         this.errors.push(e)
