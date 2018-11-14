@@ -31,6 +31,7 @@
                             <b>Hobby:</b>{{custom.hobby}}
                             <br/>
                             <b>Birthday:</b>{{custom.birthday}}
+                        </p>
                     </div>
 
                     <div v-if="showAddInfo">
