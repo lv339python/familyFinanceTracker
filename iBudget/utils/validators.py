@@ -451,7 +451,8 @@ def is_valid_data_shared_spending_to_group(data):
     return True
 
 def total_category_validation(inc_history, spend_history):
-    """Parse dates.
+    """
+        Validation total history dictionaries
         Args:
             inc_history (dict): dictionary with total, last_value,
             last_date keys

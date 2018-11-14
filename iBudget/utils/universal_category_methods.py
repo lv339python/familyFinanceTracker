@@ -3,20 +3,20 @@ This module consists methods common for different categories
 (spendings, funds, incomes)
 """
 from datetime import datetime
-"""
-Counting total value and get last or first 
-registered history entry as optional arguments 
-for this category
-    Args:
-        history: Django ORM object with history for specific category 
-        last_entry: ability to get last registered entry
-        first_entry: ability to get first registered entry
-    Returns:
-        Dictionary with history info
-"""
 
 
 def total_value_for_category(history, last_entry=False, first_entry=False):
+    """
+    Counting total value and get last or first
+    registered history entry as optional arguments
+    for this category
+        Args:
+            history: Django ORM object with history for specific category
+            last_entry: ability to get last registered entry
+            first_entry: ability to get first registered entry
+        Returns:
+            Dictionary with history info
+    """
     category_info = dict(total=0)
     for i in history:
         category_info['total'] += i.value

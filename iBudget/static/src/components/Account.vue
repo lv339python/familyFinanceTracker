@@ -1,6 +1,6 @@
 <template>
     <div id="acc" class="mr-1">
-        <b-button class='btn-yellow'  @click="showModal">
+        <b-button class='primary'  @click="showModal">
             <img id="profile-thumbnail" rounded="circle"
                  blank width="16" height="16" alt="img" class="m-1"
                  src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>
@@ -87,51 +87,5 @@
 
     #profile-thumbnail {
         margin-right: 5px;
-    }
-
-    .btn-yellow {
-        color: #000000;
-        background-color: #FFFFFF;
-        border-color: #FFD105;
-    }
-
-    .btn-yellow:hover,
-    .btn-yellow:focus,
-    .btn-yellow:active,
-    .btn-yellow.active,
-    .open .dropdown-toggle.btn-yellow {
-        color:#FFFFFF;
-        background-color: #FFD105;
-        border-color: #FFD105;
-    }
-
-    .btn-yellow:active,
-    .btn-yellow.active,
-    .open .dropdown-toggle.btn-yellow {
-        background-image: none;
-    }
-
-    .btn-yellow.disabled,
-    .btn-yellow[disabled],
-    fieldset[disabled] .btn-yellow,
-    .btn-yellow.disabled:hover,
-    .btn-yellow[disabled]:hover,
-    fieldset[disabled] .btn-yellow:hover,
-    .btn-yellow.disabled:focus,
-    .btn-yellow[disabled]:focus,
-    fieldset[disabled] .btn-yellow:focus,
-    .btn-yellow.disabled:active,
-    .btn-yellow[disabled]:active,
-    fieldset[disabled] .btn-yellow:active,
-    .btn-yellow.disabled.active,
-    .btn-yellow[disabled].active,
-    fieldset[disabled] .btn-yellow.active {
-        background-color: #FFFFFF;
-        border-color: #FFD105;
-    }
-
-    .btn-yellow .badge {
-        color: #FFFFFF;
-        background-color: #000000;
     }
 </style>

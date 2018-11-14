@@ -425,5 +425,4 @@ def fund_summary(request):
     fund_info['total'] = inc_history['total'] - spend_history['total']
     last_value_info = total_category_validation(inc_history, spend_history)
     fund_info = {**last_value_info, **fund_info}
-    print(fund_info)
     return JsonResponse(fund_info)

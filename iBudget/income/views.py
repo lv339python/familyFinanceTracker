@@ -125,4 +125,3 @@ def income_summary(request):
     history = IncomeHistory.objects.filter(income=income_id)
     income_info = {**total_value_for_category(history, True), **income_info}
     return JsonResponse(income_info)
-
