@@ -78,12 +78,12 @@
         <div class="download_buttons form-group col-md-6">
             <hr>
             <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
-                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                <button class="btn btn-outline-warning" :disabled="listValues.length===0||(finish_date<start_date)"
                         :variant="secondary">Download xlsx
                 </button>
             </a>
             <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
-                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                <button class="btn btn-outline-warning" :disabled="spending_all.length===0||(finish_date<start_date)"
                         :variant="secondary">Download csv
                 </button>
             </a>
@@ -143,6 +143,7 @@
                 this.selected = [];
                 this.spending_history_individual = {};
                 this.spending_history_admin = {};
+                this.spending_all = [];
             },
             createHistory: function (event) {
                 this.isCategory = false;
@@ -150,6 +151,7 @@
                 this.selected = [];
                 this.spending_history_individual = {};
                 this.spending_history_admin = {};
+                // this.spending_all = [];
                 axios({
                     method: 'post',
                     url: '/api/v1/spending_history/create/',
@@ -164,6 +166,7 @@
                     this.spending_history_individual = response.data.individual;
                     this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
                     this.isCategory = true;
+
                 })
                 .catch(e => {
                     this.errors.push(e)
