@@ -8,6 +8,7 @@ from django.http import HttpResponse
 
 ANONYMOUS_USERS_PATHS = ['/api/v1/authentication/login/',
                          '/api/v1/authentication/forgot_password/',
+                         '/api/v1/authentication/update_password/',
                          '/api/v1/authentication/auth/',
                          '/api/v1/authentication/sign_in/',
                          '/api/v1/authentication/registration/']

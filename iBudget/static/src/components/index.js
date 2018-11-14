@@ -14,8 +14,9 @@ import Income_registration from './Income_registration';
 import Income_tracker from './Income_tracker';
 import Groups_registration from './Groups_registration';
 import Income_add from './Income_add';
+import Upload_photo from './Upload_photo';
 
-export {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add,
+export {Login, Spending_registration, Spend, Limit, Icon_getter, Spending_add, Upload_photo,
     Financial_goal, Funds_registration, Spending_history, PasswordRecovery, Income_registration, Income_tracker, Groups_registration, Goal, Income_add};
 
 import {Pie, generateChart} from './BaseCharts'
