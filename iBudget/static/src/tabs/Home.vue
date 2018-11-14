@@ -41,6 +41,7 @@
                                     </tr>
                                     </tbody>
                                 </table>
+                            </div>
                         </b-collapse>
                     </div>
                 </div>

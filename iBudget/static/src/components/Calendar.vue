@@ -138,7 +138,8 @@
         position: relative;
         /*bottom: 0;*/
         top: 0;
-        margin-left: auto;
+        margin: auto;
+        /*padding: 0 1% 1% 0.5%;*/
 
     }
 

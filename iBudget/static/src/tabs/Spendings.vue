@@ -15,8 +15,30 @@
                     v-bind:list='list'
                     v-bind:title='title'
                     v-bind:deleteItem="delItSpending"
+                    v-bind:showModal='showModal'
                     v-if="list.length !== 0"/>
             </div>
+            <b-modal ref="myModalRef" hide-footer title='Spending'>
+                <div class="d-block text-center">
+                    <b-card>
+                        <p class="card-text">
+                            <b>Name: {{modalData['name']}}</b>
+                            <br>
+                            <b v-if="modalData['icon']">Icon:
+                                 <img class='image' :src="modalData['icon']"> <br></b>
+                            <b>Total spend for this category: {{modalData['total']}}</b>
+                            <br>
+                            <b v-if="modalData['last_value']"> Last spend registered:
+                                {{modalData['last_value']}} on {{modalData['last_date']}}<br></b>
+                            <b v-if="modalData['spend_group']">Spending is shared from
+                                {{modalData['spend_group']}} group <br></b>
+                            <br>
+                        </p>
+                        <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
+                    </b-card>
+                </div>
+
+            </b-modal>
             <router-view></router-view>
         </div>
     </div>
@@ -37,25 +59,31 @@
                 list: [],
                 title: "Spendings",
                 errors: [],
-                group_spends: false
-            }
-        },
-        computed: {
-            totalList: function () {
-                {
-                    let result = this.list;
-                    for (var i = 0; i < this.list_shared.length; i++) {
-                        result.push({
-                            'id': this.list_shared[i].id_cat,
-                            'name': this.list_shared[i].name_cat + ' / ' + this.list_shared[i].name_group
-                        });
-                    }
-                    ;
-                    return result
-                }
+                group_spends: false,
+                modalData: {}
             }
         },
         methods: {
+            showModal(data) {
+                this.$refs.myModalRef.show();
+                this.getModalData(data)
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide()
+            },
+            getModalData: function (data) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/spending/summary/',
+                    data: {
+                        'spend_id': data,
+                    }
+                }).then(response => {
+                    this.modalData = response.data;
+                }).catch(error => {
+                    alert(error.response.data)
+                })
+            },
             getData() {
                 axios({
                     method: 'get',
@@ -102,6 +130,21 @@
                 }
             }
         },
+        computed: {
+            totalList: function () {
+                {
+                    let result = this.list;
+                    for (var i = 0; i < this.list_shared.length; i++) {
+                        result.push({
+                            'id': this.list_shared[i].id_cat,
+                            'name': this.list_shared[i].name_cat + ' / ' + this.list_shared[i].name_group
+                        });
+                    }
+                    ;
+                    return result
+                }
+            }
+        },
         created() {
             this.getData();
         }
@@ -109,6 +152,11 @@
 </script>
 
 <style scoped>
+
+    .card-text {
+        text-align: left;
+        margin-left: 150px;
+    }
     .content {
         height: 100%;
         overflow: hidden;

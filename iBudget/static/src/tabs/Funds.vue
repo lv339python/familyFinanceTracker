@@ -9,6 +9,7 @@
                     v-bind:list='list'
                     v-bind:title='title'
                     v-bind:deleteItem="delItFundGoal"
+                    v-bind:showModal='showModal'
                     v-if="list.length !== 0"/>
             </div>
             <div v-if="isList&&totalListGoal.length!==0">
@@ -18,8 +19,30 @@
                     v-bind:deleteItem="delItFundGoal"
                     v-if="list.length !== 0"/>
             </div>
-            <router-view></router-view>
-        </div>
+             <b-modal ref="myModalRef" hide-footer title="Fund">
+                 <div class="d-block text-center">
+                     <b-card>
+                         <p class="card-text">
+                             <b>Name: {{modalData['name']}}</b>
+                             <br>
+                             <b v-if="modalData['icon']">Icon:
+                                 <img class='image' :src="modalData['icon']"> <br></b>
+                             <b v-if="modalData['spend_group']">Shared is shared from
+                                 {{modalData['spend_group']}} group <br></b>
+                             <b>Current balance for fund: {{modalData['total']}}</b>
+                             <br>
+                             <b v-if="modalData['last_inc_value']"> Last income for fund:
+                                 {{modalData['last_inc_value']}} on {{modalData['last_inc_date']}} <br></b>
+                             <b v-if="modalData['last_spend_value']"> Last spend for fund:
+                                 {{modalData['last_spend_value']}} on {{modalData['last_spend_date']}}</b>
+                            <br>
+                         </p>
+                         <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
+                     </b-card>
+                 </div>
+             </b-modal>
+             <router-view></router-view>
+         </div>
     </div>
 </template>
 
@@ -41,7 +64,8 @@
                 titleGoal: "Financial Goal",
                 errors: [],
                 fund_id: null,
-                id: 0
+                id: 0,
+                modalData: {}
             }
         },
         computed: {
@@ -72,6 +96,26 @@
             }
         },
         methods: {
+            showModal(data) {
+                this.$refs.myModalRef.show();
+                this.getModalData(data)
+            },
+            hideModal() {
+                this.$refs.myModalRef.hide()
+            },
+            getModalData: function (data) {
+                axios({
+                    method: 'post',
+                    url: '/api/v1/fund/summary/',
+                    data: {
+                        'fund_id': data,
+                    }
+                }).then(response => {
+                    this.modalData = response.data;
+                }).catch(error => {
+                    alert(error.response.data)
+                })
+            },
             getData() {
                 axios({
                     method: 'get',
@@ -125,6 +169,19 @@
                 }).catch(error => {
                     alert(error.response.data)
                 })
+            },
+            totalListGoal: function () {
+                {
+                    let result = this.listGoal;
+                    for (var i = 0; i < this.list_sharedGoal.length; i++) {
+                        result.push({
+                            'id': this.list_sharedGoal[i].id_fund,
+                            'name': this.list_sharedGoal[i].name_fund + ' / ' + this.list_sharedGoal[i].group_name
+                        });
+                    }
+                    ;
+                    return result
+                }
             }
         },
         created() {
