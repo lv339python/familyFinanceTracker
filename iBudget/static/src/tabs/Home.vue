@@ -173,10 +173,6 @@
         text-align: center;
     }
 
-    p {
-        width: 400px;
-    }
-
     .btn-circle.btn-xl {
         width: 70px;
         height: 70px;
