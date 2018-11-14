@@ -1,6 +1,6 @@
 <template>
     <div id="acc">
-        <b-button variant="primary" @click="showModal">
+        <b-button variant="info" @click="showModal">
             <img id="profile-thumbnail" rounded="circle"
                  blank width="16" height="16" alt="img" class="m-1"
                  src="http://cdn.onlinewebfonts.com/svg/img_191958.png"/>

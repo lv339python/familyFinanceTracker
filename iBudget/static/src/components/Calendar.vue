@@ -1,6 +1,6 @@
 <template>
     <div id="calendar">
-        <b-btn id="popoverButton-sync" variant="primary">Show Calendar</b-btn>
+        <b-btn id="popoverButton-sync" variant="info">Show Calendar</b-btn>
         <b-popover id="popover" :show.sync="show" target="popoverButton-sync" placement="bottom">
             <v-calendar :attributes='attrs'></v-calendar>
         </b-popover>
