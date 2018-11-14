@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <div class="col-md-4">
+        <div class="col-md-8">
             <h5 class='title'> {{title}} </h5>
             <ul class="list-group">
                 <li

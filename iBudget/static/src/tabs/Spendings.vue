@@ -8,7 +8,6 @@
                 Group Limitation
             </b-button>
             <b-button :variant="secondary" to="/spendings/history" @click="isList=false">History</b-button>
-            <b-button :variant="secondary" to="/spendings/new" @click="isList=false">New</b-button>
         </div>
         <div id="right" class="column">
             <div v-if="isList&&totalList.length!==0">

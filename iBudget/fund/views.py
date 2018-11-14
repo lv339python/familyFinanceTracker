@@ -5,13 +5,13 @@ This module provides functions for handling fund view.
 import json
 from decimal import Decimal
 from datetime import date, timedelta
-
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group, SharedFunds
 from income_history.models import IncomeHistory
 from spending_history.models import SpendingHistory
+from spending_history.views import create_spending_chart
 from utils.aws_helper import AwsService
 from utils.get_role import is_user_admin_group
 from utils.transaction import save_new_goal
@@ -325,7 +325,7 @@ def history_begin_date(user, user_funds):
 
 
 @require_http_methods(["GET"])
-def get_balance(request):
+def get_balance(request):#pylint: disable= R0914
     """Handling request for creating spending history data.
 
         Args:
@@ -348,6 +348,7 @@ def get_balance(request):
                     and item.fund.is_active:
                     user_funds.append(item.fund.id)
         begin_date = history_begin_date(user, user_funds)
+        chart = [create_spending_chart(user, start_date, current_date)]
         name = []
         initial = []
         balance = []
@@ -356,12 +357,13 @@ def get_balance(request):
             finish_date = start_date - timedelta(days=1)
             start_date = date(finish_date.year, finish_date.month, 1)
             dates.append(str(finish_date.month) + '/' + str(finish_date.year))
+            chart.append(create_spending_chart(user, start_date, finish_date))
 
         for item in user_funds:
-            fund_initial = [create_initial_balance(user, begin_date, start_date, item)]
-            fund_balance = [create_balance(user, begin_date, start_date, current_date, item)]
             current_date = date.today()
             start_date = date(current_date.year, current_date.month, 1)
+            fund_initial = [create_initial_balance(user, begin_date, start_date, item)]
+            fund_balance = [create_balance(user, begin_date, start_date, current_date, item)]
             while start_date > begin_date:
                 finish_date = start_date - timedelta(days=1)
                 start_date = date(finish_date.year, finish_date.month, 1)
@@ -373,7 +375,8 @@ def get_balance(request):
         return JsonResponse({'fund': name,
                              'initial': initial,
                              'balance': balance,
-                             'dates': dates}, status=200, safe=False)
+                             'dates': dates,
+                             'values': chart}, status=200, safe=False)
     return JsonResponse({}, status=400)
 
 

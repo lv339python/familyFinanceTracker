@@ -1,6 +1,7 @@
 <template>
     <div>
-        <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal">
+        <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal" data-toggle="tooltip"
+                  title="Add spending">
             -
         </b-button>
         <b-modal ref="myModalRef" hide-footer title="Add spending">
@@ -13,25 +14,28 @@
 
                     <div>
                         <b-input-group>
-                            <b-form-input  placeholder="0" v-model.number="current" type="number" min="1" ></b-form-input>
-                            <b-select v-model="type_of_pay" class="form-control" variant="primary" slot="prepend"
-                                      v-show="groupId" v-if="is_shared===true">
-                            <option v-for="type_of_pay in shared_fund_list"
-                                    v-if="type_of_pay.id_group===groupId"
-                                    v-bind:value="type_of_pay.id_fund">
-                                {{ type_of_pay.name_fund }}
-                            </option>
-                        </b-select>
-                             <b-select v-model="type_of_pay"  class="form-control" variant="primary" slot="prepend"
-                                       v-else>
-                            <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id">
-                                {{ type_of_pay.name }}
-                            </option>
-                        </b-select>
+                            <b-form-input id="curinput" v-model.number="current" type="number" min="1"></b-form-input>
+                            <b-select v-model="type_of_pay" class="form-control" id="curinput" variant="primary" slot="prepend"
+                                      v-show="groupId"
+                                      v-b-popover.hover="'Choose Shared fund'" title=" Shared Fund"
+                                      v-if="is_shared===true">
+                                <option v-for="type_of_pay in shared_fund_list"
+                                        v-if="type_of_pay.id_group===groupId"
+                                        v-bind:value="type_of_pay.id_fund">
+                                    {{ type_of_pay.name_fund }}
+                                </option>
+                            </b-select>
+                            <b-select id="curinput" v-model="type_of_pay" class="form-control" variant="primary" slot="prepend"
+                                      v-b-popover.hover="'Choose fund'" title="Fund"
+                                      v-else>
+                                <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id">
+                                    {{ type_of_pay.name }}
+                                </option>
+                            </b-select>
                         </b-input-group>
                     </div>
                     <div class="col-md-12 form-group">
-                        <input placeholder="✎ ✍" v-model="comment" type="text" class="form-control">
+                        <input placeholder="✍" v-model="comment" type="text" class="form-control">
                     </div>
                 </div>
                 <div @click="clear" class="btn">C</div>
@@ -56,50 +60,49 @@
                 <b-btn v-b-toggle.collapse3 variant="primary">Choose Category</b-btn>
             </div>
 
-            <b-collapse id="collapse3" class="mt-2">
+            <b-collapse id="collapse3" class="mt-2"v-show="!visible">
 
                 <div class="content">
                     <div class="row">
-                        <div class="col-md-8 form-group " v-if="is_shared===true">
-                            <div>
-                                <label>Chose group</label>
-                                <select v-model="groupId" class="form-control">
-                                    <option v-for="group in group_list"
-                                            v-bind:value="group.id">
-                                        {{ group.name }}
-                                    </option>
-                                </select>
+                        <div class="form-group " v-if="is_shared===true">
+                            <p>Choose group:</p>
+                            <div class="img_container">
+                                <br>
+                                <div v-for="group in group_list">
+                                    <input type="image" :src="group.url" v-on:click="get_group_icon_id(group.id)"
+                                           class="icon" alt="icon">
+                                    <p>{{group.name}}</p>
+                                </div>
                             </div>
                             <hr>
                             <div v-show="groupId">
-                                <label>Select category</label>
-                                <select v-model="category" class="form-control">
-                                    <option v-for="category in shared_list"
-                                            v-if="category.id_group === groupId"
-                                            v-bind:value="category.id_cat">
-                                        {{category.name_cat}}
-                                    </option>
-                                </select>
-                                 <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
+                                <p>Select category:</p>
+                                <div class="img_container">
+                                    <br>
+                                    <div v-for="category in shared_list" v-if="category.id_group === group_id">
+                                        <input type="image" :src="category.url"
+                                               v-on:click="get_group_icon_id(category.id_cat)"
+                                               class="icon" alt="icon">
+                                        <p>{{category.name_cat}}</p>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
 
-                        <div class="col-md-8 form-group" v-else>
-                            <div>
-                                <label>Select category:</label>
-                                <select v-model="category" class="form-control">
-                                    <option v-for="spend in spending_list" v-bind:value="spend.id ">
-                                        {{ spend.name }}
-                                    </option>
-                                </select>
-
+                        <div class="form-group" v-else>
+                            <p>Select category:</p>
+                            <div class="img_container">
+                                <br>
+                                <div v-for="spend in spending_list">
+                                    <input type="image" :src="spend.url" v-on:click="get_spend_icon_id(spend.id)"
+                                           alt="icon" class="icon">
+                                    <p>{{spend.name}}</p>
+                                </div>
                             </div>
-                              <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
-                            <hr/>
+                            <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="">
                             <input type="checkbox" id="cbx" style="display:none" v-model="is_shared"/>
                             <label for="cbx" class="toggle"><span></span>Shared</label>
                         </div>
@@ -130,7 +133,7 @@
     import Spending_registration from 'src/components/Spending_registration';
 
     export default {
-        name: 'Calculator',
+        name: 'Spending_button',
         components: {
             'Spending_add': Spending_add,
             'Spending_registration': Spending_registration
@@ -220,6 +223,7 @@
                         'date': this.date,
                         'value': this.current,
                         'comment': this.comment,
+                        'group_id': this.groupId
                     }
                 }).then(response => {
                     this.reply = response.data;
@@ -238,6 +242,19 @@
                 this.category = null;
                 this.is_active_shared_cat = null;
                 this.is_shared = false;
+            },
+            get_spend_icon_id(id) {
+                this.category = id;
+            },
+            get_fund_icon_id(id) {
+                this.type_of_pay = id
+            },
+            get_group_icon_id(id) {
+                this.group_id = id;
+                this.groupId = true;
+            },
+            get_group_fund_id(id) {
+                this.type_of_pay = id
             },
             showModal() {
                 this.$refs.myModalRef.show();
@@ -402,6 +419,28 @@
         transform: scale(1);
         opacity: 0;
         transition: all 0.4s ease;
+    }
+
+    .img_container {
+        width: 350px;
+        max-height: 350px;
+        overflow: scroll;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    div.img_container div {
+        width: 70px;
+        height: 95px;
+    }
+    #curinput{
+       background-color: #333;
     }
 </style>
 

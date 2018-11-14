@@ -1,13 +1,18 @@
 <template>
     <div class="container">
 
-         <div class="Chart">
-          <h1 style="text-align:center;">Your funds and their incomes:</h1>
-          <line-example
-                        v-bind:x_axis="get_x"
-                        v-bind:amounts="amounts"
-                        v-bind:color="getColor"
-                        v-bind:dates="dates_from_props"/>
+        <div class="Chart">
+            <h1 style="text-align:center;">Funds' income info:</h1>
+            <line-example
+                v-bind:x_axis="get_x"
+                v-bind:amounts="amounts"
+                v-bind:color="getColor"
+                v-bind:dates="dates_from_props"/>
+            <bar-example
+                v-bind:x_axis="get_x"
+                v-bind:amounts="amounts"
+                v-bind:color="getColor"
+                v-bind:dates="dates_from_props"/>
         </div>
 
 
@@ -16,16 +21,19 @@
 
 <script>
     import LineExample from './LineExample';
+    import BarExample from './BarExample';
+
     export default {
         components: {
             LineExample,
+            BarExample,
         },
         props: ['date_to_props', 'amount_to_props'],
         data() {
             return {
                 height: 100,
-                amounts:this.amount_to_props,
-                x:null,
+                amounts: this.amount_to_props,
+                x: 'fake',
                 dates_from_props: this.date_to_props
             }
         },
@@ -38,31 +46,19 @@
             },
             getColor() {
                 var list = [];
-                for (var ind in this.amount_to_props){
+                for (var ind in this.amount_to_props) {
                     list.push("#" + Math.random().toString(16).slice(2, 8))
                 }
                 return list
-                },
-            get_x(){
+            },
+            get_x() {
                 var x = [];
-                for(var i=0; i<=this.date_to_props.length-1; i++){
-                    x=x.concat(this.date_to_props[i][Object.keys(this.date_to_props[i])]);
+                for (var i = 0; i <= this.date_to_props.length - 1; i++) {
+                    x = x.concat(this.date_to_props[i][Object.keys(this.date_to_props[i])]);
                 }
-                x.forEach(function(item){
-                    var count = 0;
-                    for (i in x) {
-                        if (item === x[i]) {
-                            count = count + 1;
-                            if (count===2){
-                                x.splice(i,1)
-                            }
-                        }
-                    }
-                });
-                x = x.sort();
                 return x
             }
-            },
+        },
 
     }
 </script>

@@ -1,9 +1,7 @@
 <template>
     <div class="content">
         <div id="left" class="text column">
-            <b-button :variant="secondary" to="/incomes/add" @click="isList=false">Add</b-button>
             <b-button :variant="secondary" to="/incomes/tracking" @click="isList=false">Tracking</b-button>
-            <b-button :variant="secondary" to="/incomes/new" @click="isList=false">New</b-button>
         </div>
         <div id="right" class="column">
             <div v-if="isList&& list.length!==0">

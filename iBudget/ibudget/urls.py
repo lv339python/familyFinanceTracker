@@ -30,7 +30,8 @@ urlpatterns = [
   path('api/v1/fund/', include('fund.urls')),
   path('api/v1/files/', FileHandler.as_view()),
   path('api/v1/income/', include('income.urls')),
-  path('api/v1/income_history/', include('income_history.urls'))
+  path('api/v1/income_history/', include('income_history.urls')),
+  path('api/v1/custom_profile/', include('custom_profile.urls'))
 ]
 
 urlpatterns += staticfiles_urlpatterns()

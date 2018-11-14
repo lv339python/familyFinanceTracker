@@ -16,7 +16,7 @@ from ibudget.settings import CLIENT_SECRET, CLIENT_ID, AUTHORIZATION_BASE_URL, \
 from utils.jwttoken import create_token, handle_token
 from utils.password_reseting import send_password_update_letter, send_successful_update_letter
 from utils.validators import login_validate, is_valid_registration_data, updating_email_validate, \
-    updating_password_validate
+    updating_password_validate, is_valid_password
 from .models import UserProfile
 
 TTL_SEND_PASSWORD_TOKEN = 60 * 60
@@ -181,3 +181,34 @@ def update_password(request, token=None):
             send_successful_update_letter(user)
             return HttpResponse(status=200)
     return HttpResponse(status=400)
+
+
+@require_http_methods(["POST"])
+def change_password(request):
+    """Change_password UserProfile"""
+    user = request.user
+    data = json.loads(request.body)
+    if user.check_password(data['old_password']):
+        if is_valid_password(data['new_password']):
+            if data['new_password'] == data['confirm_password']:
+                user.update(password=data['new_password'])
+                return HttpResponse("Your password has been changed successfully!", status=200)
+        return HttpResponse(status=400)
+    return HttpResponse(status=400)
+
+
+@require_http_methods(["DELETE"])
+def delete_user(request):
+    """Handling request for delete user.
+        Args:
+            request (HttpRequest):request from the web page
+            with a json containing changes to be applied.
+        Returns:
+            HttpResponse object.
+    """
+    user = request.user
+    if not user:
+        return HttpResponse(status=400)
+    user.update(is_active=False)
+    return HttpResponse(f"{user.first_name}{user.last_name}/"
+                        f" you've just deleted your account ", status=200)

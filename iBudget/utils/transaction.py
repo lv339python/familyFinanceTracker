@@ -1,6 +1,6 @@
 """Save to DB with transaction"""
 from django.db import transaction, IntegrityError
-
+from custom_profile.models import CustomProfile
 from fund.models import FundCategories, FinancialGoal
 from group.models import SharedFunds, Group, UsersInGroups
 
@@ -106,6 +106,51 @@ def save_new_group(name, icon, owner):
                 is_admin=True
             )
             new_users_in_group.save()
+    except IntegrityError:
+        return False
+    return True
+
+
+def save_personal_info(user,    # pylint: disable=too-many-arguments
+                       first_name=None,
+                       last_name=None,
+                       icon=None,
+                       bio=None,
+                       hobby=None,
+                       birthday=None):
+
+    """Function for save personal info
+    Args:
+        first_name(str): user's first name.
+        last_name(str): user's last name.
+        bio(str): user's bio.
+        hobby(str):user's hobby.
+        icon(str):user's photo.
+        birthday(date): user's birthday.
+        user(UserProfile): transaction owner.
+    Returns:
+        True if success, False else
+    """
+
+    try:
+        with transaction.atomic():
+            user.update(first_name=first_name,
+                        last_name=last_name,
+                        icon=icon)
+            custom = CustomProfile.filter_by_user(user)
+            if custom:
+                custom.bio = bio
+                custom.hobby = hobby
+                custom.birthday = birthday
+
+            else:
+                custom = CustomProfile(
+                    user=user,
+                    bio=bio,
+                    hobby=hobby,
+                    birthday=birthday)
+
+            custom.update()
     except IntegrityError:
         return False
     return True

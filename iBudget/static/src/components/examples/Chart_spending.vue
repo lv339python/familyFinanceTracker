@@ -2,17 +2,19 @@
     <div class="container">
         <div class="Chart">
             <h1 style="text-align:center;">{{title}}</h1>
-            <pie-example class="innerChart" v-bind:pieData="value" v-bind:pieLabel="name"/>
+            <doughnut-example class="innerChart" v-bind:pieData="value" v-bind:pieLabel="name"/>
         </div>
     </div>
 </template>
 
 <script>
     import PieExample from './PieExample';
+    import DoughnutExample from './DoughnutExample';
 
     export default {
         components: {
             PieExample,
+            DoughnutExample,
         },
         props: ['value', 'name','title'],
         data() {
