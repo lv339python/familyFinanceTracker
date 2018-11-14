@@ -17,13 +17,13 @@
             </b-navbar-nav>
             </b-collapse>
 
-            <b-collapse>
+
                 <!-- Right aligned nav items -->
                 <b-navbar-nav>
                     <account></account>
                     <calendar></calendar>
                 </b-navbar-nav>
-            </b-collapse>
+
         </b-navbar>
     </div>
 

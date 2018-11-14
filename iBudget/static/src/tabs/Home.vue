@@ -1,19 +1,31 @@
 <template>
     <div class="content">
-        <b-carousel id="carousel1"
+
+        <div class="carousel-holder">
+            <b-carousel class="carousel1"
                     style="text-shadow: 1px 1px 2px #333;"
                     controls
                     indicators
-                    img-width="1024"
-                    img-height="500"
                     :interval="false"
+                    img-width="1024"
+                    img-height="480"
                     v-model="slide"
                     @sliding-start="onSlideStart"
                     @sliding-end="onSlideEnd" v-if="values.length !== 0">
-            <b-carousel-slide img-blank v-for="(item, index) in dates" v-if="dates.length !== 0">
+            <b-carousel-slide  img-blank v-for="(item, index) in dates" v-if="dates.length !== 0">
+                <div class="btn-holder">
+                    <spending_button></spending_button>
+                    <income_button></income_button>
+                    <financial_goal></financial_goal>
+                    <fund_registration></fund_registration>
+                    <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Delete">
+                        ✘
+                    </b-button>
+                </div>
                 <div class="text">
+
                     <div>
-                        <div class="chartcontainer">
+                        <div class="chart-container">
                             <chart_spending
                                 v-bind:value='values[index].value'
                                 v-bind:name='values[index].name'
@@ -22,7 +34,7 @@
                         </div>
                         <b-btn v-b-toggle.collapse6 variant="primary">Balance</b-btn>
 
-                        <b-collapse id="collapse6" class="mt-2">
+                        <b-collapse id="collapse6">
                             <div class="table-holder">
                                 <h4>Balance</h4>
                                 <table class="table table-bordered">
@@ -49,14 +61,8 @@
 
             </b-carousel-slide>
         </b-carousel>
-        <spending_button/>
-        <income_button/>
-        <financial_goal/>
-        <fund_registration/>
 
-        <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Delete">
-            ✘
-        </b-button>
+
         <b-modal ref="myModalRef" hide-footer title="Delete">
             <b-btn v-b-toggle.deleteincome variant="primary">Income</b-btn>
             <b-collapse id="deleteincome" class="mt-2">
@@ -75,6 +81,8 @@
                 <delete_spending/>
             </b-collapse>
         </b-modal>
+        </div>
+
 
     </div>
 </template>
@@ -86,8 +94,8 @@
 
     import axios from 'axios';
     import Chart_spending from 'src/components/examples/Chart_spending';
-    import Spending_button from 'src/components/Spending_button';
-    import Income_button from 'src/components/Income_button';
+    import Spending_button from 'src/components/buttons/Spending_button';
+    import Income_button from 'src/components/buttons/Income_button';
     import Financial_goal from 'src/components/Financial_goal';
     import Fund_registration from 'src/components/Funds_registration';
     import Delete_income from 'src/components/Delete_income';
@@ -157,10 +165,11 @@
     .content {
         overflow: hidden;
         display: flex;
+        flex-direction: column;
     }
 
     .text {
-        width: fit-content;
+        width: 100%;
         text-align: center;
     }
 
@@ -175,6 +184,20 @@
         border-radius: 35px;
         font-size: 24px;
         line-height: 1.33;
+    }
+    .carousel1-slide{
+        margin: auto;
+    }
+    .btn-holder{
+        display: flex;
+        flex-direction: row;
+        height: fit-content;
+        margin: auto;
+        justify-content: center;
+    }
+    .carousel-holder {
+        width: 100%;
+        position: relative;
     }
 </style>
 
