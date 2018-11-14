@@ -3,8 +3,6 @@ This module provides model of spending history.
 """
 # pylint: disable=duplicate-code
 
-import datetime
-
 from django.db import models
 
 from authentication.models import UserProfile
@@ -65,7 +63,7 @@ class SpendingHistory(models.Model):
         Returns:
             SpendingHistory objects if database contains such, None otherwise.
         """
-        date_range = [start_date - datetime.timedelta(days=1), finish_date]
+        date_range = [start_date, finish_date]
         if spending_categories:
             return SpendingHistory.objects.filter(owner=user,
                                                   spending_categories=spending_categories,
@@ -92,7 +90,7 @@ class SpendingHistory(models.Model):
 
         """
         return SpendingHistory.objects.filter(owner=user,
-                                              date__range=[start_date - datetime.timedelta(days=1),
+                                              date__range=[start_date,
                                                            finish_date],
                                               is_active=is_active)
 

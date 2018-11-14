@@ -275,7 +275,7 @@ def create_initial_balance(user, begin_date, start_date, fund_id):
                 Balance value
     """
     return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
-        date__range=[begin_date - timedelta(days=1),
+        date__range=[begin_date,
                      start_date]).values_list('value', flat=True)) - \
            sum(SpendingHistory.filter_by_user_date(
                user,
@@ -296,7 +296,7 @@ def create_balance(user, begin_date, start_date, finish_date, fund_id):
     """
 
     return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
-        date__range=[start_date - timedelta(days=1),
+        date__range=[start_date,
                      finish_date]).values_list('value', flat=True)) - \
            sum(SpendingHistory.filter_by_user_date(
                user,
@@ -344,8 +344,7 @@ def get_balance(request):#pylint: disable= R0914
 
         for group in Group.filter_groups_by_user_id(user):
             for item in SharedFunds.objects.filter(group=group.id):
-                if not FinancialGoal.has_goals(fund_id=item.fund.id) \
-                    and item.fund.is_active:
+                if not FinancialGoal.has_goals(fund_id=item.fund.id) and item.fund.is_active:
                     user_funds.append(item.fund.id)
         begin_date = history_begin_date(user, user_funds)
         chart = [create_spending_chart(user, start_date, current_date)]
