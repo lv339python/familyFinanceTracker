@@ -7,6 +7,9 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 
 from group.models import Group
+from income_history.models import IncomeHistory
+from utils.aws_helper import AwsService
+from utils.universal_category_methods import total_value_for_category
 from utils.validators import is_valid_data_new_income
 from .models import IncomeCategories
 
@@ -105,3 +108,21 @@ def delete_income(request, income_category_id):
         except(ValueError, AttributeError):
             return HttpResponse(status=400)
     return HttpResponse(f"You've just deleted income: {income.name}", status=200)
+
+@require_http_methods(["POST"])
+def income_summary(request):
+    """
+    Handling request for getting summary info about income category.
+        Args:
+            request (HttpRequest) which consists income_id
+        Returns:
+            JsonResponse object with summary info
+    """
+    income_id = json.loads(request.body)['income_id']
+    income = IncomeCategories.get_by_id(income_id)
+    income_info = {'icon': AwsService.get_image_url(income.icon), 'name': income.name}
+
+    history = IncomeHistory.objects.filter(income=income_id)
+    income_info = {**total_value_for_category(history, True), **income_info}
+    return JsonResponse(income_info)
+

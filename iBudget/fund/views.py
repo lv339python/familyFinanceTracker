@@ -403,6 +403,13 @@ def delete_fund_goal_category(request, fund_id):
 
 @require_http_methods(["POST"])
 def fund_summary(request):
+    """
+    Handling request for getting summary info about fund.
+        Args:
+            request (HttpRequest) which consists fund_id
+        Returns:
+            JsonResponse object with summary info
+    """
     fund_id = json.loads(request.body)['fund_id']
     fund = FundCategories.get_by_id(fund_id)
     fund_info = {'icon': fund.icon, 'name': fund.name}
@@ -418,5 +425,5 @@ def fund_summary(request):
     fund_info['total'] = inc_history['total'] - spend_history['total']
     last_value_info = total_category_validation(inc_history, spend_history)
     fund_info = {**last_value_info, **fund_info}
-
+    print(fund_info)
     return JsonResponse(fund_info)

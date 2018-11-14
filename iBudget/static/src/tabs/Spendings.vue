@@ -29,7 +29,7 @@
                                  <img class='image' :src="modalData['icon']"> <br></b>
                             <b>Total spend for this category: {{modalData['total']}}</b>
                             <br>
-                            <b v-if="modalData['last_value']"> Last spend for this category:
+                            <b v-if="modalData['last_value']"> Last spend registered:
                                 {{modalData['last_value']}} on {{modalData['last_date']}}<br></b>
                             <b v-if="modalData['spend_group']">Spending is shared from
                                 {{modalData['spend_group']}} group <br></b>

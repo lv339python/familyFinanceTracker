@@ -393,6 +393,13 @@ def delete_spending_category(request, spending_id):
 
 @require_http_methods(["POST"])
 def spending_summary(request):
+    """
+    Handling request for getting summary info about spending category.
+        Args:
+            request (HttpRequest) which consists spending_id
+        Returns:
+            JsonResponse object with summary info
+    """
     spend_id = json.loads(request.body)['spend_id']
     spend = SpendingCategories.get_by_id(spend_id)
     spend_info = {'icon': AwsService.get_image_url(spend.icon), 'name': spend.name}
