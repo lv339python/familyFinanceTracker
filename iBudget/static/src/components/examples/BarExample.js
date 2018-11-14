@@ -36,7 +36,6 @@ export default {
               }
           }
           this.datasets = datas
-          console.log('%%', this.datasets)
         },
     },
   mounted (){
