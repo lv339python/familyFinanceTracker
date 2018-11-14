@@ -1,7 +1,6 @@
 <template>
     <div id="icon_getter">
-        <button v-on:click="enable_upload" v-if="! upload">upload my own</button>
-
+        <button v-on:click="enable_upload" v-if="! upload">add photo</button>
         <form enctype="multipart/form-data">
             <input type="file" name="icon" v-if="upload"
                    v-on:change="get_img_name_validate($event.target.files)"></input>

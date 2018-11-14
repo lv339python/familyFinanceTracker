@@ -21,6 +21,7 @@
                     <div class="button">
                         <b-btn class="mt-3" variant="outline-success" @click="showInfo">Show more info</b-btn>
                         <b-btn class="mt-3" variant="outline-success" @click="addInfo">Update personal info</b-btn>
+                        <b-btn class="mt-3" variant="outline-danger" @click="showDeleteModal">Deactivate profile</b-btn>
                     </div>
                     <div v-if="showMoreInfo">
                         <p class="card-text">
@@ -34,13 +35,14 @@
 
                     <div v-if="showAddInfo">
                         <div class="form-group">
-                            <input type="text" v-model="user.first_name"  class="form-control" placeholder="first name" >
+                            <input type="text" v-model="user.first_name" class="form-control" placeholder="first name">
                         </div>
                         <div class="form-group">
                             <input type="text" v-model="user.last_name" class="form-control" placeholder="last name">
                         </div>
                         <div class="form-group">
-                            <textarea rows="10" cols="10" v-model="custom.bio" class="form-control" placeholder="bio"></textarea>
+                            <textarea rows="10" cols="10" v-model="custom.bio" class="form-control"
+                                      placeholder="bio"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="text" v-model="custom.hobby" class="form-control" placeholder="hobby">
@@ -75,6 +77,14 @@
             </div>
             <b-btn class="mt-3" variant="outline-danger" block @click="logout">Log Out</b-btn>
         </b-modal>
+        <b-modal ref="myModalDeleteRef" size="lg" hide-footer title="Delete your account">
+            <div class="d-block text-center">
+                <b-card>
+                    <b-btn class="mt-3" variant="outline-danger" @click="Deactivate">Yes</b-btn>
+                    <b-btn class="mt-3" variant="outline-danger" @click="hideDeleteModal">No</b-btn>
+                </b-card>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -84,7 +94,7 @@
     import Upload_photo from './Upload_photo';
 
     const path = "https://s3.amazonaws.com/family-finance-tracker-static/";
-    const default_path ="http://cdn.onlinewebfonts.com/svg/img_191958.png";
+    const default_path = "http://cdn.onlinewebfonts.com/svg/img_191958.png";
 
     export default {
         name: "Account",
@@ -114,10 +124,10 @@
         },
         methods: {
 
-            getProfilePhoto(){
-                if(this.user.icon = ! ''){
-                    return path+this.user.icon;
-                }else{
+            getProfilePhoto() {
+                if (this.user.icon !== '') {
+                    return path + this.user.icon;
+                } else {
                     return default_path;
                 }
             },
@@ -149,6 +159,13 @@
             hideModal() {
                 this.$refs.myModalRef.hide()
             },
+            showDeleteModal() {
+                this.$refs.myModalDeleteRef.show()
+            },
+
+            hideDeleteModal() {
+                this.$refs.myModalDeleteRef.hide()
+            },
 
             logout: function (event) {
                 axios({
@@ -172,6 +189,8 @@
                         'confirm_password': this.confirm_password
                     },
                 }).then(response => {
+                    this.reply = response.data;
+                    alert(this.reply);
                     this.hideModal();
                     this.getData();
                     this.clearAll();
@@ -191,10 +210,12 @@
                         'last_name': this.user.last_name,
                         'bio': this.custom.bio,
                         'hobby': this.custom.hobby,
-                        'icon': this.user.icon,
+                        'icon': this.selectedIcon,
                         'birthday': this.custom.birthday
                     }
-               }).then(response => {
+                }).then(response => {
+                    this.reply = response.data;
+                    alert(this.reply);
                     this.hideModal();
                     this.getData();
                     this.clearAll();
@@ -203,22 +224,34 @@
 
             getData: function () {
                 axios.get('api/v1/authentication/profile/')
-                .then(response => {
-                    // JSON responses are automatically parsed.
-                    this.user = response.data
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
+                    .then(response => {
+                        // JSON responses are automatically parsed.
+                        this.user = response.data
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    });
 
                 axios.get('api/v1/custom_profile/show_custom_user_data')
-                .then(response => {
-                    this.custom = response.data;
-                    console.log(this.custom);
+                    .then(response => {
+                        this.custom = response.data;
+                        console.log(this.custom);
 
-                });
+                    });
+            },
+
+            Deactivate: function (event) {
+                axios({
+                    method: 'delete',
+                    url: '/api/v1/authentication/delete_user/',
+
+                }).then(response => {
+                    this.$router.go('/login/')
+                })
             }
+
         },
+
 
         created() {
             this.getData();

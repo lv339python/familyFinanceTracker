@@ -32,7 +32,7 @@ def create_personal_details(request):
             hobby=data["hobby"],
             icon=data['icon'],
             birthday=data['birthday']):
-        return HttpResponse(status=201)
+        return HttpResponse('Congratulation, you updated personal details', status=201)
     return HttpResponse(status=400)
 
 

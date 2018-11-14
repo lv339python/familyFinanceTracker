@@ -8,7 +8,8 @@ from .views import (login_user,
                     get_profile,
                     forgot_password,
                     update_password,
-                    change_password)
+                    change_password,
+                    delete_user)
 
 urlpatterns = [
     path('registration/', registration),
@@ -20,4 +21,5 @@ urlpatterns = [
     path('forgot_password/', forgot_password),
     url(r'^update_password/(?P<token>.+)$', update_password, name="update_password"),
     path('change_password/', change_password),
+    path('delete_user/',delete_user)
     ]
