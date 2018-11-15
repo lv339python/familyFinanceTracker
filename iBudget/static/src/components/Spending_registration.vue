@@ -16,7 +16,7 @@
                     <div class="img_container">
                         <div v-for="category in shared_list" v-if="category.id_group === group_id">
                             <input type="image" :src="category.url"
-                            v-on:click="get_spend_icon_id(category.id_cat)"
+                                   v-on:click="get_spend_icon_id(category.id_cat)"
                                    class="icon" alt="icon">
                             <p>{{category.name_cat}}</p>
                         </div>
@@ -26,7 +26,7 @@
                     <div class="img_container">
                         <div v-for="type_of_pay in shared_fund_list" v-if="type_of_pay.id_group === group_id">
                             <input type="image" :src="type_of_pay.url"
-                            v-on:click="get_group_fund_id(type_of_pay.id_fund)"
+                                   v-on:click="get_group_fund_id(type_of_pay.id_fund)"
                                    class="icon" alt="icon">
                             <p>{{type_of_pay.name_fund}}</p>
                         </div>
@@ -39,7 +39,7 @@
                 <div class="img_container">
                     <div v-for="spend in spending_list">
                         <input type="image" :src="spend.url" v-on:click="get_spend_icon_id(spend.id)"
-                                alt="icon" class="icon">
+                               alt="icon" class="icon">
                         <p>{{spend.name}}</p>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                 category: null,
                 type_of_pay: null,
                 value: null,
-                date: new Date().toJSON().slice(0,10),
+                date: new Date().toJSON().slice(0, 10),
                 comment: null,
                 is_shared: false,
                 group_id: null
@@ -174,7 +174,7 @@
                         'date': this.date,
                         'value': this.value,
                         'comment': this.comment,
-                        'group_id':this.group_id
+                        'group_id': this.group_id
                     }
                 }).then(response => {
                     this.reply = response.data;
@@ -194,17 +194,17 @@
                 this.is_active_shared_cat = null;
                 this.is_shared = false;
             },
-            get_spend_icon_id(id){
+            get_spend_icon_id(id) {
                 this.category = id;
             },
-            get_fund_icon_id(id){
+            get_fund_icon_id(id) {
                 this.type_of_pay = id
             },
-            get_group_icon_id(id){
+            get_group_icon_id(id) {
                 this.group_id = id;
                 this.groupId = true;
             },
-            get_group_fund_id(id){
+            get_group_fund_id(id) {
                 this.type_of_pay = id
             }
         }
@@ -218,9 +218,11 @@
         flex-direction: column;
         flex-wrap: wrap;
     }
+
     .row {
         margin: 0;
     }
+
     .toggle {
         margin: 4vh;
         width: 40px;
@@ -229,6 +231,7 @@
         -webkit-tap-highlight-color: transparent;
         transform: translate3d(0, 0, 0);
     }
+
     .toggle:before {
         content: "";
         position: relative;
@@ -241,6 +244,7 @@
         border-radius: 8px;
         transition: background 0.2s ease;
     }
+
     .toggle span {
         position: absolute;
         top: 0;
@@ -253,6 +257,7 @@
         box-shadow: 0 3px 8px rgba(154, 153, 153, 0.5);
         transition: all 0.2s ease;
     }
+
     .toggle span:before {
         content: "";
         position: absolute;
@@ -266,35 +271,40 @@
         opacity: 1;
         pointer-events: none;
     }
+
     #cbx:checked + .toggle:before {
         background: #947ADA;
     }
+
     #cbx:checked + .toggle span {
         background: #4F2EDC;
         transform: translateX(20px);
         transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
         box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
     }
+
     #cbx:checked + .toggle span:before {
         transform: scale(1);
         opacity: 0;
         transition: all 0.4s ease;
     }
-    .img_container{
+
+    .img_container {
         width: 350px;
-        max-height:350px;
-        overflow:scroll;
+        max-height: 350px;
+        overflow: scroll;
         display: flex;
         flex-direction: row;
-        flex-wrap:wrap;
-    }
-    .icon{
-        width:70px;
-        height:70px;
+        flex-wrap: wrap;
     }
 
-    div.img_container div{
-        width:70px;
-        height:95px;
+    .icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    div.img_container div {
+        width: 70px;
+        height: 95px;
     }
 </style>

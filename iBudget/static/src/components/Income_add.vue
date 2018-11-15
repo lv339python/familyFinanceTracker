@@ -3,7 +3,7 @@
         <div>
             <hr>
             <div class="form-group">
-                <label for="name">Name of income:</label>
+                <label for="name">Name of Income:</label>
                 <input v-model="newName" placeholder="Name" id="name">
             </div>
         </div>
@@ -14,7 +14,7 @@
 
         <div>
             <div>
-                <label>Select date</label>
+                <label>Select Date</label>
                 <input v-model="incomeDate" type="date">
                 <hr>
             </div>
@@ -30,9 +30,10 @@
         </div>
 
 
-        <div v-show="isValidData">
+        <div>
             <hr>
-            <button class="btn btn-outline-primary" v-on:click="createIncome" :variant="secondary">Create income
+            <button class="btn btn-outline-success" :disabled="isValidData==false" v-on:click="createIncome"
+                    :variant="secondary">Create Income
             </button>
             <button v-on:click="createDone" :variant="secondary" v-show="isDone">{{msg}}</button>
         </div>
@@ -52,7 +53,7 @@
             return {
                 isDone: false,
                 newName: null,
-                incomeDate: null,
+                incomeDate: new Date().toJSON().slice(0, 10),
                 incomeValue: null,
                 selectedIcon: '',
                 newIncome: {
@@ -95,8 +96,12 @@
                         'date': this.incomeDate,
                         'value': this.incomeValue
                     }
-                }).then(response => (this.msg = response.data));
-                this.isDone = true;
+                }).then(response => {
+                    this.msg = response.data;
+                    alert(this.msg);
+                    this.isDone = true;
+                });
+
             },
             createDone: function (event) {
                 this.$router.go('/income_add')
