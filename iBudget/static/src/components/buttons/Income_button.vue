@@ -114,7 +114,7 @@
                 inc_category: null,
                 fund_category: null,
                 date: new Date().toJSON().slice(0, 10),
-                comment: null,
+                comment: '',
                 value: null,
                 is_active_group: null,
                 is_shared: false
