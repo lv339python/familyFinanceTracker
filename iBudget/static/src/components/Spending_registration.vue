@@ -4,7 +4,6 @@
             <div class="col-md-8 form-group " v-if="is_shared===true">
                 <p>Choose group:</p>
                 <div class="img_container">
-                    <br>
                     <div v-for="group in group_list">
                         <input type="image" :src="group.url" v-on:click="get_group_icon_id(group.id)"
                                class="icon" alt="icon">
@@ -15,10 +14,9 @@
                 <div v-show="groupId">
                     <p>Select category:</p>
                     <div class="img_container">
-                    <br>
                         <div v-for="category in shared_list" v-if="category.id_group === group_id">
                             <input type="image" :src="category.url"
-                            v-on:click="get_group_icon_id(category.id_cat)"
+                            v-on:click="get_spend_icon_id(category.id_cat)"
                                    class="icon" alt="icon">
                             <p>{{category.name_cat}}</p>
                         </div>
@@ -26,7 +24,6 @@
                     <hr/>
                     <p>Choose type of pay:</p>
                     <div class="img_container">
-                    <br>
                         <div v-for="type_of_pay in shared_fund_list" v-if="type_of_pay.id_group === group_id">
                             <input type="image" :src="type_of_pay.url"
                             v-on:click="get_group_fund_id(type_of_pay.id_fund)"
@@ -40,7 +37,6 @@
             <div class="col-md-8 form-group" v-else>
                 <p>Select category:</p>
                 <div class="img_container">
-                    <br>
                     <div v-for="spend in spending_list">
                         <input type="image" :src="spend.url" v-on:click="get_spend_icon_id(spend.id)"
                                 alt="icon" class="icon">
@@ -50,7 +46,6 @@
                 <hr/>
                 <p>Choose type of pay:</p>
                 <div class="img_container">
-                    <br>
                     <div v-for="fund in fund_list">
                         <input type="image" :src="fund.url" v-on:click="get_fund_icon_id(fund.id)"
                                class="icon" alt="icon">

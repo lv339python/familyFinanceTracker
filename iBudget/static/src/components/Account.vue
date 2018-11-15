@@ -76,8 +76,8 @@
                             <input type="password" v-model="confirm_password" class="form-control"
                                    placeholder="confirm password">
                             <br/>
-                            <b-btn class="mt-3" variant="outline-danger" @click="resetUpdate">Reset</b-btn>
                             <b-btn class="mt-3" variant="outline-success" @click="setDatapassword">Save</b-btn>
+                            <b-btn class="mt-3" variant="outline-danger" @click="resetUpdate">Reset</b-btn>
                         </div>
                     </div>
                 </b-card>

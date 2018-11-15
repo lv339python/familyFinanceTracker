@@ -18,7 +18,7 @@ from spending_history.models import SpendingHistory
 from .models import SpendingCategories, SpendingLimitationIndividual, SpendingLimitationGroup
 
 # CONSTANTS FOR ICONS
-AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static1/'
 STANDARD_SPENDINGS_FOLDER = 'standard/'
 ICON_FILE_NAME = 'miscellaneous.png'
 
