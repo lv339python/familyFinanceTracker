@@ -17,9 +17,12 @@
                     <hr>
                 </div>
             </div>
-            <div class="col-md-8 total" v-if="start_date<=finish_date">
-                <button class="btn btn-outline-warning" v-on:click="createHistory" :variant="secondary">
-                    Show all spending
+            <div class="col-md-8 total">
+                <button class="btn btn-outline-warning"
+                    :disabled="start_date>finish_date"
+                    v-on:click="createHistory"
+                    :variant="secondary">
+                        Show all spending
                 </button>
             </div>
         </div>
@@ -74,6 +77,10 @@
                     <b style="word-space:2em">&nbsp;</b>
                 </div>
             </div>
+            <div  v-if="hasData==0">
+
+                <h5>There are no spending during this period...</h5>
+            </div>
         </div>
         <div class="download_buttons form-group col-md-6">
             <hr>
@@ -110,6 +117,7 @@
                 spending_history_admin: {},
                 spending_all: [],
                 errors: [],
+                hasData: null,
                 UTC: -new Date().getTimezoneOffset() / 60
             }
         },
@@ -166,6 +174,7 @@
                     this.spending_history_individual = response.data.individual;
                     this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
                     this.isCategory = true;
+                    this.hasData = this.spending_all.length
 
                 })
                 .catch(e => {

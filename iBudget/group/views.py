@@ -321,7 +321,6 @@ def change_users_role_in_group(request):
         HttpResponse object.
     """
     data = json.loads(request.body)
-    print(data)
     user_email = data["user_email"]
     group_id = data["group_id"]
     is_admin = data["is_admin"]
@@ -357,7 +356,7 @@ def delete_group(request, group_id):
         group = Group.get_group_by_id(group_id)
         if not group:
             return HttpResponse(status=406)
-        if not group.owner == user:
+        if not is_user_admin_group(group.id, user):
             return HttpResponse(status=400)
         group.is_active = False
         try:

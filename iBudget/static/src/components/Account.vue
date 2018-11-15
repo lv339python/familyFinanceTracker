@@ -24,7 +24,7 @@
                         <b-btn class="mt-3" variant="outline-danger" @click="showDeleteModal">Deactivate profile</b-btn>
                     </div>
                     <div v-if="showMoreInfo">
-                        <p class="card-text">
+                        <p class="card-text"></p>
                             <br/>
                             <b>Bio:</b>{{custom.bio}}
                             <br/>
@@ -94,7 +94,7 @@
     import axios from 'axios';
     import Upload_photo from './Upload_photo';
 
-    const path = "https://s3.amazonaws.com/family-finance-tracker-static/";
+    const path = "https://s3.amazonaws.com/family-finance-tracker-static1";
     const default_path = "http://cdn.onlinewebfonts.com/svg/img_191958.png";
 
     export default {

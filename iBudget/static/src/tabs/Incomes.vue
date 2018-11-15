@@ -4,7 +4,7 @@
             <b-button :variant="secondary" to="/incomes/tracking" @click="isList=false">Tracking</b-button>
         </div>
         <div id="right" class="column">
-            <div v-if="isList&& list.length!==0">
+            <div v-if="isBasePath&&isList&& list.length!==0">
                 <list_paginated
                     v-bind:list='list'
                     v-bind:title='title'
@@ -16,10 +16,10 @@
                 <div class="d-block text-center">
                     <b-card>
                         <p class="card-text">
+                            <b v-if="modalData['icon']">
+                                 <img class='image' :src="modalData['icon']"> <br></b>
                             <b>Name: {{modalData['name']}}</b>
                             <br>
-                            <b v-if="modalData['icon']">Icon:
-                                 <img class='image' :src="modalData['icon']"> <br></b>
                             <b>Total value for this category: {{modalData['total']}}</b>
                             <br>
                             <b v-if="modalData['last_value']"> Last income registered:
@@ -51,6 +51,12 @@
                 id: 0,
                 modalData: {}
             }
+        },
+        computed: {
+             isBasePath: function () {
+                {
+                    return this.$route.path === "/incomes"              }
+            },
         },
         methods: {
             showModal(data) {
@@ -140,4 +146,10 @@
         width: fit-content;
         margin: auto;
     }
+
+    .image {
+        width: 15%;
+        height: 15%;
+    }
 </style>
+1

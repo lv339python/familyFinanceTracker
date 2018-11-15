@@ -4,7 +4,7 @@
             <b-button :variant="secondary" to="/funds/tracking_goal" @click="isList=false">Tracking Goal</b-button>
         </div>
         <div id="right" class="column">
-            <div v-if="isList&&totalList.length!==0">
+            <div v-if="isBasePath&&isList&&totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
                     v-bind:title='title'
@@ -93,6 +93,10 @@
                     ;
                     return result
                 }
+            },
+            isBasePath: function () {
+                {
+                    return this.$route.path === "/funds"              }
             }
         },
         methods: {
@@ -224,5 +228,10 @@
     .text {
         width: fit-content;
         margin: auto;
+    }
+
+    .image {
+        width: 15%;
+        height: 15%;
     }
 </style>

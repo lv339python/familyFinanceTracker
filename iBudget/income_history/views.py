@@ -105,10 +105,10 @@ def register_income(request):
         return HttpResponse('Please, fill all required fields properly !', status=400)
 
     income = IncomeCategories.get_by_id(int(data["inc_category"]))
-    if not income:
+    if not income and not income.is_active is True:
         return HttpResponse(status=400)
     fund = FundCategories.get_by_id(int(data["fund_category"]))
-    if not fund:
+    if not fund and not fund.is_active is True:
         return HttpResponse(status=400)
     date = data["date"]
     value = Decimal(data["value"])
