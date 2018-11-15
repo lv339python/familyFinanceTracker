@@ -332,7 +332,7 @@ def change_users_role_in_group(request):
             return HttpResponse(status=409)
         if not is_user_in_group(group_id, user_to_change.id):
             return HttpResponse(status=406)
-        group = UsersInGroups.get_by_id(user_to_change.id)
+        group = UsersInGroups.group_data_for_user_by_group_id(group_id, user_to_change)
         group.is_admin = is_admin
         try:
             group.save()
