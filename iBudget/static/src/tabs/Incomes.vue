@@ -4,7 +4,7 @@
             <b-button :variant="secondary" to="/incomes/tracking" @click="isList=false">Tracking</b-button>
         </div>
         <div id="right" class="column">
-            <div v-if="isList&& list.length!==0">
+            <div v-if="isBasePath&&isList&& list.length!==0">
                 <list_paginated
                     v-bind:list='list'
                     v-bind:title='title'
@@ -51,6 +51,12 @@
                 id: 0,
                 modalData: {}
             }
+        },
+        computed: {
+             isBasePath: function () {
+                {
+                    return this.$route.path === "/incomes"              }
+            },
         },
         methods: {
             showModal(data) {

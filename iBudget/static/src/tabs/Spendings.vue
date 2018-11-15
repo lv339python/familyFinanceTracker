@@ -8,9 +8,11 @@
                 Group Limitation
             </b-button>
             <b-button :variant="secondary" to="/spendings/history" @click="isList=false">History</b-button>
+            <div>{{isPath}}</div>
         </div>
-        <div id="right" class="column">
-            <div v-if="isList&&totalList.length!==0">
+
+        <div id="right" class="column" >
+            <div v-if="isBasePath&&isList&&totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
                     v-bind:title='title'
@@ -143,6 +145,10 @@
                     ;
                     return result
                 }
+            },
+            isBasePath: function () {
+                {
+                    return this.$route.path === "/spendings"              }
             }
         },
         created() {
