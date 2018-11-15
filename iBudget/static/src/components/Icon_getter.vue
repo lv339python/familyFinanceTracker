@@ -5,15 +5,12 @@
                v-for="icon in icons" :src="icon.path"
                v-on:click="get_name(icon.name)"
                class="icon" alt="icon" v-if="! upload">
-        <br>
-        <br>
-        <button v-on:click="enable_upload" v-if="! upload">upload my own</button>
+        <p><button v-on:click="enable_upload" v-if="! upload">upload my own</button>
 
         <form enctype="multipart/form-data">
             <input type="file" name="icon" v-if="upload"
                    v-on:change="get_img_name_validate($event.target.files)">
         </form>
-        <br>
     </div>
 </template>
 

@@ -24,7 +24,7 @@ from utils.validators import \
 from .models import FundCategories, FinancialGoal
 
 # CONSTANTS FOR ICONS
-AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static1/'
 STANDARD_FUNDS_FOLDER = 'standard_fund/'
 ICON_FILE_NAME = 'funds.png'
 

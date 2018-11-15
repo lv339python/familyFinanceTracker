@@ -11,7 +11,6 @@
                 <p>End date:</p>
                 <input v-model="end_date" type="date" required>
                 <p>
-                    <br>
                     <button v-on:click="sub_dates">submit</button>
                 </p>
             </div>
