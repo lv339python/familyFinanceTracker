@@ -10,7 +10,8 @@
                         :interval="4000"
                         v-model="slide"
                         @sliding-start="onSlideStart"
-                        @sliding-end="onSlideEnd" v-if="user_goal_list.length !== 0">
+                        @sliding-end="onSlideEnd"
+                        v-if="user_goal_list.length !== 0">
                 <b-carousel-slide img-blank v-for="item in user_goal_list">
                     <div>
                         <div>
@@ -42,6 +43,7 @@
                     </div>
                 </b-carousel-slide>
             </b-carousel>
+            <h1 class="placeholder" v-else>You haven't set any goals yet...</h1>
     </div>
 
 
@@ -93,9 +95,14 @@
 
 <style>
  .goaltable{
-      width: fit-content;
-        margin:0 ;
-        text-align: center;
+     width: 100%;
+     height: 100%;
+     margin: 0;
+     text-align: center;
+     display: flex;
  }
+    .placeholder{
+        margin: auto;
+    }
 
 </style>
