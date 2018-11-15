@@ -14,8 +14,9 @@
 
                     <div>
                         <b-input-group>
-                            <b-form-input id="curinput" v-model.number="current" type="number" min="1"></b-form-input>
-                            <b-select v-model="type_of_pay" class="form-control" id="curinput" variant="primary" slot="prepend"
+                            <b-form-input v-model.number="current" type="number" min="1"></b-form-input>
+                            <b-select v-model="type_of_pay" class="form-control" id="curinput" variant="primary"
+                                      slot="prepend"
                                       v-show="groupId"
                                       v-b-popover.hover="'Choose Shared fund'" title=" Shared Fund"
                                       v-if="is_shared===true">
@@ -25,7 +26,8 @@
                                     {{ type_of_pay.name_fund }}
                                 </option>
                             </b-select>
-                            <b-select id="curinput" v-model="type_of_pay" class="form-control" variant="primary" slot="prepend"
+                            <b-select v-model="type_of_pay" class="form-control" variant="primary"
+                                      slot="prepend"
                                       v-b-popover.hover="'Choose fund'" title="Fund"
                                       v-else>
                                 <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id">
@@ -60,45 +62,43 @@
                 <b-btn v-b-toggle.collapse3 variant="primary">Choose Category</b-btn>
             </div>
 
-            <b-collapse id="collapse3" class="mt-2"v-show="!visible">
+            <b-collapse id="collapse3" class="mt-2" v-show="!visible">
 
                 <div class="content">
                     <div class="row">
-                        <div class="form-group " v-if="is_shared===true">
-                            <p>Choose group:</p>
-                            <div class="img_container">
-                                <br>
-                                <div v-for="group in group_list">
-                                    <input type="image" :src="group.url" v-on:click="get_group_icon_id(group.id)"
-                                           class="icon" alt="icon">
-                                    <p>{{group.name}}</p>
-                                </div>
+                        <div v-if="is_shared===true">
+                            <div>
+                                <label>Chose group</label>
+                                <select v-model="groupId" class="form-control">
+                                    <option v-for="group in group_list"
+                                            v-bind:value="group.id">
+                                        {{ group.name }}
+                                    </option>
+                                </select>
                             </div>
                             <hr>
                             <div v-show="groupId">
-                                <p>Select category:</p>
-                                <div class="img_container">
-                                    <br>
-                                    <div v-for="category in shared_list" v-if="category.id_group === group_id">
-                                        <input type="image" :src="category.url"
-                                               v-on:click="get_group_icon_id(category.id_cat)"
-                                               class="icon" alt="icon">
-                                        <p>{{category.name_cat}}</p>
-                                    </div>
-                                </div>
+                                <label>Select category</label>
+                                <select v-model="category" class="form-control">
+                                    <option v-for="category in shared_list"
+                                            v-if="category.id_group === groupId"
+                                            v-bind:value="category.id_cat">
+                                        {{category.name_cat}}
+                                    </option>
+                                </select>
+                                <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
                             </div>
                         </div>
-
-                        <div class="form-group" v-else>
-                            <p>Select category:</p>
-                            <div class="img_container">
-                                <br>
-                                <div v-for="spend in spending_list">
-                                    <input type="image" :src="spend.url" v-on:click="get_spend_icon_id(spend.id)"
-                                           alt="icon" class="icon">
-                                    <p>{{spend.name}}</p>
-                                </div>
+                        <div  v-else>
+                            <div>
+                                <label>Select category:</label>
+                                <select v-model="category" class="form-control">
+                                    <option v-for="spend in spending_list" v-bind:value="spend.id ">
+                                        {{ spend.name }}
+                                    </option>
+                                </select>
                             </div>
+
                             <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
                         </div>
 
@@ -419,28 +419,6 @@
         transform: scale(1);
         opacity: 0;
         transition: all 0.4s ease;
-    }
-
-    .img_container {
-        width: 350px;
-        max-height: 350px;
-        overflow: scroll;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
-
-    .icon {
-        width: 70px;
-        height: 70px;
-    }
-
-    div.img_container div {
-        width: 70px;
-        height: 95px;
-    }
-    #curinput{
-       background-color: #333;
     }
 </style>
 
