@@ -1,11 +1,12 @@
 <template>
-    <div id="acc">
-        <b-button variant="info" @click="showModal">
+    <div id="acc" class="mr-1">
+        <b-button class='primary' variant="primary" @click="showModal">
             <img id="profile-thumbnail" rounded="circle"
                  blank width="16" height="16" alt="img" class="m-1"
                  :src="getProfilePhoto()"/>
             {{user.email}}
         </b-button>
+
         <b-modal ref="myModalRef" size="lg" hide-footer title="Account">
             <div class="d-block text-center">
                 <b-card>
@@ -21,16 +22,18 @@
                     <div class="button">
                         <b-btn class="mt-3" variant="outline-success" @click="showInfo">Show more info</b-btn>
                         <b-btn class="mt-3" variant="outline-success" @click="addInfo">Update personal info</b-btn>
+                        <b-btn class="mt-3" variant="outline-success" @click="updatePassword">Change password</b-btn>
                         <b-btn class="mt-3" variant="outline-danger" @click="showDeleteModal">Deactivate profile</b-btn>
                     </div>
+
                     <div v-if="showMoreInfo">
-                        <p class="card-text">
+                        <p v-for="item in custom" class="card-text">
                             <br/>
-                            <b>Bio:</b>{{custom.bio}}
+                            <b>Bio:</b>{{item.bio}}
                             <br/>
-                            <b>Hobby:</b>{{custom.hobby}}
+                            <b>Hobby:</b>{{item.hobby}}
                             <br/>
-                            <b>Birthday:</b>{{custom.birthday}}
+                            <b>Birthday:</b>{{item.birthday}}
                         </p>
                     </div>
 
@@ -48,36 +51,40 @@
                         <div class="form-group">
                             <input type="text" v-model="custom.hobby" class="form-control" placeholder="hobby">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 row">
                             <div class="form-group">
-                                <input v-model="custom.birthday" type="date" placeholder="birthday">
+                                <input v-b-popover.hover="'BIRTHDAY'" v-model="custom.birthday" type="date">
                             </div>
-
                             <div class="col-md-2">
                                 <Upload_photo @get_name='onGet_name'></Upload_photo>
                             </div>
                         </div>
                         <b-btn class="mt-3" variant="outline-success" @click="addPersonalInfo">Save</b-btn>
                         <hr/>
+                    </div>
+
+                    <div v-if="showUpdatePassword">
                         <div class="form-group">
                             <p>Update password</p>
                             <br/>
                             <input type="password" v-model="old_password" class="form-control"
-                                   placeholder="current password">
+                                  autocomplete="off"  placeholder="current password">
                             <br/>
                             <input type="password" v-model="new_password" class="form-control"
-                                   placeholder="new password">
+                                 autocomplete="off"   placeholder="new password">
                             <br/>
                             <input type="password" v-model="confirm_password" class="form-control"
-                                   placeholder="confirm password">
+                                   autocomplete="off" placeholder="confirm password">
                             <br/>
                             <b-btn class="mt-3" variant="outline-success" @click="setDatapassword">Save</b-btn>
+                            <b-btn class="mt-3" variant="outline-danger" @click="resetUpdate">Reset</b-btn>
                         </div>
                     </div>
                 </b-card>
             </div>
             <b-btn class="mt-3" variant="outline-danger" block @click="logout">Log Out</b-btn>
         </b-modal>
+
         <b-modal ref="myModalDeleteRef" size="lg" hide-footer title="Delete your account">
             <div class="d-block text-center">
                 <b-card>
@@ -94,7 +101,7 @@
     import axios from 'axios';
     import Upload_photo from './Upload_photo';
 
-    const path = "https://s3.amazonaws.com/family-finance-tracker-static/";
+    const path = "https://s3.amazonaws.com/family-finance-tracker-static1";
     const default_path = "http://cdn.onlinewebfonts.com/svg/img_191958.png";
 
     export default {
@@ -108,11 +115,14 @@
                 showMoreInfo: false,
                 custom: null,
                 showAddInfo: false,
+                showUpdatePassword: false,
                 old_password: null,
                 new_password: null,
                 confirm_password: null,
                 upload: false,
-                maxFileSize: 60
+                maxFileSize: 60,
+
+
             }
         },
 
@@ -133,7 +143,6 @@
                 }
             },
 
-
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']
             },
@@ -141,15 +150,22 @@
             showInfo() {
                 console.log(this.custom);
                 this.showMoreInfo = !this.showMoreInfo;
-                if (this.showAddInfo === true) {
-                    return this.showAddInfo = false
+                if (this.showAddInfo === true || this.showUpdatePassword === true) {
+                    return this.showAddInfo = false, this.showUpdatePassword = false
                 }
             },
 
             addInfo() {
                 this.showAddInfo = !this.showAddInfo;
-                if (this.showMoreInfo === true) {
-                    return this.showMoreInfo = false
+                if (this.showMoreInfo === true || this.showUpdatePassword === true) {
+                    return this.showMoreInfo = false, this.showUpdatePassword = false
+                }
+            },
+
+            updatePassword() {
+                this.showUpdatePassword = !this.showUpdatePassword;
+                if (this.showAddInfo === true || this.showMoreInfo === true) {
+                    return this.showMoreInfo = false, this.showAddInfo = false
                 }
             },
 
@@ -199,10 +215,9 @@
             },
 
             addPersonalInfo: function (event) {
-                console.log(
-                    this.selectedIcon);
-                console.log(this.user)
-                console.log(this.custom)
+                console.log(this.selectedIcon);
+                console.log(this.user);
+                console.log(this.custom);
                 axios({
                     method: 'post',
                     url: '/api/v1/custom_profile/create_personal_details/',
@@ -233,11 +248,13 @@
                         this.errors.push(e)
                     });
 
-                axios.get('api/v1/custom_profile/show_custom_user_data')
+                axios.get('api/v1/custom_profile/show_custom_user_data/')
                     .then(response => {
                         this.custom = response.data;
                         console.log(this.custom);
-
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
                     });
             },
 
@@ -249,8 +266,13 @@
                 }).then(response => {
                     this.$router.go('/login/')
                 })
-            }
+            },
+            resetUpdate() {
 
+                this.old_password = null;
+                this.new_password = null;
+                this.confirm_password = null;
+            }
         },
 
 

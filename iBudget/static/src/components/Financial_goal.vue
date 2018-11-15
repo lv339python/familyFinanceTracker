@@ -1,10 +1,10 @@
 <template>
 
     <div class="content">
-        <b-button class="btn btn-warning btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Add Goal">
+        <b-button class="btn btn-warning btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Create Goal">
             ✰
         </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Add Goal">
+        <b-modal ref="myModalRef" hide-footer title="Create Goal">
 
             <div class="form-group">
                 <div>
@@ -72,8 +72,8 @@
         name: "Financial_goal",
         data() {
             return {
-                start_date: null,
-                finish_date: null,
+                start_date:  new Date().toJSON().slice(0, 10),
+                finish_date:  new Date().toJSON().slice(0, 10),
                 value: null,
                 name: null,
                 shared_group: null,
@@ -133,8 +133,8 @@
             },
             reset() {
                 this.shared_group = null;
-                this.start_date = null;
-                this.finish_date = null;
+                this.start_date = new Date().toJSON().slice(0, 10);
+                this.finish_date = new Date().toJSON().slice(0, 10);
                 this.value = null;
                 this.name = null;
                 this.icon = null;

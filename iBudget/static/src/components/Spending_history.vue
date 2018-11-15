@@ -30,14 +30,10 @@
                             </button>
                         </div>
                     </b-form>
-                    <!--<label></label>-->
-                    <!--<input v-model="start_date" type="date" @change="blockButtom()">-->
-                    <!--<label></label>-->
-                    <!--<input v-model="finish_date" type="date" @change="blockButtom()">-->
+
                     <hr>
                 </div>
             </div>
-
         </div>
         <div v-show="isCategory&&(start_date<=finish_date)" class="total">
             <div class="btn-group-justified  but-fl" role="group" v-model="selected" v-if="spending_all.length!==0">
@@ -90,16 +86,20 @@
                     <b style="word-space:2em">&nbsp;</b>
                 </div>
             </div>
+            <div v-if="hasData==0">
+
+                <h5>There are no spending during this period...</h5>
+            </div>
         </div>
         <div class="download_buttons form-group">
             <hr>
             <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
-                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                <button class="btn btn-outline-warning" :disabled="spending_all.length===0||(finish_date<start_date)"
                         :variant="secondary">Download xlsx
                 </button>
             </a>
             <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
-                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                <button class="btn btn-outline-warning" :disabled="spending_all.length===0||(finish_date<start_date)"
                         :variant="secondary">Download csv
                 </button>
             </a>
@@ -127,6 +127,7 @@
                 spending_history_admin: {},
                 spending_all: [],
                 errors: [],
+                hasData: null,
                 UTC: -new Date().getTimezoneOffset() / 60
             }
         },
@@ -160,6 +161,7 @@
                 this.selected = [];
                 this.spending_history_individual = {};
                 this.spending_history_admin = {};
+                this.spending_all = [];
             },
             createHistory: function (event) {
                 this.isCategory = false;
@@ -167,6 +169,7 @@
                 this.selected = [];
                 this.spending_history_individual = {};
                 this.spending_history_admin = {};
+                this.spending_all = [];
                 axios({
                     method: 'post',
                     url: '/api/v1/spending_history/create/',
@@ -181,6 +184,8 @@
                         this.spending_history_individual = response.data.individual;
                         this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
                         this.isCategory = true;
+                        this.hasData = this.spending_all.length
+
                     })
                     .catch(e => {
                         this.errors.push(e)

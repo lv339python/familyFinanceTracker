@@ -142,16 +142,6 @@ class UsersInGroups(models.Model):
         return list_members
 
     @staticmethod
-    def count_of_user_in_group(group_id):
-        """
-        Args:
-            group_id(PK): Group's ID.
-        Returns:
-            Count of users in group
-        """
-        return UsersInGroups.objects.filter(group=group_id).count()
-
-    @staticmethod
     def get_by_id(user_id):
         """
         Args:
@@ -166,6 +156,18 @@ class UsersInGroups(models.Model):
             return user
         except UsersInGroups.DoesNotExist:
             return None
+
+    @staticmethod
+    def group_data_for_user_by_group_id(group_id, user):
+        """
+            Args:
+                group_id(PK): Group's ID.
+                user(PK): User object
+            Returns:
+                Group with group_id for user
+        """
+        user_data = UsersInGroups.objects.get(group=group_id, user=user)
+        return user_data
 
     @staticmethod
     def filter_by_user(user):

@@ -137,11 +137,12 @@ def save_personal_info(user,    # pylint: disable=too-many-arguments
             user.update(first_name=first_name,
                         last_name=last_name,
                         icon=icon)
-            custom = CustomProfile.filter_by_user(user)
+            custom = CustomProfile.get_by_user(user)
             if custom:
                 custom.bio = bio
                 custom.hobby = hobby
                 custom.birthday = birthday
+                custom.save()
 
             else:
                 custom = CustomProfile(
@@ -149,8 +150,7 @@ def save_personal_info(user,    # pylint: disable=too-many-arguments
                     bio=bio,
                     hobby=hobby,
                     birthday=birthday)
-
-            custom.update()
+                custom.update()
     except IntegrityError:
         return False
     return True

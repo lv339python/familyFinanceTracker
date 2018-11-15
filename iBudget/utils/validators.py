@@ -389,10 +389,14 @@ def is_valid_data_add_user_to_group(data):
     if set(data.keys()) != KEYS_SET_ADD_USER_TO_GROUP:
         return False
     try:
+        data['users_email'] = str(data['users_email'])
         data['group_id'] = int(data['group_id'])
         data['is_admin'] = bool(data['is_admin'])
-        validate_email(data['users_email'])
     except(ValueError, AttributeError):
+        return False
+    try:
+        validate_email(data["users_email"])
+    except ValidationError:
         return False
     return True
 

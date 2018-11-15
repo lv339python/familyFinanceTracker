@@ -24,7 +24,7 @@ from utils.validators import is_valid_data_create_new_group, \
 from .models import Group, UsersInGroups
 
 # CONSTANTS FOR ICONS
-AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static1/'
 STANDARD_GROUPS_FOLDER = 'standard_group/'
 ICON_FILE_NAME = 'group.png'
 
@@ -256,7 +256,7 @@ def add_shared_spending_to_group(request):
     group = Group.get_group_by_id(group_id)
     if not is_valid_data_shared_spending_to_group(data):
         return HttpResponse(status=400)
-    if not is_user_admin_group(group_id, user) and not spending.owner == user:
+    if not is_user_admin_group(group_id, user) or not spending.owner == user:
         return HttpResponse(status=409)
     if not spending and not group:
         return HttpResponse(status=406)
@@ -292,7 +292,7 @@ def add_shared_fund_to_group(request):
     group = Group.get_group_by_id(group_id)
     if not is_valid_data_shared_fund_to_group(data):
         return HttpResponse(status=400)
-    if not is_user_admin_group(group_id, user) and not fund.owner == user:
+    if not is_user_admin_group(group_id, user) or not fund.owner == user:
         return HttpResponse(status=409)
     if not fund and not group:
         return HttpResponse(status=406)
@@ -311,7 +311,7 @@ def add_shared_fund_to_group(request):
     return HttpResponse(status=201)
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["PUT"])
 def change_users_role_in_group(request):
     """Handling request for updating user's role in group.
     Args:
@@ -321,7 +321,6 @@ def change_users_role_in_group(request):
         HttpResponse object.
     """
     data = json.loads(request.body)
-    print(data)
     user_email = data["user_email"]
     group_id = data["group_id"]
     is_admin = data["is_admin"]
@@ -333,7 +332,7 @@ def change_users_role_in_group(request):
             return HttpResponse(status=409)
         if not is_user_in_group(group_id, user_to_change.id):
             return HttpResponse(status=406)
-        group = UsersInGroups.get_by_id(user_to_change.id)
+        group = UsersInGroups.group_data_for_user_by_group_id(group_id, user_to_change)
         group.is_admin = is_admin
         try:
             group.save()
@@ -357,7 +356,7 @@ def delete_group(request, group_id):
         group = Group.get_group_by_id(group_id)
         if not group:
             return HttpResponse(status=406)
-        if not group.owner == user:
+        if not is_user_admin_group(group.id, user):
             return HttpResponse(status=400)
         group.is_active = False
         try:

@@ -1,9 +1,9 @@
 <template>
     <div class="content">
-        <b-button class="btn btn-primary btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="New Fund">
+        <b-button class="btn btn-primary btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Create Fund">
             $
         </b-button>
-        <b-modal ref="myModalRef" hide-footer title="New Fund">
+        <b-modal ref="myModalRef" hide-footer title="Create Fund">
             <div>
                 <hr>
                 <div class="form-group">
@@ -35,7 +35,7 @@
         data() {
             return {
                 name: null,
-                icon: null,
+                icon: '',
                 group: null,
                 user_groups_list: [],
                 tab: 'fund',

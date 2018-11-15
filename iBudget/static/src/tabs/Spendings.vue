@@ -13,10 +13,10 @@
                 <div class="d-block text-center">
                     <b-card>
                         <p class="card-text">
+                            <b v-if="modalData['icon']">
+                            <img class='image' :src="modalData['icon']"> <br></b>
                             <b>Name: {{modalData['name']}}</b>
                             <br>
-                            <b v-if="modalData['icon']">Icon:
-                                 <img class='image' :src="modalData['icon']"> <br></b>
                             <b>Total spend for this category: {{modalData['total']}}</b>
                             <br>
                             <b v-if="modalData['last_value']"> Last spend registered:
@@ -61,6 +61,7 @@
         components: {'List_paginated': List_paginated},
         data() {
             return {
+                isList: true,
                 list_ind: [],
                 list_shared: [],
                 list: [],
@@ -160,10 +161,6 @@
 
 <style scoped>
 
-    .card-text {
-        text-align: left;
-        margin-left: 150px;
-    }
     .content {
         height: 100%;
         overflow: hidden;
@@ -201,5 +198,10 @@
     .btn-group{
         height: fit-content;
         margin: 0 auto;
+    }
+
+    .image {
+        width: 15%;
+        height: 15%;
     }
 </style>

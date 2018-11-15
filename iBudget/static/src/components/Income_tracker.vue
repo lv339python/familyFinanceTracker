@@ -34,7 +34,7 @@
                         <th>Comments</th>
                         <th>Delete</th>
                     </tr>
-                    <tr v-for="item in paginatedData">
+                    <tr v-for="item in paginatedData" v-if="!Array.isArray(item)">
                         <td>{{item['income']}}</td>
                         <td>{{item['fund']}}</td>
                         <td>{{item['date']}}</td>
@@ -119,7 +119,7 @@
                 date_to_props: [],
                 amount_to_props: [],
                 no_result: false,
-                last_element: null
+                exporting:false
             }
         },
         created() {
@@ -134,28 +134,25 @@
 
         computed: {
             pageCount() {
-                let l = this.list_with_incomes.length,
+                let l = this.list_with_incomes.length-1,
                     s = this.pagination_size,
-                    pageMax = (l % s !== 0) ? Math.floor(l / s) + 1 : Math.floor(l / s);
+                    pageMax = (l % s != 0) ? Math.floor(l / s) + 1 : Math.floor(l / s);
                 return pageMax;
             },
             paginatedData() {
                 const start = this.paginated_page_number * this.pagination_size,
-                    end = (start + this.pagination_size <= this.list_with_incomes.length) ? start + this.pagination_size : this.list_with_incomes.length - 2;
-                // this.list_with_incomes.splice(this.list_with_incomes.length-1, 1);
-                //                 console.log("##", this.list_with_incomes);
-
+                    end = (start + this.pagination_size <= this.list_with_incomes.length) ? start + this.pagination_size : this.list_with_incomes.length;
                 return this.list_with_incomes.slice(start, end);
             },
             make_list_dates() {
-                this.recover_list();
+                // this.recover_list();
                 let funds = this.list_with_incomes[this.list_with_incomes.length - 1];
                 let dates_for_funds = [];
                 for (var item in funds) {
                     let temp = {};
                     let list_in_list = [];
                     for (var val in this.list_with_incomes) {
-                        if (funds[item] === this.list_with_incomes[val]['fund']) {
+                        if (funds[item] == this.list_with_incomes[val]['fund']) {
                             list_in_list.push(this.list_with_incomes[val]['date']);
                         }
                     }
@@ -173,7 +170,7 @@
                     let temp = {};
                     let list_in_list = [];
                     for (var val in this.list_with_incomes) {
-                        if (funds[item] === this.list_with_incomes[val]['fund']) {
+                        if (funds[item] == this.list_with_incomes[val]['fund']) {
                             list_in_list.push(this.list_with_incomes[val]['amount']);
                         }
                     }
@@ -199,7 +196,6 @@
                         }
                     }).then(response => {
                         this.list_with_incomes = response.data;
-                        this.last_element = this.list_with_incomes[this.list_with_incomes.length - 1];
                         //if we got empty JSON with empty list inside
                         if (this.list_with_incomes.length === 1) {
                             this.no_result = true;
@@ -207,10 +203,12 @@
                         //if we got JSON with only one array inside, not enough to draw a chart
                         else if (this.list_with_incomes.length === 2) {
                             this.shownResult = true;
+                            this.exporting = true
                         }
                         else {
                             this.shownResult = true;
-                            this.shownResultChart = true
+                            this.shownResultChart = true;
+                            this.exporting = true
                         }
 
                     }).catch(error => {
@@ -230,9 +228,6 @@
             },
             prevPage() {
                 this.paginated_page_number--;
-            },
-            recover_list() {
-                this.list_with_incomes = this.list_with_incomes.concat([this.last_element]);
             },
             deleteIncomeHistory: function (IncHistory) {
                 axios({
@@ -274,7 +269,7 @@
     }
 
     div #chartcontainer {
-        margin-right: 600px;
+        margin-right: 200px;
         width: 800px;
     }
 

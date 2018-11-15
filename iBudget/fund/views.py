@@ -24,7 +24,7 @@ from utils.validators import \
 from .models import FundCategories, FinancialGoal
 
 # CONSTANTS FOR ICONS
-AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static1/'
 STANDARD_FUNDS_FOLDER = 'standard_fund/'
 ICON_FILE_NAME = 'funds.png'
 
@@ -144,7 +144,7 @@ def show_goal_data(request):
                                                      date__range=[fund_category.goal.start_date,
                                                                   fund_category.goal.finish_date]):
                 list_transactions.append(float(item.value))
-                list_date_transactions.append(item.date)
+                list_date_transactions.append(item.date.date())
             user_goal_statistic.append({"id": entry,
                                         "name": fund_category.name,
                                         "value": fund_category.goal.value,
@@ -275,7 +275,7 @@ def create_initial_balance(user, begin_date, start_date, fund_id):
                 Balance value
     """
     return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
-        date__range=[begin_date - timedelta(days=1),
+        date__range=[begin_date,
                      start_date]).values_list('value', flat=True)) - \
            sum(SpendingHistory.filter_by_user_date(
                user,
@@ -296,7 +296,7 @@ def create_balance(user, begin_date, start_date, finish_date, fund_id):
     """
 
     return sum(IncomeHistory.filter_by_fund_id(fund_id).filter(
-        date__range=[start_date - timedelta(days=1),
+        date__range=[start_date,
                      finish_date]).values_list('value', flat=True)) - \
            sum(SpendingHistory.filter_by_user_date(
                user,
@@ -344,8 +344,7 @@ def get_balance(request):#pylint: disable= R0914
 
         for group in Group.filter_groups_by_user_id(user):
             for item in SharedFunds.objects.filter(group=group.id):
-                if not FinancialGoal.has_goals(fund_id=item.fund.id) \
-                    and item.fund.is_active:
+                if not FinancialGoal.has_goals(fund_id=item.fund.id) and item.fund.is_active:
                     user_funds.append(item.fund.id)
         begin_date = history_begin_date(user, user_funds)
         chart = [create_spending_chart(user, start_date, current_date)]
@@ -415,7 +414,7 @@ def fund_summary(request):
     """
     fund_id = json.loads(request.body)['fund_id']
     fund = FundCategories.get_by_id(fund_id)
-    fund_info = {'icon': fund.icon, 'name': fund.name}
+    fund_info = {'icon': AwsService.get_image_url(fund.icon), 'name': fund.name}
 
     if fund.is_shared:
         fund_info['spend_group'] = SharedFunds.get_by_fund\
