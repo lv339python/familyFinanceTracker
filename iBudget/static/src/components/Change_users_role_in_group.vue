@@ -50,7 +50,7 @@
             },
             saveData: function (event) {
                 axios({
-                    method: 'post',
+                    method: 'put',
                     url: '/api/v1/group/change_users_role_in_group/',
                     data: {
                         'group_id': this.group_id,

@@ -101,7 +101,7 @@
             return {
                 cur_balance: [],
                 users_group_list: [],
-                selected_group_index: 0,
+                selected_group_index: false,
                 group_index: 0,
                 pageNumber: 0,
                 size:4,
