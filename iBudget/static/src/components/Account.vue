@@ -27,7 +27,7 @@
                     </div>
 
                     <div v-if="showMoreInfo">
-                        <p v-for="item in custom"  class="card-text">
+                        <p v-for="item in custom" class="card-text">
                             <br/>
                             <b>Bio:</b>{{item.bio}}
                             <br/>
@@ -53,7 +53,7 @@
                         </div>
                         <div class="col-md-4 row">
                             <div class="form-group">
-                                <input v-model="custom.birthday" type="date"><span>BIRTHDAY</span>
+                                <input v-b-popover.hover="'BIRTHDAY'" v-model="custom.birthday" type="date">
                             </div>
                             <div class="col-md-2">
                                 <Upload_photo @get_name='onGet_name'></Upload_photo>
@@ -269,9 +269,9 @@
             },
             resetUpdate() {
 
-                this.old_password=null;
-                this.new_password=null;
-                this.confirm_password=null;
+                this.old_password = null;
+                this.new_password = null;
+                this.confirm_password = null;
             }
         },
 
