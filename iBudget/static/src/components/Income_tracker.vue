@@ -2,18 +2,26 @@
     <div class="Income_tracker">
         <div class="wrapper">
             <div id="total">
-                <p>The total amount of income from the 1-st of this month till today is {{this.cur_income}}</p>
+                <h3>The total amount of income from the 1-st of this month till today is {{this.cur_income}}</h3>
             </div>
-            <div id="form" v-if="!shownResult">
-                <p>Please choose dates below:</p>
-                <p>Start date:</p>
-                <input v-model="start_date" type="date" required>
-                <p>End date:</p>
-                <input v-model="end_date" type="date" required>
-                <p>
-                    <button v-on:click="sub_dates">submit</button>
-                </p>
-            </div>
+
+            <b-form v-if="!shownResult" class="income-tracker-form">
+                <b-form-group label="Start date:"
+                              label-for="start-date"
+                              description="Please choose the start date">
+                    <b-form-input v-model="start_date" id="start-date" type="date" required></b-form-input>
+                </b-form-group>
+                <b-form-group label="End date:"
+                              label-for="end-date"
+                              description="Please choose the end date">
+                    <b-form-input v-model="end_date" id="end-date" type="date" required></b-form-input>
+                </b-form-group>
+                <b-button v-on:click="sub_dates" type="submit" variant="primary">
+                    Submit
+                </b-button>
+
+            </b-form>
+
 
             <div id="result">
                 <table border='1px' v-if="shownResult">
@@ -50,21 +58,22 @@
                 <p>
                     <button v-on:click="reRender" v-if="shownResult">refresh</button>
                 </p>
-            </div>
-            <div class="download_buttons" v-if="exporting">
+                <div class="download_buttons" v-if="!no_result">
                 <a v-bind:href='"/api/v1/income_history/download_xlsx_file/?start_date=" + start_date + start_date_time  + "&finish_date=" +  end_date +
                 end_date_time + "&UTC=" + UTC'>
-                    <button class="btn btn-outline-warning" :disabled="shownResult===false||(end_date<start_date)">
+                    <button :variant="seconadary" :disabled="shownResult===false||(end_date<start_date)">
                         Download xlsx
                     </button>
                 </a>
                 <a v-bind:href='"/api/v1/income_history/download_csv_file/?start_date=" + start_date + start_date_time + "&finish_date=" +
                   end_date + end_date_time + "&UTC=" + UTC'>
-                    <button class="btn btn-outline-warning" :disabled="shownResult===false||(end_date<start_date)">
+                    <button :variant="seconadary" :disabled="shownResult===false||(end_date<start_date)">
                         Download csv
                     </button>
                 </a>
             </div>
+            </div>
+
             <div id="no_result" v-if="no_result">
                 <p>There are no incomes within the chosen time frame!</p>
                 <p>
@@ -72,7 +81,7 @@
                 </p>
             </div>
         </div>
-        <div id="chartcontainer" v-if="shownResultChart">
+        <div class="chartcontainer" v-if="shownResultChart">
             <!--v-if is necessary to render the chart correctly, because computed is called with default
             data first and the chart is not rendered; here it's called twice and only the valid result is
             rendered-->
@@ -176,7 +185,7 @@
 
         methods: {
             sub_dates: function () {
-                if (this.start_date.length != 0 && this.end_date.length != 0) {
+                if (this.start_date.length !== 0 && this.end_date.length !== 0) {
                     axios({
                         method: "post",
                         url: "api/v1/income_history/track/",
@@ -239,11 +248,15 @@
 </script>
 
 <style>
+    input, label {
+        display: block;
+    }
+
     .wrapper {
         display: flex;
         flex-direction: column;
         margin: 0 auto;
-
+        justify-content: left;
     }
 
     caption {
@@ -252,6 +265,7 @@
 
     .Income_tracker {
         display: flex;
+        height: 100%;
     }
 
     div #chartcontainer {
@@ -262,5 +276,18 @@
     #no_result {
         margin-top: 50px;
 
+    }
+
+    .income-tracker-form {
+        width: 20%;
+        margin: 0 auto;
+    }
+    .download_buttons{
+        margin: auto;
+        margin-top: 5px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: max-content;
     }
 </style>

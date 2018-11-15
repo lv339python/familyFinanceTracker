@@ -1,11 +1,10 @@
 <template>
     <div class="content">
         <div id="left" class="text column">
-            <b-button :variant="secondary" to="/incomes/tracking" @click="isList=false">Tracking</b-button>
-        </div>
-        <div id="right" class="column">
-            <div v-if="isBasePath&&isList&& list.length!==0">
-                <list_paginated
+            <!--<b-button :variant="secondary" to="/incomes/tracking" @click="isList=false">Tracking</b-button>-->
+            <!--<router-view></router-view>-->
+            <div v-if="list.length!==0">
+                <list-paginated
                     v-bind:list='list'
                     v-bind:title='title'
                     v-bind:deleteItem="deleteIncome"
@@ -30,7 +29,10 @@
                     </b-card>
                 </div>
             </b-modal>
-            <router-view></router-view>
+
+        </div>
+        <div id="right" class="column">
+            <income-tracker></income-tracker>
         </div>
     </div>
 
@@ -39,9 +41,10 @@
 <script>
     import axios from 'axios';
     import List_paginated from '../components/List_paginated';
+    import Income_tracker from '../components/Income_tracker'
 
     export default {
-        components: {'List_paginated': List_paginated},
+        components: {'list-paginated': List_paginated, 'income-tracker' : Income_tracker},
         data() {
             return {
                 isList: true,
@@ -51,12 +54,6 @@
                 id: 0,
                 modalData: {}
             }
-        },
-        computed: {
-             isBasePath: function () {
-                {
-                    return this.$route.path === "/incomes"              }
-            },
         },
         methods: {
             showModal(data) {
@@ -130,9 +127,8 @@
     #left {
         flex-shrink: 0;
         background-color: whitesmoke;
-        margin: 5px;
         padding: 5px;
-        width: 16%;
+        width: 25%;
     }
 
     #right {
@@ -152,4 +148,3 @@
         height: 15%;
     }
 </style>
-1

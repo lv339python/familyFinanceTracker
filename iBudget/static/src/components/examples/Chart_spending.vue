@@ -40,7 +40,7 @@
     }
 
     h1 {
-        font-family: 'Helvetica', Arial;
+        font-family: 'Helvetica', Arial, serif;
         color: #464646;
         text-transform: uppercase;
         border-bottom: 1px solid #f1f1f1;

@@ -1,59 +1,63 @@
 <template>
     <div class="content">
-        <b-carousel id="carousel1"
-                    style="text-shadow: 1px 1px 2px #333;"
-                    controls
-                    indicators
-                    img-width="1024"
-                    img-height="500"
-                    :interval="false"
-                    v-model="slide"
-                    @sliding-start="onSlideStart"
-                    @sliding-end="onSlideEnd" v-if="values.length !== 0">
-            <b-carousel-slide img-blank v-for="(item, index) in dates" v-if="dates.length !== 0">
-                <div class="text">
-                    <div>
-                        <div class="chartcontainer">
-                            <chart_spending
-                                v-bind:value='values[index].value'
-                                v-bind:name='values[index].name'
-                                v-bind:title='item'
-                                v-if="values[index].value.length !== 0"/>
-                        </div>
-                        <b-btn v-b-toggle.collapse6 variant="primary">Balance</b-btn>
-
-                        <b-collapse id="collapse6" class="mt-2">
-                            <div class="table-holder">
-                                <h4>Balance</h4>
-                                <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th>Fund Name</th>
-                                        <th>Initial Balance</th>
-                                        <th>Current Balance</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="(fundName, entry) in fund">
-                                        <td>{{fundName}}</td>
-                                        <td>{{initial[entry][index]}}</td>
-                                        <td>{{balance[entry][index]}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+        <div class="btn-holder">
+            <spending_button></spending_button>
+            <income_button></income_button>
+            <financial_goal></financial_goal>
+            <fund_registration></fund_registration>
+        </div>
+        <div class="carousel-holder">
+            <b-carousel class="carousel1"
+                        style="text-shadow: 1px 1px 2px #333;"
+                        controls
+                        indicators
+                        :interval="false"
+                        img-width="1024"
+                        img-height="480"
+                        v-model="slide"
+                        @sliding-start="onSlideStart"
+                        @sliding-end="onSlideEnd" v-if="values.length !== 0">
+                <b-carousel-slide img-blank v-for="(item, index) in dates" v-if="dates.length !== 0">
+                    <div class="text">
+                        <div>
+                            <div class="chart-container">
+                                <chart_spending
+                                    v-bind:value='values[index].value'
+                                    v-bind:name='values[index].name'
+                                    v-bind:title='item'
+                                    v-if="values[index].value.length !== 0"/>
                             </div>
-                        </b-collapse>
+                            <b-btn v-b-toggle.collapse6 variant="primary">Balance</b-btn>
+
+                            <b-collapse id="collapse6">
+                                <div class="table-holder">
+                                    <h4>Balance</h4>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Fund Name</th>
+                                            <th>Initial Balance</th>
+                                            <th>Current Balance</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="(fundName, entry) in fund">
+                                            <td>{{fundName}}</td>
+                                            <td>{{initial[entry][index]}}</td>
+                                            <td>{{balance[entry][index]}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </b-collapse>
+                        </div>
                     </div>
-                </div>
 
 
-            </b-carousel-slide>
-        </b-carousel>
-        <spending_button/>
-        <income_button/>
-        <financial_goal/>
-        <fund_registration/>
+                </b-carousel-slide>
+            </b-carousel>
 
+        </div>
     </div>
 </template>
 
@@ -64,14 +68,10 @@
 
     import axios from 'axios';
     import Chart_spending from 'src/components/examples/Chart_spending';
-    import Spending_button from 'src/components/buttons/Spending_button';
-    import Income_button from 'src/components/buttons/Income_button';
     import Financial_goal from 'src/components/Financial_goal';
     import Fund_registration from 'src/components/Funds_registration';
-    import Delete_income from 'src/components/Delete_income';
-    import Delete_fund from 'src/components/Delete_fund';
-    import Delete_goal from 'src/components/Delete_goal';
-    import Delete_spending from 'src/components/Delete_spending';
+    import Spending_button from 'src/components/buttons/Spending_button';
+    import Income_button from 'src/components/buttons/Income_button';
 
     export default {
         name: "Home",
@@ -81,10 +81,6 @@
             'Income_button': Income_button,
             'Financial_goal': Financial_goal,
             'Fund_registration': Fund_registration,
-            'Delete_income': Delete_income,
-            'Delete_fund': Delete_fund,
-            'Delete_goal': Delete_goal,
-            'Delete_spending': Delete_spending,
         },
         data() {
             return {
@@ -135,11 +131,36 @@
     .content {
         overflow: hidden;
         display: flex;
+        flex-direction: column;
+
     }
 
     .text {
-        width: fit-content;
+        width: 100%;
         text-align: center;
+    }
+
+    .btn-circle.btn-xl {
+        width: 70px;
+        height: 70px;
+        padding: 10px 16px;
+        border-radius: 35px;
+        font-size: 24px;
+        line-height: 1.33;
+    }
+    .carousel1-slide{
+        margin: auto;
+    }
+    .btn-holder{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        padding: 10px;
+    }
+    .carousel-holder {
+        width: 100%;
+        height:100%;
+        position: relative;
     }
 </style>
 
