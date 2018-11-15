@@ -91,9 +91,9 @@
             DataValidation: {
                 get: function () {
                     let result =
-                        this.inc_category != null ||
-                        this.fund_category != null ||
-                        this.value != null ||
+                        this.inc_category != null &&
+                        this.fund_category != null &&
+                        this.value != null &&
                         this.date != null;
                     return result;
                 }
