@@ -47,3 +47,19 @@ class CustomProfile(models.Model):
 
         except CustomProfile.DoesNotExist:
             return None
+
+    @staticmethod
+    def get_by_user(user):
+        """
+        Args:
+            user: The first parameter.
+        Returns:
+            CustomProfile object if database contain user with id, None otherwise.
+
+        """
+
+        try:
+            return CustomProfile.objects.get(user=user)
+
+        except CustomProfile.DoesNotExist:
+            return None
