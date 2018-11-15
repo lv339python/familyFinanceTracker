@@ -24,7 +24,7 @@ from utils.validators import is_valid_data_create_new_group, \
 from .models import Group, UsersInGroups
 
 # CONSTANTS FOR ICONS
-AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static/'
+AWS_S3_URL = 'https://s3.amazonaws.com/family-finance-tracker-static1/'
 STANDARD_GROUPS_FOLDER = 'standard_group/'
 ICON_FILE_NAME = 'group.png'
 

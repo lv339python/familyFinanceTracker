@@ -94,7 +94,7 @@
     import axios from 'axios';
     import Upload_photo from './Upload_photo';
 
-    const path = "https://s3.amazonaws.com/family-finance-tracker-static/";
+    const path = "https://s3.amazonaws.com/family-finance-tracker-static1/";
     const default_path = "http://cdn.onlinewebfonts.com/svg/img_191958.png";
 
     export default {
