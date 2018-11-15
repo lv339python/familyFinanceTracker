@@ -104,7 +104,7 @@
                 type_of_pay: null,
                 value: null,
                 date: new Date().toJSON().slice(0, 10),
-                comment: null,
+                comment: '',
                 is_shared: false,
                 group_id: null
             }
