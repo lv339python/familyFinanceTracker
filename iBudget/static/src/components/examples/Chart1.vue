@@ -66,6 +66,7 @@
         border-radius: 20px;
         margin: 50px 0;
     }
+
     .innerChart {
         min-height: 300px;
         min-width: 200px;
