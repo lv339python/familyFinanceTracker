@@ -245,7 +245,7 @@ def create_xlsx(request):
     return response
 
 
-def create_csv(request):
+def create_csv(request):#pylint: disable= R0912
     """
     Creating csv file with spending history for specific period
     Args:

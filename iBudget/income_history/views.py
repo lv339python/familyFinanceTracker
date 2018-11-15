@@ -161,7 +161,8 @@ def create_xlsx(request):
             worksheet.write(row, col + 1, history_dict['fund'], formats_dict['cell_format'])
             date = datetime.datetime.strptime(history_dict['date'], "%Y-%m-%d")
             worksheet.write_datetime(row, col + 2, date, formats_dict['date_format'])
-            worksheet.write_number(row, col + 3, history_dict['amount'], formats_dict['value_format'])
+            worksheet.write_number(row, col + 3, history_dict['amount'],
+                                   formats_dict['value_format'])
             worksheet.write(row, col + 4, history_dict['comment'], formats_dict['cell_format'])
             col, row = 1, row + 1
 
