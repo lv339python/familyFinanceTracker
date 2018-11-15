@@ -28,10 +28,10 @@ def create_personal_details(request):
             user=user,
             first_name=data['first_name'],
             last_name=data['last_name'],
-            bio=data['bio'],
-            hobby=data["hobby"],
-            icon=data['icon'],
-            birthday=data['birthday']):
+            bio=data.get('bio'),
+            hobby=data.get("hobby"),
+            icon=data.get('icon'),
+            birthday=data.get('birthday')):
         return HttpResponse('Congratulation, you updated personal details', status=201)
     return HttpResponse(status=400)
 
