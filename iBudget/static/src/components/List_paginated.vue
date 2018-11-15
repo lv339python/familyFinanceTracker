@@ -11,7 +11,7 @@
                     <div>{{ item.name }}</div>
                     <div>
                         <button type="button" class="btn btn-outline-light but"
-                                @click="deleteItem(item.id)"
+                                @click="deleteItem(item.id); showModal=false"
                                 :variant="secondary">
                             Delete
                         </button>
