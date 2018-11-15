@@ -152,21 +152,18 @@ def create_xlsx(request):
         head_row, head_col = 1, 1
         row, col = 2, 1
         for i in income_history[0]:
-            worksheet.write(head_row, head_col, i, formats_dict['head_format'])
-            head_col += 1
+            if i != 'income_history_id':
+                worksheet.write(head_row, head_col, i, formats_dict['head_format'])
+                head_col += 1
 
         for history_dict in income_history:
-            for i in history_dict:
-                if i == 'amount':
-                    worksheet.write_number(row, col, history_dict[i], formats_dict['value_format'])
-                elif i == 'date':
-                    date = datetime.datetime.strptime(history_dict[i], "%Y-%m-%d")
-                    worksheet.write_datetime(row, col, date, formats_dict['date_format'])
-                else:
-                    worksheet.write(row, col, history_dict[i], formats_dict['cell_format'])
-                col += 1
-            col = 1
-            row += 1
+            worksheet.write(row, col, history_dict['income'], formats_dict['cell_format'])
+            worksheet.write(row, col + 1, history_dict['fund'], formats_dict['cell_format'])
+            date = datetime.datetime.strptime(history_dict['date'], "%Y-%m-%d")
+            worksheet.write_datetime(row, col + 2, date, formats_dict['date_format'])
+            worksheet.write_number(row, col + 3, history_dict['amount'], formats_dict['value_format'])
+            worksheet.write(row, col + 4, history_dict['comment'], formats_dict['cell_format'])
+            col, row = 1, row + 1
 
     workbook.close()
 
@@ -198,13 +195,16 @@ def create_csv(request):
     headers = []
     if income_history:
         for i in income_history[0]:
-            headers.append(i)
+            if i != 'income_history_id':
+                headers.append(i)
 
     writer = csv.DictWriter(output, dialect='excel', quoting=csv.QUOTE_ALL, fieldnames=headers)
     writer.writeheader()
 
     if income_history:
-        writer.writerows(income_history)
+        for entry in income_history:
+            del entry['income_history_id']
+            writer.writerow(entry)
 
     response = file_streaming_response('text/csv', 'income_history.csv', output)
     return response
