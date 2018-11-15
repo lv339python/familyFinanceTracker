@@ -1,16 +1,7 @@
 <template>
     <div class="content">
-        <div id="left" class="text column">
-            <b-button :variant="secondary" to="/spendings/add" @click="isList=false">Add</b-button>
-            <b-button :variant="secondary" to="/spendings/limit_ind" @click="isList=false">Set Individual Limitation
-            </b-button>
-            <b-button :variant="secondary" to="/spendings/limit_group" @click="isList=false" v-if="group_spends">Set
-                Group Limitation
-            </b-button>
-            <b-button :variant="secondary" to="/spendings/history" @click="isList=false">History</b-button>
-        </div>
-        <div id="right" class="column">
-            <div v-if="isList&&totalList.length!==0">
+        <div id="left">
+            <div v-if="totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
                     v-bind:title='title'
@@ -39,7 +30,24 @@
                 </div>
 
             </b-modal>
-            <router-view></router-view>
+
+        </div>
+
+        <div id="right">
+            <b-button-group size="lg" class="btn-group">
+                <b-button v-b-toggle.collapse1 variant="primary" to="/spendings/limit_ind" >
+                    Set Individual Limitation
+                </b-button>
+                <b-button v-b-toggle.collapse1 variant="primary" to="/spendings/limit_group" v-if="group_spends">
+                    Set Group Limitation
+                </b-button>
+                <b-button variant="primary" to="/spendings/history" >History</b-button>
+            </b-button-group>
+            <b-collapse id="collapse1" class="mt-2">
+                <b-card>
+                    <router-view></router-view>
+                </b-card>
+            </b-collapse>
         </div>
     </div>
 </template>
@@ -53,7 +61,6 @@
         components: {'List_paginated': List_paginated},
         data() {
             return {
-                isList: true,
                 list_ind: [],
                 list_shared: [],
                 list: [],
@@ -165,9 +172,9 @@
     }
 
     .column {
-        height: 100%;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-evenly;
     }
 
     #left {
@@ -175,7 +182,7 @@
         background-color: whitesmoke;
         margin: 5px;
         padding: 5px;
-        width: 16%;
+        width: 25%;
     }
 
     #right {
@@ -183,10 +190,16 @@
         padding: 5px;
         margin: 0;
         width: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .text {
         width: fit-content;
         margin: auto;
+    }
+    .btn-group{
+        height: fit-content;
+        margin: 0 auto;
     }
 </style>

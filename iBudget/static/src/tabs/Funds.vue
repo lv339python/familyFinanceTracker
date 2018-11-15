@@ -1,10 +1,7 @@
 <template>
     <div class="content">
         <div id="left" class="text column">
-            <b-button :variant="secondary" to="/funds/tracking_goal" @click="isList=false">Tracking Goal</b-button>
-        </div>
-        <div id="right" class="column">
-            <div v-if="isList&&totalList.length!==0">
+            <div v-if="totalList.length!==0">
                 <list_paginated
                     v-bind:list='list'
                     v-bind:title='title'
@@ -12,7 +9,7 @@
                     v-bind:showModal='showModal'
                     v-if="list.length !== 0"/>
             </div>
-            <div v-if="isList&&totalListGoal.length!==0">
+            <div v-if="totalListGoal.length!==0">
                 <list_paginated
                     v-bind:list='listGoal'
                     v-bind:title='titleGoal'
@@ -41,21 +38,23 @@
                      </b-card>
                  </div>
              </b-modal>
-             <router-view></router-view>
-         </div>
+        </div>
+        <div id="right" class="column">
+            <tracking-goal></tracking-goal>
+        </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
     import List_paginated from '../components/List_paginated';
+    import Goal from '../components/Goal'
 
     export default {
         name: "Funds",
-        components: {'List_paginated': List_paginated},
+        components: {'List_paginated': List_paginated, 'tracking-goal': Goal},
         data() {
             return {
-                isList: true,
                 list_shared: [],
                 list_sharedGoal: [],
                 listGoal: [],
@@ -211,7 +210,7 @@
         background-color: whitesmoke;
         margin: 5px;
         padding: 5px;
-        width: 16%;
+        width: 25%;
     }
 
     #right {

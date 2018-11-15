@@ -1,7 +1,6 @@
 <template>
     <div class="content">
-        <div class="col-md-8">
-            <h5 class='title'> {{title}} </h5>
+        <div class="paginated-list">
             <ul class="list-group">
                 <li
                     class="list-group-item list-group-item-action pointer"
@@ -93,7 +92,9 @@
         margin: 0px;
         display: flex;
     }
-
+    .paginated-list {
+        width: 100%;
+    }
     .column {
         height: 100%;
         display: flex;

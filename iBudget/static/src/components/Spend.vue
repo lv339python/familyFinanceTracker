@@ -8,11 +8,12 @@
             <input type="radio" id="two" value="False" v-model="fixed">
             <label for="two">Arbitrary</label>
         </div>
-        <div v-if="fixed !== null">
-            <div class="col-md-4">
+        <div class="wrapper" v-if="fixed !== null">
+            <div class="form-holder">
+                <div>
                 <hr>
                 <div class="form-group">
-                    <label for="monthYear">Your spending:</label>
+                    <label for="monthYear">Your Spending:</label>
                     <select v-model="selectedSpending" class="form-control" id="spendings" required>
                         <option v-for="spend in spending_list" v-bind:value="spend.id"> {{ spend.name }}
                         </option>
@@ -20,8 +21,8 @@
                 </div>
             </div>
 
-            <div v-if="fixed == true | fixed =='True'">
-                <div class="col-md-4">
+            <div v-if="fixed == true | fixed =='True'" class="monthly-form">
+                <div>
                     <hr>
                     <div class="form-group">
                         <label for="years">Year:</label>
@@ -30,7 +31,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div>
                     <hr>
                     <div class="form-group">
                         <label for="monthYear">Month:</label>
@@ -39,7 +40,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div>
                     <hr>
                     <div class="form-group">
                         <label for="value">Value:</label>
@@ -55,29 +56,30 @@
                         <button v-on:click="setLimitFix"
                             :variant="secondary"
                             class="btn btn-outline-primary"
-                            :disabled="isValidDataFix===false">Set limit
+                            :disabled="isValidDataFix===false">Set Limit
                         </button>
                     </div>
                 </div>
             </div>
 
             <div v-if="fixed==false | fixed=='False'">
-                <div class="form-group col-md-4">
+                <div class="form-group">
+                    <hr>
                     <div>
-                        <label>Select start date</label>
+                        <label>Select Start Date</label>
                         <input v-model="start_date" type="date">
                     </div>
                     <hr>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group">
                     <div>
-                        <label>Select final date</label>
+                        <label>Select Final Date</label>
                         <input v-model="finish_date" type="date">
                         <hr>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <hr>
+                <div>
+
                     <div class="form-group">
                         <label for="value">Value:</label>
                         <br>
@@ -92,11 +94,13 @@
                         <button v-on:click="setLimitArb"
                             :variant="secondary"
                             class="btn btn-outline-primary"
-                            :disabled="isValidDataArb===false">Set limit
+                            :disabled="isValidDataArb===false">Set Limit
                         </button>
                     </div>
                 </div>
             </div>
+            </div>
+
         </div>
     </div>
 </template>
@@ -250,5 +254,15 @@
 </script>
 
 <style scoped>
+    .wrapper{
+        display: flex;
+    }
+    .form-holder{
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        width: 25%;
+    }
 
 </style>

@@ -1,29 +1,45 @@
 <template>
     <div id="spending_history">
         <div>
-            <div class="col-md-8 total">
+            <div class="total">
                 <h6>Total in this month:
                     <br>
                     {{total}}
                 </h6>
                 <hr>
             </div>
-            <div class="form-group col-md-8">
+            <div class="form-group">
                 <div class="dates">
-                    <label>Select start date</label>
-                    <input v-model="start_date" type="date" @change="blockButtom()">
-                    <label>Select final date</label>
-                    <input v-model="finish_date" type="date" @change="blockButtom()">
+                    <b-form>
+                        <b-form-group label="Select Start Date"
+                                      label-for="start-date"
+                                      description="Please choose the start date">
+                            <b-form-input v-model="start_date" id="start-date" type="date"
+                                          required @change="blockButtom()"></b-form-input>
+                        </b-form-group>
+                        <b-form-group label="Select Final Date"
+                                      label-for="finish-date"
+                                      description="Please choose the end date">
+                            <b-form-input v-model="finish_date" id="end-date" type="date" required
+                                          @change="blockButtom()"></b-form-input>
+                        </b-form-group>
+                        <div class="total" v-if="start_date<=finish_date">
+                            <button class="btn btn-outline-primary" type="submit" v-on:click="createHistory"
+                                    :variant="secondary">
+                                Show All Spending
+                            </button>
+                        </div>
+                    </b-form>
+                    <!--<label></label>-->
+                    <!--<input v-model="start_date" type="date" @change="blockButtom()">-->
+                    <!--<label></label>-->
+                    <!--<input v-model="finish_date" type="date" @change="blockButtom()">-->
                     <hr>
                 </div>
             </div>
-            <div class="col-md-8 total" v-if="start_date<=finish_date">
-                <button class="btn btn-outline-warning" v-on:click="createHistory" :variant="secondary">
-                    Show all spending
-                </button>
-            </div>
+
         </div>
-        <div v-show="isCategory&&(start_date<=finish_date)" class="col-md-8 total">
+        <div v-show="isCategory&&(start_date<=finish_date)" class="total">
             <div class="btn-group-justified  but-fl" role="group" v-model="selected" v-if="spending_all.length!==0">
                 <button v-for="spend in spending_all"
                         type="button"
@@ -49,10 +65,10 @@
                         <td>{{ p.value }}</td>
                         <td>{{ p.date }}</td>
                         <td>{{ p.fund }}</td>
-                        <td >
+                        <td>
                             <button
-                                    type="button" class="btn btn-outline-danger" v-on:click="deleteHistory(p.Delete)"
-                                    :variant="secondary">Delete
+                                type="button" class="btn btn-outline-danger" v-on:click="deleteHistory(p.Delete)"
+                                :variant="secondary">Delete
                             </button>
                         </td>
                     </tr>
@@ -75,7 +91,7 @@
                 </div>
             </div>
         </div>
-        <div class="download_buttons form-group col-md-6">
+        <div class="download_buttons form-group">
             <hr>
             <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
                 <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
@@ -93,6 +109,7 @@
 
 <script>
     import axios from 'axios';
+
     var UTC = -new Date().getTimezoneOffset() / 60;
     export default {
         name: "Spending_history",
@@ -159,28 +176,28 @@
                         'UTC': UTC,
                     }
                 })
-                .then(response => {
-                    this.spending_history_admin = response.data.admin;
-                    this.spending_history_individual = response.data.individual;
-                    this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
-                    this.isCategory = true;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
+                    .then(response => {
+                        this.spending_history_admin = response.data.admin;
+                        this.spending_history_individual = response.data.individual;
+                        this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
+                        this.isCategory = true;
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    })
             },
-             deleteHistory: function (spendHistory) {
+            deleteHistory: function (spendHistory) {
                 axios({
                     method: 'delete',
                     url: '/api/v1/spending_history/delete_spending_history/' + spendHistory,
 
                 }).then(response => {
-                        this.reply = response.data;
-                        alert(this.reply);
-                        this.$router.go('/spendings/history')
-                    }).catch(error => {
-                        alert(error.response.data)
-                    })
+                    this.reply = response.data;
+                    alert(this.reply);
+                    this.$router.go('/spendings/history')
+                }).catch(error => {
+                    alert(error.response.data)
+                })
 
             },
             nextPage() {
@@ -215,7 +232,10 @@
     .dates {
         text-align: center;
         justify-content: space-around;
+        width: max-content;
+        margin: auto;
     }
+
     #spending_history {
 
     }

@@ -1,6 +1,14 @@
 <template>
     <div class="content">
-
+        <div class="btn-holder">
+                    <spending_button></spending_button>
+                    <income_button></income_button>
+                    <financial_goal></financial_goal>
+                    <fund_registration></fund_registration>
+                    <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Delete">
+                        ✘
+                    </b-button>
+                </div>
         <div class="carousel-holder">
             <b-carousel class="carousel1"
                     style="text-shadow: 1px 1px 2px #333;"
@@ -12,16 +20,8 @@
                     v-model="slide"
                     @sliding-start="onSlideStart"
                     @sliding-end="onSlideEnd" v-if="values.length !== 0">
-            <b-carousel-slide  img-blank v-for="(item, index) in dates" v-if="dates.length !== 0">
-                <div class="btn-holder">
-                    <spending_button></spending_button>
-                    <income_button></income_button>
-                    <financial_goal></financial_goal>
-                    <fund_registration></fund_registration>
-                    <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Delete">
-                        ✘
-                    </b-button>
-                </div>
+            <b-carousel-slide img-blank v-for="(item, index) in dates" v-if="dates.length !== 0">
+
                 <div class="text">
 
                     <div>
@@ -166,6 +166,7 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
+
     }
 
     .text {
@@ -186,13 +187,13 @@
     }
     .btn-holder{
         display: flex;
-        flex-direction: row;
-        height: fit-content;
-        margin: auto;
-        justify-content: center;
+        flex-direction: column;
+        justify-content: space-evenly;
+        padding: 10px;
     }
     .carousel-holder {
         width: 100%;
+        height:100%;
         position: relative;
     }
 </style>
