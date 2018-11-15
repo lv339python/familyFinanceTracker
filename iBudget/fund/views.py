@@ -144,7 +144,7 @@ def show_goal_data(request):
                                                      date__range=[fund_category.goal.start_date,
                                                                   fund_category.goal.finish_date]):
                 list_transactions.append(float(item.value))
-                list_date_transactions.append(item.date)
+                list_date_transactions.append(item.date.date())
             user_goal_statistic.append({"id": entry,
                                         "name": fund_category.name,
                                         "value": fund_category.goal.value,

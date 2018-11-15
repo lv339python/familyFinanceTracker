@@ -1,69 +1,69 @@
 <template>
     <div>
-        <b-button class="btn btn-success btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Add income">
+        <b-button class="btn btn-success btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Add Income">
             +
         </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Add income">
+        <b-modal ref="myModalRef" hide-footer title="Add Income">
             <div class="form-group">
-               <input v-model="date" type="date">
+                <input v-model="date" type="date">
             </div>
-
-                <div class="calculator">
-                    <div class="display">
-                         <div>
-                            <b-input-group>
-                                <b-form-input placeholder="0" v-model.number="current" type="number" min="1" ></b-form-input>
-                                <b-select v-model="fund_category" v-b-popover.hover="'Choose fund'" title="Fund" variant="primary" slot="prepend"
-                                           v-if="is_shared===false">
-                                    <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
-                                    </option>
-                                </b-select>
-                                <b-select  v-model="fund_category" v-b-popover.hover="'Choose Shared fund'" title=" Shared Fund" variant="primary" slot="prepend"
-                                           v-if="is_active_group !== null && is_shared===true">
-                                    <option v-for="fund in shared_list"
+            <div class="calculator">
+                <div class="display">
+                    <div>
+                        <b-input-group>
+                            <b-form-input v-model.number="current" type="number" min="0.00"
+                                          max="999999999"></b-form-input>
+                            <b-select v-model="fund_category" v-b-popover.hover="'Choose Fund'" title="Fund"
+                                      variant="primary" slot="prepend"
+                                      v-if="is_shared===false">
+                                <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
+                                </option>
+                            </b-select>
+                            <b-select v-model="fund_category" v-b-popover.hover="'Choose Shared Fund'"
+                                      title=" Shared Fund" variant="primary" slot="prepend"
+                                      v-if="is_active_group !== null && is_shared===true">
+                                <option v-for="fund in shared_list"
                                         v-if="fund.id_group === is_active_group"
                                         v-bind:value="fund.id_fund">
                                     {{fund.name_fund}}
-                                    </option>
-                                </b-select>
-                            </b-input-group>
-                        </div>
-                            <div class="col-md-12 form-group">
-                                <input placeholder="✎ ✍ " v-model="comment" type="text" class="form-control">
-                            </div>
+                                </option>
+                            </b-select>
+                        </b-input-group>
                     </div>
-
-                    <div @click="clear1" class="btn">C</div>
-                    <div @click="sign" class="btn">+/-</div>
-                    <div @click="percent" class="btn">%</div>
-                    <div @click="divide" class="btn operator">÷</div>
-                    <div @click="append('7')" class="btn">7</div>
-                    <div @click="append('8')" class="btn">8</div>
-                    <div @click="append('9')" class="btn">9</div>
-                    <div @click="times" class="btn operator">x</div>
-                    <div @click="append('4')" class="btn">4</div>
-                    <div @click="append('5')" class="btn">5</div>
-                    <div @click="append('6')" class="btn">6</div>
-                    <div @click="minus" class="btn operator">-</div>
-                    <div @click="append('1')" class="btn">1</div>
-                    <div @click="append('2')" class="btn">2</div>
-                    <div @click="append('3')" class="btn">3</div>
-                    <div @click="add" class="btn operator">+</div>
-                    <div @click="append('0')" class="btn zero">0</div>
-                    <div @click="dot" class="btn">.</div>
-                    <div @click="equal" class="btn operator">=</div>
-                    <b-btn v-b-toggle.collapse1 variant="primary">Choose Category</b-btn>
-
+                    <div class="col-md-12 form-group">
+                        <input placeholder="✍" v-model="comment" type="text" class="form-control">
+                    </div>
                 </div>
-                <b-collapse id="collapse1" class="mt-2">
-                    <div>
-                        <label>Select income category:</label>
-                        <select v-model="inc_category">
-                            <option v-for="income in income_list" v-bind:value="income.id"> {{ income.name }}
-                            </option>
-                        </select>
-                        <div v-if="is_shared===true">
-                        <label>Chose group</label>
+                <div @click="clear1" class="btn">C</div>
+                <div @click="sign" class="btn">+/-</div>
+                <div @click="percent" class="btn">%</div>
+                <div @click="divide" class="btn operator">÷</div>
+                <div @click="append('7')" class="btn">7</div>
+                <div @click="append('8')" class="btn">8</div>
+                <div @click="append('9')" class="btn">9</div>
+                <div @click="times" class="btn operator">x</div>
+                <div @click="append('4')" class="btn">4</div>
+                <div @click="append('5')" class="btn">5</div>
+                <div @click="append('6')" class="btn">6</div>
+                <div @click="minus" class="btn operator">-</div>
+                <div @click="append('1')" class="btn">1</div>
+                <div @click="append('2')" class="btn">2</div>
+                <div @click="append('3')" class="btn">3</div>
+                <div @click="add" class="btn operator">+</div>
+                <div @click="append('0')" class="btn zero">0</div>
+                <div @click="dot" class="btn">.</div>
+                <div @click="equal" class="btn operator">=</div>
+                <b-btn v-b-toggle.collapse1 variant="outline-success">Category</b-btn>
+            </div>
+            <b-collapse id="collapse1" class="mt-2">
+                <div>
+                    <label>Choose Income Category:</label>
+                    <select v-model="inc_category">
+                        <option v-for="income in income_list" v-bind:value="income.id"> {{ income.name }}
+                        </option>
+                    </select>
+                    <div v-if="is_shared===true">
+                        <label>Choose Group</label>
                         <select v-model="group">
                             <option v-for="group in group_list"
                                     v-bind:value="group.id"
@@ -72,36 +72,26 @@
                             </option>
                         </select>
                     </div>
-                        <div>
-                            <input type="checkbox" id="cbx1" style="display:none" v-model="is_shared"/>
-                            <label for="cbx1" class="toggle"><span></span>Shared</label>
-                        </div>
-                            <b-btn v-b-toggle.collapse2 variant="primary">+</b-btn>
-                    </div>
-
-
-
                     <div>
-                        <b-button :disabled="DataValidation===false" class="btn btn-outline-primary"
-                                  @click="setData" :variant="success">Save
-                        </b-button>
+                        <input type="checkbox" id="cbx1" style="display:none" v-model="is_shared"/>
+                        <label for="cbx1" class="toggle"><span></span>Shared</label>
                     </div>
-
-                    <div>
-                        <b-button class="btn btn-outline-danger" @click="clear" :variant="warning">Clear form</b-button>
-                    </div>
-
-                </b-collapse>
-
-                <b-collapse id="collapse2" class="mt-2">
-                    <income_add/>
-                </b-collapse>
-
+                    <b-btn class="mt-3" variant="outline-success" @click="showAddIncModal">+</b-btn>
+                </div>
+                <hr/>
+                <div>
+                    <b-button class="btn btn-outline-danger" @click="clear" :variant="warning">Reset</b-button>
+                    <b-button :disabled="DataValidation===false" class="btn btn-outline-primary"
+                              @click="setData" :variant="success">Save
+                    </b-button>
+                </div>
+            </b-collapse>
+        </b-modal>
+        <b-modal ref="myModalAddIncRef" hide-footer title="Create Income">
+            <income_add/>
         </b-modal>
     </div>
-
 </template>
-
 <script>
     import axios from 'axios';
     import Income_add from "src/components/Income_add";
@@ -110,7 +100,6 @@
         name: 'Income_button',
         components: {
             'Income_add': Income_add,
-
         },
         data() {
             return {
@@ -126,7 +115,7 @@
                 fund_category: null,
                 date: new Date().toJSON().slice(0, 10),
                 comment: null,
-                value:null,
+                value: null,
                 is_active_group: null,
                 is_shared: false
             }
@@ -201,7 +190,7 @@
                 this.group = null;
                 this.inc_category = null;
                 this.fund_category = null;
-                this.date = null;
+                this.date = new Date().toJSON().slice(0, 10);
                 this.comment = null;
                 this.is_shared = null;
             },
@@ -211,6 +200,12 @@
             hideModal() {
                 this.$refs.myModalRef.hide();
                 this.clearAll();
+            },
+            showAddIncModal() {
+                this.$refs.myModalAddIncRef.show()
+            },
+            hideAddIncModal() {
+                this.$refs.myModalAddIncRef.hide()
             },
             clear1() {
                 this.current = '';
@@ -264,7 +259,6 @@
         }
     }
 </script>
-
 <style scoped>
     .calculator {
         margin: 0 auto;
@@ -299,14 +293,14 @@
     }
 
     .btn {
-
         border: 1px solid #999;
     }
 
     .operator {
-        background-color: orange;
+        background-color: darkgreen;
         color: white;
     }
+
     .toggle {
         margin: 4vh;
         width: 40px;
@@ -372,5 +366,4 @@
         opacity: 0;
         transition: all 0.4s ease;
     }
-
 </style>

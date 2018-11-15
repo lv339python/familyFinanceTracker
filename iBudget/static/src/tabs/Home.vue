@@ -54,28 +54,6 @@
         <financial_goal/>
         <fund_registration/>
 
-        <b-button class="btn btn-danger btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Delete">
-            ✘
-        </b-button>
-        <b-modal ref="myModalRef" hide-footer title="Delete">
-            <b-btn v-b-toggle.deleteincome variant="primary">Income</b-btn>
-            <b-collapse id="deleteincome" class="mt-2">
-                <delete_income/>
-            </b-collapse>
-            <b-btn v-b-toggle.deletefund variant="primary">Fund</b-btn>
-            <b-collapse id="deletefund" class="mt-2">
-                <delete_fund/>
-            </b-collapse>
-            <b-btn v-b-toggle.deletegoal variant="primary">Goal</b-btn>
-            <b-collapse id="deletegoal" class="mt-2">
-                <delete_goal/>
-            </b-collapse>
-            <b-btn v-b-toggle.deletespending variant="primary">Spending</b-btn>
-            <b-collapse id="deletespending" class="mt-2">
-                <delete_spending/>
-            </b-collapse>
-        </b-modal>
-
     </div>
 </template>
 
@@ -86,8 +64,8 @@
 
     import axios from 'axios';
     import Chart_spending from 'src/components/examples/Chart_spending';
-    import Spending_button from 'src/components/Spending_button';
-    import Income_button from 'src/components/Income_button';
+    import Spending_button from 'src/components/buttons/Spending_button';
+    import Income_button from 'src/components/buttons/Income_button';
     import Financial_goal from 'src/components/Financial_goal';
     import Fund_registration from 'src/components/Funds_registration';
     import Delete_income from 'src/components/Delete_income';
@@ -162,19 +140,6 @@
     .text {
         width: fit-content;
         text-align: center;
-    }
-
-    p {
-        width: 400px;
-    }
-
-    .btn-circle.btn-xl {
-        width: 70px;
-        height: 70px;
-        padding: 10px 16px;
-        border-radius: 35px;
-        font-size: 24px;
-        line-height: 1.33;
     }
 </style>
 

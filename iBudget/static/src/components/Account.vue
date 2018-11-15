@@ -68,13 +68,13 @@
                             <p>Update password</p>
                             <br/>
                             <input type="password" v-model="old_password" class="form-control"
-                                   placeholder="current password">
+                                  autocomplete="off"  placeholder="current password">
                             <br/>
                             <input type="password" v-model="new_password" class="form-control"
-                                   placeholder="new password">
+                                 autocomplete="off"   placeholder="new password">
                             <br/>
                             <input type="password" v-model="confirm_password" class="form-control"
-                                   placeholder="confirm password">
+                                   autocomplete="off" placeholder="confirm password">
                             <br/>
                             <b-btn class="mt-3" variant="outline-success" @click="setDatapassword">Save</b-btn>
                             <b-btn class="mt-3" variant="outline-danger" @click="resetUpdate">Reset</b-btn>

@@ -16,7 +16,7 @@
             PieExample,
             DoughnutExample,
         },
-        props: ['value', 'name','title'],
+        props: ['value', 'name', 'title'],
         data() {
             return {
                 height: 80,
@@ -55,7 +55,9 @@
         border-radius: 20px;
         margin: 50px 0;
     }
+
     .innerChart {
         min-height: 300px;
-        min-width: 200px;}
+        min-width: 200px;
+    }
 </style>

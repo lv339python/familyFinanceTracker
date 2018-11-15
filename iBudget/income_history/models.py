@@ -53,7 +53,7 @@ class IncomeHistory(models.Model):
                 for this fund, None otherwise.
 
         """
-        return IncomeHistory.objects.filter(pk=fund_name, is_active=is_active)
+        return IncomeHistory.objects.filter(fund_id=fund_name, is_active=is_active)
 
     @staticmethod
     def filter_by_user_date_spending(user,

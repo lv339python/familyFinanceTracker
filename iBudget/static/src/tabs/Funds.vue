@@ -12,7 +12,7 @@
                     v-bind:showModal='showModal'
                     v-if="list.length !== 0"/>
             </div>
-            <div v-if="isList&&totalListGoal.length!==0">
+            <div v-if="isBasePath&&isList&&totalListGoal.length!==0">
                 <list_paginated
                     v-bind:list='listGoal'
                     v-bind:title='titleGoal'
