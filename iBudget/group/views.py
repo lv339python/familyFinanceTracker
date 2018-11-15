@@ -256,7 +256,7 @@ def add_shared_spending_to_group(request):
     group = Group.get_group_by_id(group_id)
     if not is_valid_data_shared_spending_to_group(data):
         return HttpResponse(status=400)
-    if not is_user_admin_group(group_id, user) and not spending.owner == user:
+    if not is_user_admin_group(group_id, user) or not spending.owner == user:
         return HttpResponse(status=409)
     if not spending and not group:
         return HttpResponse(status=406)
@@ -292,7 +292,7 @@ def add_shared_fund_to_group(request):
     group = Group.get_group_by_id(group_id)
     if not is_valid_data_shared_fund_to_group(data):
         return HttpResponse(status=400)
-    if not is_user_admin_group(group_id, user) and not fund.owner == user:
+    if not is_user_admin_group(group_id, user) or not fund.owner == user:
         return HttpResponse(status=409)
     if not fund and not group:
         return HttpResponse(status=406)
