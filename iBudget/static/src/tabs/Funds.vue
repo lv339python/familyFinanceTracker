@@ -23,10 +23,10 @@
                  <div class="d-block text-center">
                      <b-card>
                          <p class="card-text">
+                             <b v-if="modalData['icon']">
+                                 <img class='image' :src="modalData['icon']"> <br></b>
                              <b>Name: {{modalData['name']}}</b>
                              <br>
-                             <b v-if="modalData['icon']">Icon:
-                                 <img class='image' :src="modalData['icon']"> <br></b>
                              <b v-if="modalData['spend_group']">Shared is shared from
                                  {{modalData['spend_group']}} group <br></b>
                              <b>Current balance for fund: {{modalData['total']}}</b>
@@ -35,7 +35,7 @@
                                  {{modalData['last_inc_value']}} on {{modalData['last_inc_date']}} <br></b>
                              <b v-if="modalData['last_spend_value']"> Last spend for fund:
                                  {{modalData['last_spend_value']}} on {{modalData['last_spend_date']}}</b>
-                            <br>
+                             <br>
                          </p>
                          <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
                      </b-card>
