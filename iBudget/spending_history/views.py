@@ -200,12 +200,12 @@ def create_xlsx(request):
     output, worksheet, workbook, formats_dict = creating_empty_xlsx_file()
 
     row, col = 2, 1
-
     if individual_spending_history:
         worksheet.write(row - 1, col, 'Individual spending', formats_dict['head_format'])
-        for i in individual_spending_history[0]['history'][0]:
-            worksheet.write(row - 1, col + 1, i, formats_dict['head_format'])
-            col += 1
+        for key in individual_spending_history[0]['history'][0]:
+            if key != 'Delete':
+                worksheet.write(row - 1, col + 1, key, formats_dict['head_format'])
+                col += 1
 
         col = 1
         for spending_dicts in individual_spending_history:
@@ -219,12 +219,13 @@ def create_xlsx(request):
     if group_spending_history:
         row = row + 1
         worksheet.write(row, col, 'Group spending', formats_dict['head_format'])
-        for i in group_spending_history[0]['history'][0]:
-            if i == 'member':
+        for key in group_spending_history[0]['history'][0]:
+            if key == 'member':
                 worksheet.write(row, col - 1, 'Member', formats_dict['head_format'])
-            else:
-                worksheet.write(row, col + 1, i, formats_dict['head_format'])
+            elif key != 'Delete':
+                worksheet.write(row, col + 1, key, formats_dict['head_format'])
                 col += 1
+
         row, col = row + 1, 1
         for spending_dicts in group_spending_history:
             for history_dict in spending_dicts['history']:
@@ -244,7 +245,7 @@ def create_xlsx(request):
     return response
 
 
-def create_csv(request):
+def create_csv(request):#pylint: disable= R0912
     """
     Creating csv file with spending history for specific period
     Args:
@@ -270,12 +271,14 @@ def create_csv(request):
 
     if group_spending_history:
         headers = ['spending', 'group']
-        for i in group_spending_history[0]['history'][0]:
-            headers.append(i)
+        for key in group_spending_history[0]['history'][0]:
+            if key != 'Delete':
+                headers.append(key)
     elif individual_spending_history:
         headers = ['spending']
-        for i in individual_spending_history[0]['history'][0]:
-            headers.append(i)
+        for key in individual_spending_history[0]['history'][0]:
+            if key != 'Delete':
+                headers.append(key)
     else:
         headers = []
 
@@ -284,16 +287,18 @@ def create_csv(request):
 
     if individual_spending_history:
         for spending_dicts in individual_spending_history:
-            for i in spending_dicts['history']:
-                i['spending'] = spending_dicts['spending']
-            writer.writerows(spending_dicts['history'])
+            for entry in spending_dicts['history']:
+                del entry['Delete']
+                entry['spending'] = spending_dicts['spending']
+                writer.writerow(entry)
 
     if group_spending_history:
         for spending_dicts in group_spending_history:
-            for i in spending_dicts['history']:
-                i['spending'] = spending_dicts['spending'].split('/')[0]
-                i['group'] = spending_dicts['spending'].split('/')[1]
-            writer.writerows(spending_dicts['history'])
+            for entry in spending_dicts['history']:
+                del entry['Delete']
+                entry['spending'] = spending_dicts['spending'].split('/')[0]
+                entry['group'] = spending_dicts['spending'].split('/')[1]
+                writer.writerow(entry)
 
     response = file_streaming_response('text/csv', 'spending_history.csv', output)
     return response

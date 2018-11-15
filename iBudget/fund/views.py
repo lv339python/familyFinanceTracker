@@ -144,7 +144,7 @@ def show_goal_data(request):
                                                      date__range=[fund_category.goal.start_date,
                                                                   fund_category.goal.finish_date]):
                 list_transactions.append(float(item.value))
-                list_date_transactions.append(item.date)
+                list_date_transactions.append(item.date.date())
             user_goal_statistic.append({"id": entry,
                                         "name": fund_category.name,
                                         "value": fund_category.goal.value,
@@ -414,7 +414,7 @@ def fund_summary(request):
     """
     fund_id = json.loads(request.body)['fund_id']
     fund = FundCategories.get_by_id(fund_id)
-    fund_info = {'icon': fund.icon, 'name': fund.name}
+    fund_info = {'icon': AwsService.get_image_url(fund.icon), 'name': fund.name}
 
     if fund.is_shared:
         fund_info['spend_group'] = SharedFunds.get_by_fund\

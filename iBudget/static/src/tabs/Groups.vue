@@ -12,8 +12,13 @@
                     <b> name </b>: <i> {{ item.group_name }} </i> <br>
                     <b>your role </b>: <i> {{ item.user_role }} </i> <br>
                     <b>count of users </b>: <i> {{ item.count }} </i>
-                    <b-btn class="btn btn-outline-light" variant="outline-primary"
-                           block @click="deleteGroup(item.id)">Delete group
+                    <b-btn
+                        class="btn btn-outline-light"
+                        variant="outline-primary"
+                        block
+                        v-if="item.user_role==='Owner' || item.user_role==='Admin'"
+                        @click="deleteGroup(item.id)"
+                        >Delete group
                     </b-btn>
                 </li>
             </ul>
@@ -174,16 +179,21 @@
                             this.errors.push(e)
                         })
             }, deleteGroup: function (groupId) {
-                axios({
-                    method: 'delete',
-                    url: '/api/v1/group/delete_group/' + groupId,
-                }).then(response => {
-                    this.reply = response.data;
-                    alert(this.reply);
-                    this.getData();
-                }).catch(error => {
-                    alert(error.response.data)
-                })
+                let warning_alert;
+                let warning=confirm("Delete group?");
+                if (warning == true) {
+                    warning_alert = "You delete group";
+                    axios({
+                        method: 'delete',
+                        url: '/api/v1/group/delete_group/' + groupId,
+                    }).then(response => {
+                        this.reply = response.data;
+                        alert(this.reply);
+                        this.getData();
+                    }).catch(error => {
+                        alert(error.response.data)
+                    })
+                }
             }
         },
         computed: {

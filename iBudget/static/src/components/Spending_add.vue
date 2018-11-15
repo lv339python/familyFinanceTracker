@@ -1,7 +1,7 @@
 <template>
     <div id="spending_add">
 
-        <div >
+        <div>
             <hr>
             <div class="form-group">
                 <label for="name">Name of spending:</label>
@@ -16,10 +16,10 @@
         <div>
             <hr>
             <button
-                class="btn btn-outline-dark"
+                class="btn btn-outline-danger"
                 :disabled="isValidData === false"
                 v-on:click="createSpending"
-                :variant="secondary">Create spending
+                :variant="secondary">Create Spending
             </button>
         </div>
     </div>
@@ -70,7 +70,7 @@
             createDone: function (event) {
                 this.newName = null;
                 this.selectedIcon = '';
-                this.msg =''
+                this.msg = ''
             },
             onGet_name(data) {
                 this.selectedIcon = data['icon_name']
@@ -80,7 +80,7 @@
 </script>
 
 <style scoped>
-    #spending_add{
+    #spending_add {
         width: fit-content;
     }
 </style>

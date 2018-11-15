@@ -3,10 +3,10 @@
         <div class="wrapper">
             <div id="available_spendings" v-if="brand_new_user">
                 <br>
-                <p>You want to set limits by day or by month/year? Choose below:</p>
+                <label>You want to set limits by day or by month/year? Choose below:</label>
                 <form v-on:change="set_date_choice">
-                    <input type="radio" value="True" v-model="picked"> monthly/yearly limits
-                    <input type="radio" value="False" v-model="picked"> daily limits
+                    <input type="radio" value="True" v-model="picked"> Monthly/yearly
+                    <input type="radio" value="False" v-model="picked"> Daily
                 </form>
             </div>
 

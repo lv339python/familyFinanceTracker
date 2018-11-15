@@ -19,10 +19,10 @@
             </div>
             <div class="col-md-8 total">
                 <button class="btn btn-outline-warning"
-                    :disabled="start_date>finish_date"
-                    v-on:click="createHistory"
-                    :variant="secondary">
-                        Show all spending
+                        :disabled="start_date>finish_date"
+                        v-on:click="createHistory"
+                        :variant="secondary">
+                    Show all spending
                 </button>
             </div>
         </div>
@@ -52,10 +52,10 @@
                         <td>{{ p.value }}</td>
                         <td>{{ p.date }}</td>
                         <td>{{ p.fund }}</td>
-                        <td >
+                        <td>
                             <button
-                                    type="button" class="btn btn-outline-danger" v-on:click="deleteHistory(p.Delete)"
-                                    :variant="secondary">Delete
+                                type="button" class="btn btn-outline-danger" v-on:click="deleteHistory(p.Delete)"
+                                :variant="secondary">Delete
                             </button>
                         </td>
                     </tr>
@@ -77,7 +77,7 @@
                     <b style="word-space:2em">&nbsp;</b>
                 </div>
             </div>
-            <div  v-if="hasData==0">
+            <div v-if="hasData==0">
 
                 <h5>There are no spending during this period...</h5>
             </div>
@@ -85,12 +85,12 @@
         <div class="download_buttons form-group col-md-6">
             <hr>
             <a v-bind:href='"/api/v1/spending_history/download_xlsx_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
-                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                <button class="btn btn-outline-warning" :disabled="spending_all.length===0||(finish_date<start_date)"
                         :variant="secondary">Download xlsx
                 </button>
             </a>
             <a v-bind:href='"/api/v1/spending_history/download_csv_file/?start_date=" + start_date + "&finish_date=" +  finish_date + "&UTC=" + UTC'>
-                <button class="btn btn-outline-warning" :disabled="isCategory===false||(finish_date<start_date)"
+                <button class="btn btn-outline-warning" :disabled="spending_all.length===0||(finish_date<start_date)"
                         :variant="secondary">Download csv
                 </button>
             </a>
@@ -100,6 +100,7 @@
 
 <script>
     import axios from 'axios';
+
     var UTC = -new Date().getTimezoneOffset() / 60;
     export default {
         name: "Spending_history",
@@ -151,6 +152,7 @@
                 this.selected = [];
                 this.spending_history_individual = {};
                 this.spending_history_admin = {};
+                this.spending_all = [];
             },
             createHistory: function (event) {
                 this.isCategory = false;
@@ -158,6 +160,7 @@
                 this.selected = [];
                 this.spending_history_individual = {};
                 this.spending_history_admin = {};
+                this.spending_all = [];
                 axios({
                     method: 'post',
                     url: '/api/v1/spending_history/create/',
@@ -167,30 +170,30 @@
                         'UTC': UTC,
                     }
                 })
-                .then(response => {
-                    this.spending_history_admin = response.data.admin;
-                    this.spending_history_individual = response.data.individual;
-                    this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
-                    this.isCategory = true;
-                    this.hasData = this.spending_all.length
+                    .then(response => {
+                        this.spending_history_admin = response.data.admin;
+                        this.spending_history_individual = response.data.individual;
+                        this.spending_all = this.spending_history_individual.concat(this.spending_history_admin);
+                        this.isCategory = true;
+                        this.hasData = this.spending_all.length
 
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    })
             },
-             deleteHistory: function (spendHistory) {
+            deleteHistory: function (spendHistory) {
                 axios({
                     method: 'delete',
                     url: '/api/v1/spending_history/delete_spending_history/' + spendHistory,
 
                 }).then(response => {
-                        this.reply = response.data;
-                        alert(this.reply);
-                        this.$router.go('/spendings/history')
-                    }).catch(error => {
-                        alert(error.response.data)
-                    })
+                    this.reply = response.data;
+                    alert(this.reply);
+                    this.$router.go('/spendings/history')
+                }).catch(error => {
+                    alert(error.response.data)
+                })
 
             },
             nextPage() {
@@ -226,6 +229,7 @@
         text-align: center;
         justify-content: space-around;
     }
+
     #spending_history {
 
     }
