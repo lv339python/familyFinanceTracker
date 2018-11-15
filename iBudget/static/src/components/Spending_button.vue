@@ -9,19 +9,17 @@
                 <input v-model="date" type="date">
             </div>
             <div class="calculator">
-
                 <div class="display">
-
                     <div>
                         <b-input-group>
                             <b-form-input v-model.number="current" type="number" min="1"></b-form-input>
-                            <b-select v-model="type_of_pay" class="form-control" id="curinput" variant="primary"
+                            <b-select v-model="type_of_pay" class="form-control" variant="primary"
                                       slot="prepend"
                                       v-show="groupId"
                                       v-b-popover.hover="'Choose Shared fund'" title=" Shared Fund"
                                       v-if="is_shared===true">
                                 <option v-for="type_of_pay in shared_fund_list"
-                                        v-if="type_of_pay.id_group===groupId"
+                                        v-if="type_of_pay.id_group === group_id"
                                         v-bind:value="type_of_pay.id_fund">
                                     {{ type_of_pay.name_fund }}
                                 </option>
@@ -61,53 +59,50 @@
                 <div @click="equal" class="btn operator">=</div>
                 <b-btn v-b-toggle.collapse3 variant="primary">Choose Category</b-btn>
             </div>
-
             <b-collapse id="collapse3" class="mt-2" v-show="!visible">
-
                 <div class="content">
                     <div class="row">
                         <div v-if="is_shared===true">
-                            <div>
-                                <label>Chose group</label>
-                                <select v-model="groupId" class="form-control">
-                                    <option v-for="group in group_list"
-                                            v-bind:value="group.id">
-                                        {{ group.name }}
-                                    </option>
-                                </select>
+                            <p>Choose group:</p>
+                            <div class="img_container">
+                                <br>
+                                <div v-for="group in group_list">
+                                    <input type="image" :src="group.url" v-on:click="get_group_icon_id(group.id)"
+                                           class="icon" alt="icon">
+                                    <p>{{group.name}}</p>
+                                </div>
                             </div>
                             <hr>
                             <div v-show="groupId">
-                                <label>Select category</label>
-                                <select v-model="category" class="form-control">
-                                    <option v-for="category in shared_list"
-                                            v-if="category.id_group === groupId"
-                                            v-bind:value="category.id_cat">
-                                        {{category.name_cat}}
-                                    </option>
-                                </select>
-                                <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
+                                <p>Select category:</p>
+                                <div class="img_container">
+                                    <br>
+                                    <div v-for="category in shared_list" v-if="category.id_group === group_id">
+                                        <input type="image" :src="category.url"
+                                               v-on:click="get_spend_icon_id(category.id_cat)"
+                                               class="icon" alt="icon">
+                                        <p>{{category.name_cat}}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div  v-else>
-                            <div>
-                                <label>Select category:</label>
-                                <select v-model="category" class="form-control">
-                                    <option v-for="spend in spending_list" v-bind:value="spend.id ">
-                                        {{ spend.name }}
-                                    </option>
-                                </select>
+                        <div v-else>
+                            <p>Select category:</p>
+                            <div class="img_container">
+                                <br>
+                                <div v-for="spend in spending_list">
+                                    <input type="image" :src="spend.url" v-on:click="get_spend_icon_id(spend.id)"
+                                           alt="icon" class="icon">
+                                    <p>{{spend.name}}</p>
+                                </div>
                             </div>
-
-                            <b-btn v-b-toggle.collapse4 variant="primary">+</b-btn>
+                           <b-btn class="mt-3" variant="outline-danger" @click="showAddModal">+</b-btn>
                         </div>
-
-                        <div class="">
+                        <div>
                             <input type="checkbox" id="cbx" style="display:none" v-model="is_shared"/>
                             <label for="cbx" class="toggle"><span></span>Shared</label>
                         </div>
                     </div>
-
                     <div>
                         <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
                         <button :disabled="!isValidData" type="button" class="btn btn-outline-primary"
@@ -117,21 +112,16 @@
                     </div>
                 </div>
             </b-collapse>
-            <b-collapse id="collapse4" class="mt-2">
-
-                <spending_add/>
-            </b-collapse>
+        </b-modal>
+        <b-modal ref="myModalAddRef" hide-footer title="Create spending">
+          <spending_add></spending_add>
         </b-modal>
     </div>
-
-
 </template>
-
 <script>
     import axios from 'axios';
     import Spending_add from 'src/components/Spending_add';
     import Spending_registration from 'src/components/Spending_registration';
-
     export default {
         name: 'Spending_button',
         components: {
@@ -149,7 +139,7 @@
                 group_list: [],
                 shared_list: [],
                 shared_fund_list: [],
-                groupId: null,
+                groupId: false,
                 category: null,
                 type_of_pay: null,
                 value: null,
@@ -257,11 +247,16 @@
                 this.type_of_pay = id
             },
             showModal() {
-                this.$refs.myModalRef.show();
+                this.$refs.myModalRef.show()
             },
             hideModal() {
-                this.$refs.myModalRef.hide();
-                this.clearAll();
+                this.$refs.myModalRef.hide()
+            },
+            showAddModal() {
+                this.$refs.myModalAddRef.show()
+            },
+            hideAddModal() {
+                this.$refs.myModalAddRef.hide()
             },
             clear() {
                 this.current = '';
@@ -315,7 +310,6 @@
         }
     }
 </script>
-
 <style scoped>
     .calculator {
         margin: 0 auto;
@@ -324,28 +318,22 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         grid-auto-rows: minmax(50px, auto);
-
     }
-
     .display {
         grid-column: 1 / 5;
         background-color: #333;
         color: white;
     }
-
     .zero {
         grid-column: 1 / 3;
     }
-
     .btn {
         border: 1px solid #999;
     }
-
     .operator {
         background-color: orange;
         color: white;
     }
-
     .btn-circle.btn-xl {
         width: 70px;
         height: 70px;
@@ -354,7 +342,6 @@
         font-size: 24px;
         line-height: 1.33;
     }
-
     .toggle {
         margin: 4vh;
         width: 40px;
@@ -363,7 +350,6 @@
         -webkit-tap-highlight-color: transparent;
         transform: translate3d(0, 0, 0);
     }
-
     .toggle:before {
         content: "";
         position: relative;
@@ -376,7 +362,6 @@
         border-radius: 8px;
         transition: background 0.2s ease;
     }
-
     .toggle span {
         position: absolute;
         top: 0;
@@ -389,7 +374,6 @@
         box-shadow: 0 3px 8px rgba(154, 153, 153, 0.5);
         transition: all 0.2s ease;
     }
-
     .toggle span:before {
         content: "";
         position: absolute;
@@ -403,22 +387,34 @@
         opacity: 1;
         pointer-events: none;
     }
-
     #cbx:checked + .toggle:before {
         background: #947ADA;
     }
-
     #cbx:checked + .toggle span {
         background: #4F2EDC;
         transform: translateX(20px);
         transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
         box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
     }
-
     #cbx:checked + .toggle span:before {
         transform: scale(1);
         opacity: 0;
         transition: all 0.4s ease;
     }
+    .img_container {
+        width: 350px;
+        max-height: 350px;
+        overflow: scroll;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .icon {
+        width: 70px;
+        height: 70px;
+    }
+    div.img_container div {
+        width: 70px;
+        height: 95px;
+    }
 </style>
-

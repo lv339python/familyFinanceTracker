@@ -1,7 +1,6 @@
 <template>
     <div class="content">
         <div id="left" class="text column">
-            <b-button :variant="secondary" to="/spendings/add" @click="isList=false">Add</b-button>
             <b-button :variant="secondary" to="/spendings/limit_ind" @click="isList=false">Set Individual Limitation
             </b-button>
             <b-button :variant="secondary" to="/spendings/limit_group" @click="isList=false" v-if="group_spends">Set

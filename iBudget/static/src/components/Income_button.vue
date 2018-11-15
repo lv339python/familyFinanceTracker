@@ -7,7 +7,6 @@
             <div class="form-group">
                <input v-model="date" type="date">
             </div>
-
                 <div class="calculator">
                     <div class="display">
                          <div>
@@ -32,7 +31,6 @@
                                 <input placeholder="✎ ✍ " v-model="comment" type="text" class="form-control">
                             </div>
                     </div>
-
                     <div @click="clear1" class="btn">C</div>
                     <div @click="sign" class="btn">+/-</div>
                     <div @click="percent" class="btn">%</div>
@@ -53,7 +51,6 @@
                     <div @click="dot" class="btn">.</div>
                     <div @click="equal" class="btn operator">=</div>
                     <b-btn v-b-toggle.collapse1 variant="primary">Choose Category</b-btn>
-
                 </div>
                 <b-collapse id="collapse1" class="mt-2">
                     <div>
@@ -76,41 +73,30 @@
                             <input type="checkbox" id="cbx1" style="display:none" v-model="is_shared"/>
                             <label for="cbx1" class="toggle"><span></span>Shared</label>
                         </div>
-                            <b-btn v-b-toggle.collapse2 variant="primary">+</b-btn>
+                           <b-btn class="mt-3" variant="outline-danger" @click="showAddIncModal">+</b-btn>
                     </div>
-
-
-
                     <div>
                         <b-button :disabled="DataValidation===false" class="btn btn-outline-primary"
                                   @click="setData" :variant="success">Save
                         </b-button>
                     </div>
-
                     <div>
                         <b-button class="btn btn-outline-danger" @click="clear" :variant="warning">Clear form</b-button>
                     </div>
-
                 </b-collapse>
-
-                <b-collapse id="collapse2" class="mt-2">
-                    <income_add/>
-                </b-collapse>
-
+        </b-modal>
+        <b-modal ref="myModalAddIncRef" hide-footer title="Create Income">
+         <income_add/>
         </b-modal>
     </div>
-
 </template>
-
 <script>
     import axios from 'axios';
     import Income_add from "src/components/Income_add";
-
     export default {
         name: 'Income_button',
         components: {
             'Income_add': Income_add,
-
         },
         data() {
             return {
@@ -212,6 +198,12 @@
                 this.$refs.myModalRef.hide();
                 this.clearAll();
             },
+            showAddIncModal() {
+                this.$refs.myModalAddIncRef.show()
+            },
+            hideAddIncModal() {
+                this.$refs.myModalAddIncRef.hide()
+            },
             clear1() {
                 this.current = '';
             },
@@ -264,7 +256,6 @@
         }
     }
 </script>
-
 <style scoped>
     .calculator {
         margin: 0 auto;
@@ -278,17 +269,14 @@
         max-width: 400px;
         min-height: 300px;
     }
-
     .display {
         grid-column: 1 / 5;
         background-color: #333;
         color: white;
     }
-
     .zero {
         grid-column: 1 / 3;
     }
-
     .btn-circle.btn-xl {
         width: 70px;
         height: 70px;
@@ -297,12 +285,9 @@
         font-size: 24px;
         line-height: 1.33;
     }
-
     .btn {
-
         border: 1px solid #999;
     }
-
     .operator {
         background-color: orange;
         color: white;
@@ -315,7 +300,6 @@
         -webkit-tap-highlight-color: transparent;
         transform: translate3d(0, 0, 0);
     }
-
     .toggle:before {
         content: "";
         position: relative;
@@ -328,7 +312,6 @@
         border-radius: 8px;
         transition: background 0.2s ease;
     }
-
     .toggle span {
         position: absolute;
         top: 0;
@@ -341,7 +324,6 @@
         box-shadow: 0 3px 8px rgba(154, 153, 153, 0.5);
         transition: all 0.2s ease;
     }
-
     .toggle span:before {
         content: "";
         position: absolute;
@@ -355,22 +337,18 @@
         opacity: 1;
         pointer-events: none;
     }
-
     #cbx1:checked + .toggle:before {
         background: #947ADA;
     }
-
     #cbx1:checked + .toggle span {
         background: #4F2EDC;
         transform: translateX(20px);
         transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
         box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
     }
-
     #cbx1:checked + .toggle span:before {
         transform: scale(1);
         opacity: 0;
         transition: all 0.4s ease;
     }
-
 </style>
