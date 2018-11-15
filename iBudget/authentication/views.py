@@ -97,9 +97,13 @@ def google_sign_in(request):
     :return: status 200 if user is already in database , status 201 if user was auto-registered ,
     status 400  if token fetching was unsuccessful
     """
+
     google = OAuth2Session(CLIENT_ID, scope=SCOPE, redirect_uri=REDIRECT_URL)
+
     google.fetch_token(TOKEN_URL, client_secret=CLIENT_SECRET, authorization_response=
                        LOCAL_URL + request.get_full_path(), code=request.GET["code"])
+
+
     user_data = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
     if user_data:
         user_profile = UserProfile.get_by_email(user_data['email'])

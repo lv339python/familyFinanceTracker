@@ -35,7 +35,7 @@
         data() {
             return {
                 name: null,
-                icon: null,
+                icon: '',
                 group: null,
                 user_groups_list: [],
                 tab: 'fund',

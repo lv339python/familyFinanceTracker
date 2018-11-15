@@ -16,10 +16,10 @@
                 <div class="d-block text-center">
                     <b-card>
                         <p class="card-text">
+                            <b v-if="modalData['icon']">
+                                 <img class='image' :src="modalData['icon']"> <br></b>
                             <b>Name: {{modalData['name']}}</b>
                             <br>
-                            <b v-if="modalData['icon']">Icon:
-                                 <img class='image' :src="modalData['icon']"> <br></b>
                             <b>Total value for this category: {{modalData['total']}}</b>
                             <br>
                             <b v-if="modalData['last_value']"> Last income registered:
@@ -146,4 +146,10 @@
         width: fit-content;
         margin: auto;
     }
+
+    .image {
+        width: 15%;
+        height: 15%;
+    }
 </style>
+1

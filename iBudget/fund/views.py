@@ -414,7 +414,7 @@ def fund_summary(request):
     """
     fund_id = json.loads(request.body)['fund_id']
     fund = FundCategories.get_by_id(fund_id)
-    fund_info = {'icon': fund.icon, 'name': fund.name}
+    fund_info = {'icon': AwsService.get_image_url(fund.icon), 'name': fund.name}
 
     if fund.is_shared:
         fund_info['spend_group'] = SharedFunds.get_by_fund\
