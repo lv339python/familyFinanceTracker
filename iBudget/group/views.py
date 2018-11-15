@@ -311,7 +311,7 @@ def add_shared_fund_to_group(request):
     return HttpResponse(status=201)
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["PUT"])
 def change_users_role_in_group(request):
     """Handling request for updating user's role in group.
     Args:
@@ -321,7 +321,6 @@ def change_users_role_in_group(request):
         HttpResponse object.
     """
     data = json.loads(request.body)
-    print(data)
     user_email = data["user_email"]
     group_id = data["group_id"]
     is_admin = data["is_admin"]
