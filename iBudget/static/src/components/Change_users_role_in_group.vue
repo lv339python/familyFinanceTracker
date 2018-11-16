@@ -7,10 +7,10 @@
             <div class="d-block text-center">
                 <b-card>
                     <p class="card-text">
-                        <b>Change user's role?</b>
+                        <b>Change User's Role?</b>
                         <br/>
                     </p>
-                    <b-btn class="mt-3" variant="outline-primary" block aria-disabled="true" @click="saveData">Change role</b-btn>
+                    <b-btn class="mt-3" variant="outline-primary" block aria-disabled="true" @click="saveData">Change Role</b-btn>
                     <b-btn class="mt-3" variant="outline-danger" block>Close</b-btn>
                 </b-card>
             </div>

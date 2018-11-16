@@ -18,17 +18,17 @@
                         </select>
                     </p>
                     <form>
-                        <p>Start date:</p>
+                        <p>Start Date:</p>
                         <input v-model="start_date" type="date" placeholder="yyyy-mm-dd"
                                required size="9">
-                        <p>End date:</p>
+                        <p>End Date:</p>
                         <input v-model="end_date" type="date" placeholder="yyyy-mm-dd"
                                required size="9">
                         <p>Amount:</p>
                         <input v-model="value" type="number" required>
                     </form>
                     <p>
-                        <button v-on:click='set_limit_daily'>set limit</button>
+                        <button v-on:click='set_limit_daily'>Set limit</button>
                     </p>
                 </div>
 
@@ -51,7 +51,7 @@
                         <input v-model="value" type="number" required>
                     </form>
                     <p>
-                        <button v-on:click='set_limit_year'>set limit</button>
+                        <button v-on:click='set_limit_year'>Set limit</button>
                     </p>
                 </div>
             </div>
@@ -66,6 +66,7 @@
 
 <script>
     import axios from 'axios';
+
     var today = new Date();
     var yyyy = today.getFullYear();
 
@@ -83,9 +84,9 @@
                 isShown: false,
                 brand_new_user: null,
                 picked: '',
-                daily:null,
+                daily: null,
                 year: null,
-                month:null,
+                month: null,
                 yyyy: yyyy,
                 months: [
                     {nameM: 'All the year', valueM: 0},
@@ -114,7 +115,7 @@
                 });
             axios.get('api/v1/spending/admin/check_choice/')
                 .then(response => {
-                    if(response.data === 'False'){
+                    if (response.data === 'False') {
                         this.brand_new_user = false;
                         this.daily = false
                     }
@@ -149,16 +150,16 @@
             },
             set_limit_year: function (event) {
                 var days_in_month = new Date(this.year, this.month, 0).getDate();
-                if(this.month ===0){
+                if (this.month === 0) {
                     axios({
-                    method: 'post',
-                    url: 'api/v1/spending/admin/set_limit/',
-                    data: {
-                        'spending_category': this.spending_category,
-                        'start_date': this.year + '-' + '01' + '-' + '01',
-                        'end_date': this.year + '-' + '12' + '-' + '31',
-                        'value': this.value,
-                    },
+                        method: 'post',
+                        url: 'api/v1/spending/admin/set_limit/',
+                        data: {
+                            'spending_category': this.spending_category,
+                            'start_date': this.year + '-' + '01' + '-' + '01',
+                            'end_date': this.year + '-' + '12' + '-' + '31',
+                            'value': this.value,
+                        },
                     }).then(response => {
                         this.reply = response.data;
                         this.isShown = true

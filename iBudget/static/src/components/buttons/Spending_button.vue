@@ -6,18 +6,18 @@
         </b-button>
         <b-modal ref="myModalRef" hide-footer title="Add Spending">
             <div class="form-group">
-                <input v-model="date" type="date">
+                <input v-model="date" v-b-tooltip.hover title="Choose Date!" type="date">
             </div>
             <div class="calculator">
                 <div class="display">
                     <div>
                         <b-input-group>
-                            <b-form-input v-model.number="current" type="number" min="0.00"
-                                          max="999999999"></b-form-input>
+                            <b-form-input v-model.number="current" type="number" v-b-tooltip.hover title="Enter Value!"
+                                          min="0.00" max="999999999"></b-form-input>
                             <b-select v-model="type_of_pay" class="form-control" variant="primary"
                                       slot="prepend"
                                       v-show="groupId"
-                                      v-b-popover.hover="'Choose Shared Fund'" title=" Shared Fund"
+                                      v-b-tooltip.hover title="Choose Shared Fund!"
                                       v-if="is_shared===true">
                                 <option v-for="type_of_pay in shared_fund_list"
                                         v-if="type_of_pay.id_group === group_id"
@@ -27,7 +27,7 @@
                             </b-select>
                             <b-select v-model="type_of_pay" class="form-control" variant="primary"
                                       slot="prepend"
-                                      v-b-popover.hover="'Choose Fund'" title="Fund"
+                                      v-b-tooltip.hover title="Choose Fund!"
                                       v-else>
                                 <option v-for="type_of_pay in fund_list" v-bind:value="type_of_pay.id">
                                     {{ type_of_pay.name }}
@@ -36,7 +36,8 @@
                         </b-input-group>
                     </div>
                     <div class="col-md-12 form-group">
-                        <input placeholder="✍" v-model="comment" type="text" class="form-control">
+                        <input placeholder="✏" v-model="comment" v-b-tooltip.hover title="Leave comment!"
+                               type="text" class="form-control">
                     </div>
                 </div>
                 <div @click="clear" class="btn">C</div>
@@ -96,7 +97,9 @@
                                            alt="icon" class="icon">
                                     <p>{{spend.name}}</p>
                                 </div>
-                                <b-btn class="mt-3" variant="outline-danger" @click="showAddModal">+</b-btn>
+                                <b-btn class="mt-3" v-b-tooltip.hover title="Create Spending!"
+                                       variant="outline-danger" @click="showAddModal">+
+                                </b-btn>
                             </div>
 
                         </div>
@@ -107,7 +110,9 @@
                     </div>
                     <hr/>
                     <div>
-                        <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
+                        <button type="button" class="btn btn-outline-danger" v-b-tooltip.hover title="Reset All Field!"
+                                @click="reset">Reset
+                        </button>
                         <button :disabled="!isValidData" type="button" class="btn btn-outline-primary"
                                 @click="setData"
                                 :variant="secondary">Save
@@ -348,7 +353,7 @@
         height: 70px;
         padding: 10px 16px;
         border-radius: 35px;
-        font-size: 24px;
+        font-size: 30px;
         line-height: 1.33;
     }
 
