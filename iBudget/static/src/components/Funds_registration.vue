@@ -1,22 +1,21 @@
 <template>
     <div class="content">
-        <b-button class="btn btn-primary btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Create Fund">
+        <b-button class="btn btn-primary btn-circle btn-xl" @click="showModal" data-toggle="tooltip"
+                  title="Create Fund">
             $
         </b-button>
         <b-modal ref="myModalRef" hide-footer title="Create Fund">
             <div>
                 <hr>
                 <div class="form-group">
-                    <input type="text" placeholder="Input name" v-model="name" class="form-control">
+                    <input type="text" placeholder="Input Name" v-model="name" class="form-control">
                 </div>
             </div>
 
-            <div>
-                <hr>
-                <div class="form-group">
-                    <label>Choose icon</label>
-                    <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
-                </div>
+            <hr>
+            <div class="form-group">
+                <label>Choose Icon</label>
+                <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
             </div>
             <hr>
             <div>
@@ -93,6 +92,7 @@
         width: fit-content;
         margin: auto;
     }
+
     .btn-circle.btn-xl {
         width: 70px;
         height: 70px;

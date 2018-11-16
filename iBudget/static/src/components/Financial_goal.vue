@@ -1,61 +1,46 @@
 <template>
 
     <div class="content">
-        <b-button class="btn btn-warning btn-circle btn-xl" @click="showModal" data-toggle="tooltip" title="Create Goal">
+        <b-button class="btn btn-warning btn-circle btn-xl" @click="showModal" data-toggle="tooltip"
+                  title="Create Goal">
             ✰
         </b-button>
         <b-modal ref="myModalRef" hide-footer title="Create Goal">
 
             <div class="form-group">
-                <div>
-
-                    <input type="text" placeholder="Input name" v-model="name" class="form-control">
-                </div>
+                <input type="text" placeholder="Input Name" v-model="name" class="form-control">
             </div>
             <div class="form-group">
-                <div>
-                    <input v-model="value" placeholder="Input value" type="number" min="1" class="form-control">
-                </div>
+                <input v-model="value" placeholder="Input Value" type="number" min="1" max="999999999"
+                       class="form-control">
             </div>
-
-            <div class="form-group">
-                <div>
-                    <label>Choose icon</label>
-                    <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
-                </div>
+            <div>
+                <label>Choose Icon</label>
+                <icon_getter @get_name='onGet_name' :tabName="tab"></icon_getter>
             </div>
-
             <div class="form-group">
-                <div>
-                    <label>Shared to</label>
-                    <select v-model="shared_group" class="form-control">
-                        <option
-                            v-for="group in user_groups_list"
-                            v-bind:value="group.id">
-                            {{ group.name }}
-                        </option>
-                    </select>
-                </div>
+                <label>Shared to</label>
+                <select v-model="shared_group" class="form-control">
+                    <option
+                        v-for="group in user_groups_list"
+                        v-bind:value="group.id">
+                        {{ group.name }}
+                    </option>
+                </select>
             </div>
 
             <div>
-
-                <div class="form-group">
-                    <label>Start Date</label>
-                    <input placeholder="Start Date" v-model="start_date" type="date">
-                    <label>Finish Date</label>
-                    <input v-model="finish_date" placeholder="Finish Date" type="date">
-                </div>
+                <label>Start Date</label>
+                <input v-model="start_date" type="date">
+                <hr/>
+                <label>Finish Date</label>
+                <input v-model="finish_date" type="date">
             </div>
 
             <div>
-                <div class="form-group">
-
-                </div>
-            </div>
-
-            <div>
-                <button type="button" class="btn btn-outline-danger" @click="reset">Reset</button>
+                <button type="button" class="btn btn-outline-danger" v-b-tooltip.hover title="Reset All Field!"
+                        @click="reset">Reset
+                </button>
                 <button :disabled="isValidData===false" type="button" class="btn btn-outline-primary" @click="setData"
                         :variant="secondary">Save
                 </button>
@@ -72,8 +57,8 @@
         name: "Financial_goal",
         data() {
             return {
-                start_date:  new Date().toJSON().slice(0, 10),
-                finish_date:  new Date().toJSON().slice(0, 10),
+                start_date: new Date().toJSON().slice(0, 10),
+                finish_date: new Date().toJSON().slice(0, 10),
                 value: null,
                 name: null,
                 shared_group: null,

@@ -2,16 +2,16 @@
     <div class="content">
         <div  id="left" class="text column">
             <create_new_group v-bind:getData="getData"></create_new_group>
-            <p>There are your groups: {{ users_group_list.length }}</p>
+            <p> Count Of Your Groups: {{ users_group_list.length }}</p>
             <ul class="list-group">
                 <li
                     class="list-group-item list-group-item-action pointer"
                     v-for="(item, index) in paginatedData"
                     v-on:click="selected_group(index, item.id)"
                     :class="{'active': selected_group_index===index}">
-                    <b> name </b>: <i> {{ item.group_name }} </i> <br>
-                    <b>your role </b>: <i> {{ item.user_role }} </i> <br>
-                    <b>count of users </b>: <i> {{ item.count }} </i>
+                    <b> Name </b>: <i> {{ item.group_name }} </i> <br>
+                    <b>Your Role </b>: <i> {{ item.user_role }} </i> <br>
+                    <b>Count Of Users </b>: <i> {{ item.count }} </i>
                     <b-btn
                         class="btn btn-outline-light"
                         variant="outline-primary"
@@ -59,7 +59,7 @@
                         </ul>
                   </b-tab>
 
-                  <b-tab title="User's in group" >
+                  <b-tab title="User's In Group" >
                         <div>
                             <ul class="group-display"
                             v-for="user in users_in_group"
@@ -80,11 +80,11 @@
 
                         </div>
                   </b-tab>
-                  <b-tab title="Shared fund">
+                  <b-tab title="Shared Fund">
                       <div v-for="fund in shared_fund_list" v-if="group_index===fund.id_group"> {{ fund.name_fund }} </div>
                       <add_shared_fund v-bind:getData="getData" v-bind:group_id="selected_group_id"></add_shared_fund>
                   </b-tab>
-                  <b-tab title="Shared spending categories">
+                  <b-tab title="Shared Spending Categories">
                       <div v-for="spend in shared_spending_list" v-if="group_index===spend.id_group"> {{spend.name_cat }} </div>
                       <add_shared_spending v-bind:getData="getData" v-bind:group_id="selected_group_id"></add_shared_spending>
                   </b-tab>

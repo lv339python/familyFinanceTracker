@@ -41,7 +41,7 @@
                 <b-button v-b-toggle.collapse1 variant="primary" to="/spendings/limit_group" v-if="group_spends">
                     Set Group Limitation
                 </b-button>
-                <b-button variant="primary" to="/spendings/history" >History</b-button>
+                <b-button v-b-toggle.collapse1 variant="primary" to="/spendings/history" >History</b-button>
             </b-button-group>
             <b-collapse id="collapse1" class="mt-2">
                 <b-card>

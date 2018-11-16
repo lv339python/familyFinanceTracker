@@ -1,13 +1,13 @@
 <template>
     <div id="acc">
         <b-button variant="primary" @click="showModal">
-            Add user
+            Add User
         </b-button>
-        <b-modal ref="myModalRef2" hide-footer title="Add new user to group">
+        <b-modal ref="myModalRef2" hide-footer title="Add New User To Group">
             <div class="d-block text-center">
                 <b-card>
                     <p class="card-text">
-                        <b>User's email</b>
+                        <b>User's Email</b>
                         <input type="email" v-model="email">
                         <br/>
                         <b>Admin </b>

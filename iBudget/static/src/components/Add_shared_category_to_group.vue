@@ -1,11 +1,11 @@
 <template>
     <div id="acc">
         <b-button variant="primary" @click="showModal">
-            Add shared SpendCategory
+            Add Shared Spending Category
         </b-button>
-        <b-modal ref="myModalRef1" hide-footer title="Add shared SpendCategory">
+        <b-modal ref="myModalRef1" hide-footer title="Add Shared Spending Category">
         <b-card>
-            <label>Select spending:</label>
+            <label>Select Spending:</label>
             <select v-model="shared_spending" class="form-control">
                 <option v-for="spend in spending_list" v-bind:value="spend.id">
                     {{ spend.name }}

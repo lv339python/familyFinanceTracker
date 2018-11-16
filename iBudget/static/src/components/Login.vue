@@ -15,14 +15,14 @@
                     <b-button @click="login">Login</b-button>
                     <br/>
                     <br/>
-                    <b-link @click="showForgotPassword">Forgot your password ?</b-link>
+                    <b-link @click="showForgotPassword">Forgot Your Password ?</b-link>
                     <br>
-                    <b-link @click="showRegister">Create new account</b-link>
+                    <b-link @click="showRegister">Create New Account</b-link>
                     <hr/>
-                    <b-button @click="google">Sign in With Google</b-button>
+                    <b-button @click="google">Sign In With Google</b-button>
                 </form>
                 <form class="forgotpassword" @submit.prevent="forgotpassword" v-show="forgotpasswordDisplay">
-                    <h1>Forgot password </h1>
+                    <h1>Forgot Password </h1>
                     <label>Please enter your email to change your password.</label>
                     <br/>
                     <input required v-model="email" type="text" placeholder="Email"/>
@@ -45,7 +45,7 @@
                     <b-button class="btn btn-outline-primary" type="submit" v-if:isValidPassword @click="registration">Register</b-button>
                     <br/>
                     <br/>
-                    <b-link @click="showLogin">Already registered?</b-link>
+                    <b-link @click="showLogin">Already Registered?</b-link>
                 </form>
             </div>
         </div>

@@ -20,10 +20,10 @@
                         <b>Last Name: </b>{{user.last_name}}
                     </p>
                     <div class="button">
-                        <b-btn class="mt-3" variant="outline-success" @click="showInfo">Show more info</b-btn>
-                        <b-btn class="mt-3" variant="outline-success" @click="addInfo">Update personal info</b-btn>
-                        <b-btn class="mt-3" variant="outline-success" @click="updatePassword">Change password</b-btn>
-                        <b-btn class="mt-3" variant="outline-danger" @click="showDeleteModal">Deactivate profile</b-btn>
+                        <b-btn class="mt-3" variant="outline-success" @click="showInfo">Show More Info</b-btn>
+                        <b-btn class="mt-3" variant="outline-success" @click="addInfo">Update Personal Info</b-btn>
+                        <b-btn class="mt-3" variant="outline-success" @click="updatePassword">Change Password</b-btn>
+                        <b-btn class="mt-3" variant="outline-danger" @click="showDeleteModal">Deactivate Profile</b-btn>
                     </div>
 
                     <div v-if="showMoreInfo">
@@ -39,21 +39,21 @@
 
                     <div v-if="showAddInfo">
                         <div class="form-group">
-                            <input type="text" v-model="user.first_name" class="form-control" placeholder="first name">
+                            <input type="text" v-model="user.first_name" class="form-control" placeholder="First Name">
                         </div>
                         <div class="form-group">
-                            <input type="text" v-model="user.last_name" class="form-control" placeholder="last name">
+                            <input type="text" v-model="user.last_name" class="form-control" placeholder="Last Name">
                         </div>
                         <div class="form-group">
                             <textarea rows="10" cols="10" v-model="custom.bio" class="form-control"
-                                      placeholder="bio"></textarea>
+                                      placeholder="Bio"></textarea>
                         </div>
                         <div class="form-group">
-                            <input type="text" v-model="custom.hobby" class="form-control" placeholder="hobby">
+                            <input type="text" v-model="custom.hobby" class="form-control" placeholder="Hobby">
                         </div>
                         <div class="col-md-4 row">
                             <div class="form-group">
-                                <input v-b-popover.hover="'BIRTHDAY'" v-model="custom.birthday" type="date">
+                                <input v-b-popover.hover="'Birthday'" v-model="custom.birthday" type="date">
                             </div>
                             <div class="col-md-2">
                                 <Upload_photo @get_name='onGet_name'></Upload_photo>
@@ -65,16 +65,16 @@
 
                     <div v-if="showUpdatePassword">
                         <div class="form-group">
-                            <p>Update password</p>
+                            <label>Update Password</label>
                             <br/>
                             <input type="password" v-model="old_password" class="form-control"
-                                  autocomplete="off"  placeholder="current password">
+                                  autocomplete="off"  placeholder="Current Password">
                             <br/>
                             <input type="password" v-model="new_password" class="form-control"
-                                 autocomplete="off"   placeholder="new password">
+                                 autocomplete="off"   placeholder="New Password">
                             <br/>
                             <input type="password" v-model="confirm_password" class="form-control"
-                                   autocomplete="off" placeholder="confirm password">
+                                   autocomplete="off" placeholder="Confirm Password">
                             <br/>
                             <b-btn class="mt-3" variant="outline-success" @click="setDatapassword">Save</b-btn>
                             <b-btn class="mt-3" variant="outline-danger" @click="resetUpdate">Reset</b-btn>
@@ -85,7 +85,7 @@
             <b-btn class="mt-3" variant="outline-danger" block @click="logout">Log Out</b-btn>
         </b-modal>
 
-        <b-modal ref="myModalDeleteRef" size="lg" hide-footer title="Delete your account">
+        <b-modal ref="myModalDeleteRef" size="lg" hide-footer title="Delete Your Account">
             <div class="d-block text-center">
                 <b-card>
                     <b-btn class="mt-3" variant="outline-danger" @click="Deactivate">Yes</b-btn>

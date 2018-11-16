@@ -5,22 +5,16 @@
         </b-button>
         <b-modal ref="myModalRef" hide-footer title="Add Income">
             <div class="form-group">
-                <input v-model="date" type="date">
+                <input v-model="date" v-b-tooltip.hover title="Choose Date!" type="date">
             </div>
             <div class="calculator">
                 <div class="display">
                     <div>
                         <b-input-group>
-                            <b-form-input v-model.number="current" type="number" min="0.00"
-                                          max="999999999"></b-form-input>
-                            <b-select v-model="fund_category" v-b-popover.hover="'Choose Fund'" title="Fund"
+                            <b-form-input v-model.number="current" type="number" v-b-tooltip.hover title="Enter Value!"
+                                          min="0.00" max="999999999"></b-form-input>
+                            <b-select v-model="fund_category" v-b-tooltip.hover title="Choose Shared Fund!"
                                       variant="primary" slot="prepend"
-                                      v-if="is_shared===false">
-                                <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
-                                </option>
-                            </b-select>
-                            <b-select v-model="fund_category" v-b-popover.hover="'Choose Shared Fund'"
-                                      title=" Shared Fund" variant="primary" slot="prepend"
                                       v-if="is_active_group !== null && is_shared===true">
                                 <option v-for="fund in shared_list"
                                         v-if="fund.id_group === is_active_group"
@@ -28,10 +22,18 @@
                                     {{fund.name_fund}}
                                 </option>
                             </b-select>
+                            <b-select v-model="fund_category" v-b-tooltip.hover title="Choose Fund!"
+                                      variant="primary" slot="prepend"
+                                      v-else="is_shared===false">
+                                <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
+                                </option>
+                            </b-select>
+
                         </b-input-group>
                     </div>
                     <div class="col-md-12 form-group">
-                        <input placeholder="✍" v-model="comment" type="text" class="form-control">
+                        <input placeholder="✏" v-model="comment" v-b-tooltip.hover title="Leave comment!"
+                               type="text" class="form-control">
                     </div>
                 </div>
                 <div @click="clear1" class="btn">C</div>
@@ -76,11 +78,15 @@
                         <input type="checkbox" id="cbx1" style="display:none" v-model="is_shared"/>
                         <label for="cbx1" class="toggle"><span></span>Shared</label>
                     </div>
-                    <b-btn class="mt-3" variant="outline-success" @click="showAddIncModal">+</b-btn>
+                    <b-btn class="mt-3" variant="outline-success" v-b-tooltip.hover title="Create Income!"
+                           @click="showAddIncModal">+
+                    </b-btn>
                 </div>
                 <hr/>
                 <div>
-                    <b-button class="btn btn-outline-danger" @click="clear" :variant="warning">Reset</b-button>
+                    <b-button class="btn btn-outline-danger" v-b-tooltip.hover title="Reset All Field!" @click="clear"
+                              :variant="warning">Reset
+                    </b-button>
                     <b-button :disabled="DataValidation===false" class="btn btn-outline-primary"
                               @click="setData" :variant="success">Save
                     </b-button>
@@ -114,7 +120,7 @@
                 inc_category: null,
                 fund_category: null,
                 date: new Date().toJSON().slice(0, 10),
-                comment: null,
+                comment: '',
                 value: null,
                 is_active_group: null,
                 is_shared: false
@@ -193,6 +199,7 @@
                 this.date = new Date().toJSON().slice(0, 10);
                 this.comment = null;
                 this.is_shared = null;
+                this.is_active_group = null;
             },
             showModal() {
                 this.$refs.myModalRef.show();

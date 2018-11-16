@@ -1,11 +1,11 @@
 <template>
     <div id="acc">
         <b-button variant="primary" @click="showModal">
-            Add shared FundCategory
+            Add Shared Fund Category
         </b-button>
-        <b-modal ref="myModalRef3" hide-footer title="Add shared FundCategory">
+        <b-modal ref="myModalRef3" hide-footer title="Add Shared Fund Category">
         <b-card>
-            <label>Select fund:</label>
+            <label>Select Fund:</label>
             <select v-model="shared_fund" class="form-control">
                 <option v-for="fund in fund_list" v-bind:value="fund.id">
                     {{ fund.name }}

@@ -11,7 +11,7 @@
             <b-collapse is-nav id="nav-collapse">
                 <b-navbar-nav>
                 <b-nav-item href="#" to="/incomes">Incomes</b-nav-item>
-                <b-nav-item href="#" to="/funds">Funds</b-nav-item>
+                <b-nav-item href="#" to="/funds">Funds and Goals</b-nav-item>
                 <b-nav-item href="#" to="/spendings">Spendings</b-nav-item>
                 <b-nav-item href="#" to="/groups">Groups</b-nav-item>
             </b-navbar-nav>

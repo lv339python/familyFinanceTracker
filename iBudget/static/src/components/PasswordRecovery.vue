@@ -4,13 +4,13 @@
             <div id="password_recovery">
 
                 <h1>Change password</h1>
-                <label>Please enter new password</label>
+                <label>Please Enter New Password</label>
                 <br/>
-                <input required v-model="new_password" type="password" placeholder="New password"/>
+                <input required v-model="new_password" type="password" placeholder="New Password"/>
                 <br/>
-                <label>Please confirm your password</label>
+                <label>Please Confirm Your Password</label>
                 <br/>
-                <input required v-model="confirm_password" type="password" placeholder="Confirm your password"/>
+                <input required v-model="confirm_password" type="password" placeholder="Confirm Your Password"/>
                 <br/>
                 <div class="button">
                     <b-button class="btn btn-outline-primary" v-if=isValidPassword @click="setData">Submit</b-button>
@@ -22,7 +22,7 @@
                 <p>Your password has been reset successfully!</p>
             </div>
             <div class="d-block text-right">
-                <b-button variant="primary" @click="hideModal">ok</b-button>
+                <b-button variant="primary" @click="hideModal">OK</b-button>
             </div>
         </b-modal>
     </div>

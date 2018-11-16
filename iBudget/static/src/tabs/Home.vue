@@ -140,14 +140,6 @@
         text-align: center;
     }
 
-    .btn-circle.btn-xl {
-        width: 70px;
-        height: 70px;
-        padding: 10px 16px;
-        border-radius: 35px;
-        font-size: 24px;
-        line-height: 1.33;
-    }
     .carousel1-slide{
         margin: auto;
     }
