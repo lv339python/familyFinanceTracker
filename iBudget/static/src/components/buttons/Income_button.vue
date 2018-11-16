@@ -13,12 +13,6 @@
                         <b-input-group>
                             <b-form-input v-model.number="current" type="number" min="0.00"
                                           max="999999999"></b-form-input>
-                            <b-select v-model="fund_category" v-b-popover.hover="'Choose Fund'" title="Fund"
-                                      variant="primary" slot="prepend"
-                                      v-if="is_shared===false">
-                                <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
-                                </option>
-                            </b-select>
                             <b-select v-model="fund_category" v-b-popover.hover="'Choose Shared Fund'"
                                       title=" Shared Fund" variant="primary" slot="prepend"
                                       v-if="is_active_group !== null && is_shared===true">
@@ -28,6 +22,13 @@
                                     {{fund.name_fund}}
                                 </option>
                             </b-select>
+                            <b-select v-model="fund_category" v-b-popover.hover="'Choose Fund'" title="Fund"
+                                      variant="primary" slot="prepend"
+                                      v-else="is_shared===false">
+                                <option v-for="fund in fund_list" v-bind:value="fund.id"> {{ fund.name }}
+                                </option>
+                            </b-select>
+
                         </b-input-group>
                     </div>
                     <div class="col-md-12 form-group">
@@ -193,6 +194,7 @@
                 this.date = new Date().toJSON().slice(0, 10);
                 this.comment = null;
                 this.is_shared = null;
+                this.is_active_group = null;
             },
             showModal() {
                 this.$refs.myModalRef.show();
