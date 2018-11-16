@@ -420,9 +420,9 @@ def fund_summary(request):
         fund_info['spend_group'] = SharedFunds.get_by_fund\
             (fund_id).group.name
 
-    inc_history = total_value_for_category\
-        (SpendingHistory.objects.filter(fund=fund_id), True)
     spend_history = total_value_for_category\
+        (SpendingHistory.objects.filter(fund=fund_id), True)
+    inc_history = total_value_for_category\
         (IncomeHistory.objects.filter(fund=fund_id), True)
     fund_info['total'] = inc_history['total'] - spend_history['total']
     last_value_info = total_category_validation(inc_history, spend_history)

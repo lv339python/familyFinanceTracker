@@ -24,13 +24,13 @@
                                  <img class='image' :src="modalData['icon']"> <br></b>
                              <b>Name: {{modalData['name']}}</b>
                              <br>
-                             <b v-if="modalData['spend_group']">Shared is shared from
+                             <b v-if="modalData['spend_group']">Fund is shared from
                                  {{modalData['spend_group']}} group <br></b>
                              <b>Current balance for fund: {{modalData['total']}}</b>
                              <br>
-                             <b v-if="modalData['last_inc_value']"> Last income for fund:
+                             <b v-if="modalData['last_inc_value']"> Last registered income entry :
                                  {{modalData['last_inc_value']}} on {{modalData['last_inc_date']}} <br></b>
-                             <b v-if="modalData['last_spend_value']"> Last spend for fund:
+                             <b v-if="modalData['last_spend_value']"> Last registered spend entry:
                                  {{modalData['last_spend_value']}} on {{modalData['last_spend_date']}}</b>
                              <br>
                          </p>
